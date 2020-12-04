@@ -1,0 +1,186 @@
+{
+    "system_catalogue": [
+        {
+            "name": "c_sys14",
+            "description": "14-bus system",
+            "category": "TestSystem",
+            "raw_data": "data/data_14bus_pu.jl",
+            "build_function": "build_c_sys14"
+        },
+        {
+            "name": "c_sys14_dc",
+            "description": "14-bus system with DC line",
+            "category": "TestSystem",
+            "raw_data": "data/data_14bus_pu.jl",
+            "build_function": "build_c_sys14_dc"
+        },
+        {
+            "name": "c_sys5",
+            "description": "5-bus system",
+            "category": "TestSystem",
+            "raw_data": "data/data_5bus_pu.jl",
+            "build_function": "build_c_sys5"
+        },
+        {
+            "name": "c_sys5_bat",
+            "description": "5-bus system with Storage Device",
+            "category": "TestSystem",
+            "raw_data": "data/data_5bus_pu.jl",
+            "build_function": "build_c_sys5_bat"
+        },
+        {
+            "name": "c_sys5_dc",
+            "description": "Systems with HVDC data in the branches",
+            "category": "TestSystem",
+            "raw_data": "data/data_5bus_pu.jl",
+            "build_function": "build_c_sys5_dc"
+        },
+        {
+            "name": "c_sys5_ed",
+            "description": "5-bus System for Economic Dispatch Simulations",
+            "category": "TestSystem",
+            "raw_data": "data/data_5bus_pu.jl",
+            "build_function": "build_c_sys5_ed"
+        },
+        {
+            "name": "c_sys5_hy",
+            "description": "5-bus system with HydroDispatch",
+            "category": "TestSystem",
+            "raw_data": "data/data_5bus_pu.jl",
+            "build_function": "build_c_sys5_hy"
+        },
+        {
+            "name": "c_sys5_hy_ed",
+            "description": "5-bus system with Hydro-Power for Economic Dispatch Simulations",
+            "category": "TestSystem",
+            "raw_data": "data/data_5bus_pu.jl",
+            "build_function": "build_c_sys5_hy"
+        },
+        {
+            "name": "c_sys5_phes_ed",
+            "description": "5-bus system with Hydro Pumped Energy Storage for Economic Dispatch Simulations",
+            "category": "TestSystem",
+            "raw_data": "data/data_5bus_pu.jl",
+            "build_function": "build_c_sys5_phes_ed"
+        },
+        {
+            "name": "c_sys5_hy_uc",
+            "description": "5-bus system with Hydro-Power for Unit Commitment Simulations",
+            "category": "TestSystem",
+            "raw_data": "data/data_5bus_pu.jl",
+            "build_function": "build_c_sys5_hy_uc"
+        },
+        {
+            "name": "c_sys5_hyd",
+            "description": "5-bus system with Hydro Energy Reservoir",
+            "category": "TestSystem",
+            "raw_data": "data/data_5bus_pu.jl",
+            "build_function": "build_c_sys5_hyd"
+        },
+        {
+            "name": "c_sys5_il",
+            "description": "System with Interruptible Load",
+            "category": "TestSystem",
+            "raw_data": "data/data_5bus_pu.jl",
+            "build_function": "build_c_sys5_il"
+        },
+        {
+            "name": "c_sys5_ml",
+            "description": "",
+            "category": "TestSystem",
+            "raw_data": "data/data_5bus_pu.jl",
+            "build_function": "build_c_sys5_ml"
+        },
+        {
+            "name": "c_sys5_re",
+            "description": "5-bus system with Renewable Energy",
+            "category": "TestSystem",
+            "raw_data": "data/data_5bus_pu.jl",
+            "build_function": "build_c_sys5_re"
+        },
+        {
+            "name": "c_sys5_re_only",
+            "description": "5-bus system with only Renewable Energy",
+            "category": "TestSystem",
+            "raw_data": "data/data_5bus_pu.jl",
+            "build_function": "build_c_sys5_re"
+        },
+        {
+            "name": "c_sys5_uc",
+            "description": "5-bus system for Unit Commitment Simulations",
+            "category": "TestSystem",
+            "raw_data": "data/data_5bus_pu.jl",
+            "build_function": "build_c_sys5_uc"
+        },
+        {
+            "name": "c_sys5_pglib",
+            "description": "5-bus with ThermalMultiStart",
+            "category": "TestSystem",
+            "raw_data": "data/data_5bus_pu.jl",
+            "build_function": "build_c_sys5_pglib"
+        },
+        {
+            "name": "c_sys5_pwl_uc",
+            "description": "5-bus with SOS cost function for Unit Commitment Simulations",
+            "category": "TestSystem",
+            "raw_data": "data/data_5bus_pu.jl",
+            "build_function": "build_c_sys5_pwl_uc"
+        },
+        {
+            "name": "c_sys5_pwl_ed",
+            "description": "5-bus with pwl cost function",
+            "category": "TestSystem",
+            "raw_data": "data/data_5bus_pu.jl",
+            "build_function": "build_c_sys5_pwl_ed"
+        },
+        {
+            "name": "c_sys5_pwl_ed_nonconvex",
+            "description": "5-bus with SOS cost function for Economic Dispatch Simulations",
+            "category": "TestSystem",
+            "raw_data": "data/data_5bus_pu.jl",
+            "build_function": "build_c_sys5_pwl_ed_nonconvex"
+        },
+        {
+            "name": "c_sys5_reg",
+            "description": "5-bus with regulation devices and AGC",
+            "category": "TestSystem",
+            "raw_data": "data/data_5bus_pu.jl",
+            "build_function": "build_c_sys5_reg"
+        },
+        {
+            "name": "c_ramp_test",
+            "description": "1-bus for ramp testing",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_sys_ramp_testing"
+        },
+        {
+            "name": "c_duration_test",
+            "description": "1 Bus for duration testing",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_duration_test_sys"
+        },
+        {
+            "name": "c_linear_pwl_test",
+            "description": "1 Bus lineal PWL linear testing",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_duration_test_sys"
+        },
+        {
+            "name": "c_sos_pwl_test",
+            "description": "1 Bus lineal PWL sos testing",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_sos_test_sys"
+        },
+        {
+            "name": "c_market_bid_cost",
+            "description": "1 bus system with MarketBidCost Model",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pwl_marketbid_sys"
+        }
+    ]
+}
