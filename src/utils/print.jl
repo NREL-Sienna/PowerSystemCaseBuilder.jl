@@ -13,3 +13,14 @@ function list_system(data::Array{SystemDescriptor})
     end
     show(df, allrows=true, truncate=92, rowlabel = :Name)
 end
+
+function print_stats(data::SystemDescriptor)
+    df = DataFrames.DataFrame(Name = [], Value = [])
+    stats = get_stats(data)
+    for name in fieldnames(typeof(stats))
+        push!(df, (name, getfield(stats, name)))
+    end
+    show(df, allrows=true)
+    
+end
+
