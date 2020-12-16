@@ -1,12 +1,16 @@
-function build_system(name::String; kwargs...)
+function get_system_library(; kwargs...)
+    if check_for_serialized_descriptor()
+        return deserialize()
+    else
+        return parse_system_library()
+    end
+end
+
+function build_system(name::String, print_stat::Bool=false; kwargs...)
     #TODO: add check for supported kwargs
     add_forecasts = get(kwargs, :add_forecasts, true)
     add_reserves = get(kwargs, :add_reserves, false)
-    if check_for_serialized_descriptor()
-        system_library = deserialize()
-    else
-        system_library = parse_system_library()
-    end
+    system_library = get(kwargs, :system_library, get_system_library())
     sys_descriptor = get_system_descriptor(system_library, name)
     label = make_system_label(add_forecasts, add_reserves)
     if !is_serialized(sys_descriptor, label)
@@ -37,5 +41,6 @@ function build_system(name::String; kwargs...)
         )   
         update_stats!(sys_descriptor, time() - start)
     end
+    print_stat ? print_stats(sys_descriptor) : nothing
     return sys
 end
