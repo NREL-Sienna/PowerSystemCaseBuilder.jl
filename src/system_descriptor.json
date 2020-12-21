@@ -181,6 +181,447 @@
             "category": "TestSystem",
             "raw_data": "",
             "build_function": "build_pwl_marketbid_sys"
+        },
+        {
+            "name": "5_bus_hydro_uc_sys",
+            "description": "5-bus hydro unit commitment data",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_5_bus_hydro_uc_sys"
+        },
+        {
+            "name": "5_bus_hydro_ed_sys",
+            "description": "5-bus hydro economic dispatch data",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_5_bus_hydro_ed_sys"
+        },
+        {
+            "name": "5_bus_hydro_wk_sys",
+            "description": "5-bus hydro system for weekly dispatch",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_5_bus_hydro_wk_sys"
+        },
+        {
+            "name": "psse_RTS_GMLC_sys",
+            "description": "PSSE .raw RTS-GMLC system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_psse_RTS_GMLC_sys"
+        },
+        {
+            "name": "test_RTS_GMLC_sys",
+            "description": "RTS-GMLC test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_test_RTS_GMLC_sys"
+        },
+        {
+            "name": "US_sys",
+            "description": "RTS-GMLC test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_US_sys"
+        },
+        {
+            "name": "psse_ACTIVSg10k_sys",
+            "description": "ACTIVSg10k Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_ACTIVSg10k_sys"
+        },
+        {
+            "name": "psse_ACTIVSg70k_sys",
+            "description": "ACTIVSg70k Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_ACTIVSg70k_sys"
+        },
+        {
+            "name": "psse_ACTIVSg2000_sys",
+            "description": "ACTIVSg2000 Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_psse_ACTIVSg2000_sys"
+        },
+        {
+            "name": "matpower_ACTIVSg10k_sys",
+            "description": "ACTIVSg10k Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_matpower_ACTIVSg10k_sys"
+        },
+        {
+            "name": "matpower_case2_sys",
+            "description": "Matpower Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_matpower_case2_sys"
+        },
+        {
+            "name": "matpower_case3_tnep_sys",
+            "description": "Matpower Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_matpower_case3_tnep_sys"
+        },
+        {
+            "name": "matpower_case5_asym_sys",
+            "description": "Matpower Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_matpower_case5_asym_sys"
+        },
+        {
+            "name": "matpower_case5_dc_sys",
+            "description": "Matpower Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_matpower_case5_dc_sys"
+        },
+        {
+            "name": "matpower_case5_gap_sys",
+            "description": "Matpower Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_matpower_case5_gap_sys"
+        },
+        {
+            "name": "matpower_case5_pwlc_sys",
+            "description": "Matpower Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_matpower_case5_pwlc_sys"
+        },
+        {
+            "name": "matpower_case5_re_intid_sys",
+            "description": "Matpower Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_matpower_case5_re_intid_sys"
+        },
+        {
+            "name": "matpower_case5_re_uc_pwl_sys",
+            "description": "Matpower Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_matpower_case5_re_uc_pwl_sys"
+        },
+        {
+            "name": "matpower_case5_re_uc_sys",
+            "description": "Matpower Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_matpower_case5_re_uc_sys"
+        },
+        {
+            "name": "matpower_case5_re_sys",
+            "description": "Matpower Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_matpower_case5_re_sys"
+        },
+        {
+            "name": "matpower_case5_th_intid_sys",
+            "description": "Matpower Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_matpower_case5_th_intid_sys"
+        },
+        {
+            "name": "matpower_case5_tnep_sys",
+            "description": "Matpower Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_matpower_case5_tnep_sys"
+        },
+        {
+            "name": "matpower_case5_sys",
+            "description": "Matpower Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_matpower_case5_sys"
+        },
+        {
+            "name": "matpower_case6_sys",
+            "description": "Matpower Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_matpower_case6_sys"
+        },
+        {
+            "name": "matpower_case7_tplgy_sys",
+            "description": "Matpower Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_matpower_case7_tplgy_sys"
+        },
+        {
+            "name": "matpower_case14_sys",
+            "description": "Matpower Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_matpower_case14_sys"
+        },
+        {
+            "name": "matpower_case24_sys",
+            "description": "Matpower Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_matpower_case24_sys"
+        },
+        {
+            "name": "matpower_case30_sys",
+            "description": "Matpower Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_matpower_case30_sys"
+        },
+        {
+            "name": "matpower_frankenstein_00_sys",
+            "description": "Matpower Frankenstein Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_matpower_frankenstein_00_sys"
+        },
+        {
+            "name": "matpower_RTS_GMLC_sys",
+            "description": "Matpower RTS-GMLC Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_matpower_RTS_GMLC_sys"
+        },
+        {
+            "name": "matpower_case5_strg_sys",
+            "description": "Matpower Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_matpower_case5_strg_sys"
+        },
+        {
+            "name": "pti_case3_sys",
+            "description": "PSSE 3-bus Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_case3_sys"
+        },
+        {
+            "name": "pti_case5_alc_sys",
+            "description": "PSSE 5-bus alc Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_case5_alc_sys"
+        },
+        {
+            "name": "pti_case5_sys",
+            "description": "PSSE 5-bus Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_case5_sys"
+        },
+        {
+            "name": "pti_case7_tplgy_sys",
+            "description": "PSSE 7-bus Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_case7_tplgy_sys"
+        },
+        {
+            "name": "pti_case14_sys",
+            "description": "PSSE 14-bus Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_case14_sys"
+        },
+        {
+            "name": "pti_case24_sys",
+            "description": "PSSE 24-bus Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_case24_sys"
+        },
+        {
+            "name": "pti_case30_sys",
+            "description": "PSSE 30-bus Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_case30_sys"
+        },
+        {
+            "name": "pti_case73_sys",
+            "description": "PSSE 73-bus Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_case73_sys"
+        },
+        {
+            "name": "pti_frankenstein_00_2_sys",
+            "description": "PSSE frankenstein Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_frankenstein_00_2_sys"
+        },
+        {
+            "name": "pti_frankenstein_00_sys",
+            "description": "PSSE frankenstein Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_frankenstein_00_sys"
+        },
+        {
+            "name": "pti_frankenstein_20_sys",
+            "description": "PSSE frankenstein Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_frankenstein_20_sys"
+        },
+        {
+            "name": "pti_frankenstein_70_sys",
+            "description": "PSSE frankenstein Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_frankenstein_70_sys"
+        },
+        {
+            "name": "pti_parser_test_a_sys",
+            "description": "PSSE Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_parser_test_a_sys"
+        },
+        {
+            "name": "pti_parser_test_b_sys",
+            "description": "PSSE Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_parser_test_b_sys"
+        },
+        {
+            "name": "pti_parser_test_c_sys",
+            "description": "PSSE Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_parser_test_c_sys"
+        },
+        {
+            "name": "pti_parser_test_d_sys",
+            "description": "PSSE Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_parser_test_d_sys"
+        },
+        {
+            "name": "pti_parser_test_e_sys",
+            "description": "PSSE Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_parser_test_e_sys"
+        },
+        {
+            "name": "pti_parser_test_f_sys",
+            "description": "PSSE Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_parser_test_f_sys"
+        },
+        {
+            "name": "pti_parser_test_g_sys",
+            "description": "PSSE Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_parser_test_g_sys"
+        },
+        {
+            "name": "pti_parser_test_h_sys",
+            "description": "PSSE Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_parser_test_h_sys"
+        },
+        {
+            "name": "pti_parser_test_i_sys",
+            "description": "PSSE Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_parser_test_i_sys"
+        },
+        {
+            "name": "pti_parser_test_j_sys",
+            "description": "PSSE Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_parser_test_j_sys"
+        },
+        {
+            "name": "pti_three_winding_mag_test_sys",
+            "description": "PSSE Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_three_winding_mag_test_sys"
+        },
+        {
+            "name": "pti_three_winding_test_2_sys",
+            "description": "PSSE Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_three_winding_test_2_sys"
+        },
+        {
+            "name": "pti_three_winding_test_sys",
+            "description": "PSSE Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_three_winding_test_sys"
+        },
+        {
+            "name": "pti_two_winding_mag_test_sys",
+            "description": "PSSE Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_two_winding_mag_test_sys"
+        },
+        {
+            "name": "pti_two_terminal_hvdc_test_sys",
+            "description": "PSSE Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_two_terminal_hvdc_test_sys"
+        },
+        {
+            "name": "pti_vsc_hvdc_test_sys",
+            "description": "PSSE Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_pti_vsc_hvdc_test_sys"
+        },
+        {
+            "name": "psse_Benchmark_4ger_33_2015_sys",
+            "description": "PSSE Benchmark system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_psse_Benchmark_4ger_33_2015_sys"
+        },
+        {
+            "name": "psse_OMIB_sys",
+            "description": "PSSE OMIB Test system",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_psse_OMIB_sys"
+        },
+        {
+            "name": "psse_3bus_gen_cls_sys",
+            "description": "PSSE 3-bus Test system with CLS",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_psse_3bus_gen_cls_sys"
+        },
+        {
+            "name": "psse_3bus_no_cls_sys",
+            "description": "PSSE 3-bus Test system without CLS",
+            "category": "TestSystem",
+            "raw_data": "",
+            "build_function": "build_psse_3bus_no_cls_sys"
         }
     ]
 }

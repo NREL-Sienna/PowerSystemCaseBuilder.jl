@@ -1496,3 +1496,448 @@ function build_pwl_marketbid_sys(; kwargs...)
     PSY.set_variable_cost!(cost_test_sys, gens_cost[2], market_bid_gen2)
     return cost_test_sys
 end
+
+############# Test System from TestData #############
+function build_5_bus_hydro_uc_sys(; kwargs...)
+    rawsys = PSY.PowerSystemTableData(
+        joinpath(data_dir, "5-bus-hydro"),
+        100.0,
+        joinpath(data_dir, "5-bus-hydro", "user_descriptors.yaml");
+        generator_mapping_file = joinpath(data_dir, "5-bus-hydro", "generator_mapping.yaml"),
+    )
+    c_sys5_hy_uc = PSY.System(
+    rawsys,
+    timeseries_metadata_file = joinpath(
+            data_dir,
+            "forecasts",
+            "5bus_ts",
+            "7day",
+            "timeseries_pointers_da_7day.json",
+        ),
+        time_series_in_memory = true,
+    )
+    PSY.transform_single_time_series!(c_sys5_hy_uc, 24, Hour(24))
+
+    return c_sys5_hy_uc
+end
+
+function build_5_bus_hydro_ed_sys(; kwargs...)
+    rawsys = PSY.PowerSystemTableData(
+        joinpath(data_dir, "5-bus-hydro"),
+        100.0,
+        joinpath(data_dir, "5-bus-hydro", "user_descriptors.yaml");
+        generator_mapping_file = joinpath(data_dir, "5-bus-hydro", "generator_mapping.yaml"),
+    )
+    c_sys5_hy_ed = PSY.System(
+        rawsys,
+        timeseries_metadata_file = joinpath(
+            data_dir,
+            "forecasts",
+            "5bus_ts",
+            "7day",
+            "timeseries_pointers_rt_7day.json",
+        ),
+        time_series_in_memory = true,
+    )
+    PSY.transform_single_time_series!(c_sys5_hy_ed, 12, Hour(1))
+
+    return c_sys5_hy_ed
+end
+
+function build_5_bus_hydro_wk_sys(; kwargs...)
+    c_sys5_hy_wk = System(rawsys, time_series_in_memory = true)
+    # TODO: better construction  of the time series data
+    return
+end
+
+function build_matpower_case5_re_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "matpower",  "case5_re.m")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+
+    return sys
+end
+
+function build_psse_RTS_GMLC_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "psse_raw",  "RTS-GMLC.RAW")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+
+    return sys
+end
+
+function build_test_RTS_GMLC_sys(; kwargs...)
+    RTS_GMLC_DIR = joinpath(PACKAGE_DIR, "data", "RTS_GMLC");
+    rawsys = PSY.PowerSystemTableData(
+        RTS_GMLC_DIR,
+        100.0,
+        joinpath(RTS_GMLC_DIR, "user_descriptors.yaml"),
+        timeseries_metadata_file = joinpath(RTS_GMLC_DIR, "timeseries_pointers.json"),
+        generator_mapping_file = joinpath(RTS_GMLC_DIR, "generator_mapping.yaml"),
+    )
+    sys = PSY.System(rawsys; time_series_resolution = Dates.Hour(1));
+    PSY.transform_single_time_series!(sys, 24, Dates.Hour(24));
+
+    return sys
+end
+
+function build_US_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "psse_raw",  "RTS-GMLC.RAW")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    # TODO
+    return sys
+end
+
+function build_ACTIVSg10k_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "ACTIVSg10k",  "ACTIVSg10k.RAW")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+
+    return sys
+end
+
+function build_ACTIVSg70k_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "ACTIVSg70k",  "ACTIVSg70k.RAW")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+
+    return sys
+end
+
+function build_psse_ACTIVSg2000_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "ACTIVSg2000",  "ACTIVSg2000.RAW")
+    dyr_file = joinpath(PACKAGE_DIR, "data", "psse_dyr",  "ACTIVSg2000_dynamics.dyr")
+    sys = PSY.System(PSY.PowerModelsData(file_path, dyr_file))
+
+    return sys
+end
+
+function build_matpower_ACTIVSg2000_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "matpower",  "ACTIVSg2000.m")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_matpower_ACTIVSg10k_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "matpower",  "ACTIVSg10k.m")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_matpower_case2_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "matpower",  "case2.m")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_matpower_case3_tnep_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "matpower",  "case3_tnep.m")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_matpower_case5_asym_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "matpower",  "case5_asym.m")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_matpower_case5_dc_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "matpower",  "case5_dc.m")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_matpower_case5_gap_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "matpower",  "case5_gap.m")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_matpower_case5_pwlc_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "matpower",  "case5_pwlc.m")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_matpower_case5_re_intid_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "matpower",  "case5_re_intid.m")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_matpower_case5_re_uc_pwl_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "matpower",  "case5_re_uc_pwl.m")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_matpower_case5_re_uc_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "matpower",  "case5_re_uc.m")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_matpower_case5_re_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "matpower",  "case5_re.m")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_matpower_case5_th_intid_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "matpower",  "case5_th_intid.m")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_matpower_case5_tnep_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "matpower",  "case5_tnep.m")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_matpower_case5_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "matpower",  "case5.m")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_matpower_case6_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "matpower",  "case6.m")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_matpower_case7_tplgy_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "matpower",  "case7_tplgy.m")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_matpower_case14_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "matpower",  "case14.m")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_matpower_case24_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "matpower",  "case24.m")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_matpower_case30_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "matpower",  "case30.m")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_matpower_frankenstein_00_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "matpower",  "frankenstein_00.m")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_matpower_RTS_GMLC_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "matpower",  "RTS_GMLC.m")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_matpower_case5_strg_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "matpower", "case5_strg.m")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_case3_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "case3.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_case5_alc_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "case5_alc.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_case5_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "case5.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_case7_tplgy_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "case7_tplgy.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_case14_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "case14.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_case24_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "case24.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_case30_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "case30.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_case73_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "case73.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_frankenstein_00_2_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "frankenstein_00_2.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_frankenstein_00_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "frankenstein_00.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_frankenstein_20_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "frankenstein_20.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_frankenstein_70_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "frankenstein_70.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_parser_test_a_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_a.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_parser_test_b_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_b.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_parser_test_c_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_c.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_parser_test_d_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_d.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_parser_test_e_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_e.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_parser_test_f_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_f.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_parser_test_g_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_g.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_parser_test_h_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_h.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_parser_test_i_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_i.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_parser_test_j_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_j.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_three_winding_mag_test_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "three_winding_mag_test.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_three_winding_test_2_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "three_winding_test_2.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_three_winding_test_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "three_winding_test.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_two_winding_mag_test_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "two_winding_mag_test.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_two_terminal_hvdc_test_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "two-terminal-hvdc_test.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_pti_vsc_hvdc_test_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "vsc-hvdc_test.raw")
+    sys = PSY.System(PSY.PowerModelsData(file_path))
+    return sys
+end
+
+function build_psse_Benchmark_4ger_33_2015_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "psse_raw", "Benchmark_4ger_33_2015.raw")
+    dyr_file = joinpath(PACKAGE_DIR, "data", "psse_dyr", "Benchmark_4ger_33_2015.dyr")
+    sys = PSY.System(PSY.PowerModelsData(file_path, dyr_file))
+    return sys
+end
+
+function build_psse_OMIB_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "psse_raw", "OMIB.raw")
+    dyr_file = joinpath(PACKAGE_DIR, "data", "psse_dyr", "OMIB.dyr")
+    sys = PSY.System(PSY.PowerModelsData(file_path, dyr_file))
+    return sys
+end
+
+function build_psse_3bus_gen_cls_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "PSSE_test", "ThreeBusNetwork.raw")
+    dyr_file = joinpath(PACKAGE_DIR, "data", "PSSE_test", "TestGENCLS.dyr")
+    sys = PSY.System(PSY.PowerModelsData(file_path, dyr_file))
+    return sys
+end
+
+function build_psse_3bus_no_cls_sys(; kwargs...)
+    file_path = joinpath(PACKAGE_DIR, "data", "PSSE_test", "ThreeBusNetwork.raw")
+    dyr_file = joinpath(PACKAGE_DIR, "data", "PSSE_test", "Test-NoCLS.dyr")
+    sys = PSY.System(PSY.PowerModelsData(file_path, dyr_file))
+    return sys
+end
