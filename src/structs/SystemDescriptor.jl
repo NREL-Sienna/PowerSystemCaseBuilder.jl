@@ -1,17 +1,17 @@
 mutable struct SystemDescriptor <: PowerSystemBuilderType
     name::AbstractString
     description::AbstractString
-    category::SystemCategorys.SystemCategory
+    category::Type{<:SystemCategory}
     raw_data::AbstractString
     build_function::Function
-    serialized::Dict{String, AbstractString}
+    download_function::Union{Nothing, Function}
     stats::Union{Nothing, SystemBuildStats}
 end
 
 function SystemDescriptor(
     name::AbstractString,
     description::AbstractString,
-    category::SystemCategorys.SystemCategory,
+    category::Type{<:SystemCategory},
     raw_data::AbstractString,
     build_function::Function
 )
@@ -32,7 +32,7 @@ function SystemDescriptor(;
     category,
     raw_data,
     build_function,
-    serialized = Dict{String, AbstractString}(),
+    download_function = nothing,
     stats = nothing,
 )
     return SystemDescriptor(
@@ -41,7 +41,7 @@ function SystemDescriptor(;
         category,
         raw_data,
         build_function,
-        serialized,
+        download_function,
         stats,
     )
 end
@@ -51,24 +51,15 @@ get_description(v::SystemDescriptor) = v.description
 get_category(v::SystemDescriptor) = v.category
 get_raw_data(v::SystemDescriptor) = v.raw_data
 get_build_function(v::SystemDescriptor) = v.build_function
-get_serialized_file(v::SystemDescriptor, key::String) = v.serialized[key]
+get_download_function(v::SystemDescriptor) = v.download_function
 get_stats(v::SystemDescriptor) = v.stats
 
+set_name!(v::SystemDescriptor, value::String) = v.name = value
+set_description!(v::SystemDescriptor, value::String) = v.description = value
+set_category!(v::SystemDescriptor, value::Type{<:SystemCategory}) = v.category = value
+set_raw_data!(v::SystemDescriptor, value::String) = v.raw_data = value
+set_build_function!(v::SystemDescriptor, value::Function) = v.build_function = value
+set_download_function!(v::SystemDescriptor, value::Function) = v.download_function = value
 set_stats!(v::SystemDescriptor, value::SystemBuildStats) = v.stats = value
-update_serialized!(v::SystemDescriptor, key::String, filepath::AbstractString) = v.serialized[key] = filepath
+
 update_stats!(v::SystemDescriptor, deserialize_time::Float64) = update_stats!(v.stats, deserialize_time)
-is_serialized(v::SystemDescriptor, key::String) = haskey(v.serialized, key)
-
-function get_serialzed_file_name(v::SystemDescriptor, key::String)
-    file_name = "$(v.name)_$(key).json"
-    return file_name
-end
-
-function get_system_descriptor(data::Array{SystemDescriptor}, name::String)
-    sys = filter(x -> x.name == name, data)
-    if isempty(sys)
-        error("invalid system name: $name")
-    else
-        return sys[1]
-    end
-end
