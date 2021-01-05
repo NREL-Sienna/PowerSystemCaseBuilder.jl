@@ -73,14 +73,14 @@ const IS = InfrastructureSystems
 # includes
 abstract type PowerSystemBuilderType <: IS.InfrastructureSystemsType end
 
-include("definations.jl")
+include("definitions.jl")
 include("system_library.jl")
 
-include("structs/SystemBuildStats.jl")
-include("structs/SystemDescriptor.jl")
-include("structs/SystemCatelog.jl")
-
+include("system_build_stats.jl")
 include("system_descriptor.jl")
+include("system_catelog.jl")
+
+include("system_descriptor_data.jl")
 include("utils/print.jl")
 include("utils/parse.jl")
 include("utils/utils.jl")
