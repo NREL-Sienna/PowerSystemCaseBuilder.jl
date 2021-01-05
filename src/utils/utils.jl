@@ -61,10 +61,7 @@ function get_raw_data(; kwargs...)
     end
 end
 
-
-# function clear_serialized_system_library()
-#     if isfile(SERIALIZED_SYSTEM_DESCRIPTORS_FILE)
-#         @debug "Deleting file" SERIALIZED_SYSTEM_DESCRIPTORS_FILE
-#         rm(SERIALIZED_SYSTEM_DESCRIPTORS_FILE, force = true)
-#     end
-# end
+function filter_kwargs(; kwargs...)
+    system_kwargs = filter(x-> in(first(x), PSY.SYSTEM_KWARGS), kwargs)
+    return system_kwargs
+end

@@ -2,9 +2,10 @@ include(joinpath(PACKAGE_DIR, "data","data_5bus_pu.jl"))
 include(joinpath(PACKAGE_DIR, "data","data_14bus_pu.jl"))
 
 function build_c_sys5(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5 =
-        PSY.System(100.0, nodes, thermal_generators5(nodes), loads5(nodes), branches5(nodes))
+        PSY.System(100.0, nodes, thermal_generators5(nodes), loads5(nodes), branches5(nodes); sys_kwargs...)
 
     if get(kwargs, :add_forecasts, true)
         for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5))
@@ -21,6 +22,7 @@ function build_c_sys5(; kwargs...)
 end
 
 function build_c_sys5_ml(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_ml = PSY.System(
         100.0,
@@ -29,6 +31,7 @@ function build_c_sys5_ml(; kwargs...)
         loads5(nodes),
         branches5(nodes);
         time_series_in_memory = get(kwargs, :time_series_in_memory, true),
+        sys_kwargs...,
     )
 
     if get(kwargs, :add_forecasts, true)
@@ -46,6 +49,7 @@ function build_c_sys5_ml(; kwargs...)
 end
 
 function build_c_sys14(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes14()
     c_sys14 = PSY.System(
         100.0,
@@ -54,6 +58,7 @@ function build_c_sys14(; kwargs...)
         loads14(nodes),
         branches14(nodes);
         time_series_in_memory = get(kwargs, :time_series_in_memory, true),
+        sys_kwargs...,
     )
 
     if get(kwargs, :add_forecasts, true)
@@ -69,6 +74,7 @@ function build_c_sys14(; kwargs...)
 end
 
 function build_c_sys5_re(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_re = PSY.System(
         100.0,
@@ -78,6 +84,7 @@ function build_c_sys5_re(; kwargs...)
         loads5(nodes),
         branches5(nodes);
         time_series_in_memory = get(kwargs, :time_series_in_memory, true),
+        sys_kwargs...,
     )
 
     if get(kwargs, :add_forecasts, true)
@@ -136,6 +143,7 @@ function build_c_sys5_re(; kwargs...)
 end
 
 function build_c_sys5_re_only(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_re_only = PSY.System(
         100.0,
@@ -144,6 +152,7 @@ function build_c_sys5_re_only(; kwargs...)
         loads5(nodes),
         branches5(nodes);
         time_series_in_memory = get(kwargs, :time_series_in_memory, true),
+        sys_kwargs...,
     )
 
     if get(kwargs, :add_forecasts, true)
@@ -177,6 +186,7 @@ function build_c_sys5_re_only(; kwargs...)
 end
 
 function build_c_sys5_hy(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_hy = PSY.System(
         100.0,
@@ -186,6 +196,7 @@ function build_c_sys5_hy(; kwargs...)
         loads5(nodes),
         branches5(nodes);
         time_series_in_memory = get(kwargs, :time_series_in_memory, true),
+        sys_kwargs...,
     )
 
     if get(kwargs, :add_forecasts, true)
@@ -211,6 +222,7 @@ function build_c_sys5_hy(; kwargs...)
 end
 
 function build_c_sys5_hyd(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_hyd = PSY.System(
         100.0,
@@ -220,6 +232,7 @@ function build_c_sys5_hyd(; kwargs...)
         loads5(nodes),
         branches5(nodes);
         time_series_in_memory = get(kwargs, :time_series_in_memory, true),
+        sys_kwargs...,
     )
 
     if get(kwargs, :add_forecasts, true)
@@ -317,6 +330,7 @@ function build_c_sys5_hyd(; kwargs...)
 end
 
 function build_c_sys5_bat(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     time_series_in_memory = get(kwargs, :time_series_in_memory, true)
     nodes = nodes5()
     c_sys5_bat = PSY.System(
@@ -328,6 +342,7 @@ function build_c_sys5_bat(; kwargs...)
         branches5(nodes),
         battery5(nodes);
         time_series_in_memory = time_series_in_memory,
+        sys_kwargs...,
     )
 
     if get(kwargs, :add_forecasts, true)
@@ -390,6 +405,7 @@ function build_c_sys5_bat(; kwargs...)
 end
 
 function build_c_sys5_il(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_il = PSY.System(
         100.0,
@@ -399,6 +415,7 @@ function build_c_sys5_il(; kwargs...)
         interruptible(nodes),
         branches5(nodes);
         time_series_in_memory = get(kwargs, :time_series_in_memory, true),
+        sys_kwargs...,
     )
 
     if get(kwargs, :add_forecasts, true)
@@ -457,6 +474,7 @@ function build_c_sys5_il(; kwargs...)
 end
 
 function build_c_sys5_dc(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_dc = PSY.System(
         100.0,
@@ -466,6 +484,7 @@ function build_c_sys5_dc(; kwargs...)
         loads5(nodes),
         branches5_dc(nodes);
         time_series_in_memory = get(kwargs, :time_series_in_memory, true),
+        sys_kwargs...,
     )
 
     if get(kwargs, :add_forecasts, true)
@@ -491,6 +510,7 @@ function build_c_sys5_dc(; kwargs...)
 end
 
 function build_c_sys14_dc(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes14()
     c_sys14_dc = PSY.System(
         100.0,
@@ -499,6 +519,7 @@ function build_c_sys14_dc(; kwargs...)
         loads14(nodes),
         branches14_dc(nodes);
         time_series_in_memory = get(kwargs, :time_series_in_memory, true),
+        sys_kwargs...,
     )
 
     if get(kwargs, :add_forecasts, true)
@@ -519,9 +540,9 @@ end
 
 function build_c_sys5_reg(; kwargs...)
     nodes = nodes5()
-
+    sys_kwargs = filter_kwargs(; kwargs...)
     c_sys5_reg =
-        PSY.System(100.0, nodes, thermal_generators5(nodes), loads5(nodes), branches5(nodes))
+        PSY.System(100.0, nodes, thermal_generators5(nodes), loads5(nodes), branches5(nodes), sys_kwargs...)
 
     area = PSY.Area("1")
     PSY.add_component!(c_sys5_reg, area)
@@ -578,6 +599,7 @@ function build_c_sys5_reg(; kwargs...)
 end
 
 function build_sys_ramp_testing(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     node = PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, nothing, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gen_ramp = [
@@ -625,7 +647,7 @@ function build_sys_ramp_testing(; kwargs...)
     ramp_load = [0.9, 1.1, 2.485, 2.175, 0.9]
     ts_dict = SortedDict(DA_ramp[1] => ramp_load)
     load_forecast_ramp = PSY.Deterministic("max_active_power", ts_dict, Hour(1))
-    ramp_test_sys = PSY.System(100.0)
+    ramp_test_sys = PSY.System(100.0, sys_kwargs...)
     PSY.add_component!(ramp_test_sys, node)
     PSY.add_component!(ramp_test_sys, load)
     PSY.add_component!(ramp_test_sys, gen_ramp[1])
@@ -635,6 +657,7 @@ function build_sys_ramp_testing(; kwargs...)
 end
 
 function build_c_sys5_uc(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_uc = PSY.System(
         100.0,
@@ -643,6 +666,7 @@ function build_c_sys5_uc(; kwargs...)
         loads5(nodes),
         branches5(nodes);
         time_series_in_memory = get(kwargs, :time_series_in_memory, true),
+        sys_kwargs...,
     )
 
     if get(kwargs, :add_forecasts, true)
@@ -710,7 +734,8 @@ function build_c_sys5_uc(; kwargs...)
 end
 
 function build_c_sys5_pwl_uc(; kwargs...)
-    c_sys5_uc = build_c_sys5_uc(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    c_sys5_uc = build_c_sys5_uc(; sys_kwargs...)
     thermal = thermal_generators5_pwl(collect(PSY.get_components(PSY.Bus, c_sys5_uc)))
     for d in thermal
         PSY.add_component!(c_sys5_uc, d)
@@ -719,6 +744,7 @@ function build_c_sys5_pwl_uc(; kwargs...)
 end
 
 function build_c_sys5_ed(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_ed = PSY.System(
         100.0,
@@ -729,6 +755,7 @@ function build_c_sys5_ed(; kwargs...)
         interruptible(nodes),
         branches5(nodes);
         time_series_in_memory = get(kwargs, :time_series_in_memory, true),
+        sys_kwargs...,
     )
 
     if get(kwargs, :add_forecasts, true)
@@ -774,7 +801,8 @@ function build_c_sys5_ed(; kwargs...)
 end
 
 function build_c_sys5_pwl_ed(; kwargs...)
-    c_sys5_ed = build_c_sys5_ed(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    c_sys5_ed = build_c_sys5_ed(; sys_kwargs...)
     thermal = thermal_generators5_pwl(collect(PSY.get_components(PSY.Bus, c_sys5_ed)))
     for d in thermal
         PSY.add_component!(c_sys5_ed, d)
@@ -783,7 +811,8 @@ function build_c_sys5_pwl_ed(; kwargs...)
 end
 
 function build_c_sys5_pwl_ed_nonconvex(; kwargs...)
-    c_sys5_ed = build_c_sys5_ed(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    c_sys5_ed = build_c_sys5_ed(; sys_kwargs...)
     thermal = thermal_generators5_pwl_nonconvex(collect(PSY.get_components(PSY.Bus, c_sys5_ed)))
     for d in thermal
         PSY.add_component!(c_sys5_ed, d)
@@ -805,6 +834,7 @@ function build_init(gens, data)
 end
 
 function build_c_sys5_hy_uc(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_hy_uc = PSY.System(
         100.0,
@@ -815,6 +845,7 @@ function build_c_sys5_hy_uc(; kwargs...)
         loads5(nodes),
         branches5(nodes);
         time_series_in_memory = get(kwargs, :time_series_in_memory, true),
+        sys_kwargs...,
     )
 
     if get(kwargs, :add_forecasts, true)
@@ -909,6 +940,7 @@ function build_c_sys5_hy_uc(; kwargs...)
 end
 
 function build_c_sys5_hy_ed(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_hy_ed = PSY.System(
         100.0,
@@ -920,6 +952,7 @@ function build_c_sys5_hy_ed(; kwargs...)
         interruptible(nodes),
         branches5(nodes);
         time_series_in_memory = get(kwargs, :time_series_in_memory, true),
+        sys_kwargs...,
     )
 
     if get(kwargs, :add_forecasts, true)
@@ -1042,6 +1075,7 @@ function build_c_sys5_hy_ed(; kwargs...)
 end
 
 function build_c_sys5_phes_ed(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_phes_ed = PSY.System(
         100.0,
@@ -1053,6 +1087,7 @@ function build_c_sys5_phes_ed(; kwargs...)
         interruptible(nodes),
         branches5(nodes);
         time_series_in_memory = get(kwargs, :time_series_in_memory, true),
+        sys_kwargs...,
     )
 
     if get(kwargs, :add_forecasts, true)
@@ -1155,6 +1190,7 @@ function build_c_sys5_phes_ed(; kwargs...)
 end
 
 function build_c_sys5_pglib(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_uc = PSY.System(
         100.0,
@@ -1164,6 +1200,7 @@ function build_c_sys5_pglib(; kwargs...)
         loads5(nodes),
         branches5(nodes);
         time_series_in_memory = get(kwargs, :time_series_in_memory, true),
+        sys_kwargs...,
     )
 
     if get(kwargs, :add_forecasts, true)
@@ -1200,6 +1237,7 @@ function build_c_sys5_pglib(; kwargs...)
 end
 
 function build_sos_test_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     node = PSY.Bus(1, "nodeA", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, nothing, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gens_cost_sos = [
@@ -1262,7 +1300,7 @@ function build_sos_test_sys(; kwargs...)
     end
     load_forecast_cost_sos = PSY.Deterministic("max_active_power", DA_load_forecast)
     cost_test_sos_sys =
-        PSY.System(100.0; time_series_in_memory = get(kwargs, :time_series_in_memory, true))
+        PSY.System(100.0; sys_kwargs...)
         PSY.add_component!(cost_test_sos_sys, node)
         PSY.add_component!(cost_test_sos_sys, load)
         PSY.add_component!(cost_test_sos_sys, gens_cost_sos[1])
@@ -1273,6 +1311,7 @@ function build_sos_test_sys(; kwargs...)
 end
 
 function build_pwl_test_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     node = PSY.Bus(1, "nodeA", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, nothing, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gens_cost = [
@@ -1330,7 +1369,7 @@ function build_pwl_test_sys(; kwargs...)
     end
     load_forecast_cost_sos = PSY.Deterministic("max_active_power", DA_load_forecast)
     cost_test_sys =
-        PSY.System(100.0; time_series_in_memory = get(kwargs, :time_series_in_memory, true))
+        PSY.System(100.0; sys_kwargs...)
     PSY.add_component!(cost_test_sys, node)
     PSY.add_component!(cost_test_sys, load)
     PSY.add_component!(cost_test_sys, gens_cost[1])
@@ -1340,6 +1379,7 @@ function build_pwl_test_sys(; kwargs...)
 end
 
 function build_duration_test_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     node = PSY.Bus(1, "nodeA", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, nothing, 0.4, 0.9861, 100.0, 1.0, 2.0)
     DA_dur = collect(
@@ -1391,7 +1431,7 @@ function build_duration_test_sys(; kwargs...)
     load_data = SortedDict(DA_dur[1] => TimeSeries.TimeArray(DA_dur, duration_load))
     load_forecast_dur = PSY.Deterministic("max_active_power", load_data)
     duration_test_sys =
-        PSY.System(100.0; time_series_in_memory = get(kwargs, :time_series_in_memory, true))
+        PSY.System(100.0; sys_kwargs...)
     PSY.add_component!(duration_test_sys, node)
     PSY.add_component!(duration_test_sys, load)
     PSY.add_component!(duration_test_sys, gens_dur[1])
@@ -1402,6 +1442,7 @@ function build_duration_test_sys(; kwargs...)
 end
 
 function build_pwl_marketbid_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     node = PSY.Bus(1, "nodeA", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, nothing, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gens_cost = [
@@ -1489,7 +1530,7 @@ function build_pwl_marketbid_sys(; kwargs...)
     end
     load_forecast_cost_market_bid = PSY.Deterministic("max_active_power", DA_load_forecast)
     cost_test_sys =
-        PSY.System(100.0; time_series_in_memory = get(kwargs, :time_series_in_memory, true))
+        PSY.System(100.0; sys_kwargs...)
     PSY.add_component!(cost_test_sys, node)
     PSY.add_component!(cost_test_sys, load)
     PSY.add_component!(cost_test_sys, gens_cost[1])
@@ -1502,6 +1543,7 @@ end
 
 ############# Test System from TestData #############
 function build_5_bus_hydro_uc_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
     rawsys = PSY.PowerSystemTableData(
         joinpath(data_dir, "5-bus-hydro"),
@@ -1510,15 +1552,16 @@ function build_5_bus_hydro_uc_sys(; kwargs...)
         generator_mapping_file = joinpath(data_dir, "5-bus-hydro", "generator_mapping.yaml"),
     )
     c_sys5_hy_uc = PSY.System(
-    rawsys,
-    timeseries_metadata_file = joinpath(
-            data_dir,
-            "forecasts",
-            "5bus_ts",
-            "7day",
-            "timeseries_pointers_da_7day.json",
-        ),
+        rawsys,
+        timeseries_metadata_file = joinpath(
+                data_dir,
+                "forecasts",
+                "5bus_ts",
+                "7day",
+                "timeseries_pointers_da_7day.json",
+            ),
         time_series_in_memory = true,
+        sys_kwargs...,
     )
     PSY.transform_single_time_series!(c_sys5_hy_uc, 24, Hour(24))
 
@@ -1526,6 +1569,7 @@ function build_5_bus_hydro_uc_sys(; kwargs...)
 end
 
 function build_5_bus_hydro_ed_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
     rawsys = PSY.PowerSystemTableData(
         joinpath(data_dir, "5-bus-hydro"),
@@ -1543,6 +1587,7 @@ function build_5_bus_hydro_ed_sys(; kwargs...)
             "timeseries_pointers_rt_7day.json",
         ),
         time_series_in_memory = true,
+        sys_kwargs...,
     )
     PSY.transform_single_time_series!(c_sys5_hy_ed, 12, Hour(1))
 
@@ -1550,19 +1595,22 @@ function build_5_bus_hydro_ed_sys(; kwargs...)
 end
 
 function build_5_bus_hydro_wk_sys(; kwargs...)
-    c_sys5_hy_wk = System(rawsys, time_series_in_memory = true)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    c_sys5_hy_wk = System(rawsys,  sys_kwargs...)
     # TODO: better construction  of the time series data
     return
 end
 
 function build_psse_RTS_GMLC_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(data_dir))
+    sys = PSY.System(PSY.PowerModelsData(data_dir), sys_kwargs...)
 
     return sys
 end
 
 function build_test_RTS_GMLC_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     RTS_GMLC_DIR = get_raw_data(; kwargs...)
     rawsys = PSY.PowerSystemTableData(
         RTS_GMLC_DIR,
@@ -1571,376 +1619,435 @@ function build_test_RTS_GMLC_sys(; kwargs...)
         timeseries_metadata_file = joinpath(RTS_GMLC_DIR, "timeseries_pointers.json"),
         generator_mapping_file = joinpath(RTS_GMLC_DIR, "generator_mapping.yaml"),
     )
-    sys = PSY.System(rawsys; time_series_resolution = Dates.Hour(1));
+    sys = PSY.System(rawsys; time_series_resolution = Dates.Hour(1), sys_kwargs...);
     PSY.transform_single_time_series!(sys, 24, Dates.Hour(24));
 
     return sys
 end
 
 function build_US_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = joinpath(PACKAGE_DIR, "data", "psse_raw",  "RTS-GMLC.RAW")
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     # TODO
     return sys
 end
 
 function build_ACTIVSg10k_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
 
     return sys
 end
 
 function build_ACTIVSg70k_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
 
     return sys
 end
 
 function build_psse_ACTIVSg2000_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
     file_path = joinpath(data_dir, "ACTIVSg2000",  "ACTIVSg2000.RAW")
     dyr_file = joinpath(data_dir, "psse_dyr",  "ACTIVSg2000_dynamics.dyr")
-    sys = PSY.System(PSY.PowerModelsData(file_path, dyr_file))
+    sys = PSY.System(PSY.PowerModelsData(file_path, dyr_file), sys_kwargs...)
 
     return sys
 end
 
 function build_matpower_ACTIVSg2000_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_matpower_ACTIVSg10k_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_matpower_case2_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_matpower_case3_tnep_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_matpower_case5_asym_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_matpower_case5_dc_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_matpower_case5_gap_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_matpower_case5_pwlc_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_matpower_case5_re_intid_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_matpower_case5_re_uc_pwl_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_matpower_case5_re_uc_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_matpower_case5_re_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_matpower_case5_th_intid_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_matpower_case5_tnep_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_matpower_case5_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_matpower_case6_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_matpower_case7_tplgy_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_matpower_case14_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_matpower_case24_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_matpower_case30_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_matpower_frankenstein_00_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_matpower_RTS_GMLC_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_matpower_case5_strg_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_case3_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_case5_alc_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_case5_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_case7_tplgy_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_case14_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_case24_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_case30_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_case73_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_frankenstein_00_2_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_frankenstein_00_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_frankenstein_20_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_frankenstein_70_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_parser_test_a_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_parser_test_b_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_parser_test_c_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_parser_test_d_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_parser_test_e_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_parser_test_f_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_parser_test_g_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_parser_test_h_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_parser_test_i_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_parser_test_j_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_three_winding_mag_test_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_three_winding_test_2_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_three_winding_test_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_two_winding_mag_test_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_pti_two_terminal_hvdc_test_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
     sys = PSY.System(PSY.PowerModelsData(file_path))
     return sys
 end
 
 function build_pti_vsc_hvdc_test_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
-    sys = PSY.System(PSY.PowerModelsData(file_path))
+    sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
 
 function build_psse_Benchmark_4ger_33_2015_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
     file_path = joinpath(data_dir, "psse_raw", "Benchmark_4ger_33_2015.raw")
     dyr_file = joinpath(data_dir, "psse_dyr", "Benchmark_4ger_33_2015.dyr")
-    sys = PSY.System(PSY.PowerModelsData(file_path, dyr_file))
+    sys = PSY.System(PSY.PowerModelsData(file_path, dyr_file), sys_kwargs...)
     return sys
 end
 
 function build_psse_OMIB_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
     file_path = joinpath(data_dir, "psse_raw", "OMIB.raw")
     dyr_file = joinpath(data_dir, "psse_dyr", "OMIB.dyr")
-    sys = PSY.System(PSY.PowerModelsData(file_path, dyr_file))
+    sys = PSY.System(PSY.PowerModelsData(file_path, dyr_file), sys_kwargs...)
     return sys
 end
 
 function build_psse_3bus_gen_cls_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
     file_path = joinpath(data_dir, "ThreeBusNetwork.raw")
     dyr_file = joinpath(data_dir, "TestGENCLS.dyr")
-    sys = PSY.System(PSY.PowerModelsData(file_path, dyr_file))
+    sys = PSY.System(PSY.PowerModelsData(file_path, dyr_file), sys_kwargs...)
     return sys
 end
 
 function build_psse_3bus_no_cls_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
     file_path = joinpath(data_dir, "ThreeBusNetwork.raw")
     dyr_file = joinpath(data_dir, "Test-NoCLS.dyr")
-    sys = PSY.System(PSY.PowerModelsData(file_path, dyr_file))
+    sys = PSY.System(PSY.PowerModelsData(file_path, dyr_file), sys_kwargs...)
     return sys
 end
