@@ -617,7 +617,7 @@ function build_sys_ramp_testing(; kwargs...)
             reactive_power_limits = nothing,
             ramp_limits = nothing,
             time_limits = nothing,
-            operation_cost = PSY.ThreePartCost((0.0, 1400.0), 0.0, 4.0, 2.0),
+            operation_cost = PSY.ThreePartCost((0.0, 14.0), 0.0, 4.0, 2.0),
             base_power = 100.0,
         ),
         PSY.ThermalStandard(
@@ -634,7 +634,7 @@ function build_sys_ramp_testing(; kwargs...)
             reactive_power_limits = nothing,
             ramp_limits = (up = 0.010625 * 2.0, down = 0.010625 * 2.0),
             time_limits = nothing,
-            operation_cost = PSY.ThreePartCost((0.0, 1500.0), 0.0, 1.5, 0.75),
+            operation_cost = PSY.ThreePartCost((0.0, 15.0), 0.0, 1.5, 0.75),
             base_power = 100.0,
         ),
     ]
@@ -1256,7 +1256,7 @@ function build_sos_test_sys(; kwargs...)
             time_limits = nothing,
             ramp_limits = nothing,
             operation_cost = PSY.ThreePartCost(
-                [(1122.43, 0.22), (1617.43, 0.33), (1742.48, 0.44), (2075.88, 0.55)],
+                [(1122.43, 22.0), (1617.43, 33.0), (1742.48, 44.0), (2075.88, 55.0)],
                 0.0,
                 5665.23,
                 0.0,
@@ -1278,7 +1278,7 @@ function build_sos_test_sys(; kwargs...)
             time_limits = nothing,
             ramp_limits = nothing,
             operation_cost = PSY.ThreePartCost(
-                [(1500.19, 0.62), (2132.59, 0.929), (2829.875, 1.24), (2831.444, 1.55)],
+                [(1500.19, 62.0), (2132.59, 92.9), (2829.875, 124.0), (2831.444, 155.0)],
                 0.0,
                 5665.23,
                 0.0,
@@ -1330,7 +1330,7 @@ function build_pwl_test_sys(; kwargs...)
             time_limits = nothing,
             ramp_limits = nothing,
             operation_cost = PSY.ThreePartCost(
-                [(589.99, 0.220), (884.99, 0.33), (1210.04, 0.44), (1543.44, 0.55)],
+                [(589.99, 22.0), (884.99, 33.0), (1210.04, 44.0), (1543.44, 55.0)],
                 532.44,
                 5665.23,
                 0.0,
@@ -1352,7 +1352,7 @@ function build_pwl_test_sys(; kwargs...)
             time_limits = nothing,
             ramp_limits = nothing,
             operation_cost = PSY.ThreePartCost(
-                [(1264.80, 0.62), (1897.20, 0.93), (2594.4787, 1.24), (3433.04, 1.55)],
+                [(1264.80, 62.0), (1897.20, 93.0), (2594.4787, 124.0), (3433.04, 155.0)],
                 235.397,
                 5665.23,
                 0.0,
@@ -1403,7 +1403,7 @@ function build_duration_test_sys(; kwargs...)
             reactive_power_limits = nothing,
             ramp_limits = nothing,
             time_limits = (up = 4, down = 2),
-            operation_cost = PSY.ThreePartCost((0.0, 1400.0), 0.0, 4.0, 2.0),
+            operation_cost = PSY.ThreePartCost((0.0, 14.0), 0.0, 4.0, 2.0),
             base_power = 100.0,
             time_at_status = 2.0,
         ),
@@ -1421,7 +1421,7 @@ function build_duration_test_sys(; kwargs...)
             reactive_power_limits = nothing,
             ramp_limits = nothing,
             time_limits = (up = 6, down = 4),
-            operation_cost = PSY.ThreePartCost((0.0, 1500.0), 0.0, 1.5, 0.75),
+            operation_cost = PSY.ThreePartCost((0.0, 15.0), 0.0, 1.5, 0.75),
             base_power = 100.0,
             time_at_status = 3.0,
         ),
@@ -1496,12 +1496,12 @@ function build_pwl_marketbid_sys(; kwargs...)
     DA_load_forecast = Dict{Dates.DateTime, TimeSeries.TimeArray}()
     market_bid_gen1_data = Dict(
         ini_time => [
-            [(589.99, 0.220), (884.99, 0.33), (1210.04, 0.44), (1543.44, 0.55)],
-            [(589.99, 0.220), (884.99, 0.33), (1210.04, 0.44), (1543.44, 0.55)],
+            [(589.99, 22.0), (884.99, 33.0), (1210.04, 44.0), (1543.44, 55.0)],
+            [(589.99, 22.0), (884.99, 33.0), (1210.04, 44.0), (1543.44, 55.0)],
         ],
         ini_time + Hour(1) => [
-            [(589.99, 0.220), (884.99, 0.33), (1210.04, 0.44), (1543.44, 0.55)],
-            [(589.99, 0.220), (884.99, 0.33), (1210.04, 0.44), (1543.44, 0.55)],
+            [(589.99, 22.0), (884.99, 33.0), (1210.04, 44.0), (1543.44, 55.0)],
+            [(589.99, 22.0), (884.99, 33.0), (1210.04, 44.0), (1543.44, 55.0)],
         ],
     )
     market_bid_gen1 = PSY.Deterministic(
@@ -1511,12 +1511,12 @@ function build_pwl_marketbid_sys(; kwargs...)
     )
     market_bid_gen2_data = Dict(
         ini_time => [
-            [(0.0, 0.05), (290.1, 0.0733), (582.72, 0.0967), (894.1, 0.120)],
-            [(0.0, 0.05), (300.1, 0.0733), (600.72, 0.0967), (900.1, 0.120)],
+            [(0.0, 5.0), (290.1, 7.33), (582.72, 9.67), (894.1, 12.0)],
+            [(0.0, 5.0), (300.1, 7.33), (600.72, 9.67), (900.1, 12.0)],
         ],
         ini_time + Hour(1) => [
-            [(0.0, 0.05), (290.1, 0.0733), (582.72, 0.0967), (894.1, 0.120)],
-            [(0.0, 0.05), (300.1, 0.0733), (600.72, 0.0967), (900.1, 0.120)],
+            [(0.0, 5.0), (290.1, 7.33), (582.72, 9.67), (894.1, 12.0)],
+            [(0.0, 5.0), (300.1, 7.33), (600.72, 9.67), (900.1, 12.0)],
         ],
     )
     market_bid_gen2 = PSY.Deterministic(
