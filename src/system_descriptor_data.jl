@@ -53,7 +53,7 @@ const SYSTEM_CATELOG = [
         description =  "5-bus system with Hydro-Power for Economic Dispatch Simulations",
         category =  PSITestSystems,
         raw_data =  "data/data_5bus_pu.jl",
-        build_function  =  build_c_sys5_hy
+        build_function  =  build_c_sys5_hy_ed
     ),
     SystemDescriptor(
         name =  "c_sys5_phes_ed",
@@ -102,7 +102,7 @@ const SYSTEM_CATELOG = [
         description =  "5-bus system with only Renewable Energy",
         category =  PSITestSystems,
         raw_data =  "data/data_5bus_pu.jl",
-        build_function  =  build_c_sys5_re
+        build_function  =  build_c_sys5_re_only
     ),
     SystemDescriptor(
         name =  "c_sys5_uc",
