@@ -5,7 +5,7 @@ function build_system(category::Type{<:SystemCategory}, name::String, print_stat
     system_catelog = get(kwargs, :system_catelog, SystemCatalog(SYSTEM_CATELOG))
     sys_descriptor = get_system_descriptor(category, system_catelog, name)
     if !is_serialized(name, add_forecasts, add_reserves) || force_build
-        check_serailized_storage()
+        check_serialized_storage()
         download_function = get_download_function(sys_descriptor)
         if !isnothing(download_function)
             filepath = download_function(; kwargs...)

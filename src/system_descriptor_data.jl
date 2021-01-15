@@ -195,13 +195,13 @@ const SYSTEM_CATELOG = [
         raw_data =  joinpath(PACKAGE_DIR, "data"),
         build_function  =  build_5_bus_hydro_ed_sys
     ),
-    SystemDescriptor(
-        name =  "5_bus_hydro_wk_sys",
-        description =  "5-bus hydro system for weekly dispatch",
-        category =  SIIPExampleSystems,
-        raw_data =  joinpath(PACKAGE_DIR, "data"),
-        build_function  =  build_5_bus_hydro_wk_sys
-    ),
+    # SystemDescriptor(
+    #     name =  "5_bus_hydro_wk_sys",
+    #     description =  "5-bus hydro system for weekly dispatch",
+    #     category =  SIIPExampleSystems,
+    #     raw_data =  joinpath(PACKAGE_DIR, "data"),
+    #     build_function  =  build_5_bus_hydro_wk_sys
+    # ),
     SystemDescriptor(
         name =  "psse_RTS_GMLC_sys",
         description =  "PSSE .raw RTS-GMLC system",
@@ -216,27 +216,27 @@ const SYSTEM_CATELOG = [
         raw_data =  joinpath(PACKAGE_DIR, "data", "RTS_GMLC"),
         build_function  =  build_test_RTS_GMLC_sys
     ),
-    SystemDescriptor(
-        name =  "US_sys",
-        description =  "US test system",
-        category =  SIIPExampleSystems,
-        raw_data =  "",
-        build_function  =  build_US_sys
-    ),
-    SystemDescriptor(
-        name =  "psse_ACTIVSg10k_sys",
-        description =  "ACTIVSg10k Test system",
-        category =  PSSETestSystems,
-        raw_data =  joinpath(PACKAGE_DIR, "data", "ACTIVSg10k",  "ACTIVSg10k.RAW"),
-        build_function  =  build_ACTIVSg10k_sys
-    ),
-    SystemDescriptor(
-        name =  "psse_ACTIVSg70k_sys",
-        description =  "ACTIVSg70k Test system",
-        category =  PSSETestSystems,
-        raw_data =  joinpath(PACKAGE_DIR, "data", "ACTIVSg70k",  "ACTIVSg70k.RAW"),
-        build_function  =  build_ACTIVSg70k_sys
-    ),
+    # SystemDescriptor(
+    #     name =  "US_sys",
+    #     description =  "US test system",
+    #     category =  SIIPExampleSystems,
+    #     raw_data =  "",
+    #     build_function  =  build_US_sys
+    # ),
+    # SystemDescriptor(
+    #     name =  "psse_ACTIVSg10k_sys",
+    #     description =  "ACTIVSg10k Test system",
+    #     category =  PSSETestSystems,
+    #     raw_data =  joinpath(PACKAGE_DIR, "data", "ACTIVSg10k",  "ACTIVSg10k.RAW"),
+    #     build_function  =  build_ACTIVSg10k_sys
+    # ),
+    # SystemDescriptor(
+    #     name =  "psse_ACTIVSg70k_sys",
+    #     description =  "ACTIVSg70k Test system",
+    #     category =  PSSETestSystems,
+    #     raw_data =  joinpath(PACKAGE_DIR, "data", "ACTIVSg70k",  "ACTIVSg70k.RAW"),
+    #     build_function  =  build_ACTIVSg70k_sys
+    # ),
     SystemDescriptor(
         name =  "psse_ACTIVSg2000_sys",
         description =  "PSSE ACTIVSg2000 Test system",
@@ -252,10 +252,17 @@ const SYSTEM_CATELOG = [
         build_function  =  build_matpower_ACTIVSg2000_sys
     ),
     SystemDescriptor(
+        name =  "tamu_ACTIVSg2000_sys",
+        description =  "TAMU ACTIVSg2000 Test system",
+        category =  PSYTestSystems,
+        raw_data =  joinpath(PACKAGE_DIR, "data"),
+        build_function  =  build_tamu_ACTIVSg2000_sys
+    ),
+    SystemDescriptor(
         name =  "matpower_ACTIVSg10k_sys",
         description =  "ACTIVSg10k Test system",
         category =  MatPowerTestSystems,
-        raw_data =  joinpath(PACKAGE_DIR, "data", "matpower",  "ACTIVSg10k.m"),
+        raw_data =  joinpath(PACKAGE_DIR, "data", "matpower",  "case_ACTIVSg10k.m"),
         build_function  =  build_matpower_ACTIVSg10k_sys,
     ),
     SystemDescriptor(
@@ -496,69 +503,69 @@ const SYSTEM_CATELOG = [
         raw_data =  joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_a.raw"),
         build_function  =  build_pti_parser_test_a_sys
     ),
-    SystemDescriptor(
-        name =  "pti_parser_test_b_sys",
-        description =  "PSSE Test system",
-        category =  PSSETestSystems,
-        raw_data =  joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_b.raw"),
-        build_function  =  build_pti_parser_test_b_sys
-    ),
-    SystemDescriptor(
-        name =  "pti_parser_test_c_sys",
-        description =  "PSSE Test system",
-        category =  PSSETestSystems,
-        raw_data =  joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_c.raw"),
-        build_function  =  build_pti_parser_test_c_sys
-    ),
-    SystemDescriptor(
-        name =  "pti_parser_test_d_sys",
-        description =  "PSSE Test system",
-        category =  PSSETestSystems,
-        raw_data =  joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_d.raw"),
-        build_function  =  build_pti_parser_test_d_sys
-    ),
-    SystemDescriptor(
-        name =  "pti_parser_test_e_sys",
-        description =  "PSSE Test system",
-        category =  PSSETestSystems,
-        raw_data =  joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_e.raw"),
-        build_function  =  build_pti_parser_test_e_sys
-    ),
-    SystemDescriptor(
-        name =  "pti_parser_test_f_sys",
-        description =  "PSSE Test system",
-        category =  PSSETestSystems,
-        raw_data =  joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_f.raw"),
-        build_function  =  build_pti_parser_test_f_sys
-    ),
-    SystemDescriptor(
-        name =  "pti_parser_test_g_sys",
-        description =  "PSSE Test system",
-        category =  PSSETestSystems,
-        raw_data =  joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_g.raw"),
-        build_function  =  build_pti_parser_test_g_sys
-    ),
-    SystemDescriptor(
-        name =  "pti_parser_test_h_sys",
-        description =  "PSSE Test system",
-        category =  PSSETestSystems,
-        raw_data =  joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_h.raw"),
-        build_function  =  build_pti_parser_test_h_sys
-    ),
-    SystemDescriptor(
-        name =  "pti_parser_test_i_sys",
-        description =  "PSSE Test system",
-        category =  PSSETestSystems,
-        raw_data =  joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_i.raw"),
-        build_function  =  build_pti_parser_test_i_sys
-    ),
-    SystemDescriptor(
-        name =  "pti_parser_test_j_sys",
-        description =  "PSSE Test system",
-        category =  PSSETestSystems,
-        raw_data =  joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_j.raw"),
-        build_function  =  build_pti_parser_test_j_sys
-    ),
+    # SystemDescriptor(
+    #     name =  "pti_parser_test_b_sys",
+    #     description =  "PSSE Test system",
+    #     category =  PSSETestSystems,
+    #     raw_data =  joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_b.raw"),
+    #     build_function  =  build_pti_parser_test_b_sys
+    # ),
+    # SystemDescriptor(
+    #     name =  "pti_parser_test_c_sys",
+    #     description =  "PSSE Test system",
+    #     category =  PSSETestSystems,
+    #     raw_data =  joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_c.raw"),
+    #     build_function  =  build_pti_parser_test_c_sys
+    # ),
+    # SystemDescriptor(
+    #     name =  "pti_parser_test_d_sys",
+    #     description =  "PSSE Test system",
+    #     category =  PSSETestSystems,
+    #     raw_data =  joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_d.raw"),
+    #     build_function  =  build_pti_parser_test_d_sys
+    # ),
+    # SystemDescriptor(
+    #     name =  "pti_parser_test_e_sys",
+    #     description =  "PSSE Test system",
+    #     category =  PSSETestSystems,
+    #     raw_data =  joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_e.raw"),
+    #     build_function  =  build_pti_parser_test_e_sys
+    # ),
+    # SystemDescriptor(
+    #     name =  "pti_parser_test_f_sys",
+    #     description =  "PSSE Test system",
+    #     category =  PSSETestSystems,
+    #     raw_data =  joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_f.raw"),
+    #     build_function  =  build_pti_parser_test_f_sys
+    # ),
+    # SystemDescriptor(
+    #     name =  "pti_parser_test_g_sys",
+    #     description =  "PSSE Test system",
+    #     category =  PSSETestSystems,
+    #     raw_data =  joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_g.raw"),
+    #     build_function  =  build_pti_parser_test_g_sys
+    # ),
+    # SystemDescriptor(
+    #     name =  "pti_parser_test_h_sys",
+    #     description =  "PSSE Test system",
+    #     category =  PSSETestSystems,
+    #     raw_data =  joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_h.raw"),
+    #     build_function  =  build_pti_parser_test_h_sys
+    # ),
+    # SystemDescriptor(
+    #     name =  "pti_parser_test_i_sys",
+    #     description =  "PSSE Test system",
+    #     category =  PSSETestSystems,
+    #     raw_data =  joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_i.raw"),
+    #     build_function  =  build_pti_parser_test_i_sys
+    # ),
+    # SystemDescriptor(
+    #     name =  "pti_parser_test_j_sys",
+    #     description =  "PSSE Test system",
+    #     category =  PSSETestSystems,
+    #     raw_data =  joinpath(PACKAGE_DIR, "data", "pm_data", "pti", "parser_test_j.raw"),
+    #     build_function  =  build_pti_parser_test_j_sys
+    # ),
     SystemDescriptor(
         name =  "pti_three_winding_mag_test_sys",
         description =  "PSSE Test system",
@@ -628,5 +635,12 @@ const SYSTEM_CATELOG = [
         category =  PSSETestSystems,
         raw_data =  joinpath(PACKAGE_DIR, "data", "PSSE_test"),
         build_function  =  build_psse_3bus_no_cls_sys
+    ),
+    SystemDescriptor(
+        name =  "dynamic_inverter_sys",
+        description =  "PSY test dynamic inverter system",
+        category =  PSYTestSystems,
+        raw_data = "",
+        build_function  =  build_dynamic_inverter_sys
     )
 ]

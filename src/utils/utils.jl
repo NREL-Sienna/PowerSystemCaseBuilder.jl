@@ -7,7 +7,7 @@ function verify_storage_dir(
     end
 end
 
-function check_serailized_storage()
+function check_serialized_storage()
     verify_storage_dir(SERIALIZED_DIR)
     for path in SEARCH_DIRS
         verify_storage_dir(path)
@@ -22,10 +22,19 @@ function clear_serialized_system(name::String)
         for file in file_names
             if isfile(joinpath(dir, file))
                 @debug "Deleting file" file
-                rm(file, force = true)
+                rm(joinpath(dir, file), force = true)
             end
         end
     end
+    return
+end
+
+function clear_all_serialized_system()
+    for dir in SEARCH_DIRS
+        @debug "Deleting dir" dir
+        rm(dir, force = true, recursive=true)
+    end
+    check_serialized_storage()
     return
 end
 

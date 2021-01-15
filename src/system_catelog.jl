@@ -6,8 +6,10 @@ function get_system_descriptor(category::Type{<:SystemCategory}, catalog::System
     data = catalog.data
     if haskey(data, category)
         return get(data[category], name, nothing)
+    else
+        error("System $(name) of Category $(category) not found in current SystemCatalog")
     end
-    return nothing
+
 end
 
 function get_system_descriptors(category::Type{<:SystemCategory}, catalog::SystemCatalog)
@@ -15,6 +17,8 @@ function get_system_descriptors(category::Type{<:SystemCategory}, catalog::Syste
     if haskey(data, category)
         array = SystemDescriptor[descriptor for descriptor in values(data[category])]
         return array
+    else
+        error("Category $(category) not found in SystemCatalog")
     end
 end
 
