@@ -1,4 +1,4 @@
-mutable struct SystemBuildStats <: PowerSystemBuilderType
+mutable struct SystemBuildStats <: PowerSystemCaseBuilderType
     count::Int
     initial_construct_time::Float64
     serialize_time::Float64
@@ -15,7 +15,14 @@ function SystemBuildStats(;
     max_deserialize_time,
     total_deserialize_time,
 )
-    return SystemBuildStats(count, initial_construct_time, serialize_time, min_deserialize_time, max_deserialize_time, total_deserialize_time)
+    return SystemBuildStats(
+        count,
+        initial_construct_time,
+        serialize_time,
+        min_deserialize_time,
+        max_deserialize_time,
+        total_deserialize_time,
+    )
 end
 
 function SystemBuildStats(initial_construct_time::Float64, serialize_time::Float64)

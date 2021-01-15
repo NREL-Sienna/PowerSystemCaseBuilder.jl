@@ -1,11 +1,17 @@
-include(joinpath(PACKAGE_DIR, "data","data_5bus_pu.jl"))
-include(joinpath(PACKAGE_DIR, "data","data_14bus_pu.jl"))
+include(joinpath(PACKAGE_DIR, "data", "data_5bus_pu.jl"))
+include(joinpath(PACKAGE_DIR, "data", "data_14bus_pu.jl"))
 
 function build_c_sys5(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
-    c_sys5 =
-        PSY.System(100.0, nodes, thermal_generators5(nodes), loads5(nodes), branches5(nodes); sys_kwargs...)
+    c_sys5 = PSY.System(
+        100.0,
+        nodes,
+        thermal_generators5(nodes),
+        loads5(nodes),
+        branches5(nodes);
+        sys_kwargs...,
+    )
 
     if get(kwargs, :add_forecasts, true)
         for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5))
@@ -14,7 +20,11 @@ function build_c_sys5(; kwargs...)
                 ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
             end
-            add_time_series!(c_sys5, l, PSY.Deterministic("max_active_power", forecast_data))
+            add_time_series!(
+                c_sys5,
+                l,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
         end
     end
 
@@ -41,7 +51,11 @@ function build_c_sys5_ml(; kwargs...)
                 ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
             end
-            PSY.add_time_series!(c_sys5_ml, l, PSY.Deterministic("max_active_power", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_ml,
+                l,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
         end
     end
 
@@ -66,7 +80,11 @@ function build_c_sys14(; kwargs...)
         for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys14))
             ini_time = TimeSeries.timestamp(timeseries_DA14[ix])[1]
             forecast_data[ini_time] = timeseries_DA14[ix]
-            PSY.add_time_series!(c_sys14, l, PSY.Deterministic("max_active_power", forecast_data))
+            PSY.add_time_series!(
+                c_sys14,
+                l,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
         end
     end
 
@@ -94,7 +112,11 @@ function build_c_sys5_re(; kwargs...)
                 ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
             end
-            PSY.add_time_series!(c_sys5_re, l, PSY.Deterministic("max_active_power", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_re,
+                l,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
         end
         for (ix, r) in enumerate(PSY.get_components(RenewableGen, c_sys5_re))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
@@ -102,27 +124,43 @@ function build_c_sys5_re(; kwargs...)
                 ini_time = TimeSeries.timestamp(ren_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = ren_timeseries_DA[t][ix]
             end
-            PSY.add_time_series!(c_sys5_re, r, PSY.Deterministic("max_active_power", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_re,
+                r,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
         end
     end
 
     if get(kwargs, :add_reserves, false)
         reserve_re = reserve5_re(PSY.get_components(PSY.RenewableDispatch, c_sys5_re))
-        PSY.add_service!(c_sys5_re, reserve_re[1], PSY.get_components(PSY.RenewableDispatch, c_sys5_re))
+        PSY.add_service!(
+            c_sys5_re,
+            reserve_re[1],
+            PSY.get_components(PSY.RenewableDispatch, c_sys5_re),
+        )
         PSY.add_service!(
             c_sys5_re,
             reserve_re[2],
             [collect(PSY.get_components(PSY.RenewableDispatch, c_sys5_re))[end]],
         )
         # ORDC
-        PSY.add_service!(c_sys5_re, reserve_re[3], PSY.get_components(PSY.RenewableDispatch, c_sys5_re))
+        PSY.add_service!(
+            c_sys5_re,
+            reserve_re[3],
+            PSY.get_components(PSY.RenewableDispatch, c_sys5_re),
+        )
         for (ix, serv) in enumerate(PSY.get_components(PSY.VariableReserve, c_sys5_re))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
             end
-            PSY.add_time_series!(c_sys5_re, serv, PSY.Deterministic("requirement", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_re,
+                serv,
+                PSY.Deterministic("requirement", forecast_data),
+            )
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_re))
             forecast_data = SortedDict{Dates.DateTime, Vector{IS.PWL}}()
@@ -130,7 +168,9 @@ function build_c_sys5_re(; kwargs...)
                 ini_time = TimeSeries.timestamp(ORDC_cost_ts[t])[1]
                 forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
             end
-            resolution = TimeSeries.timestamp(ORDC_cost_ts[1])[2] - TimeSeries.timestamp(ORDC_cost_ts[1])[1]
+            resolution =
+                TimeSeries.timestamp(ORDC_cost_ts[1])[2] -
+                TimeSeries.timestamp(ORDC_cost_ts[1])[1]
             PSY.set_variable_cost!(
                 c_sys5_re,
                 serv,
@@ -206,7 +246,11 @@ function build_c_sys5_hy(; kwargs...)
                 ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
             end
-            PSY.add_time_series!(c_sys5_hy, l, PSY.Deterministic("max_active_power", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_hy,
+                l,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
         end
         for (ix, r) in enumerate(PSY.get_components(PSY.HydroGen, c_sys5_hy))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
@@ -214,7 +258,11 @@ function build_c_sys5_hy(; kwargs...)
                 ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
             end
-            PSY.add_time_series!(c_sys5_hy, r, PSY.Deterministic("max_active_power", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_hy,
+                r,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
         end
     end
 
@@ -266,7 +314,11 @@ function build_c_sys5_hyd(; kwargs...)
                 ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
             end
-            PSY.add_time_series!(c_sys5_hyd, h, PSY.Deterministic("hydro_budget", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_hyd,
+                h,
+                PSY.Deterministic("hydro_budget", forecast_data),
+            )
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd))
             forecast_data_inflow = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
@@ -276,7 +328,11 @@ function build_c_sys5_hyd(; kwargs...)
                 forecast_data_inflow[ini_time] = hydro_timeseries_DA[t][ix] .* 0.8
                 forecast_data_target[ini_time] = hydro_timeseries_DA[t][ix] .* 0.5
             end
-            PSY.add_time_series!(c_sys5_hyd, h, PSY.Deterministic("inflow", forecast_data_inflow))
+            PSY.add_time_series!(
+                c_sys5_hyd,
+                h,
+                PSY.Deterministic("inflow", forecast_data_inflow),
+            )
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
@@ -309,7 +365,11 @@ function build_c_sys5_hyd(; kwargs...)
                 ini_time = TimeSeries.timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
             end
-            PSY.add_time_series!(c_sys5_hyd, serv, PSY.Deterministic("requirement", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_hyd,
+                serv,
+                PSY.Deterministic("requirement", forecast_data),
+            )
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_hyd))
             forecast_data = SortedDict{Dates.DateTime, Vector{IS.PWL}}()
@@ -317,7 +377,9 @@ function build_c_sys5_hyd(; kwargs...)
                 ini_time = TimeSeries.timestamp(ORDC_cost_ts[t])[1]
                 forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
             end
-            resolution = TimeSeries.timestamp(ORDC_cost_ts[1])[2] - TimeSeries.timestamp(ORDC_cost_ts[1])[1]
+            resolution =
+                TimeSeries.timestamp(ORDC_cost_ts[1])[2] -
+                TimeSeries.timestamp(ORDC_cost_ts[1])[1]
             PSY.set_variable_cost!(
                 c_sys5_hyd,
                 serv,
@@ -374,17 +436,33 @@ function build_c_sys5_bat(; kwargs...)
 
     if get(kwargs, :add_reserves, false)
         reserve_bat = reserve5_re(PSY.get_components(PSY.RenewableDispatch, c_sys5_bat))
-        PSY.add_service!(c_sys5_bat, reserve_bat[1], PSY.get_components(PSY.GenericBattery, c_sys5_bat))
-        PSY.add_service!(c_sys5_bat, reserve_bat[2], PSY.get_components(PSY.GenericBattery, c_sys5_bat))
+        PSY.add_service!(
+            c_sys5_bat,
+            reserve_bat[1],
+            PSY.get_components(PSY.GenericBattery, c_sys5_bat),
+        )
+        PSY.add_service!(
+            c_sys5_bat,
+            reserve_bat[2],
+            PSY.get_components(PSY.GenericBattery, c_sys5_bat),
+        )
         # ORDC
-        PSY.add_service!(c_sys5_bat, reserve_bat[3], PSY.get_components(PSY.GenericBattery, c_sys5_bat))
+        PSY.add_service!(
+            c_sys5_bat,
+            reserve_bat[3],
+            PSY.get_components(PSY.GenericBattery, c_sys5_bat),
+        )
         for (ix, serv) in enumerate(PSY.get_components(PSY.VariableReserve, c_sys5_bat))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
             end
-            PSY.add_time_series!(c_sys5_bat, serv, PSY.Deterministic("requirement", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_bat,
+                serv,
+                PSY.Deterministic("requirement", forecast_data),
+            )
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_bat))
             forecast_data = SortedDict{Dates.DateTime, Vector{IS.PWL}}()
@@ -392,7 +470,9 @@ function build_c_sys5_bat(; kwargs...)
                 ini_time = TimeSeries.timestamp(ORDC_cost_ts[t])[1]
                 forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
             end
-            resolution = TimeSeries.timestamp(ORDC_cost_ts[1])[2] - TimeSeries.timestamp(ORDC_cost_ts[1])[1]
+            resolution =
+                TimeSeries.timestamp(ORDC_cost_ts[1])[2] -
+                TimeSeries.timestamp(ORDC_cost_ts[1])[1]
             PSY.set_variable_cost!(
                 c_sys5_bat,
                 serv,
@@ -425,7 +505,11 @@ function build_c_sys5_il(; kwargs...)
                 ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
             end
-            PSY.add_time_series!(c_sys5_il, l, PSY.Deterministic("max_active_power", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_il,
+                l,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
         end
         for (ix, i) in enumerate(PSY.get_components(PSY.InterruptibleLoad, c_sys5_il))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
@@ -433,27 +517,43 @@ function build_c_sys5_il(; kwargs...)
                 ini_time = TimeSeries.timestamp(Iload_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = Iload_timeseries_DA[t][ix]
             end
-            PSY.add_time_series!(c_sys5_il, i, PSY.Deterministic("max_active_power", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_il,
+                i,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
         end
     end
 
     if get(kwargs, :add_reserves, false)
         reserve_il = reserve5_il(PSY.get_components(PSY.InterruptibleLoad, c_sys5_il))
-        PSY.add_service!(c_sys5_il, reserve_il[1], PSY.get_components(PSY.InterruptibleLoad, c_sys5_il))
+        PSY.add_service!(
+            c_sys5_il,
+            reserve_il[1],
+            PSY.get_components(PSY.InterruptibleLoad, c_sys5_il),
+        )
         PSY.add_service!(
             c_sys5_il,
             reserve_il[2],
             [collect(PSY.get_components(PSY.InterruptibleLoad, c_sys5_il))[end]],
         )
         # ORDC
-        PSY.add_service!(c_sys5_il, reserve_il[3], PSY.get_components(PSY.InterruptibleLoad, c_sys5_il))
+        PSY.add_service!(
+            c_sys5_il,
+            reserve_il[3],
+            PSY.get_components(PSY.InterruptibleLoad, c_sys5_il),
+        )
         for (ix, serv) in enumerate(PSY.get_components(PSY.VariableReserve, c_sys5_il))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
             end
-            PSY.add_time_series!(c_sys5_il, serv, PSY.Deterministic("requirement", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_il,
+                serv,
+                PSY.Deterministic("requirement", forecast_data),
+            )
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_il))
             forecast_data = SortedDict{Dates.DateTime, Vector{IS.PWL}}()
@@ -461,7 +561,9 @@ function build_c_sys5_il(; kwargs...)
                 ini_time = TimeSeries.timestamp(ORDC_cost_ts[t])[1]
                 forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
             end
-            resolution = TimeSeries.timestamp(ORDC_cost_ts[1])[2] - TimeSeries.timestamp(ORDC_cost_ts[1])[1]
+            resolution =
+                TimeSeries.timestamp(ORDC_cost_ts[1])[2] -
+                TimeSeries.timestamp(ORDC_cost_ts[1])[1]
             PSY.set_variable_cost!(
                 c_sys5_il,
                 serv,
@@ -494,7 +596,11 @@ function build_c_sys5_dc(; kwargs...)
                 ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
             end
-            PSY.add_time_series!(c_sys5_dc, l, PSY.Deterministic("max_active_power", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_dc,
+                l,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
         end
         for (ix, r) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_dc))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
@@ -502,7 +608,11 @@ function build_c_sys5_dc(; kwargs...)
                 ini_time = TimeSeries.timestamp(ren_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = ren_timeseries_DA[t][ix]
             end
-            PSY.add_time_series!(c_sys5_dc, r, PSY.Deterministic("max_active_power", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_dc,
+                r,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
         end
     end
 
@@ -541,8 +651,14 @@ end
 function build_c_sys5_reg(; kwargs...)
     nodes = nodes5()
     sys_kwargs = filter_kwargs(; kwargs...)
-    c_sys5_reg =
-        PSY.System(100.0, nodes, thermal_generators5(nodes), loads5(nodes), branches5(nodes), sys_kwargs...)
+    c_sys5_reg = PSY.System(
+        100.0,
+        nodes,
+        thermal_generators5(nodes),
+        loads5(nodes),
+        branches5(nodes),
+        sys_kwargs...,
+    )
 
     area = PSY.Area("1")
     PSY.add_component!(c_sys5_reg, area)
@@ -588,7 +704,8 @@ function build_c_sys5_reg(; kwargs...)
     contributing_devices = Vector()
     for g in PSY.get_components(PSY.Generator, c_sys5_reg)
         droop =
-            isa(g, PSY.ThermalStandard) ? 0.04 * PSY.get_base_power(g) : 0.05 * PSY.get_base_power(g)
+            isa(g, PSY.ThermalStandard) ? 0.04 * PSY.get_base_power(g) :
+            0.05 * PSY.get_base_power(g)
         p_factor = (up = 1.0, dn = 1.0)
         t = PSY.RegulationDevice(g, participation_factor = p_factor, droop = droop)
         PSY.add_component!(c_sys5_reg, t)
@@ -600,7 +717,8 @@ end
 
 function build_sys_ramp_testing(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    node = PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+    node =
+        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, nothing, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gen_ramp = [
         PSY.ThermalStandard(
@@ -676,7 +794,11 @@ function build_c_sys5_uc(; kwargs...)
                 ini_time = timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
             end
-            PSY.add_time_series!(c_sys5_uc, l, PSY.Deterministic("max_active_power", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_uc,
+                l,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
         end
         for (ix, r) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_uc))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
@@ -684,7 +806,11 @@ function build_c_sys5_uc(; kwargs...)
                 ini_time = timestamp(ren_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = ren_timeseries_DA[t][ix]
             end
-            PSY.add_time_series!(c_sys5_uc, r, PSY.Deterministic("max_active_power", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_uc,
+                r,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
         end
         for (ix, i) in enumerate(PSY.get_components(PSY.InterruptibleLoad, c_sys5_uc))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
@@ -692,28 +818,48 @@ function build_c_sys5_uc(; kwargs...)
                 ini_time = timestamp(Iload_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = Iload_timeseries_DA[t][ix]
             end
-            PSY.add_time_series!(c_sys5_uc, i, PSY.Deterministic("max_active_power", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_uc,
+                i,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
         end
     end
 
     if get(kwargs, :add_reserves, false)
         reserve_uc = reserve5(PSY.get_components(PSY.ThermalStandard, c_sys5_uc))
-        PSY.add_service!(c_sys5_uc, reserve_uc[1], PSY.get_components(PSY.ThermalStandard, c_sys5_uc))
+        PSY.add_service!(
+            c_sys5_uc,
+            reserve_uc[1],
+            PSY.get_components(PSY.ThermalStandard, c_sys5_uc),
+        )
         PSY.add_service!(
             c_sys5_uc,
             reserve_uc[2],
             [collect(PSY.get_components(PSY.ThermalStandard, c_sys5_uc))[end]],
         )
-        PSY.add_service!(c_sys5_uc, reserve_uc[3], PSY.get_components(PSY.ThermalStandard, c_sys5_uc))
+        PSY.add_service!(
+            c_sys5_uc,
+            reserve_uc[3],
+            PSY.get_components(PSY.ThermalStandard, c_sys5_uc),
+        )
         # ORDC Curve
-        PSY.add_service!(c_sys5_uc, reserve_uc[4], PSY.get_components(PSY.ThermalStandard, c_sys5_uc))
+        PSY.add_service!(
+            c_sys5_uc,
+            reserve_uc[4],
+            PSY.get_components(PSY.ThermalStandard, c_sys5_uc),
+        )
         for serv in PSY.get_components(PSY.VariableReserve, c_sys5_uc)
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
             end
-            PSY.add_time_series!(c_sys5_uc, serv, PSY.Deterministic("requirement", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_uc,
+                serv,
+                PSY.Deterministic("requirement", forecast_data),
+            )
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_uc))
             forecast_data = SortedDict{Dates.DateTime, Vector{IS.PWL}}()
@@ -769,7 +915,11 @@ function build_c_sys5_ed(; kwargs...)
                     forecast_data[ini_time[1]] = data
                 end
             end
-            PSY.add_time_series!(c_sys5_ed, l, PSY.Deterministic("max_active_power", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_ed,
+                l,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
         end
         for (ix, l) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
@@ -781,7 +931,11 @@ function build_c_sys5_ed(; kwargs...)
                     forecast_data[ini_time[1]] = data
                 end
             end
-            PSY.add_time_series!(c_sys5_ed, l, PSY.Deterministic("max_active_power", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_ed,
+                l,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
         end
         for (ix, l) in enumerate(PSY.get_components(PSY.InterruptibleLoad, c_sys5_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
@@ -793,7 +947,11 @@ function build_c_sys5_ed(; kwargs...)
                     forecast_data[ini_time[1]] = data
                 end
             end
-            PSY.add_time_series!(c_sys5_ed, l, PSY.Deterministic("max_active_power", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_ed,
+                l,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
         end
     end
 
@@ -813,7 +971,8 @@ end
 function build_c_sys5_pwl_ed_nonconvex(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     c_sys5_ed = build_c_sys5_ed(; sys_kwargs...)
-    thermal = thermal_generators5_pwl_nonconvex(collect(PSY.get_components(PSY.Bus, c_sys5_ed)))
+    thermal =
+        thermal_generators5_pwl_nonconvex(collect(PSY.get_components(PSY.Bus, c_sys5_ed)))
     for d in thermal
         PSY.add_component!(c_sys5_ed, d)
     end
@@ -896,7 +1055,11 @@ function build_c_sys5_hy_uc(; kwargs...)
                 ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = hydro_timeseries_DA[t][ix] .* 0.8
             end
-            PSY.add_time_series!(c_sys5_hy_uc, h, PSY.Deterministic("inflow", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_hy_uc,
+                h,
+                PSY.Deterministic("inflow", forecast_data),
+            )
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HydroDispatch, c_sys5_hy_uc))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
@@ -1035,7 +1198,11 @@ function build_c_sys5_hy_ed(; kwargs...)
                     forecast_data[ini_time[1]] = data
                 end
             end
-            PSY.add_time_series!(c_sys5_hy_ed, l, PSY.Deterministic("inflow", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_hy_ed,
+                l,
+                PSY.Deterministic("inflow", forecast_data),
+            )
         end
         for (ix, l) in enumerate(PSY.get_components(PSY.InterruptibleLoad, c_sys5_hy_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
@@ -1165,8 +1332,16 @@ function build_c_sys5_phes_ed(; kwargs...)
                     forecast_data[ini_time[1]] = data
                 end
             end
-            PSY.add_time_series!(c_sys5_phes_ed, l, PSY.Deterministic("inflow", forecast_data))
-            PSY.add_time_series!(c_sys5_phes_ed, l, PSY.Deterministic("outflow", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_phes_ed,
+                l,
+                PSY.Deterministic("inflow", forecast_data),
+            )
+            PSY.add_time_series!(
+                c_sys5_phes_ed,
+                l,
+                PSY.Deterministic("outflow", forecast_data),
+            )
         end
         for (ix, l) in enumerate(PSY.get_components(PSY.InterruptibleLoad, c_sys5_phes_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
@@ -1210,26 +1385,42 @@ function build_c_sys5_pglib(; kwargs...)
                 ini_time = timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
             end
-            PSY.add_time_series!(c_sys5_uc, l, PSY.Deterministic("max_active_power", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_uc,
+                l,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
         end
     end
 
     if get(kwargs, :add_reserves, false)
         reserve_uc = reserve5(PSY.get_components(PSY.ThermalStandard, c_sys5_uc))
-        PSY.add_service!(c_sys5_uc, reserve_uc[1], PSY.get_components(PSY.ThermalStandard, c_sys5_uc))
+        PSY.add_service!(
+            c_sys5_uc,
+            reserve_uc[1],
+            PSY.get_components(PSY.ThermalStandard, c_sys5_uc),
+        )
         PSY.add_service!(
             c_sys5_uc,
             reserve_uc[2],
             [collect(PSY.get_components(PSY.ThermalStandard, c_sys5_uc))[end]],
         )
-        PSY.add_service!(c_sys5_uc, reserve_uc[3], PSY.get_components(PSY.ThermalStandard, c_sys5_uc))
+        PSY.add_service!(
+            c_sys5_uc,
+            reserve_uc[3],
+            PSY.get_components(PSY.ThermalStandard, c_sys5_uc),
+        )
         for (ix, serv) in enumerate(PSY.get_components(PSY.VariableReserve, c_sys5_uc))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
             end
-            PSY.add_time_series!(c_sys5_uc, serv, PSY.Deterministic("requirement", forecast_data))
+            PSY.add_time_series!(
+                c_sys5_uc,
+                serv,
+                PSY.Deterministic("requirement", forecast_data),
+            )
         end
     end
 
@@ -1296,16 +1487,16 @@ function build_sos_test_sys(; kwargs...)
     ini_time = DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S")
     cost_sos_load = [[1.3, 2.1], [1.3, 2.1]]
     for (ix, date) in enumerate(range(ini_time; length = 2, step = Hour(1)))
-        DA_load_forecast[date] = TimeSeries.TimeArray([date, date + Hour(1)], cost_sos_load[ix])
+        DA_load_forecast[date] =
+            TimeSeries.TimeArray([date, date + Hour(1)], cost_sos_load[ix])
     end
     load_forecast_cost_sos = PSY.Deterministic("max_active_power", DA_load_forecast)
-    cost_test_sos_sys =
-        PSY.System(100.0; sys_kwargs...)
-        PSY.add_component!(cost_test_sos_sys, node)
-        PSY.add_component!(cost_test_sos_sys, load)
-        PSY.add_component!(cost_test_sos_sys, gens_cost_sos[1])
-        PSY.add_component!(cost_test_sos_sys, gens_cost_sos[2])
-        PSY.add_time_series!(cost_test_sos_sys, load, load_forecast_cost_sos)
+    cost_test_sos_sys = PSY.System(100.0; sys_kwargs...)
+    PSY.add_component!(cost_test_sos_sys, node)
+    PSY.add_component!(cost_test_sos_sys, load)
+    PSY.add_component!(cost_test_sos_sys, gens_cost_sos[1])
+    PSY.add_component!(cost_test_sos_sys, gens_cost_sos[2])
+    PSY.add_time_series!(cost_test_sos_sys, load, load_forecast_cost_sos)
 
     return cost_test_sos_sys
 end
@@ -1365,11 +1556,11 @@ function build_pwl_test_sys(; kwargs...)
     ini_time = DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S")
     cost_sos_load = [[1.3, 2.1], [1.3, 2.1]]
     for (ix, date) in enumerate(range(ini_time; length = 2, step = Hour(1)))
-        DA_load_forecast[date] = TimeSeries.TimeArray([date, date + Hour(1)], cost_sos_load[ix])
+        DA_load_forecast[date] =
+            TimeSeries.TimeArray([date, date + Hour(1)], cost_sos_load[ix])
     end
     load_forecast_cost_sos = PSY.Deterministic("max_active_power", DA_load_forecast)
-    cost_test_sys =
-        PSY.System(100.0; sys_kwargs...)
+    cost_test_sys = PSY.System(100.0; sys_kwargs...)
     PSY.add_component!(cost_test_sys, node)
     PSY.add_component!(cost_test_sys, load)
     PSY.add_component!(cost_test_sys, gens_cost[1])
@@ -1430,8 +1621,7 @@ function build_duration_test_sys(; kwargs...)
     duration_load = [0.3, 0.6, 0.8, 0.7, 1.7, 0.9, 0.7]
     load_data = SortedDict(DA_dur[1] => TimeSeries.TimeArray(DA_dur, duration_load))
     load_forecast_dur = PSY.Deterministic("max_active_power", load_data)
-    duration_test_sys =
-        PSY.System(100.0; sys_kwargs...)
+    duration_test_sys = PSY.System(100.0; sys_kwargs...)
     PSY.add_component!(duration_test_sys, node)
     PSY.add_component!(duration_test_sys, load)
     PSY.add_component!(duration_test_sys, gens_dur[1])
@@ -1526,11 +1716,11 @@ function build_pwl_marketbid_sys(; kwargs...)
     )
     market_bid_load = [[1.3, 2.1], [1.3, 2.1]]
     for (ix, date) in enumerate(range(ini_time; length = 2, step = Hour(1)))
-        DA_load_forecast[date] = TimeSeries.TimeArray([date, date + Hour(1)], market_bid_load[ix])
+        DA_load_forecast[date] =
+            TimeSeries.TimeArray([date, date + Hour(1)], market_bid_load[ix])
     end
     load_forecast_cost_market_bid = PSY.Deterministic("max_active_power", DA_load_forecast)
-    cost_test_sys =
-        PSY.System(100.0; sys_kwargs...)
+    cost_test_sys = PSY.System(100.0; sys_kwargs...)
     PSY.add_component!(cost_test_sys, node)
     PSY.add_component!(cost_test_sys, load)
     PSY.add_component!(cost_test_sys, gens_cost[1])
@@ -1549,27 +1739,28 @@ function build_5_bus_hydro_uc_sys(; kwargs...)
         joinpath(data_dir, "5-bus-hydro"),
         100.0,
         joinpath(data_dir, "5-bus-hydro", "user_descriptors.yaml");
-        generator_mapping_file = joinpath(data_dir, "5-bus-hydro", "generator_mapping.yaml"),
+        generator_mapping_file = joinpath(
+            data_dir,
+            "5-bus-hydro",
+            "generator_mapping.yaml",
+        ),
     )
     if get(kwargs, :add_forecasts, true)
         c_sys5_hy_uc = PSY.System(
             rawsys,
             timeseries_metadata_file = joinpath(
-                    data_dir,
-                    "forecasts",
-                    "5bus_ts",
-                    "7day",
-                    "timeseries_pointers_da_7day.json",
-                ),
+                data_dir,
+                "forecasts",
+                "5bus_ts",
+                "7day",
+                "timeseries_pointers_da_7day.json",
+            ),
             time_series_in_memory = true,
             sys_kwargs...,
         )
         PSY.transform_single_time_series!(c_sys5_hy_uc, 24, Hour(24))
     else
-        c_sys5_hy_uc = PSY.System(
-            rawsys;
-            sys_kwargs...,
-        )
+        c_sys5_hy_uc = PSY.System(rawsys; sys_kwargs...)
     end
 
     return c_sys5_hy_uc
@@ -1582,7 +1773,11 @@ function build_5_bus_hydro_ed_sys(; kwargs...)
         joinpath(data_dir, "5-bus-hydro"),
         100.0,
         joinpath(data_dir, "5-bus-hydro", "user_descriptors.yaml");
-        generator_mapping_file = joinpath(data_dir, "5-bus-hydro", "generator_mapping.yaml"),
+        generator_mapping_file = joinpath(
+            data_dir,
+            "5-bus-hydro",
+            "generator_mapping.yaml",
+        ),
     )
     c_sys5_hy_ed = PSY.System(
         rawsys,
@@ -1627,8 +1822,8 @@ function build_test_RTS_GMLC_sys(; kwargs...)
             timeseries_metadata_file = joinpath(RTS_GMLC_DIR, "timeseries_pointers.json"),
             generator_mapping_file = joinpath(RTS_GMLC_DIR, "generator_mapping.yaml"),
         )
-        sys = PSY.System(rawsys; time_series_resolution = Dates.Hour(1), sys_kwargs...);
-        PSY.transform_single_time_series!(sys, 24, Dates.Hour(24));
+        sys = PSY.System(rawsys; time_series_resolution = Dates.Hour(1), sys_kwargs...)
+        PSY.transform_single_time_series!(sys, 24, Dates.Hour(24))
         return sys
     else
         rawsys = PSY.PowerSystemTableData(
@@ -1636,7 +1831,7 @@ function build_test_RTS_GMLC_sys(; kwargs...)
             100.0,
             joinpath(RTS_GMLC_DIR, "user_descriptors.yaml"),
         )
-        sys = PSY.System(rawsys; time_series_resolution = Dates.Hour(1), sys_kwargs...);
+        sys = PSY.System(rawsys; time_series_resolution = Dates.Hour(1), sys_kwargs...)
         return sys
     end
 end
@@ -1668,8 +1863,8 @@ end
 function build_psse_ACTIVSg2000_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
-    file_path = joinpath(data_dir, "ACTIVSg2000",  "ACTIVSg2000.RAW")
-    dyr_file = joinpath(data_dir, "psse_dyr",  "ACTIVSg2000_dynamics.dyr")
+    file_path = joinpath(data_dir, "ACTIVSg2000", "ACTIVSg2000.RAW")
+    dyr_file = joinpath(data_dir, "psse_dyr", "ACTIVSg2000_dynamics.dyr")
     sys = PSY.System(file_path, dyr_file; sys_kwargs...)
 
     return sys
@@ -1685,7 +1880,7 @@ end
 function build_tamu_ACTIVSg2000_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
-    file_path = joinpath(data_dir, "ACTIVSg2000",  "ACTIVSg2000.RAW")
+    file_path = joinpath(data_dir, "ACTIVSg2000", "ACTIVSg2000.RAW")
     !isfile(file_path) && throw(DataFormatError("Cannot find $file_path"))
 
     pm_data = PSY.PowerModelsData(file_path)

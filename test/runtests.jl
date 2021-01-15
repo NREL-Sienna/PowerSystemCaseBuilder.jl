@@ -10,9 +10,8 @@ using PowerSystems
 const PSY = PowerSystems
 using PowerSimulations
 const PSI = PowerSimulations
-using PowerSystemBuilder
-const PSB = PowerSystemBuilder
-
+using PowerSystemCaseBuilder
+const PSB = PowerSystemCaseBuilder
 
 @testset "Test Serializtion/De-Serializtion" begin
     system_catelog = SystemCatalog(SYSTEM_CATELOG)
@@ -20,11 +19,22 @@ const PSB = PowerSystemBuilder
         for (name, descriptor) in descriptor_dict
             for forecasts in [true, false], reserves in [true, false]
                 # build a new system from scratch
-                sys = build_system(type, name; add_forecasts = forecasts, add_reserves = reserves, force_build = true)
+                sys = build_system(
+                    type,
+                    name;
+                    add_forecasts = forecasts,
+                    add_reserves = reserves,
+                    force_build = true,
+                )
                 @test isa(sys, System)
                 # build a new system from json
                 @test PSB.is_serialized(name, forecasts, reserves)
-                sys2 = build_system(type, name; add_forecasts = forecasts, add_reserves = reserves)
+                sys2 = build_system(
+                    type,
+                    name;
+                    add_forecasts = forecasts,
+                    add_reserves = reserves,
+                )
                 @test isa(sys2, System)
 
                 PSB.clear_serialized_system(name)

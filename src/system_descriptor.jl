@@ -1,4 +1,4 @@
-mutable struct SystemDescriptor <: PowerSystemBuilderType
+mutable struct SystemDescriptor <: PowerSystemCaseBuilderType
     name::AbstractString
     description::AbstractString
     category::Type{<:SystemCategory}
@@ -44,4 +44,5 @@ set_build_function!(v::SystemDescriptor, value::Function) = v.build_function = v
 set_download_function!(v::SystemDescriptor, value::Function) = v.download_function = value
 set_stats!(v::SystemDescriptor, value::SystemBuildStats) = v.stats = value
 
-update_stats!(v::SystemDescriptor, deserialize_time::Float64) = update_stats!(v.stats, deserialize_time)
+update_stats!(v::SystemDescriptor, deserialize_time::Float64) =
+    update_stats!(v.stats, deserialize_time)

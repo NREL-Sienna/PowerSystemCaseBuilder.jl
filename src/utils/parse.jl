@@ -1,5 +1,5 @@
 function parse_build_function(string::AbstractString)
-    return getfield(PowerSystemBuilder, Symbol(string))
+    return getfield(PowerSystemCaseBuilder, Symbol(string))
 end
 
 function parse_system_descriptor(data::Dict)
@@ -13,9 +13,7 @@ function parse_system_descriptor(data::Dict)
     return sys_descriptor
 end
 
-function parse_system_library(
-    filepath::AbstractString = SYSTEM_DESCRIPTORS_FILE
-)
+function parse_system_library(filepath::AbstractString = SYSTEM_DESCRIPTORS_FILE)
     data = open(filepath) do io
         JSON3.read(io, Dict)
     end

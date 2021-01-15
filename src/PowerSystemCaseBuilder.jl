@@ -1,4 +1,4 @@
-module PowerSystemBuilder
+module PowerSystemCaseBuilder
 
 # exports
 export SystemCategory
@@ -36,7 +36,7 @@ const PSI = PowerSimulations
 const IS = InfrastructureSystems
 
 # includes
-abstract type PowerSystemBuilderType <: IS.InfrastructureSystemsType end
+abstract type PowerSystemCaseBuilderType <: IS.InfrastructureSystemsType end
 
 include("definitions.jl")
 include("system_library.jl")

@@ -1,6 +1,4 @@
-function verify_storage_dir(
-    folder::AbstractString = SERIALIZED_DIR,
-)
+function verify_storage_dir(folder::AbstractString = SERIALIZED_DIR)
     directory = abspath(normpath(folder))
     if !isdir(directory)
         mkpath(directory)
@@ -16,8 +14,9 @@ function check_serialized_storage()
 end
 
 function clear_serialized_system(name::String)
-    seralized_file_extension = [".json", "_validation_descriptors.json", "_time_series_storage.h5"]
-    file_names = [name*ext for ext in SERIALIZE_FILE_EXTENSIONS]
+    seralized_file_extension =
+        [".json", "_validation_descriptors.json", "_time_series_storage.h5"]
+    file_names = [name * ext for ext in SERIALIZE_FILE_EXTENSIONS]
     for dir in SEARCH_DIRS
         for file in file_names
             if isfile(joinpath(dir, file))
@@ -32,7 +31,7 @@ end
 function clear_all_serialized_system()
     for dir in SEARCH_DIRS
         @debug "Deleting dir" dir
-        rm(dir, force = true, recursive=true)
+        rm(dir, force = true, recursive = true)
     end
     check_serialized_storage()
     return
@@ -71,6 +70,6 @@ function get_raw_data(; kwargs...)
 end
 
 function filter_kwargs(; kwargs...)
-    system_kwargs = filter(x-> in(first(x), PSY.SYSTEM_KWARGS), kwargs)
+    system_kwargs = filter(x -> in(first(x), PSY.SYSTEM_KWARGS), kwargs)
     return system_kwargs
 end
