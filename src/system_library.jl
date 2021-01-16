@@ -979,19 +979,6 @@ function build_c_sys5_pwl_ed_nonconvex(; kwargs...)
     return c_sys5_ed
 end
 
-function build_init(gens, data)
-    init = Vector{PSY.InitialCondition}(undef, length(collect(gens)))
-    for (ix, g) in enumerate(gens)
-        init[ix] = PSY.InitialCondition(
-            g,
-            PSI.UpdateRef{JuMP.VariableRef}(PSI.ACTIVE_POWER),
-            data[ix],
-            PSY.TimeStatusChange,
-        )
-    end
-    return init
-end
-
 function build_c_sys5_hy_uc(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
@@ -1478,9 +1465,27 @@ function build_sos_test_sys(; kwargs...)
         ),
     ]
 
+    function slope_convexity_check(slopes::Vector{Float64})
+        flag = true
+        for ix in 1:(length(slopes) - 1)
+            if slopes[ix] > slopes[ix + 1]
+                @debug slopes
+                return flag = false
+            end
+        end
+        return flag
+    end
+
+    function pwlparamcheck(cost_)
+        slopes = PSY.get_slopes(cost_)
+        # First element of the return is the average cost at P_min.
+        # Shouldn't be passed for convexity check
+        return slope_convexity_check(slopes[2:end])
+    end
+
     #Checks the data remains non-convex
     for g in gens_cost_sos
-        @assert PSI.pwlparamcheck(PSY.get_operation_cost(g).variable) == false
+        @assert pwlparamcheck(PSY.get_operation_cost(g).variable) == false
     end
 
     DA_load_forecast = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()

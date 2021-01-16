@@ -3,13 +3,10 @@ using Logging
 using DataStructures
 using Dates
 using TimeSeries
-using JSON3
 using InfrastructureSystems
 const IS = InfrastructureSystems
 using PowerSystems
 const PSY = PowerSystems
-using PowerSimulations
-const PSI = PowerSimulations
 using PowerSystemCaseBuilder
 const PSB = PowerSystemCaseBuilder
 
