@@ -8,8 +8,8 @@ function get_system_descriptor(
     name::String,
 )
     data = catalog.data
-    if haskey(data, category)
-        return get(data[category], name, nothing)
+    if haskey(data, category) && haskey(data[category], name)
+        return data[category][name]
     else
         error("System $(name) of Category $(category) not found in current SystemCatalog")
     end
