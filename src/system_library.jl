@@ -2321,7 +2321,7 @@ end
 function build_psse_Benchmark_4ger_33_2015_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
-    file_path = joinpath(data_dir, "psse_raw", "Benchmark_4ger_33_2015.raw")
+    file_path = joinpath(data_dir, "psse_raw", "Benchmark_4ger_33_2015.RAW")
     dyr_file = joinpath(data_dir, "psse_dyr", "Benchmark_4ger_33_2015.dyr")
     sys = PSY.System(file_path, dyr_file; sys_kwargs...)
     return sys
