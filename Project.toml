@@ -1,7 +1,7 @@
 name = "PowerSystemCaseBuilder"
 uuid = "f00506e0-b84f-492a-93c2-c0a9afc4364e"
 authors = ["sourabhdalvi <sourabh.p.dalvi@gmail.com>"]
-version = "0.1.0"
+version = "0.2.0"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
@@ -17,7 +17,7 @@ TimeSeries = "9e3dc215-6440-5c97-bce1-76c03772f85e"
 CSV = "~0.8"
 DataFrames = "~0.22"
 DataStructures = "~0.18"
-InfrastructureSystems = "^1.1.1"
-PowerSystems = "^1.1"
+InfrastructureSystems = "1"
+PowerSystems = "1"
 TimeSeries = "~0.20"
 julia = "^1.4"
