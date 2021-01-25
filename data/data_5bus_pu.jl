@@ -716,7 +716,7 @@ battery5(nodes5) = [GenericBattery(
 )];
 
 batteryems5(nodes5) = [
-     BatteryEMS(
+     PSY.BatteryEMS(
          name = "Bat2",
          prime_mover = PrimeMovers.BA,
          available = true,

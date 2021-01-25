@@ -680,4 +680,11 @@ const SYSTEM_CATELOG = [
         raw_data = "data/data_5bus_pu.jl",
         build_function = build_c_sys5_bat_ems,
     ),
+    SystemDescriptor(
+        name = "c_sys5_pglib_sim",
+        description = "5-bus with ThermalMultiStart for simulation",
+        category = PSITestSystems,
+        raw_data = "data/data_5bus_pu.jl",
+        build_function = build_c_sys5_pglib_sim,
+    ),
 ]

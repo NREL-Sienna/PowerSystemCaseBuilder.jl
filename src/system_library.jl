@@ -1381,21 +1381,21 @@ function build_c_sys5_pglib(; kwargs...)
     end
 
     if get(kwargs, :add_reserves, false)
-        reserve_uc = reserve5(PSY.get_components(PSY.ThermalStandard, c_sys5_uc))
+        reserve_uc = reserve5(PSY.get_components(PSY.ThermalMultiStart, c_sys5_uc))
         PSY.add_service!(
             c_sys5_uc,
             reserve_uc[1],
-            PSY.get_components(PSY.ThermalStandard, c_sys5_uc),
+            PSY.get_components(PSY.ThermalMultiStart, c_sys5_uc),
         )
         PSY.add_service!(
             c_sys5_uc,
             reserve_uc[2],
-            [collect(PSY.get_components(PSY.ThermalStandard, c_sys5_uc))[end]],
+            [collect(PSY.get_components(PSY.ThermalMultiStart, c_sys5_uc))[end]],
         )
         PSY.add_service!(
             c_sys5_uc,
             reserve_uc[3],
-            PSY.get_components(PSY.ThermalStandard, c_sys5_uc),
+            PSY.get_components(PSY.ThermalMultiStart, c_sys5_uc),
         )
         for (ix, serv) in enumerate(PSY.get_components(PSY.VariableReserve, c_sys5_uc))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
@@ -2518,7 +2518,7 @@ function build_c_sys5_bat_ems(; kwargs...)
                 Deterministic("max_active_power", forecast_data),
             )
         end
-        for (ix, r) in enumerate(get_components(BatteryEMS, c_sys5_bat))
+        for (ix, r) in enumerate(get_components(PSY.BatteryEMS, c_sys5_bat))
             forecast_data = SortedDict{Dates.DateTime, TimeArray}()
             for t in 1:2
                 ini_time = timestamp(battery_target_timeseries_DA[t])[1]
@@ -2530,10 +2530,10 @@ function build_c_sys5_bat_ems(; kwargs...)
 
     if get(kwargs, :add_reserves, false)
         reserve_bat = reserve5_re(get_components(RenewableDispatch, c_sys5_bat))
-        add_service!(c_sys5_bat, reserve_bat[1], get_components(BatteryEMS, c_sys5_bat))
-        add_service!(c_sys5_bat, reserve_bat[2], get_components(BatteryEMS, c_sys5_bat))
+        add_service!(c_sys5_bat, reserve_bat[1], get_components(PSY.BatteryEMS, c_sys5_bat))
+        add_service!(c_sys5_bat, reserve_bat[2], get_components(PSY.BatteryEMS, c_sys5_bat))
         # ORDC
-        add_service!(c_sys5_bat, reserve_bat[3], get_components(BatteryEMS, c_sys5_bat))
+        add_service!(c_sys5_bat, reserve_bat[3], get_components(PSY.BatteryEMS, c_sys5_bat))
         for (ix, serv) in enumerate(get_components(VariableReserve, c_sys5_bat))
             forecast_data = SortedDict{Dates.DateTime, TimeArray}()
             for t in 1:2
@@ -2558,4 +2558,44 @@ function build_c_sys5_bat_ems(; kwargs...)
     end
 
     return c_sys5_bat
+end
+
+function build_c_sys5_pglib_sim(; kwargs...)
+    nodes = nodes5()
+    c_sys5_uc = System(
+        100.0,
+        nodes,
+        thermal_pglib_generators5(nodes),
+        renewable_generators5(nodes),
+        loads5(nodes),
+        branches5(nodes);
+        time_series_in_memory = get(kwargs, :time_series_in_memory, true),
+    )
+
+    if get(kwargs, :add_forecasts, true)
+        for (ix, l) in enumerate(get_components(PowerLoad, c_sys5_uc))
+            data = vcat(load_timeseries_DA[1][ix] .* 0.3, load_timeseries_DA[2][ix] .* 0.3)
+            add_time_series!(c_sys5_uc, l, SingleTimeSeries("max_active_power", data))
+        end
+        for (ix, r) in enumerate(get_components(RenewableGen, c_sys5_uc))
+            data = vcat(ren_timeseries_DA[1][ix], ren_timeseries_DA[2][ix])
+            add_time_series!(c_sys5_uc, r, SingleTimeSeries("max_active_power", data))
+        end
+    end
+    if get(kwargs, :add_reserves, false)
+        reserve_uc = reserve5(get_components(ThermalMultiStart, c_sys5_uc))
+        add_service!(c_sys5_uc, reserve_uc[1], get_components(ThermalMultiStart, c_sys5_uc))
+        add_service!(
+            c_sys5_uc,
+            reserve_uc[2],
+            [collect(get_components(ThermalMultiStart, c_sys5_uc))[end]],
+        )
+        add_service!(c_sys5_uc, reserve_uc[3], get_components(ThermalMultiStart, c_sys5_uc))
+        for serv in get_components(VariableReserve, c_sys5_uc)
+            data = vcat(Reserve_ts[1], Reserve_ts[2])
+            add_time_series!(c_sys5_uc, serv, SingleTimeSeries("requirement", data))
+        end
+    end
+    PSY.transform_single_time_series!(c_sys5_uc, 24, Dates.Hour(14))
+    return c_sys5_uc
 end
