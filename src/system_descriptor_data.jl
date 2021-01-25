@@ -673,4 +673,11 @@ const SYSTEM_CATELOG = [
         raw_data = "",
         build_function = build_dynamic_inverter_sys,
     ),
+    SystemDescriptor(
+        name = "c_sys5_bat_ems",
+        description = "5-bus system with Storage Device with EMS",
+        category = PSITestSystems,
+        raw_data = "data/data_5bus_pu.jl",
+        build_function = build_c_sys5_bat_ems,
+    ),
 ]
