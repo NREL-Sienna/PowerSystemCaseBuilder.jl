@@ -40,7 +40,7 @@ include("system_library.jl")
 
 include("system_build_stats.jl")
 include("system_descriptor.jl")
-include("system_catelog.jl")
+include("system_catalog.jl")
 
 include("system_descriptor_data.jl")
 include("utils/print.jl")

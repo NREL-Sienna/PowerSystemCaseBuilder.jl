@@ -1416,7 +1416,8 @@ end
 
 function build_sos_test_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    node = PSY.Bus(1, "nodeA", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+    node =
+        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, nothing, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gens_cost_sos = [
         PSY.ThermalStandard(
@@ -1508,7 +1509,8 @@ end
 
 function build_pwl_test_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    node = PSY.Bus(1, "nodeA", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+    node =
+        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, nothing, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gens_cost = [
         PSY.ThermalStandard(
@@ -1576,7 +1578,8 @@ end
 
 function build_duration_test_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    node = PSY.Bus(1, "nodeA", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+    node =
+        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, nothing, 0.4, 0.9861, 100.0, 1.0, 2.0)
     DA_dur = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -1638,7 +1641,8 @@ end
 
 function build_pwl_marketbid_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    node = PSY.Bus(1, "nodeA", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+    node =
+        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, nothing, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gens_cost = [
         PSY.ThermalStandard(
