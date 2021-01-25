@@ -2520,11 +2520,7 @@ function build_c_sys5_bat_ems(; kwargs...)
                 ini_time = timestamp(battery_target_timeseries_DA[t])[1]
                 forecast_data[ini_time] = battery_target_timeseries_DA[t]
             end
-            add_time_series!(
-                c_sys5_bat,
-                r,
-                Deterministic("storage_target", forecast_data),
-            )
+            add_time_series!(c_sys5_bat, r, Deterministic("storage_target", forecast_data))
         end
     end
 
