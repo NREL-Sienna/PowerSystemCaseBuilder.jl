@@ -7,6 +7,7 @@ function build_system(
     add_forecasts = get(kwargs, :add_forecasts, true)
     add_reserves = get(kwargs, :add_reserves, false)
     force_build = get(kwargs, :force_build, false)
+    skip_serialization = get(kwargs, :skip_serialization, false)
     system_catelog = get(kwargs, :system_catelog, SystemCatalog(SYSTEM_CATELOG))
     sys_descriptor = get_system_descriptor(category, system_catelog, name)
     if !is_serialized(name, add_forecasts, add_reserves) || force_build
@@ -23,8 +24,10 @@ function build_system(
         construct_time = time() - start
         serialized_filepath = get_serialized_filepath(name, add_forecasts, add_reserves)
         start = time()
-        PSY.to_json(sys, serialized_filepath; force = true)
-        serialize_time = time() - start
+        if !skip_serialization
+            PSY.to_json(sys, serialized_filepath; force = true)
+            serialize_time = time() - start
+        end
         # set_stats!(sys_descriptor, SystemBuildStats(construct_time, serialize_time))
     else
         @debug "Deserialize system from file" sys_descriptor.name
