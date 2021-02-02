@@ -58,7 +58,8 @@ function build_c_sys5_ml(; kwargs...)
             )
         end
     end
-
+    line = PSY.get_component(Line, c_sys5_ml, "1")
+    PSY.convert_component!(MonitoredLine, line, c_sys5_ml)
     return c_sys5_ml
 end
 
