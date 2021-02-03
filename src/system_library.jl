@@ -2912,7 +2912,7 @@ function build_modified_RTS_GMLC_DA_sys(; kwargs...)
         end
     end
 
-    PSY.transform_single_time_series!(PSY.sys, 48, Hour(24))
+    PSY.transform_single_time_series!(sys, 48, Hour(24))
     return sys
 end
 
