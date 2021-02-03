@@ -2862,7 +2862,7 @@ function build_modified_RTS_GMLC_DA_sys(; kwargs...)
             x -> (occursin(r"STEAM|NUCLEAR", PSY.get_name(x))),
         )
             PSY.get_fuel(d) == PSY.ThermalFuels.COAL &&
-                (PSY.get_ramp_limits(d) = (up = 0.001, down = 0.001))
+                (PSY.set_ramp_limits!(d, (up = 0.001, down = 0.001)))
             if PSY.get_fuel(d) == PSY.ThermalFuels.DISTILLATE_FUEL_OIL
                 PSY.remove_component!(sys, d)
                 continue
@@ -2875,10 +2875,9 @@ function build_modified_RTS_GMLC_DA_sys(; kwargs...)
                 continue
             end
             PSY.clear_services!(d)
-            PSY.get_operation_cost(d).shut_down = PSY.get_operation_cost(d).start_up / 2.0
             if PSY.get_fuel(d) == PSY.ThermalFuels.NUCLEAR
-                PSY.get_ramp_limits(d) = (up = 0.0, down = 0.0)
-                PSY.get_time_limits(d) = (up = 4380.0, down = 4380.0)
+                PSY.set_ramp_limits!(d, (up = 0.0, down = 0.0))
+                PSY.set_time_limits!(d, (up = 4380.0, down = 4380.0))
             end
         end
         for d in PSY.get_components(PSY.RenewableDispatch, sys)
@@ -2989,7 +2988,7 @@ function build_modified_RTS_GMLC_RT_sys(; kwargs...)
             x -> (occursin(r"STEAM|NUCLEAR", PSY.get_name(x))),
         )
             PSY.get_fuel(d) == PSY.ThermalFuels.COAL &&
-                (PSY.get_ramp_limits(d) = (up = 0.001, down = 0.001))
+                (PSY.set_ramp_limits!(d, (up = 0.001, down = 0.001)))
             if PSY.get_fuel(d) == PSY.ThermalFuels.DISTILLATE_FUEL_OIL
                 PSY.remove_component!(sys, d)
                 continue
@@ -3002,10 +3001,9 @@ function build_modified_RTS_GMLC_RT_sys(; kwargs...)
                 continue
             end
             PSY.clear_services!(d)
-            PSY.get_operation_cost(d).shut_down = PSY.get_operation_cost(d).start_up / 2.0
             if PSY.get_fuel(d) == PSY.ThermalFuels.NUCLEAR
-                PSY.get_ramp_limits(d) = (up = 0.0, down = 0.0)
-                PSY.get_time_limits(d) = (up = 4380.0, down = 4380.0)
+                PSY.set_ramp_limits!(d, (up = 0.0, down = 0.0))
+                PSY.set_time_limits!(d, (up = 4380.0, down = 4380.0))
             end
         end
         for d in PSY.get_components(PSY.RenewableDispatch, sys)
@@ -3040,6 +3038,6 @@ function build_modified_RTS_GMLC_RT_sys(; kwargs...)
         end
     end
 
-    PSY.transform_single_time_series!(PSY.sys, 12, Hour(15))
+    PSY.transform_single_time_series!(sys, 12, Minute(15))
     return sys
 end
