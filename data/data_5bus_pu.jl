@@ -913,9 +913,10 @@ ORDC_cost_ts = [
     TimeSeries.TimeArray(DayAhead + Day(1), repeat([ORDC_cost], 24)),
 ]
 
+# TODO: add a sensible cost for hybrid devices
 hybrid_cost_ts = [
-    TimeSeries.TimeArray(DayAhead, repeat([999.0], 24)),
-    TimeSeries.TimeArray(DayAhead + Day(1), repeat([999.0], 24)),
+    TimeSeries.TimeArray(DayAhead, repeat([45.0], 24)),
+    TimeSeries.TimeArray(DayAhead + Day(1), repeat([45.0], 24)),
 ]
 
 Reserve_ts = [TimeSeries.TimeArray(DayAhead, rand(24)), TimeSeries.TimeArray(DayAhead + Day(1), rand(24))]
