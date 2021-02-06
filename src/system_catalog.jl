@@ -25,6 +25,13 @@ function get_system_descriptors(category::Type{<:SystemCategory}, catalog::Syste
     end
 end
 
+function list_categories()
+    catalog = SystemCatalog()
+    return list_categories(catalog)
+end
+
+list_categories(c::SystemCatalog) = sort!([x for x in (keys(c.data))], by = x -> string(x))
+
 function SystemCatalog(system_catalogue::Array{SystemDescriptor} = SYSTEM_CATELOG)
     data = Dict{DataType, Dict{String, SystemDescriptor}}()
     for descriptor in system_catalogue

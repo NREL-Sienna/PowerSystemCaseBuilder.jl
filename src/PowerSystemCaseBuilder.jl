@@ -14,6 +14,10 @@ export PSSETestSystems
 export MatPowerTestSystems
 
 export build_system
+export list_categories
+export show_categories
+export list_systems
+export show_systems
 
 export SYSTEM_CATELOG
 
@@ -23,6 +27,7 @@ import InfrastructureSystems: InfrastructureSystemsType
 import PowerSystems
 import DataStructures: SortedDict
 import DataFrames
+import PrettyTables
 
 #TimeStamp Management Imports
 import TimeSeries
