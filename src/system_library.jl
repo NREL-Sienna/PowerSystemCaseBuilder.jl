@@ -58,7 +58,8 @@ function build_c_sys5_ml(; kwargs...)
             )
         end
     end
-
+    line = PSY.get_component(Line, c_sys5_ml, "1")
+    PSY.convert_component!(MonitoredLine, line, c_sys5_ml)
     return c_sys5_ml
 end
 
@@ -2598,4 +2599,445 @@ function build_c_sys5_pglib_sim(; kwargs...)
     end
     PSY.transform_single_time_series!(c_sys5_uc, 24, Dates.Hour(14))
     return c_sys5_uc
+end
+
+function build_c_sys5_hybrid(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    nodes = nodes5()
+    thermals = thermal_generators5(nodes)
+    loads = loads5(nodes)
+    renewables = renewable_generators5(nodes)
+    _battery(nodes, bus, name) = PSY.BatteryEMS(
+        name = name,
+        prime_mover = PrimeMovers.BA,
+        available = true,
+        bus = nodes[bus],
+        initial_energy = 5.0,
+        state_of_charge_limits = (min = 0.10, max = 7.0),
+        rating = 7.0,
+        active_power = 2.0,
+        input_active_power_limits = (min = 0.0, max = 2.0),
+        output_active_power_limits = (min = 0.0, max = 2.0),
+        efficiency = (in = 0.80, out = 0.90),
+        reactive_power = 0.0,
+        reactive_power_limits = (min = -2.0, max = 2.0),
+        base_power = 100.0,
+        storage_target = 0.2,
+        penalty_cost = 1e5,
+        energy_value = 0.0,
+    )
+    hyd = [
+        HybridSystem(
+            name = "RE+battery",
+            available = true,
+            status = true,
+            bus = nodes[1],
+            active_power = 6.0,
+            reactive_power = 1.0,
+            thermal_unit = nothing,
+            electric_load = nothing,
+            storage = _battery(nodes, 1, "batt_hybrid_1"),
+            renewable_unit = renewables[1],
+            base_power = 100.0,
+            # operation_cost = TwoPartCost(nothing),
+            interconnection_rating = 5.0,
+            interconnection_impedance = nothing,
+            input_active_power_limits = (min = 0.2, max = 5.0),
+            output_active_power_limits = (min = 0.2, max = 5.0),
+            reactive_power_limits = nothing,
+        ),
+        HybridSystem(
+            name = "thermal+battery",
+            available = true,
+            status = true,
+            bus = nodes[3],
+            active_power = 9.0,
+            reactive_power = 1.0,
+            thermal_unit = thermals[3],
+            electric_load = nothing,
+            storage = _battery(nodes, 3, "batt_hybrid_2"),
+            renewable_unit = nothing,
+            base_power = 100.0,
+            # operation_cost = TwoPartCost(nothing),
+            interconnection_rating = 10.0,
+            interconnection_impedance = nothing,
+            input_active_power_limits = (min = 0.5, max = 10.0),
+            output_active_power_limits = (min = 0.5, max = 10.0),
+            reactive_power_limits = nothing,
+        ),
+        HybridSystem(
+            name = "load+battery",
+            available = true,
+            status = true,
+            bus = nodes[3],
+            active_power = 9.0,
+            reactive_power = 1.0,
+            electric_load = loads[2],
+            storage = _battery(nodes, 3, "batt_hybrid_3"),
+            renewable_unit = nothing,
+            base_power = 100.0,
+            # operation_cost = TwoPartCost(nothing),
+            interconnection_rating = 10.0,
+            interconnection_impedance = nothing,
+            input_active_power_limits = (min = 0.5, max = 10.0),
+            output_active_power_limits = (min = 0.5, max = 10.0),
+            reactive_power_limits = nothing,
+        ),
+        HybridSystem(
+            name = "all_hybrid",
+            available = true,
+            status = true,
+            bus = nodes[4],
+            active_power = 9.0,
+            reactive_power = 1.0,
+            electric_load = loads[3],
+            thermal_unit = thermals[4],
+            storage = _battery(nodes, 4, "batt_hybrid_4"),
+            renewable_unit = renewables[2],
+            base_power = 100.0,
+            # operation_cost = MarketBidCost(nothing),
+            interconnection_rating = 15.0,
+            interconnection_impedance = nothing,
+            input_active_power_limits = (min = 0.5, max = 15.0),
+            output_active_power_limits = (min = 0.5, max = 15.0),
+            reactive_power_limits = nothing,
+        ),
+    ]
+    c_sys5_hybrid = PSY.System(
+        100.0,
+        nodes,
+        loads[1:1],
+        branches5(nodes);
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
+        sys_kwargs...,
+    )
+
+    for d in hyd
+        PSY.add_component!(c_sys5_hybrid, d)
+        set_operation_cost!(d, MarketBidCost(nothing))
+    end
+
+    if get(kwargs, :add_forecasts, true)
+        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hybrid))
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
+                forecast_data[ini_time] = load_timeseries_DA[t][ix]
+            end
+            add_time_series!(
+                c_sys5_hybrid,
+                l,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
+        end
+        _load_devices = filter!(
+            x -> !isnothing(PSY.get_electric_load(x)),
+            collect(PSY.get_components(PSY.HybridSystem, c_sys5_hybrid)),
+        )
+        for (ix, l) in enumerate(_load_devices)
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
+                forecast_data[ini_time] = load_timeseries_DA[t][ix]
+            end
+            add_time_series!(
+                c_sys5_hybrid,
+                l,
+                PSY.Deterministic("max_active_power_load", forecast_data),
+            )
+        end
+        _re_devices = filter!(
+            x -> !isnothing(PSY.get_renewable_unit(x)),
+            collect(PSY.get_components(PSY.HybridSystem, c_sys5_hybrid)),
+        )
+        for (ix, r) in enumerate(_re_devices)
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ini_time = TimeSeries.timestamp(ren_timeseries_DA[t][ix])[1]
+                forecast_data[ini_time] = ren_timeseries_DA[t][ix]
+            end
+            PSY.add_time_series!(
+                c_sys5_hybrid,
+                r,
+                PSY.Deterministic("max_active_power_renewable", forecast_data),
+            )
+        end
+        for (ix, h) in enumerate(PSY.get_components(PSY.HybridSystem, c_sys5_hybrid))
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ini_time = TimeSeries.timestamp(hybrid_cost_ts[t])[1]
+                forecast_data[ini_time] = hybrid_cost_ts[t]
+            end
+            set_variable_cost!(
+                c_sys5_hybrid,
+                h,
+                PSY.Deterministic("variable_cost", forecast_data),
+            )
+        end
+    end
+
+    return c_sys5_hybrid
+end
+
+function build_RTS_GMLC_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    RTS_GMLC_DIR = get_raw_data(; kwargs...)
+    RTS_SRC_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "SourceData")
+    RTS_SIIP_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "FormattedData", "SIIP")
+    rawsys = PSY.PowerSystemTableData(
+        RTS_SRC_DIR,
+        100.0,
+        joinpath(RTS_SIIP_DIR, "user_descriptors.yaml"),
+        timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
+        generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
+    )
+    sys = PSY.System(rawsys; time_series_resolution = Dates.Hour(1), sys_kwargs...)
+    PSY.transform_single_time_series!(sys, 48, Dates.Hour(24))
+    return sys
+end
+
+function build_modified_RTS_GMLC_DA_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    RTS_GMLC_DIR = get_raw_data(; kwargs...)
+    RTS_SRC_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "SourceData")
+    RTS_SIIP_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "FormattedData", "SIIP")
+    rawsys = PSY.PowerSystemTableData(
+        RTS_SRC_DIR,
+        100.0,
+        joinpath(RTS_SIIP_DIR, "user_descriptors.yaml"),
+        timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
+        generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
+    )
+
+    sys = PSY.System(rawsys; time_series_resolution = Dates.Hour(1), sys_kwargs...)
+    PSY.set_units_base_system!(sys, "SYSTEM_BASE")
+    res_up = PSY.get_component(PSY.VariableReserve{PSY.ReserveUp}, sys, "Flex_Up")
+    res_dn = PSY.get_component(PSY.VariableReserve{PSY.ReserveDown}, sys, "Flex_Down")
+    PSY.remove_component!(sys, res_dn)
+    PSY.remove_component!(sys, res_up)
+    reg_reserve_up = PSY.get_component(PSY.VariableReserve, sys, "Reg_Up")
+    PSY.set_requirement!(reg_reserve_up, 1.75 * PSY.get_requirement(reg_reserve_up))
+    reg_reserve_dn = PSY.get_component(PSY.VariableReserve, sys, "Reg_Down")
+    PSY.set_requirement!(reg_reserve_dn, 1.75 * PSY.get_requirement(reg_reserve_dn))
+    spin_reserve_R1 = PSY.get_component(PSY.VariableReserve, sys, "Spin_Up_R1")
+    spin_reserve_R2 = PSY.get_component(PSY.VariableReserve, sys, "Spin_Up_R2")
+    spin_reserve_R3 = PSY.get_component(PSY.VariableReserve, sys, "Spin_Up_R3")
+    for g in PSY.get_components(
+        PSY.ThermalStandard,
+        sys,
+        x -> PSY.get_prime_mover(x) in [PSY.PrimeMovers.CT, PSY.PrimeMovers.CC],
+    )
+        if PSY.get_fuel(g) == PSY.ThermalFuels.DISTILLATE_FUEL_OIL
+            PSY.remove_component!(sys, g)
+            continue
+        end
+        g.operation_cost.shut_down = g.operation_cost.start_up / 2.0
+        if PSY.get_base_power(g) > 3
+            continue
+        end
+        PSY.clear_services!(g)
+        PSY.add_service!(g, reg_reserve_dn)
+        PSY.add_service!(g, reg_reserve_up)
+        #Remove units that make no sense to include
+        names = [
+            "114_SYNC_COND_1",
+            "314_SYNC_COND_1",
+            "313_STORAGE_1",
+            "214_SYNC_COND_1",
+            "212_CSP_1",
+        ]
+        for d in PSY.get_components(PSY.Generator, sys, x -> x.name ∈ names)
+            PSY.remove_component!(sys, d)
+        end
+        for br in PSY.get_components(PSY.DCBranch, sys)
+            PSY.remove_component!(sys, br)
+        end
+        for d in PSY.get_components(PSY.Storage, sys)
+            PSY.remove_component!(sys, d)
+        end
+        # Remove large Coal and Nuclear from reserves
+        for d in PSY.get_components(
+            PSY.ThermalStandard,
+            sys,
+            x -> (occursin(r"STEAM|NUCLEAR", PSY.get_name(x))),
+        )
+            PSY.get_fuel(d) == PSY.ThermalFuels.COAL &&
+                (PSY.set_ramp_limits!(d, (up = 0.001, down = 0.001)))
+            if PSY.get_fuel(d) == PSY.ThermalFuels.DISTILLATE_FUEL_OIL
+                PSY.remove_component!(sys, d)
+                continue
+            end
+            PSY.get_operation_cost(d).shut_down = PSY.get_operation_cost(d).start_up / 2.0
+            if PSY.get_rating(d) < 3
+                PSY.set_status!(d, false)
+                PSY.set_status!(d, false)
+                PSY.set_active_power!(d, 0.0)
+                continue
+            end
+            PSY.clear_services!(d)
+            if PSY.get_fuel(d) == PSY.ThermalFuels.NUCLEAR
+                PSY.set_ramp_limits!(d, (up = 0.0, down = 0.0))
+                PSY.set_time_limits!(d, (up = 4380.0, down = 4380.0))
+            end
+        end
+        for d in PSY.get_components(PSY.RenewableDispatch, sys)
+            PSY.clear_services!(d)
+        end
+
+        # Add Hydro to regulation reserves
+        for d in PSY.get_components(PSY.HydroEnergyReservoir, sys)
+            PSY.remove_component!(sys, d)
+        end
+
+        for d in PSY.get_components(PSY.HydroDispatch, sys)
+            PSY.clear_services!(d)
+        end
+
+        for g in PSY.get_components(
+            PSY.RenewableDispatch,
+            sys,
+            x -> PSY.get_prime_mover(x) == PSY.PrimeMovers.PVe,
+        )
+            rat_ = PSY.get_rating(g)
+            PSY.set_rating!(g, PSY.DISPATCH_INCREASE * rat_)
+        end
+
+        for g in PSY.get_components(
+            PSY.RenewableFix,
+            sys,
+            x -> PSY.get_prime_mover(x) == PSY.PrimeMovers.PVe,
+        )
+            rat_ = PSY.get_rating(g)
+            PSY.set_rating!(g, PSY.FIX_DECREASE * rat_)
+        end
+    end
+
+    PSY.transform_single_time_series!(sys, 48, Hour(24))
+    return sys
+end
+
+function build_modified_RTS_GMLC_RT_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    RTS_GMLC_DIR = get_raw_data(; kwargs...)
+    RTS_SRC_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "SourceData")
+    RTS_SIIP_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "FormattedData", "SIIP")
+    rawsys = PSY.PowerSystemTableData(
+        RTS_SRC_DIR,
+        100.0,
+        joinpath(RTS_SIIP_DIR, "user_descriptors.yaml"),
+        timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
+        generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
+    )
+
+    sys = PSY.System(rawsys; time_series_resolution = Dates.Hour(1), sys_kwargs...)
+
+    # Add area renewable energy forecasts for RT model
+    area_mapping = PSY.get_aggregation_topology_mapping(PSY.Area, sys)
+    for (k, buses_in_area) in area_mapping
+        k == "1" && continue
+        PSY.remove_component!(sys, PSY.get_component(PSY.Area, sys, k))
+        for b in buses_in_area
+            PSY.set_area!(b, PSY.get_component(PSY.Area, sys, "1"))
+        end
+    end
+    PSY.set_units_base_system!(sys, "SYSTEM_BASE")
+    res_up = PSY.get_component(PSY.VariableReserve{PSY.ReserveUp}, sys, "Flex_Up")
+    res_dn = PSY.get_component(PSY.VariableReserve{PSY.ReserveDown}, sys, "Flex_Down")
+    PSY.remove_component!(sys, res_dn)
+    PSY.remove_component!(sys, res_up)
+    reg_reserve_up = PSY.get_component(PSY.VariableReserve, sys, "Reg_Up")
+    reg_reserve_dn = PSY.get_component(PSY.VariableReserve, sys, "Reg_Down")
+
+    for g in PSY.get_components(
+        PSY.ThermalStandard,
+        sys,
+        x -> PSY.get_prime_mover(x) in [PSY.PrimeMovers.CT, PSY.PrimeMovers.CC],
+    )
+        if PSY.get_fuel(g) == PSY.ThermalFuels.DISTILLATE_FUEL_OIL
+            PSY.remove_component!(sys, g)
+            continue
+        end
+        g.operation_cost.shut_down = g.operation_cost.start_up / 2.0
+        if PSY.get_base_power(g) > 3
+            continue
+        end
+        PSY.clear_services!(g)
+        PSY.add_service!(g, reg_reserve_dn)
+        PSY.add_service!(g, reg_reserve_up)
+        #Remove units that make no sense to include
+        names = [
+            "114_SYNC_COND_1",
+            "314_SYNC_COND_1",
+            "313_STORAGE_1",
+            "214_SYNC_COND_1",
+            "212_CSP_1",
+        ]
+        for d in PSY.get_components(PSY.Generator, sys, x -> x.name ∈ names)
+            PSY.remove_component!(sys, d)
+        end
+        for br in PSY.get_components(PSY.DCBranch, sys)
+            PSY.remove_component!(sys, br)
+        end
+        for d in PSY.get_components(PSY.Storage, sys)
+            PSY.remove_component!(sys, d)
+        end
+        # Remove large Coal and Nuclear from reserves
+        for d in PSY.get_components(
+            PSY.ThermalStandard,
+            sys,
+            x -> (occursin(r"STEAM|NUCLEAR", PSY.get_name(x))),
+        )
+            PSY.get_fuel(d) == PSY.ThermalFuels.COAL &&
+                (PSY.set_ramp_limits!(d, (up = 0.001, down = 0.001)))
+            if PSY.get_fuel(d) == PSY.ThermalFuels.DISTILLATE_FUEL_OIL
+                PSY.remove_component!(sys, d)
+                continue
+            end
+            PSY.get_operation_cost(d).shut_down = PSY.get_operation_cost(d).start_up / 2.0
+            if PSY.get_rating(d) < 3
+                PSY.set_status!(d, false)
+                PSY.set_status!(d, false)
+                PSY.set_active_power!(d, 0.0)
+                continue
+            end
+            PSY.clear_services!(d)
+            if PSY.get_fuel(d) == PSY.ThermalFuels.NUCLEAR
+                PSY.set_ramp_limits!(d, (up = 0.0, down = 0.0))
+                PSY.set_time_limits!(d, (up = 4380.0, down = 4380.0))
+            end
+        end
+        for d in PSY.get_components(PSY.RenewableDispatch, sys)
+            PSY.clear_services!(d)
+        end
+
+        # Add Hydro to regulation reserves
+        for d in PSY.get_components(PSY.HydroEnergyReservoir, sys)
+            PSY.remove_component!(sys, d)
+        end
+
+        for d in PSY.get_components(PSY.HydroDispatch, sys)
+            PSY.clear_services!(d)
+        end
+
+        for g in PSY.get_components(
+            PSY.RenewableDispatch,
+            sys,
+            x -> PSY.get_prime_mover(x) == PSY.PrimeMovers.PVe,
+        )
+            rat_ = PSY.get_rating(g)
+            PSY.set_rating!(g, PSY.DISPATCH_INCREASE * rat_)
+        end
+
+        for g in PSY.get_components(
+            PSY.RenewableFix,
+            sys,
+            x -> PSY.get_prime_mover(x) == PSY.PrimeMovers.PVe,
+        )
+            rat_ = PSY.get_rating(g)
+            PSY.set_rating!(g, PSY.FIX_DECREASE * rat_)
+        end
+    end
+
+    PSY.transform_single_time_series!(sys, 12, Minute(15))
+    return sys
 end

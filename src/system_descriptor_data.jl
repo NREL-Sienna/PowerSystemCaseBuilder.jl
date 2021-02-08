@@ -211,10 +211,36 @@ const SYSTEM_CATELOG = [
     ),
     SystemDescriptor(
         name = "test_RTS_GMLC_sys",
-        description = "RTS-GMLC test system",
+        description = "RTS-GMLC test system with day-ahead forecast",
         category = PSITestSystems,
         raw_data = joinpath(PACKAGE_DIR, "data", "RTS_GMLC"),
         build_function = build_test_RTS_GMLC_sys,
+    ),
+    SystemDescriptor(
+        name = "RTS_GMLC_sys",
+        description = "RTS-GMLC Full system from git repo for day-ahead simulations",
+        category = PSITestSystems,
+        raw_data = joinpath(PACKAGE_DIR, "data", "RTS-GMLC-master"),
+        build_function = build_RTS_GMLC_sys,
+        download_function = download_RTS,
+    ),
+    SystemDescriptor(
+        name = "modified_RTS_GMLC_DA_sys",
+        description = "Modified RTS-GMLC Full system for day-ahead simulations 
+            with modifications to reserve definitions to improve feasibility",
+        category = PSITestSystems,
+        raw_data = joinpath(PACKAGE_DIR, "data", "RTS-GMLC-master"),
+        build_function = build_modified_RTS_GMLC_DA_sys,
+        download_function = download_RTS,
+    ),
+    SystemDescriptor(
+        name = "modified_RTS_GMLC_RT_sys",
+        description = "Modified RTS-GMLC Full system for real-time simulations 
+            with modifications to reserve definitions to improve feasibility",
+        category = PSITestSystems,
+        raw_data = joinpath(PACKAGE_DIR, "data", "RTS-GMLC-master"),
+        build_function = build_modified_RTS_GMLC_RT_sys,
+        download_function = download_RTS,
     ),
     # SystemDescriptor(
     #     name =  "US_sys",
@@ -686,5 +712,12 @@ const SYSTEM_CATELOG = [
         category = PSITestSystems,
         raw_data = "data/data_5bus_pu.jl",
         build_function = build_c_sys5_pglib_sim,
+    ),
+    SystemDescriptor(
+        name = "c_sys5_hybrid",
+        description = "5-bus system with Hybrid devices",
+        category = PSITestSystems,
+        raw_data = "data/data_5bus_pu.jl",
+        build_function = build_c_sys5_hybrid,
     ),
 ]

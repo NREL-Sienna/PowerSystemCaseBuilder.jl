@@ -27,7 +27,7 @@ import DataFrames
 #TimeStamp Management Imports
 import TimeSeries
 import Dates
-import Dates: DateTime, Hour
+import Dates: DateTime, Hour, Minute
 import CSV
 const PSY = PowerSystems
 const IS = InfrastructureSystems

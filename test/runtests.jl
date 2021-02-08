@@ -14,6 +14,7 @@ const PSB = PowerSystemCaseBuilder
     system_catelog = SystemCatalog(SYSTEM_CATELOG)
     for (type, descriptor_dict) in system_catelog.data
         for (name, descriptor) in descriptor_dict
+            name == "c_sys5_hybrid" && continue
             for forecasts in [true, false], reserves in [true, false]
                 # build a new system from scratch
                 sys = build_system(
