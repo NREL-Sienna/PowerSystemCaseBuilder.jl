@@ -716,7 +716,7 @@ battery5(nodes5) = [GenericBattery(
 )];
 
 batteryems5(nodes5) = [
-     PSY.BatteryEMS(
+     PSY.BatteryEMS(;
          name = "Bat2",
          prime_mover = PrimeMovers.BA,
          available = true,
@@ -732,8 +732,14 @@ batteryems5(nodes5) = [
          reactive_power_limits = (min = -2.0, max = 2.0),
          base_power = 100.0,
          storage_target=0.2,
-         penalty_cost=1e5,
-         energy_value=0.0,
+         operation_cost = PSY.StorageManagementCost(
+            variable = VariableCost(0.0),
+            fixed = 0.0,
+            start_up = 0.0,
+            shut_down = 0.0,
+            energy_shortage_cost = 50.0,
+            energy_surplus_cost = 40.0,
+         ),
      )
  ];
 
