@@ -2929,7 +2929,7 @@ function build_modified_RTS_GMLC_RT_sys(; kwargs...)
         generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
     )
 
-    sys = PSY.System(rawsys; time_series_resolution = Dates.Hour(1), sys_kwargs...)
+    sys = PSY.System(rawsys; time_series_resolution = Dates.Minute(5), sys_kwargs...)
 
     # Add area renewable energy forecasts for RT model
     area_mapping = PSY.get_aggregation_topology_mapping(PSY.Area, sys)
