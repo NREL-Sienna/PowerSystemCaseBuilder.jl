@@ -1,3 +1,18 @@
+"""
+build_system(
+    category::Type{<:SystemCategory},
+    name::String,
+    print_stat::Bool = false;
+    kwargs...,
+)
+
+Accepted Key Words:
+- `add_forecasts::Bool`: Default is `true`
+- `add_reserves::Bool`: Default is `false`
+- `force_build::Bool`: `true` runs entire build process, `false` (Default) uses deserializiation if possible
+- `skip_serialization::Bool`: Default is `false`
+- `system_catelog::SystemCatalog`
+"""
 function build_system(
     category::Type{<:SystemCategory},
     name::String,
