@@ -195,13 +195,13 @@ const SYSTEM_CATELOG = [
         raw_data = joinpath(PACKAGE_DIR, "data"),
         build_function = build_5_bus_hydro_ed_sys,
     ),
-     SystemDescriptor(
-         name =  "5_bus_hydro_wk_sys",
-         description =  "5-bus hydro system for weekly dispatch",
-         category =  SIIPExampleSystems,
-         raw_data =  joinpath(PACKAGE_DIR, "data"),
-         build_function  =  build_5_bus_hydro_wk_sys
-     ),
+    SystemDescriptor(
+        name = "5_bus_hydro_wk_sys",
+        description = "5-bus hydro system for weekly dispatch",
+        category = SIIPExampleSystems,
+        raw_data = joinpath(PACKAGE_DIR, "data"),
+        build_function = build_5_bus_hydro_wk_sys,
+    ),
     SystemDescriptor(
         name = "psse_RTS_GMLC_sys",
         description = "PSSE .raw RTS-GMLC system",

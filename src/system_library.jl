@@ -1848,7 +1848,6 @@ function build_5_bus_matpower_DA(; kwargs...)
         joinpath(FORECASTS_DIR, "timeseries_pointers_da_7day.json"),
     )
 
-
     sys = System(pm_data)
     reserves = [
         VariableReserve{ReserveUp}("REG1", true, 5.0, 0.1),
