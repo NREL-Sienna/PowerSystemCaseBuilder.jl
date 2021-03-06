@@ -32,7 +32,7 @@ function build_system(
             filepath = download_function(; kwargs...)
             set_raw_data!(sys_descriptor, filepath)
         end
-        @debug "Build new system" sys_descriptor.name
+        @info "Building new system $(sys_descriptor.name) from raw data" sys_descriptor.raw_data
         build_func = get_build_function(sys_descriptor)
         start = time()
         sys = build_func(; raw_data = sys_descriptor.raw_data, kwargs...)

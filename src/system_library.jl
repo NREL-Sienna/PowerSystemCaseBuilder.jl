@@ -1806,12 +1806,104 @@ function build_5_bus_hydro_ed_sys(; kwargs...)
     return c_sys5_hy_ed
 end
 
-# function build_5_bus_hydro_wk_sys(; kwargs...)
-#     sys_kwargs = filter_kwargs(; kwargs...)
-#     c_sys5_hy_wk = System(rawsys,  sys_kwargs...)
-#     # TODO: better construction  of the time series data
-#     return
-# end
+function build_5_bus_hydro_wk_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    data_dir = get_raw_data(; kwargs...)
+    rawsys = PSY.PowerSystemTableData(
+        joinpath(data_dir, "5-bus-hydro"),
+        100.0,
+        joinpath(data_dir, "5-bus-hydro", "user_descriptors.yaml");
+        generator_mapping_file = joinpath(
+            data_dir,
+            "5-bus-hydro",
+            "generator_mapping.yaml",
+        ),
+    )
+    c_sys5_hy_wk = PSY.System(
+        rawsys,
+        timeseries_metadata_file = joinpath(
+            data_dir,
+            "forecasts",
+            "5bus_ts",
+            "7day",
+            "timeseries_pointers_wk_7day.json",
+        ),
+        time_series_in_memory = true,
+        sys_kwargs...,
+    )
+    PSY.transform_single_time_series!(c_sys5_hy_wk, 2, Hour(48))
+
+    return c_sys5_hy_wk
+end
+
+function build_5_bus_matpower_DA(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    file_path = get_raw_data(; kwargs...)
+    data_dir = dirname(dirname(file_path))
+    pm_data = PowerSystems.PowerModelsData(file_path)
+
+    FORECASTS_DIR = joinpath(data_dir, "forecasts", "5bus_ts", "7day")
+
+    tsp = IS.read_time_series_file_metadata(
+        joinpath(FORECASTS_DIR, "timeseries_pointers_da_7day.json"),
+    )
+
+
+    sys = System(pm_data)
+    reserves = [
+        VariableReserve{ReserveUp}("REG1", true, 5.0, 0.1),
+        VariableReserve{ReserveUp}("REG2", true, 5.0, 0.06),
+        VariableReserve{ReserveUp}("REG3", true, 5.0, 0.03),
+        VariableReserve{ReserveUp}("REG4", true, 5.0, 0.02),
+    ]
+    contributing_devices = get_components(Generator, sys)
+    for r in reserves
+        add_service!(sys, r, contributing_devices)
+    end
+
+    add_time_series!(sys, tsp)
+    transform_single_time_series!(sys, 48, Hour(24))
+
+    return sys
+end
+
+function build_5_bus_matpower_RT(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    file_path = get_raw_data(; kwargs...)
+    data_dir = dirname(dirname(file_path))
+    pm_data = PowerSystems.PowerModelsData(file_path)
+
+    FORECASTS_DIR = joinpath(data_dir, "forecasts", "5bus_ts", "7day")
+
+    tsp = IS.read_time_series_file_metadata(
+        joinpath(FORECASTS_DIR, "timeseries_pointers_rt_7day.json"),
+    )
+
+    sys = System(pm_data)
+
+    add_time_series!(sys, tsp)
+    transform_single_time_series!(sys, 12, Hour(1))
+
+    return sys
+end
+
+function build_5_bus_matpower_AGC(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    file_path = get_raw_data(; kwargs...)
+    data_dir = dirname(dirname(file_path))
+    pm_data = PowerSystems.PowerModelsData(file_path)
+
+    FORECASTS_DIR = joinpath(data_dir, "forecasts", "5bus_ts", "7day")
+
+    tsp = IS.read_time_series_file_metadata(
+        joinpath(FORECASTS_DIR, "timeseries_pointers_agc_7day.json"),
+    )
+
+    sys = System(pm_data)
+
+    add_time_series!(sys, tsp)
+    return sys
+end
 
 function build_psse_RTS_GMLC_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
