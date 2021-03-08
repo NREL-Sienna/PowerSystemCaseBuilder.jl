@@ -195,13 +195,13 @@ const SYSTEM_CATELOG = [
         raw_data = joinpath(PACKAGE_DIR, "data"),
         build_function = build_5_bus_hydro_ed_sys,
     ),
-    # SystemDescriptor(
-    #     name =  "5_bus_hydro_wk_sys",
-    #     description =  "5-bus hydro system for weekly dispatch",
-    #     category =  SIIPExampleSystems,
-    #     raw_data =  joinpath(PACKAGE_DIR, "data"),
-    #     build_function  =  build_5_bus_hydro_wk_sys
-    # ),
+    SystemDescriptor(
+        name = "5_bus_hydro_wk_sys",
+        description = "5-bus hydro system for weekly dispatch",
+        category = SIIPExampleSystems,
+        raw_data = joinpath(PACKAGE_DIR, "data"),
+        build_function = build_5_bus_hydro_wk_sys,
+    ),
     SystemDescriptor(
         name = "psse_RTS_GMLC_sys",
         description = "PSSE .raw RTS-GMLC system",
@@ -226,7 +226,7 @@ const SYSTEM_CATELOG = [
     ),
     SystemDescriptor(
         name = "modified_RTS_GMLC_DA_sys",
-        description = "Modified RTS-GMLC Full system for day-ahead simulations 
+        description = "Modified RTS-GMLC Full system for day-ahead simulations
             with modifications to reserve definitions to improve feasibility",
         category = PSITestSystems,
         raw_data = joinpath(PACKAGE_DIR, "data", "RTS-GMLC-master"),
@@ -235,7 +235,7 @@ const SYSTEM_CATELOG = [
     ),
     SystemDescriptor(
         name = "modified_RTS_GMLC_RT_sys",
-        description = "Modified RTS-GMLC Full system for real-time simulations 
+        description = "Modified RTS-GMLC Full system for real-time simulations
             with modifications to reserve definitions to improve feasibility",
         category = PSITestSystems,
         raw_data = joinpath(PACKAGE_DIR, "data", "RTS-GMLC-master"),
@@ -719,5 +719,26 @@ const SYSTEM_CATELOG = [
         category = PSITestSystems,
         raw_data = "data/data_5bus_pu.jl",
         build_function = build_c_sys5_hybrid,
+    ),
+    SystemDescriptor(
+        name = "5_bus_matpower_DA",
+        description = "matpower 5-bus system with DA time series",
+        category = SIIPExampleSystems,
+        raw_data = joinpath(PACKAGE_DIR, "data", "matpower", "case5_re_uc.m"),
+        build_function = build_5_bus_matpower_DA,
+    ),
+    SystemDescriptor(
+        name = "5_bus_matpower_RT",
+        description = "matpower 5-bus system with RT time series",
+        category = SIIPExampleSystems,
+        raw_data = joinpath(PACKAGE_DIR, "data", "matpower", "case5_re_uc.m"),
+        build_function = build_5_bus_matpower_RT,
+    ),
+    SystemDescriptor(
+        name = "5_bus_matpower_AGC",
+        description = "matpower 5-bus system with AGC time series",
+        category = SIIPExampleSystems,
+        raw_data = joinpath(PACKAGE_DIR, "data", "matpower", "case5_re_uc.m"),
+        build_function = build_5_bus_matpower_AGC,
     ),
 ]
