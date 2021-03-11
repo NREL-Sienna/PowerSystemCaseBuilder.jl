@@ -18,14 +18,40 @@ function Base.show(io::IO, sys::SystemCatalog)
     show(df, allrows = true)
 end
 
-function list_systems(sys::SystemCatalog, category::Type{<:SystemCategory})
-    df = DataFrames.DataFrame(Name = [], Descriptor = [])
+function list_systems(sys::SystemCatalog, category::Type{<:SystemCategory}; kwargs...)
     descriptors = get_system_descriptors(category, sys)
-    for d in descriptors
-        push!(df, (get_name(d), get_description(d)))
+    sort!(descriptors, by = x -> x.name)
+    header = ["Name", "Descriptor"]
+    data = Array{Any, 2}(undef, length(descriptors), length(header))
+    for (i, d) in enumerate(descriptors)
+        data[i, 1] = get_name(d)
+        data[i, 2] = get_description(d)
     end
-    show(df, allrows = true, truncate = 92, rowlabel = :Name)
+
+    PrettyTables.pretty_table(stdout, data, header, alignment = :l; kwargs...)
 end
+
+show_categories() = println(join(string.(list_categories()), "\n"))
+
+function show_systems(; kwargs...)
+    catalog = SystemCatalog()
+    show_systems(catalog; kwargs...)
+end
+
+function show_systems(category::Type{<:SystemCategory}; kwargs...)
+    catalog = SystemCatalog()
+    show_systems(catalog, category; kwargs...)
+end
+
+function show_systems(catalog::SystemCatalog; kwargs...)
+    for category in list_categories(catalog)
+        println("\nCategory: $category\n")
+        list_systems(catalog, category)
+    end
+end
+
+show_systems(s::SystemCatalog, c::Type{<:SystemCategory}; kwargs...) =
+    list_systems(s, c; kwargs...)
 
 function print_stats(data::SystemDescriptor)
     df = DataFrames.DataFrame(Name = [], Value = [])

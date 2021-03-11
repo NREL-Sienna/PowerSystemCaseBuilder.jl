@@ -29,5 +29,6 @@ const SEARCH_DIRS = [
 const SERIALIZE_FILE_EXTENSIONS =
     [".json", "_validation_descriptors.json", "_time_series_storage.h5"]
 
-download_RTS(; kwargs...) =
-    Base.download("https://github.com/GridMod/RTS-GMLC", "master", "./data")
+function download_RTS(; kwargs...)
+    PowerSystems.download("https://github.com/GridMod/RTS-GMLC", "master", "./data")
+end
