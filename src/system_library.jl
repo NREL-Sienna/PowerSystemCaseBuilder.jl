@@ -1184,7 +1184,7 @@ function build_c_sys5_hy_ed(; kwargs...)
                 ta = hydro_timeseries_DA[t][ix]
                 for i in 1:length(ta)
                     ini_time = timestamp(ta[i])
-                    data = when(hydro_timeseries_RT[t][ix] .* 0.8, hour, hour(ini_time[1]))
+                    data = when(hydro_timeseries_RT[t][ix], hour, hour(ini_time[1]))
                     forecast_data[ini_time[1]] = data
                 end
             end
