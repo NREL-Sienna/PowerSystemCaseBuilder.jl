@@ -2739,7 +2739,7 @@ function build_c_sys5_hybrid(; kwargs...)
             shut_down = 0.0,
             energy_shortage_cost = 50.0,
             energy_surplus_cost = 40.0,
-         ),
+        ),
     )
     hyd = [
         HybridSystem(
