@@ -312,8 +312,8 @@ function build_c_sys5_hyd(; kwargs...)
         for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
-                ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
+                ini_time = TimeSeries.timestamp(hydro_budget_DA[t][ix])[1]
+                forecast_data[ini_time] = hydro_budget_DA[t][ix]
             end
             PSY.add_time_series!(
                 c_sys5_hyd,
@@ -326,8 +326,8 @@ function build_c_sys5_hyd(; kwargs...)
             forecast_data_target = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][ix])[1]
-                forecast_data_inflow[ini_time] = hydro_timeseries_DA[t][ix] .* 0.8
-                forecast_data_target[ini_time] = hydro_timeseries_DA[t][ix] .* 0.5
+                forecast_data_inflow[ini_time] = hydro_timeseries_DA[t][ix]
+                forecast_data_target[ini_time] = storage_target_DA[t][ix]
             end
             PSY.add_time_series!(
                 c_sys5_hyd,
@@ -1023,14 +1023,9 @@ function build_c_sys5_hy_uc(; kwargs...)
         for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_uc))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
-                ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
+                ini_time = timestamp(storage_target_DA[t][ix])[1]
+                forecast_data[ini_time] = storage_target_DA[t][ix]
             end
-            PSY.add_time_series!(
-                c_sys5_hy_uc,
-                h,
-                PSY.Deterministic("storage_capacity", forecast_data),
-            )
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 h,
@@ -1047,6 +1042,18 @@ function build_c_sys5_hy_uc(; kwargs...)
                 c_sys5_hy_uc,
                 h,
                 PSY.Deterministic("inflow", forecast_data),
+            )
+        end
+        for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_uc))
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ini_time = TimeSeries.timestamp(hydro_budget_DA[t][ix])[1]
+                forecast_data[ini_time] = hydro_budget_DA[t][ix]
+            end
+            PSY.add_time_series!(
+                c_sys5_hy_uc,
+                h,
+                PSY.Deterministic("hydro_budget", forecast_data),
             )
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HydroDispatch, c_sys5_hy_uc))
@@ -1158,18 +1165,13 @@ function build_c_sys5_hy_ed(; kwargs...)
         for (ix, l) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
-                ta = hydro_timeseries_DA[t][ix]
+                ta = storage_target_DA[t][ix]
                 for i in 1:length(ta)
                     ini_time = timestamp(ta[i])
-                    data = when(hydro_timeseries_RT[t][ix], hour, hour(ini_time[1]))
+                    data = when(storage_target_RT[t][ix], hour, hour(ini_time[1]))
                     forecast_data[ini_time[1]] = data
                 end
             end
-            PSY.add_time_series!(
-                c_sys5_hy_ed,
-                l,
-                PSY.Deterministic("storage_capacity", forecast_data),
-            )
             PSY.add_time_series!(
                 c_sys5_hy_ed,
                 l,
@@ -1190,6 +1192,22 @@ function build_c_sys5_hy_ed(; kwargs...)
                 c_sys5_hy_ed,
                 l,
                 PSY.Deterministic("inflow", forecast_data),
+            )
+        end
+        for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_ed))
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ta = hydro_budget_DA[t][ix]
+                for i in 1:length(ta)
+                    ini_time = timestamp(ta[i])
+                    data = when(hydro_budget_RT[t][ix] .* 0.8, hour, hour(ini_time[1]))
+                    forecast_data[ini_time[1]] = data
+                end
+            end
+            PSY.add_time_series!(
+                c_sys5_hy_ed,
+                h,
+                PSY.Deterministic("hydro_budget", forecast_data),
             )
         end
         for (ix, l) in enumerate(PSY.get_components(PSY.InterruptibleLoad, c_sys5_hy_ed))
@@ -2613,8 +2631,8 @@ function build_c_sys5_bat_ems(; kwargs...)
         for (ix, r) in enumerate(get_components(PSY.BatteryEMS, c_sys5_bat))
             forecast_data = SortedDict{Dates.DateTime, TimeArray}()
             for t in 1:2
-                ini_time = timestamp(battery_target_timeseries_DA[t])[1]
-                forecast_data[ini_time] = battery_target_timeseries_DA[t]
+                ini_time = timestamp(storage_target_DA[t][1])[1]
+                forecast_data[ini_time] = storage_target_DA[t][1]
             end
             add_time_series!(c_sys5_bat, r, Deterministic("storage_target", forecast_data))
         end
@@ -2714,8 +2732,14 @@ function build_c_sys5_hybrid(; kwargs...)
         reactive_power_limits = (min = -2.0, max = 2.0),
         base_power = 100.0,
         storage_target = 0.2,
-        penalty_cost = 1e5,
-        energy_value = 0.0,
+        operation_cost = PSY.StorageManagementCost(
+            variable = PSY.VariableCost(0.0),
+            fixed = 0.0,
+            start_up = 0.0,
+            shut_down = 0.0,
+            energy_shortage_cost = 50.0,
+            energy_surplus_cost = 40.0,
+        ),
     )
     hyd = [
         HybridSystem(

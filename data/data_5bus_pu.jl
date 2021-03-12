@@ -300,6 +300,33 @@ wind_ts_DA = [
     0.069569628
 ]
 
+hydro_inflow_ts_DA = [
+    0.314300
+    0.386684
+    0.228582
+    0.226677
+    0.222867
+    0.129530
+    0.144768
+    0.365731
+    0.207628
+    0.622885
+    0.670507
+    0.676221
+    0.668602
+    0.407638
+    0.321919
+    0.369541
+    0.287632
+    0.449544
+    0.630505
+    0.731462
+    0.777178
+    0.712413
+    0.780988
+    0.190485
+];
+
 thermal_generators5(nodes5) = [
     ThermalStandard(;
         name = "Alta",
@@ -632,12 +659,12 @@ hydro_generators5(nodes5) = [
         active_power = 0.0,
         reactive_power = 0.0,
         #rating = 4.0,
-        rating = 0.6,
+        rating = 6.0,
         prime_mover = PrimeMovers.HY,
         #active_power_limits = (min = 0.0, max = 3.0),
         #reactive_power_limits = (min = -1.5, max = 1.5),
-        active_power_limits = (min = 0.0, max = 60.0),
-        reactive_power_limits = (min = 0.0, max = 60.0),
+        active_power_limits = (min = 0.0, max = 6.0),
+        reactive_power_limits = (min = 0.0, max = 6.0),
         ramp_limits = nothing,
         time_limits = nothing,
         base_power = 100.0,
@@ -649,23 +676,21 @@ hydro_generators5(nodes5) = [
         active_power = 0.0,
         reactive_power = 0.0,
         #rating = 4.0,
-        rating = 0.5,
+        rating = 7.0,
         prime_mover = PrimeMovers.HY,
         #active_power_limits = (min = 0.1, max = 3.0),
         #reactive_power_limits = (min = -1.5, max = 1.5),
-        active_power_limits = (min = 0.0, max = 60.0),
-        reactive_power_limits = (min = 0.0, max = 60.0),
+        active_power_limits = (min = 0.0, max = 7.0),
+        reactive_power_limits = (min = 0.0, max = 7.0),
         #ramp_limits = (up = 1.0, down = 1.0),
-        ramp_limits = (up = 10.0 * 0.6, down = 10.0 * 0.6),
+        ramp_limits = (up = 7.0, down = 7.0),
         time_limits = nothing,
-        operation_cost = TwoPartCost(0.150, 0.0),
+        operation_cost = TwoPartCost(0.15, 0.0),
         base_power = 100.0,
-        storage_capacity = 0.1, # 50 pu * hr (i.e. 5 GWh)
-        inflow = 1.0,
-        initial_storage = 0.9,
-        #storage_capacity = 50.0, # 50 pu * hr (i.e. 5 GWh)
-        #inflow = 0.5,
-        #initial_storage = 25.0,
+        storage_capacity = 50.0, # 50 pu * hr (i.e. 5 GWh)
+        inflow = 4.0,
+        conversion_factor = 1.0,
+        initial_storage = 0.5,
     ),
 ];
 
@@ -676,24 +701,25 @@ phes5(nodes5) = [
         bus = nodes5[3],
         active_power = 0.0,
         reactive_power = 0.0,
-        rating = 0.5,
+        rating = 5.0,
         base_power = 100.0,
         prime_mover = PrimeMovers.HY,
-        active_power_limits = (min = 0.0, max = 60.0),
-        reactive_power_limits = (min = 0.0, max = 60.0),
-        ramp_limits = (up = 10.0 * 0.6, down = 10.0 * 0.6),
+        active_power_limits = (min = 0.0, max = 5.0),
+        reactive_power_limits = (min = 0.0, max = 5.0),
+        ramp_limits = (up = 10.0 * 0.5, down = 10.0 * 0.5),
         time_limits = nothing,
-        operation_cost = TwoPartCost(0.150, 0.0),
+        operation_cost = TwoPartCost(0.15, 0.0),
         rating_pump = 0.2,
         active_power_limits_pump = (min = 0.0, max = 10.0),
         reactive_power_limits_pump = (min = 0.0, max = 10.0),
         ramp_limits_pump = (up = 10.0 * 0.6, down = 10.0 * 0.6),
         time_limits_pump = nothing,
-        storage_capacity = (up = 1.0, down = 1.0), # 50 pu * hr (i.e. 5 GWh)
-        inflow = 0.2,
-        outflow = 0.2,
+        storage_capacity = (up = 25.0, down = 25.0), # 50 pu * hr (i.e. 5 GWh)
+        inflow = 3.0,
+        outflow = 1.0,
         initial_storage = (up = 0.5, down = 0.5),
-        storage_target = (up = 0.75, down = 0.75),
+        storage_target = (up = 0.5, down = 0.75),
+        conversion_factor = 1.0,
         pump_efficiency = 1.0,
     ),
 ];
@@ -703,20 +729,20 @@ battery5(nodes5) = [GenericBattery(
     prime_mover = PrimeMovers.BA,
     available = true,
     bus = nodes5[1],
-    initial_energy = 5.0,
-    state_of_charge_limits = (min = 5.0, max = 100.0),
-    rating = 70.0,
-    active_power = 10.0,
-    input_active_power_limits = (min = 0.0, max = 50.0),
-    output_active_power_limits = (min = 0.0, max = 50.0),
+    initial_energy = 2.0,
+    state_of_charge_limits = (min = 0.05, max = 4.0),
+    rating = 4.0,
+    active_power = 4.0,
+    input_active_power_limits = (min = 0.0, max = 2.0),
+    output_active_power_limits = (min = 0.0, max = 2.0),
     efficiency = (in = 0.80, out = 0.90),
     reactive_power = 0.0,
-    reactive_power_limits = (min = -50.0, max = 50.0),
+    reactive_power_limits = (min = -2.0, max = 2.0),
     base_power = 100.0,
 )];
 
 batteryems5(nodes5) = [
-     PSY.BatteryEMS(
+     PSY.BatteryEMS(;
          name = "Bat2",
          prime_mover = PrimeMovers.BA,
          available = true,
@@ -732,8 +758,14 @@ batteryems5(nodes5) = [
          reactive_power_limits = (min = -2.0, max = 2.0),
          base_power = 100.0,
          storage_target=0.2,
-         penalty_cost=1e5,
-         energy_value=0.0,
+         operation_cost = PSY.StorageManagementCost(
+            variable = VariableCost(0.0),
+            fixed = 0.0,
+            start_up = 0.0,
+            shut_down = 0.0,
+            energy_shortage_cost = 50.0,
+            energy_surplus_cost = 40.0,
+         ),
      )
  ];
 
@@ -859,12 +891,12 @@ interruptible(nodes5) = [InterruptibleLoad(
     true,
     nodes5[4],
     LoadModels.ConstantPower,
-    0.10,
+    1.00,
     0.0,
-    0.10,
+    1.00,
     0.0,
     100.0,
-    TwoPartCost(150.0, 2400.0),
+    TwoPartCost(1.50, 24.0),
 )]
 
 ORDC_cost = [(9000.0, 0.0), (6000.0, 0.2), (500.0, 0.4), (10.0, 0.6), (0.0, 0.8)]
@@ -922,20 +954,20 @@ hybrid_cost_ts = [
 Reserve_ts = [TimeSeries.TimeArray(DayAhead, rand(24)), TimeSeries.TimeArray(DayAhead + Day(1), rand(24))]
 
 hydro_timeseries_DA = [
-    [TimeSeries.TimeArray(DayAhead, wind_ts_DA)],
-    [TimeSeries.TimeArray(DayAhead + Day(1), wind_ts_DA)],
+    [TimeSeries.TimeArray(DayAhead, hydro_inflow_ts_DA)],
+    [TimeSeries.TimeArray(DayAhead + Day(1), ones(24) * 0.1 + hydro_inflow_ts_DA)],
 ];
 
-#budget_aux = zeros(24)
-#budget_aux[end] = 0.5
-#hydro_budget_DA = [
-#    [TimeSeries.TimeArray(DayAhead, budget_aux)],
-#    [TimeSeries.TimeArray(DayAhead + Day(1), budget_aux .* 1.2)],
-#]
+storage_target = zeros(24)
+storage_target[end] = 0.5
+storage_target_DA = [
+   [TimeSeries.TimeArray(DayAhead, storage_target)],
+   [TimeSeries.TimeArray(DayAhead + Day(1), storage_target)],
+];
 
 hydro_budget_DA = [
-    [TimeSeries.TimeArray(DayAhead, wind_ts_DA)],
-    [TimeSeries.TimeArray(DayAhead + Day(1), wind_ts_DA)],
+    [TimeSeries.TimeArray(DayAhead, hydro_inflow_ts_DA * 0.8)],
+    [TimeSeries.TimeArray(DayAhead + Day(1), hydro_inflow_ts_DA * 0.8)],
 ];
 
 RealTime = collect(
@@ -946,8 +978,18 @@ RealTime = collect(
 )
 
 hydro_timeseries_RT = [
-    [TimeSeries.TimeArray(RealTime, repeat(wind_ts_DA, inner = 12))],
-    [TimeSeries.TimeArray(RealTime + Day(1), repeat(wind_ts_DA, inner = 12))],
+    [TimeSeries.TimeArray(RealTime, repeat(hydro_inflow_ts_DA, inner = 12))],
+    [TimeSeries.TimeArray(RealTime + Day(1), ones(288) * 0.1 + repeat(hydro_inflow_ts_DA, inner = 12))],
+];
+
+storage_target_RT = [
+    [TimeSeries.TimeArray(RealTime, repeat(storage_target, inner = 12))],
+    [TimeSeries.TimeArray(RealTime + Day(1), repeat(storage_target, inner = 12))],
+];
+
+hydro_budget_RT = [
+    [TimeSeries.TimeArray(RealTime, repeat(hydro_inflow_ts_DA  * 0.8, inner = 12))],
+    [TimeSeries.TimeArray(RealTime + Day(1), repeat(hydro_inflow_ts_DA  * 0.8, inner = 12))],
 ];
 
 load_timeseries_RT = [
@@ -1006,11 +1048,6 @@ ren_timeseries_DA = [
         TimeSeries.TimeArray(DayAhead + Day(1), rand(24) * 0.1 + wind_ts_DA),
     ],
 ];
-
-battery_target_timeseries_DA = [
-    TimeArray(DayAhead, repeat([0.5], 24)),
-    TimeArray(DayAhead + Day(1), repeat([0.6], 24) ),
-]
 
 Iload_timeseries_DA = [
     [TimeSeries.TimeArray(DayAhead, loadbus4_ts_DA)],
