@@ -995,7 +995,7 @@ hydro_timeseries_DA = [
 ];
 
 storage_target = zeros(24)
-storage_target[end] = 0.5
+storage_target[end] = 0.1
 storage_target_DA = [
    [TimeSeries.TimeArray(DayAhead, storage_target)],
    [TimeSeries.TimeArray(DayAhead + Day(1), storage_target)],
