@@ -514,7 +514,6 @@ function build_c_sys5_hyd_ems(; kwargs...)
     return c_sys5_hyd
 end
 
-
 function build_c_sys5_bat(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true)
@@ -3579,21 +3578,23 @@ function build_hydro_test_case_b_sys(; kwargs...)
             energy_surplus_cost = 10.0,
         ),
         base_power = 100.0,
-        storage_capacity = 50.0, 
+        storage_capacity = 50.0,
         inflow = 4.0,
         conversion_factor = 1.0,
         initial_storage = 0.5,
-    );
-    duration_load = [0.3, 0.6, 0.5 ];
-    load_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, duration_load))
+    )
+    duration_load = [0.3, 0.6, 0.5]
+    load_data =
+        SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, duration_load))
     load_forecast_dur = PSY.Deterministic("max_active_power", load_data)
 
-    inflow = [0.5, 0.5, 0.5 ];
+    inflow = [0.5, 0.5, 0.5]
     inflow_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, inflow))
     inflow_forecast_dur = PSY.Deterministic("inflow", inflow_data)
 
-    energy_target = [0.0, 0.0, 0.1];
-    energy_target_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, energy_target))
+    energy_target = [0.0, 0.0, 0.1]
+    energy_target_data =
+        SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, energy_target))
     energy_target_forecast_dur = PSY.Deterministic("storage_target", energy_target_data)
 
     hydro_test_case_b_sys = PSY.System(100.0; sys_kwargs...)
@@ -3639,21 +3640,23 @@ function build_hydro_test_case_c_sys(; kwargs...)
             energy_surplus_cost = 0.0,
         ),
         base_power = 100.0,
-        storage_capacity = 50.0, 
+        storage_capacity = 50.0,
         inflow = 4.0,
         conversion_factor = 1.0,
         initial_storage = 0.5,
-    );
-    duration_load = [0.3, 0.6, 0.5 ];
-    load_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, duration_load))
+    )
+    duration_load = [0.3, 0.6, 0.5]
+    load_data =
+        SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, duration_load))
     load_forecast_dur = PSY.Deterministic("max_active_power", load_data)
 
-    inflow = [0.5, 0.5, 0.5 ];
+    inflow = [0.5, 0.5, 0.5]
     inflow_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, inflow))
     inflow_forecast_dur = PSY.Deterministic("inflow", inflow_data)
 
-    energy_target = [0.0, 0.0, 0.1];
-    energy_target_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, energy_target))
+    energy_target = [0.0, 0.0, 0.1]
+    energy_target_data =
+        SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, energy_target))
     energy_target_forecast_dur = PSY.Deterministic("storage_target", energy_target_data)
 
     hydro_test_case_c_sys = PSY.System(100.0; sys_kwargs...)
@@ -3699,21 +3702,23 @@ function build_hydro_test_case_d_sys(; kwargs...)
             energy_surplus_cost = -5.0,
         ),
         base_power = 100.0,
-        storage_capacity = 50.0, 
+        storage_capacity = 50.0,
         inflow = 4.0,
         conversion_factor = 1.0,
         initial_storage = 0.5,
-    );
-    duration_load = [0.3, 0.6, 0.5 ];
-    load_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, duration_load))
+    )
+    duration_load = [0.3, 0.6, 0.5]
+    load_data =
+        SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, duration_load))
     load_forecast_dur = PSY.Deterministic("max_active_power", load_data)
 
-    inflow = [0.5, 0.5, 0.5 ];
+    inflow = [0.5, 0.5, 0.5]
     inflow_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, inflow))
     inflow_forecast_dur = PSY.Deterministic("inflow", inflow_data)
 
-    energy_target = [0.0, 0.0, 0.0];
-    energy_target_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, energy_target))
+    energy_target = [0.0, 0.0, 0.0]
+    energy_target_data =
+        SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, energy_target))
     energy_target_forecast_dur = PSY.Deterministic("storage_target", energy_target_data)
 
     hydro_test_case_d_sys = PSY.System(100.0; sys_kwargs...)
@@ -3726,7 +3731,6 @@ function build_hydro_test_case_d_sys(; kwargs...)
 
     return hydro_test_case_d_sys
 end
-
 
 function build_hydro_test_case_e_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
@@ -3760,21 +3764,23 @@ function build_hydro_test_case_e_sys(; kwargs...)
             energy_surplus_cost = 40.0,
         ),
         base_power = 100.0,
-        storage_capacity = 50.0, 
+        storage_capacity = 50.0,
         inflow = 4.0,
         conversion_factor = 1.0,
         initial_storage = 20.0,
-    );
-    duration_load = [0.3, 0.6, 0.5 ];
-    load_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, duration_load))
+    )
+    duration_load = [0.3, 0.6, 0.5]
+    load_data =
+        SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, duration_load))
     load_forecast_dur = PSY.Deterministic("max_active_power", load_data)
 
-    inflow = [0.5, 0.5, 0.5 ];
+    inflow = [0.5, 0.5, 0.5]
     inflow_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, inflow))
     inflow_forecast_dur = PSY.Deterministic("inflow", inflow_data)
 
-    energy_target = [0.2, 0.2, 0.0];
-    energy_target_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, energy_target))
+    energy_target = [0.2, 0.2, 0.0]
+    energy_target_data =
+        SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, energy_target))
     energy_target_forecast_dur = PSY.Deterministic("storage_target", energy_target_data)
 
     hydro_test_case_e_sys = PSY.System(100.0; sys_kwargs...)
@@ -3820,21 +3826,23 @@ function build_hydro_test_case_f_sys(; kwargs...)
             energy_surplus_cost = -5.0,
         ),
         base_power = 100.0,
-        storage_capacity = 50.0, 
+        storage_capacity = 50.0,
         inflow = 4.0,
         conversion_factor = 1.0,
         initial_storage = 10.0,
-    );
-    duration_load = [0.3, 0.6, 0.5 ];
-    load_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, duration_load))
+    )
+    duration_load = [0.3, 0.6, 0.5]
+    load_data =
+        SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, duration_load))
     load_forecast_dur = PSY.Deterministic("max_active_power", load_data)
 
-    inflow = [0.5, 0.5, 0.5 ];
+    inflow = [0.5, 0.5, 0.5]
     inflow_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, inflow))
     inflow_forecast_dur = PSY.Deterministic("inflow", inflow_data)
 
-    energy_target = [0.0, 0.0, 0.1];
-    energy_target_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, energy_target))
+    energy_target = [0.0, 0.0, 0.1]
+    energy_target_data =
+        SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, energy_target))
     energy_target_forecast_dur = PSY.Deterministic("storage_target", energy_target_data)
 
     hydro_test_case_f_sys = PSY.System(100.0; sys_kwargs...)
@@ -3847,7 +3855,6 @@ function build_hydro_test_case_f_sys(; kwargs...)
 
     return hydro_test_case_f_sys
 end
-
 
 function build_batt_test_case_b_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
@@ -3872,46 +3879,47 @@ function build_batt_test_case_b_sys(; kwargs...)
         1.0,
         TwoPartCost(0.220, 0.0),
         100.0,
-    );
+    )
 
     batt = PSY.BatteryEMS(;
-         name = "Bat2",
-         prime_mover = PrimeMovers.BA,
-         available = true,
-         bus = node,
-         initial_energy = 5.0,
-         state_of_charge_limits = (min = .10, max = 7.0),
-         rating = 7.0,
-         active_power = 2.0,
-         input_active_power_limits = (min = 0.0, max = 2.0),
-         output_active_power_limits = (min = 0.0, max = 2.0),
-         efficiency = (in = 0.80, out = 0.90),
-         reactive_power = 0.0,
-         reactive_power_limits = (min = -2.0, max = 2.0),
-         base_power = 100.0,
-         storage_target=0.2,
-         operation_cost = PSY.StorageManagementCost(
+        name = "Bat2",
+        prime_mover = PrimeMovers.BA,
+        available = true,
+        bus = node,
+        initial_energy = 5.0,
+        state_of_charge_limits = (min = 0.10, max = 7.0),
+        rating = 7.0,
+        active_power = 2.0,
+        input_active_power_limits = (min = 0.0, max = 2.0),
+        output_active_power_limits = (min = 0.0, max = 2.0),
+        efficiency = (in = 0.80, out = 0.90),
+        reactive_power = 0.0,
+        reactive_power_limits = (min = -2.0, max = 2.0),
+        base_power = 100.0,
+        storage_target = 0.2,
+        operation_cost = PSY.StorageManagementCost(
             variable = PSY.VariableCost(0.0),
             fixed = 0.0,
             start_up = 0.0,
             shut_down = 0.0,
             energy_shortage_cost = 0.001,
             energy_surplus_cost = 10.0,
-         ),
-     )
-    load_ts = [0.3, 0.6, 0.5 ];
+        ),
+    )
+    load_ts = [0.3, 0.6, 0.5]
     load_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, load_ts))
     load_forecast = PSY.Deterministic("max_active_power", load_data)
 
-    wind_ts = [0.5, 0.7, 0.8 ];
+    wind_ts = [0.5, 0.7, 0.8]
     wind_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, wind_ts))
     wind_forecast = PSY.Deterministic("max_active_power", wind_data)
 
-    energy_target = [0.4, 0.4, 0.1];
-    energy_target_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, energy_target))
+    energy_target = [0.4, 0.4, 0.1]
+    energy_target_data =
+        SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, energy_target))
     energy_target_forecast = PSY.Deterministic("storage_target", energy_target_data)
 
-    batt_test_case_b_sys = PSY.System(100.0; )#sys_kwargs...)
+    batt_test_case_b_sys = PSY.System(100.0; sys_kwargs...)
     PSY.add_component!(batt_test_case_b_sys, node)
     PSY.add_component!(batt_test_case_b_sys, load)
     PSY.add_component!(batt_test_case_b_sys, re)
@@ -3946,46 +3954,47 @@ function build_batt_test_case_c_sys(; kwargs...)
         1.0,
         TwoPartCost(0.220, 0.0),
         100.0,
-    );
+    )
 
     batt = PSY.BatteryEMS(;
-         name = "Bat2",
-         prime_mover = PrimeMovers.BA,
-         available = true,
-         bus = node,
-         initial_energy = 2.0,
-         state_of_charge_limits = (min = .10, max = 7.0),
-         rating = 7.0,
-         active_power = 2.0,
-         input_active_power_limits = (min = 0.0, max = 2.0),
-         output_active_power_limits = (min = 0.0, max = 2.0),
-         efficiency = (in = 0.80, out = 0.90),
-         reactive_power = 0.0,
-         reactive_power_limits = (min = -2.0, max = 2.0),
-         base_power = 100.0,
-         storage_target=0.2,
-         operation_cost = PSY.StorageManagementCost(
+        name = "Bat2",
+        prime_mover = PrimeMovers.BA,
+        available = true,
+        bus = node,
+        initial_energy = 2.0,
+        state_of_charge_limits = (min = 0.10, max = 7.0),
+        rating = 7.0,
+        active_power = 2.0,
+        input_active_power_limits = (min = 0.0, max = 2.0),
+        output_active_power_limits = (min = 0.0, max = 2.0),
+        efficiency = (in = 0.80, out = 0.90),
+        reactive_power = 0.0,
+        reactive_power_limits = (min = -2.0, max = 2.0),
+        base_power = 100.0,
+        storage_target = 0.2,
+        operation_cost = PSY.StorageManagementCost(
             variable = PSY.VariableCost(0.0),
             fixed = 0.0,
             start_up = 0.0,
             shut_down = 0.0,
             energy_shortage_cost = 50.0,
             energy_surplus_cost = 0.0,
-         ),
-     )
-    load_ts = [0.3, 0.6, 0.5 ];
+        ),
+    )
+    load_ts = [0.3, 0.6, 0.5]
     load_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, load_ts))
     load_forecast = PSY.Deterministic("max_active_power", load_data)
 
-    wind_ts = [0.9, 0.7, 0.8 ];
+    wind_ts = [0.9, 0.7, 0.8]
     wind_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, wind_ts))
     wind_forecast = PSY.Deterministic("max_active_power", wind_data)
 
-    energy_target = [0.0, 0.0, 0.4];
-    energy_target_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, energy_target))
+    energy_target = [0.0, 0.0, 0.4]
+    energy_target_data =
+        SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, energy_target))
     energy_target_forecast = PSY.Deterministic("storage_target", energy_target_data)
 
-    batt_test_case_c_sys = PSY.System(100.0; )#sys_kwargs...)
+    batt_test_case_c_sys = PSY.System(100.0; sys_kwargs...)
     PSY.add_component!(batt_test_case_c_sys, node)
     PSY.add_component!(batt_test_case_c_sys, load)
     PSY.add_component!(batt_test_case_c_sys, re)
@@ -4020,46 +4029,47 @@ function build_batt_test_case_d_sys(; kwargs...)
         1.0,
         TwoPartCost(0.220, 0.0),
         100.0,
-    );
+    )
 
     batt = PSY.BatteryEMS(;
-         name = "Bat2",
-         prime_mover = PrimeMovers.BA,
-         available = true,
-         bus = node,
-         initial_energy = 2.0,
-         state_of_charge_limits = (min = .10, max = 7.0),
-         rating = 7.0,
-         active_power = 2.0,
-         input_active_power_limits = (min = 0.0, max = 2.0),
-         output_active_power_limits = (min = 0.0, max = 2.0),
-         efficiency = (in = 0.80, out = 0.90),
-         reactive_power = 0.0,
-         reactive_power_limits = (min = -2.0, max = 2.0),
-         base_power = 100.0,
-         storage_target=0.2,
-         operation_cost = PSY.StorageManagementCost(
+        name = "Bat2",
+        prime_mover = PrimeMovers.BA,
+        available = true,
+        bus = node,
+        initial_energy = 2.0,
+        state_of_charge_limits = (min = 0.10, max = 7.0),
+        rating = 7.0,
+        active_power = 2.0,
+        input_active_power_limits = (min = 0.0, max = 2.0),
+        output_active_power_limits = (min = 0.0, max = 2.0),
+        efficiency = (in = 0.80, out = 0.90),
+        reactive_power = 0.0,
+        reactive_power_limits = (min = -2.0, max = 2.0),
+        base_power = 100.0,
+        storage_target = 0.2,
+        operation_cost = PSY.StorageManagementCost(
             variable = PSY.VariableCost(0.0),
             fixed = 0.0,
             start_up = 0.0,
             shut_down = 0.0,
             energy_shortage_cost = 0.0,
             energy_surplus_cost = -10.0,
-         ),
-     )
-    load_ts = [0.3, 0.6, 0.5, 0.8 ];
+        ),
+    )
+    load_ts = [0.3, 0.6, 0.5, 0.8]
     load_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, load_ts))
     load_forecast = PSY.Deterministic("max_active_power", load_data)
 
-    wind_ts = [0.9, 0.7, 0.8, 0.1];
+    wind_ts = [0.9, 0.7, 0.8, 0.1]
     wind_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, wind_ts))
     wind_forecast = PSY.Deterministic("max_active_power", wind_data)
 
-    energy_target = [0.0, 0.0, 0.0, 0.0];
-    energy_target_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, energy_target))
+    energy_target = [0.0, 0.0, 0.0, 0.0]
+    energy_target_data =
+        SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, energy_target))
     energy_target_forecast = PSY.Deterministic("storage_target", energy_target_data)
 
-    batt_test_case_d_sys = PSY.System(100.0; )#sys_kwargs...)
+    batt_test_case_d_sys = PSY.System(100.0; sys_kwargs...)
     PSY.add_component!(batt_test_case_d_sys, node)
     PSY.add_component!(batt_test_case_d_sys, load)
     PSY.add_component!(batt_test_case_d_sys, re)
@@ -4094,46 +4104,47 @@ function build_batt_test_case_e_sys(; kwargs...)
         1.0,
         TwoPartCost(0.220, 0.0),
         100.0,
-    );
+    )
 
     batt = PSY.BatteryEMS(;
-         name = "Bat2",
-         prime_mover = PrimeMovers.BA,
-         available = true,
-         bus = node,
-         initial_energy = 2.0,
-         state_of_charge_limits = (min = .10, max = 7.0),
-         rating = 7.0,
-         active_power = 2.0,
-         input_active_power_limits = (min = 0.0, max = 2.0),
-         output_active_power_limits = (min = 0.0, max = 2.0),
-         efficiency = (in = 0.80, out = 0.90),
-         reactive_power = 0.0,
-         reactive_power_limits = (min = -2.0, max = 2.0),
-         base_power = 100.0,
-         storage_target=0.2,
-         operation_cost = PSY.StorageManagementCost(
+        name = "Bat2",
+        prime_mover = PrimeMovers.BA,
+        available = true,
+        bus = node,
+        initial_energy = 2.0,
+        state_of_charge_limits = (min = 0.10, max = 7.0),
+        rating = 7.0,
+        active_power = 2.0,
+        input_active_power_limits = (min = 0.0, max = 2.0),
+        output_active_power_limits = (min = 0.0, max = 2.0),
+        efficiency = (in = 0.80, out = 0.90),
+        reactive_power = 0.0,
+        reactive_power_limits = (min = -2.0, max = 2.0),
+        base_power = 100.0,
+        storage_target = 0.2,
+        operation_cost = PSY.StorageManagementCost(
             variable = PSY.VariableCost(0.0),
             fixed = 0.0,
             start_up = 0.0,
             shut_down = 0.0,
             energy_shortage_cost = 50.0,
             energy_surplus_cost = 50.0,
-         ),
-     )
-    load_ts = [0.3, 0.6, 0.5 ];
+        ),
+    )
+    load_ts = [0.3, 0.6, 0.5]
     load_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, load_ts))
     load_forecast = PSY.Deterministic("max_active_power", load_data)
 
-    wind_ts = [0.9, 0.7, 0.8];
+    wind_ts = [0.9, 0.7, 0.8]
     wind_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, wind_ts))
     wind_forecast = PSY.Deterministic("max_active_power", wind_data)
 
-    energy_target = [0.2, 0.2, 0.0];
-    energy_target_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, energy_target))
+    energy_target = [0.2, 0.2, 0.0]
+    energy_target_data =
+        SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, energy_target))
     energy_target_forecast = PSY.Deterministic("storage_target", energy_target_data)
 
-    batt_test_case_e_sys = PSY.System(100.0; )#sys_kwargs...)
+    batt_test_case_e_sys = PSY.System(100.0; sys_kwargs...)
     PSY.add_component!(batt_test_case_e_sys, node)
     PSY.add_component!(batt_test_case_e_sys, load)
     PSY.add_component!(batt_test_case_e_sys, re)
@@ -4168,46 +4179,47 @@ function build_batt_test_case_f_sys(; kwargs...)
         1.0,
         TwoPartCost(0.220, 0.0),
         100.0,
-    );
+    )
 
     batt = PSY.BatteryEMS(;
-         name = "Bat2",
-         prime_mover = PrimeMovers.BA,
-         available = true,
-         bus = node,
-         initial_energy = 1.0,
-         state_of_charge_limits = (min = .10, max = 7.0),
-         rating = 7.0,
-         active_power = 2.0,
-         input_active_power_limits = (min = 0.0, max = 2.0),
-         output_active_power_limits = (min = 0.0, max = 2.0),
-         efficiency = (in = 0.80, out = 0.90),
-         reactive_power = 0.0,
-         reactive_power_limits = (min = -2.0, max = 2.0),
-         base_power = 100.0,
-         storage_target=0.2,
-         operation_cost = PSY.StorageManagementCost(
+        name = "Bat2",
+        prime_mover = PrimeMovers.BA,
+        available = true,
+        bus = node,
+        initial_energy = 1.0,
+        state_of_charge_limits = (min = 0.10, max = 7.0),
+        rating = 7.0,
+        active_power = 2.0,
+        input_active_power_limits = (min = 0.0, max = 2.0),
+        output_active_power_limits = (min = 0.0, max = 2.0),
+        efficiency = (in = 0.80, out = 0.90),
+        reactive_power = 0.0,
+        reactive_power_limits = (min = -2.0, max = 2.0),
+        base_power = 100.0,
+        storage_target = 0.2,
+        operation_cost = PSY.StorageManagementCost(
             variable = PSY.VariableCost(0.0),
             fixed = 0.0,
             start_up = 0.0,
             shut_down = 0.0,
             energy_shortage_cost = 50.0,
             energy_surplus_cost = -5.0,
-         ),
-     )
-    load_ts = [0.3, 0.6, 0.5 ];
+        ),
+    )
+    load_ts = [0.3, 0.6, 0.5]
     load_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, load_ts))
     load_forecast = PSY.Deterministic("max_active_power", load_data)
 
-    wind_ts = [0.9, 0.7, 0.8];
+    wind_ts = [0.9, 0.7, 0.8]
     wind_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, wind_ts))
     wind_forecast = PSY.Deterministic("max_active_power", wind_data)
 
-    energy_target = [0.0, 0.0, 0.3];
-    energy_target_data = SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, energy_target))
+    energy_target = [0.0, 0.0, 0.3]
+    energy_target_data =
+        SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, energy_target))
     energy_target_forecast = PSY.Deterministic("storage_target", energy_target_data)
 
-    batt_test_case_f_sys = PSY.System(100.0; )#sys_kwargs...)
+    batt_test_case_f_sys = PSY.System(100.0; sys_kwargs...)
     PSY.add_component!(batt_test_case_f_sys, node)
     PSY.add_component!(batt_test_case_f_sys, load)
     PSY.add_component!(batt_test_case_f_sys, re)
