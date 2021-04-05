@@ -3300,11 +3300,14 @@ function build_RTS_GMLC_sys(; kwargs...)
     return sys
 end
 
-function build_modified_RTS_GMLC_DA_sys(; kwargs...)
+function make_modified_RTS_GMLC_sys(resolution::Dates.TimePeriod = Hour(1); kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     RTS_GMLC_DIR = get_raw_data(; kwargs...)
     RTS_SRC_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "SourceData")
     RTS_SIIP_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "FormattedData", "SIIP")
+    DISPATCH_INCREASE = 2.0
+    FIX_DECREASE = 0.3
+
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
@@ -3313,7 +3316,7 @@ function build_modified_RTS_GMLC_DA_sys(; kwargs...)
         generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
     )
 
-    sys = PSY.System(rawsys; time_series_resolution = Dates.Hour(1), sys_kwargs...)
+    sys = PSY.System(rawsys; time_series_resolution = resolution, sys_kwargs...)
     PSY.set_units_base_system!(sys, "SYSTEM_BASE")
     res_up = PSY.get_component(PSY.VariableReserve{PSY.ReserveUp}, sys, "Flex_Up")
     res_dn = PSY.get_component(PSY.VariableReserve{PSY.ReserveDown}, sys, "Flex_Down")
@@ -3342,99 +3345,91 @@ function build_modified_RTS_GMLC_DA_sys(; kwargs...)
         PSY.clear_services!(g)
         PSY.add_service!(g, reg_reserve_dn)
         PSY.add_service!(g, reg_reserve_up)
-        #Remove units that make no sense to include
-        names = [
-            "114_SYNC_COND_1",
-            "314_SYNC_COND_1",
-            "313_STORAGE_1",
-            "214_SYNC_COND_1",
-            "212_CSP_1",
-        ]
-        for d in PSY.get_components(PSY.Generator, sys, x -> x.name ∈ names)
+    end
+    #Remove units that make no sense to include
+    names = [
+        "114_SYNC_COND_1",
+        "314_SYNC_COND_1",
+        "313_STORAGE_1",
+        "214_SYNC_COND_1",
+        "212_CSP_1",
+    ]
+    for d in PSY.get_components(PSY.Generator, sys, x -> x.name ∈ names)
+        PSY.remove_component!(sys, d)
+    end
+    for br in PSY.get_components(PSY.DCBranch, sys)
+        PSY.remove_component!(sys, br)
+    end
+    for d in PSY.get_components(PSY.Storage, sys)
+        PSY.remove_component!(sys, d)
+    end
+    # Remove large Coal and Nuclear from reserves
+    for d in PSY.get_components(
+        PSY.ThermalStandard,
+        sys,
+        x -> (occursin(r"STEAM|NUCLEAR", PSY.get_name(x))),
+    )
+        PSY.get_fuel(d) == PSY.ThermalFuels.COAL &&
+            (PSY.set_ramp_limits!(d, (up = 0.001, down = 0.001)))
+        if PSY.get_fuel(d) == PSY.ThermalFuels.DISTILLATE_FUEL_OIL
             PSY.remove_component!(sys, d)
+            continue
         end
-        for br in PSY.get_components(PSY.DCBranch, sys)
-            PSY.remove_component!(sys, br)
+        PSY.get_operation_cost(d).shut_down = PSY.get_operation_cost(d).start_up / 2.0
+        if PSY.get_rating(d) < 3
+            PSY.set_status!(d, false)
+            PSY.set_status!(d, false)
+            PSY.set_active_power!(d, 0.0)
+            continue
         end
-        for d in PSY.get_components(PSY.Storage, sys)
-            PSY.remove_component!(sys, d)
-        end
-        # Remove large Coal and Nuclear from reserves
-        for d in PSY.get_components(
-            PSY.ThermalStandard,
-            sys,
-            x -> (occursin(r"STEAM|NUCLEAR", PSY.get_name(x))),
-        )
-            PSY.get_fuel(d) == PSY.ThermalFuels.COAL &&
-                (PSY.set_ramp_limits!(d, (up = 0.001, down = 0.001)))
-            if PSY.get_fuel(d) == PSY.ThermalFuels.DISTILLATE_FUEL_OIL
-                PSY.remove_component!(sys, d)
-                continue
-            end
-            PSY.get_operation_cost(d).shut_down = PSY.get_operation_cost(d).start_up / 2.0
-            if PSY.get_rating(d) < 3
-                PSY.set_status!(d, false)
-                PSY.set_status!(d, false)
-                PSY.set_active_power!(d, 0.0)
-                continue
-            end
-            PSY.clear_services!(d)
-            if PSY.get_fuel(d) == PSY.ThermalFuels.NUCLEAR
-                PSY.set_ramp_limits!(d, (up = 0.0, down = 0.0))
-                PSY.set_time_limits!(d, (up = 4380.0, down = 4380.0))
-            end
-        end
-        for d in PSY.get_components(PSY.RenewableDispatch, sys)
-            PSY.clear_services!(d)
-        end
-
-        # Add Hydro to regulation reserves
-        for d in PSY.get_components(PSY.HydroEnergyReservoir, sys)
-            PSY.remove_component!(sys, d)
-        end
-
-        for d in PSY.get_components(PSY.HydroDispatch, sys)
-            PSY.clear_services!(d)
-        end
-
-        for g in PSY.get_components(
-            PSY.RenewableDispatch,
-            sys,
-            x -> PSY.get_prime_mover(x) == PSY.PrimeMovers.PVe,
-        )
-            rat_ = PSY.get_rating(g)
-            PSY.set_rating!(g, PSY.DISPATCH_INCREASE * rat_)
-        end
-
-        for g in PSY.get_components(
-            PSY.RenewableFix,
-            sys,
-            x -> PSY.get_prime_mover(x) == PSY.PrimeMovers.PVe,
-        )
-            rat_ = PSY.get_rating(g)
-            PSY.set_rating!(g, PSY.FIX_DECREASE * rat_)
+        PSY.clear_services!(d)
+        if PSY.get_fuel(d) == PSY.ThermalFuels.NUCLEAR
+            PSY.set_ramp_limits!(d, (up = 0.0, down = 0.0))
+            PSY.set_time_limits!(d, (up = 4380.0, down = 4380.0))
         end
     end
+    for d in PSY.get_components(PSY.RenewableDispatch, sys)
+        PSY.clear_services!(d)
+    end
 
+    # Add Hydro to regulation reserves
+    for d in PSY.get_components(PSY.HydroEnergyReservoir, sys)
+        PSY.remove_component!(sys, d)
+    end
+
+    for d in PSY.get_components(PSY.HydroDispatch, sys)
+        PSY.clear_services!(d)
+    end
+
+    for g in PSY.get_components(
+        PSY.RenewableDispatch,
+        sys,
+        x -> PSY.get_prime_mover(x) == PSY.PrimeMovers.PVe,
+    )
+        rat_ = PSY.get_rating(g)
+        PSY.set_rating!(g, DISPATCH_INCREASE * rat_)
+    end
+
+    for g in PSY.get_components(
+        PSY.RenewableFix,
+        sys,
+        x -> PSY.get_prime_mover(x) == PSY.PrimeMovers.PVe,
+    )
+        rat_ = PSY.get_rating(g)
+        PSY.set_rating!(g, FIX_DECREASE * rat_)
+    end
+
+    return sys
+end
+
+function build_modified_RTS_GMLC_DA_sys(; kwargs...)
+    sys = make_modified_RTS_GMLC_sys(; kwargs...)
     PSY.transform_single_time_series!(sys, 48, Hour(24))
     return sys
 end
 
 function build_modified_RTS_GMLC_RT_sys(; kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
-    RTS_GMLC_DIR = get_raw_data(; kwargs...)
-    RTS_SRC_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "SourceData")
-    RTS_SIIP_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "FormattedData", "SIIP")
-    rawsys = PSY.PowerSystemTableData(
-        RTS_SRC_DIR,
-        100.0,
-        joinpath(RTS_SIIP_DIR, "user_descriptors.yaml"),
-        timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
-        generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
-    )
-
-    sys = PSY.System(rawsys; time_series_resolution = Dates.Minute(5), sys_kwargs...)
-
+    sys = make_modified_RTS_GMLC_sys(Minute(5); kwargs...)
     # Add area renewable energy forecasts for RT model
     area_mapping = PSY.get_aggregation_topology_mapping(PSY.Area, sys)
     for (k, buses_in_area) in area_mapping
@@ -3444,104 +3439,6 @@ function build_modified_RTS_GMLC_RT_sys(; kwargs...)
             PSY.set_area!(b, PSY.get_component(PSY.Area, sys, "1"))
         end
     end
-    PSY.set_units_base_system!(sys, "SYSTEM_BASE")
-    res_up = PSY.get_component(PSY.VariableReserve{PSY.ReserveUp}, sys, "Flex_Up")
-    res_dn = PSY.get_component(PSY.VariableReserve{PSY.ReserveDown}, sys, "Flex_Down")
-    PSY.remove_component!(sys, res_dn)
-    PSY.remove_component!(sys, res_up)
-    reg_reserve_up = PSY.get_component(PSY.VariableReserve, sys, "Reg_Up")
-    reg_reserve_dn = PSY.get_component(PSY.VariableReserve, sys, "Reg_Down")
-
-    for g in PSY.get_components(
-        PSY.ThermalStandard,
-        sys,
-        x -> PSY.get_prime_mover(x) in [PSY.PrimeMovers.CT, PSY.PrimeMovers.CC],
-    )
-        if PSY.get_fuel(g) == PSY.ThermalFuels.DISTILLATE_FUEL_OIL
-            PSY.remove_component!(sys, g)
-            continue
-        end
-        g.operation_cost.shut_down = g.operation_cost.start_up / 2.0
-        if PSY.get_base_power(g) > 3
-            continue
-        end
-        PSY.clear_services!(g)
-        PSY.add_service!(g, reg_reserve_dn)
-        PSY.add_service!(g, reg_reserve_up)
-        #Remove units that make no sense to include
-        names = [
-            "114_SYNC_COND_1",
-            "314_SYNC_COND_1",
-            "313_STORAGE_1",
-            "214_SYNC_COND_1",
-            "212_CSP_1",
-        ]
-        for d in PSY.get_components(PSY.Generator, sys, x -> x.name ∈ names)
-            PSY.remove_component!(sys, d)
-        end
-        for br in PSY.get_components(PSY.DCBranch, sys)
-            PSY.remove_component!(sys, br)
-        end
-        for d in PSY.get_components(PSY.Storage, sys)
-            PSY.remove_component!(sys, d)
-        end
-        # Remove large Coal and Nuclear from reserves
-        for d in PSY.get_components(
-            PSY.ThermalStandard,
-            sys,
-            x -> (occursin(r"STEAM|NUCLEAR", PSY.get_name(x))),
-        )
-            PSY.get_fuel(d) == PSY.ThermalFuels.COAL &&
-                (PSY.set_ramp_limits!(d, (up = 0.001, down = 0.001)))
-            if PSY.get_fuel(d) == PSY.ThermalFuels.DISTILLATE_FUEL_OIL
-                PSY.remove_component!(sys, d)
-                continue
-            end
-            PSY.get_operation_cost(d).shut_down = PSY.get_operation_cost(d).start_up / 2.0
-            if PSY.get_rating(d) < 3
-                PSY.set_status!(d, false)
-                PSY.set_status!(d, false)
-                PSY.set_active_power!(d, 0.0)
-                continue
-            end
-            PSY.clear_services!(d)
-            if PSY.get_fuel(d) == PSY.ThermalFuels.NUCLEAR
-                PSY.set_ramp_limits!(d, (up = 0.0, down = 0.0))
-                PSY.set_time_limits!(d, (up = 4380.0, down = 4380.0))
-            end
-        end
-        for d in PSY.get_components(PSY.RenewableDispatch, sys)
-            PSY.clear_services!(d)
-        end
-
-        # Add Hydro to regulation reserves
-        for d in PSY.get_components(PSY.HydroEnergyReservoir, sys)
-            PSY.remove_component!(sys, d)
-        end
-
-        for d in PSY.get_components(PSY.HydroDispatch, sys)
-            PSY.clear_services!(d)
-        end
-
-        for g in PSY.get_components(
-            PSY.RenewableDispatch,
-            sys,
-            x -> PSY.get_prime_mover(x) == PSY.PrimeMovers.PVe,
-        )
-            rat_ = PSY.get_rating(g)
-            PSY.set_rating!(g, PSY.DISPATCH_INCREASE * rat_)
-        end
-
-        for g in PSY.get_components(
-            PSY.RenewableFix,
-            sys,
-            x -> PSY.get_prime_mover(x) == PSY.PrimeMovers.PVe,
-        )
-            rat_ = PSY.get_rating(g)
-            PSY.set_rating!(g, PSY.FIX_DECREASE * rat_)
-        end
-    end
-
     PSY.transform_single_time_series!(sys, 12, Minute(15))
     return sys
 end
