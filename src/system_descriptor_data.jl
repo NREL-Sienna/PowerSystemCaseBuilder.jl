@@ -165,7 +165,7 @@ const SYSTEM_CATELOG = [
         description = "5-bus with regulation devices and AGC",
         category = PSITestSystems,
         raw_data = "data/data_5bus_pu.jl",
-        build_function = build_c_sys5_reg
+        build_function = build_c_sys5_reg,
     ),
     SystemDescriptor(
         name = "c_ramp_test",
