@@ -2940,7 +2940,7 @@ function build_dynamic_inverter_sys(; kwargs...)
 
     outer_control = PSY.OuterControl(virtual_H, Q_control)
 
-    vsc = PSY.CurrentControl(
+    vsc = PSY.VoltageModeControl(
         0.59, #kpv:: Voltage controller proportional gain
         736.0, #kiv:: Voltage controller integral gain
         0.0, #kffv:: Binary variable enabling the voltage feed-forward in output of current controllers
