@@ -707,6 +707,13 @@ const SYSTEM_CATELOG = [
         build_function = build_psse_3bus_gen_cls_sys,
     ),
     SystemDescriptor(
+        name = "psse_3bus_SEXS_sys",
+        description = "PSSE 3-bus Test system with SEXS",
+        category = PSSETestSystems,
+        raw_data = joinpath(PACKAGE_DIR, "data", "PSSE_test"),
+        build_function = build_psse_3bus_sexs_sys,
+    ),
+    SystemDescriptor(
         name = "psse_3bus_no_cls_sys",
         description = "PSSE 3-bus Test system without CLS",
         category = PSSETestSystems,
