@@ -165,7 +165,7 @@ const SYSTEM_CATELOG = [
         description = "5-bus with regulation devices and AGC",
         category = PSITestSystems,
         raw_data = "data/data_5bus_pu.jl",
-        build_function = build_c_sys5_reg,
+        build_function = build_c_sys5_reg
     ),
     SystemDescriptor(
         name = "c_ramp_test",
@@ -705,6 +705,13 @@ const SYSTEM_CATELOG = [
         category = PSSETestSystems,
         raw_data = joinpath(PACKAGE_DIR, "data", "PSSE_test"),
         build_function = build_psse_3bus_gen_cls_sys,
+    ),
+    SystemDescriptor(
+        name = "psse_3bus_SEXS_sys",
+        description = "PSSE 3-bus Test system with SEXS",
+        category = PSSETestSystems,
+        raw_data = joinpath(PACKAGE_DIR, "data", "PSSE_test"),
+        build_function = build_psse_3bus_sexs_sys,
     ),
     SystemDescriptor(
         name = "psse_3bus_no_cls_sys",
