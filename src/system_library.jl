@@ -2852,7 +2852,7 @@ function build_psse_3bus_sexs_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
     file_path = joinpath(data_dir, "ThreeBusNetwork.raw")
-    dyr_file = joinpath(data_dir, "Test_SEXS.dyr")
+    dyr_file = joinpath(data_dir, "test_SEXS.dyr")
     sys = PSY.System(file_path, dyr_file; sys_kwargs...)
     return sys
 end
