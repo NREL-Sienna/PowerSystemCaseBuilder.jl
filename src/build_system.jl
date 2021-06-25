@@ -12,11 +12,14 @@ Accepted Key Words:
 - `force_build::Bool`: `true` runs entire build process, `false` (Default) uses deserializiation if possible
 - `skip_serialization::Bool`: Default is `false`
 - `system_catelog::SystemCatalog`
+- `assign_new_uuids::Bool`: Assign new UUIDs to the system and all components if
+   deserialization is used. Default is `true`.
 """
 function build_system(
     category::Type{<:SystemCategory},
     name::String,
     print_stat::Bool = false;
+    assign_new_uuids = true,
     kwargs...,
 )
     add_forecasts = get(kwargs, :add_forecasts, true)
@@ -50,7 +53,8 @@ function build_system(
         # time_series_in_memory = get(kwargs, :time_series_in_memory, false)
         sys_kwargs = filter_kwargs(; kwargs...)
         file_path = get_serialized_filepath(name, add_forecasts, add_reserves)
-        sys = PSY.System(file_path; sys_kwargs...)
+        sys = PSY.System(file_path; assign_new_uuids = assign_new_uuids, sys_kwargs...)
+        @show PSY.get_runchecks(sys)
         # update_stats!(sys_descriptor, time() - start)
     end
     # print_stat ? print_stats(sys_descriptor) : nothing
