@@ -1999,7 +1999,7 @@ function build_duration_test_sys(; kwargs...)
         PSY.ThermalStandard(
             name = "Alta",
             available = true,
-            status = true,
+            status = false,
             bus = node,
             active_power = 0.40,
             reactive_power = 0.010,
@@ -3155,8 +3155,8 @@ function build_c_sys5_hybrid(; kwargs...)
             # operation_cost = TwoPartCost(nothing),
             interconnection_rating = 5.0,
             interconnection_impedance = nothing,
-            input_active_power_limits = (min = 0.2, max = 5.0),
-            output_active_power_limits = (min = 0.2, max = 5.0),
+            input_active_power_limits = (min = 0.0, max = 5.0),
+            output_active_power_limits = (min = 0.0, max = 5.0),
             reactive_power_limits = nothing,
         ),
         HybridSystem(

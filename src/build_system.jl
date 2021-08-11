@@ -54,7 +54,7 @@ function build_system(
         sys_kwargs = filter_kwargs(; kwargs...)
         file_path = get_serialized_filepath(name, add_forecasts, add_reserves)
         sys = PSY.System(file_path; assign_new_uuids = assign_new_uuids, sys_kwargs...)
-        @show PSY.get_runchecks(sys)
+        PSY.get_runchecks(sys)
         # update_stats!(sys_descriptor, time() - start)
     end
     # print_stat ? print_stats(sys_descriptor) : nothing
