@@ -3300,8 +3300,8 @@ function build_c_sys5_hybrid(; kwargs...)
             # operation_cost = TwoPartCost(nothing),
             interconnection_rating = 10.0,
             interconnection_impedance = nothing,
-            input_active_power_limits = (min = 0.5, max = 10.0),
-            output_active_power_limits = (min = 0.5, max = 10.0),
+            input_active_power_limits = (min = 0.0, max = 10.0),
+            output_active_power_limits = (min = 0.0, max = 10.0),
             reactive_power_limits = nothing,
         ),
         HybridSystem(
@@ -3318,8 +3318,8 @@ function build_c_sys5_hybrid(; kwargs...)
             # operation_cost = TwoPartCost(nothing),
             interconnection_rating = 10.0,
             interconnection_impedance = nothing,
-            input_active_power_limits = (min = 0.5, max = 10.0),
-            output_active_power_limits = (min = 0.5, max = 10.0),
+            input_active_power_limits = (min = 0.0, max = 10.0),
+            output_active_power_limits = (min = 0.0, max = 10.0),
             reactive_power_limits = nothing,
         ),
         HybridSystem(
@@ -3337,8 +3337,8 @@ function build_c_sys5_hybrid(; kwargs...)
             # operation_cost = MarketBidCost(nothing),
             interconnection_rating = 15.0,
             interconnection_impedance = nothing,
-            input_active_power_limits = (min = 0.5, max = 15.0),
-            output_active_power_limits = (min = 0.5, max = 15.0),
+            input_active_power_limits = (min = 0.0, max = 15.0),
+            output_active_power_limits = (min = 0.0, max = 15.0),
             reactive_power_limits = nothing,
         ),
     ]
