@@ -2183,6 +2183,50 @@ function build_5_bus_hydro_uc_sys(; kwargs...)
     return c_sys5_hy_uc
 end
 
+function build_5_bus_hydro_uc_sys_targets(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    data_dir = get_raw_data(; kwargs...)
+    rawsys = PSY.PowerSystemTableData(
+        joinpath(data_dir, "5-bus-hydro"),
+        100.0,
+        joinpath(data_dir, "5-bus-hydro", "user_descriptors.yaml");
+        generator_mapping_file = joinpath(
+            data_dir,
+            "5-bus-hydro",
+            "generator_mapping.yaml",
+        ),
+    )
+    if get(kwargs, :add_forecasts, true)
+        c_sys5_hy_uc = PSY.System(
+            rawsys,
+            timeseries_metadata_file = joinpath(
+                data_dir,
+                "forecasts",
+                "5bus_ts",
+                "7day",
+                "timeseries_pointers_da_7day.json",
+            ),
+            time_series_in_memory = true,
+            sys_kwargs...,
+        )
+        PSY.transform_single_time_series!(c_sys5_hy_uc, 24, Hour(24))
+    else
+        c_sys5_hy_uc = PSY.System(rawsys; sys_kwargs...)
+    end
+    cost = PSY.StorageManagementCost(
+        variable = VariableCost(0.15),
+        fixed = 0.0,
+        start_up = 0.0,
+        shut_down = 0.0,
+        energy_shortage_cost = 50.0,
+        energy_surplus_cost = 0.0,
+    )
+    for hy in get_components(HydroEnergyReservoir, c_sys5_hy_uc)
+        set_operation_cost!(hy, cost)
+    end
+    return c_sys5_hy_uc
+end
+
 function build_5_bus_hydro_ed_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
@@ -2213,6 +2257,47 @@ function build_5_bus_hydro_ed_sys(; kwargs...)
     return c_sys5_hy_ed
 end
 
+function build_5_bus_hydro_ed_sys_targets(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    data_dir = get_raw_data(; kwargs...)
+    rawsys = PSY.PowerSystemTableData(
+        joinpath(data_dir, "5-bus-hydro"),
+        100.0,
+        joinpath(data_dir, "5-bus-hydro", "user_descriptors.yaml");
+        generator_mapping_file = joinpath(
+            data_dir,
+            "5-bus-hydro",
+            "generator_mapping.yaml",
+        ),
+    )
+    c_sys5_hy_ed = PSY.System(
+        rawsys,
+        timeseries_metadata_file = joinpath(
+            data_dir,
+            "forecasts",
+            "5bus_ts",
+            "7day",
+            "timeseries_pointers_rt_7day.json",
+        ),
+        time_series_in_memory = true,
+        sys_kwargs...,
+    )
+    cost = PSY.StorageManagementCost(
+        variable = VariableCost(0.15),
+        fixed = 0.0,
+        start_up = 0.0,
+        shut_down = 0.0,
+        energy_shortage_cost = 50.0,
+        energy_surplus_cost = 0.0,
+    )
+    for hy in get_components(HydroEnergyReservoir, c_sys5_hy_ed)
+        set_operation_cost!(hy, cost)
+    end
+    PSY.transform_single_time_series!(c_sys5_hy_ed, 12, Hour(1))
+
+    return c_sys5_hy_ed
+end
+
 function build_5_bus_hydro_wk_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
@@ -2238,6 +2323,47 @@ function build_5_bus_hydro_wk_sys(; kwargs...)
         time_series_in_memory = true,
         sys_kwargs...,
     )
+    PSY.transform_single_time_series!(c_sys5_hy_wk, 2, Hour(48))
+
+    return c_sys5_hy_wk
+end
+
+function build_5_bus_hydro_wk_sys_targets(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    data_dir = get_raw_data(; kwargs...)
+    rawsys = PSY.PowerSystemTableData(
+        joinpath(data_dir, "5-bus-hydro"),
+        100.0,
+        joinpath(data_dir, "5-bus-hydro", "user_descriptors.yaml");
+        generator_mapping_file = joinpath(
+            data_dir,
+            "5-bus-hydro",
+            "generator_mapping.yaml",
+        ),
+    )
+    c_sys5_hy_wk = PSY.System(
+        rawsys,
+        timeseries_metadata_file = joinpath(
+            data_dir,
+            "forecasts",
+            "5bus_ts",
+            "7day",
+            "timeseries_pointers_wk_7day.json",
+        ),
+        time_series_in_memory = true,
+        sys_kwargs...,
+    )
+    cost = PSY.StorageManagementCost(
+        variable = VariableCost(0.15),
+        fixed = 0.0,
+        start_up = 0.0,
+        shut_down = 0.0,
+        energy_shortage_cost = 50.0,
+        energy_surplus_cost = 0.0,
+    )
+    for hy in get_components(HydroEnergyReservoir, c_sys5_hy_wk)
+        set_operation_cost!(hy, cost)
+    end
     PSY.transform_single_time_series!(c_sys5_hy_wk, 2, Hour(48))
 
     return c_sys5_hy_wk
@@ -3155,8 +3281,8 @@ function build_c_sys5_hybrid(; kwargs...)
             # operation_cost = TwoPartCost(nothing),
             interconnection_rating = 5.0,
             interconnection_impedance = nothing,
-            input_active_power_limits = (min = 0.2, max = 5.0),
-            output_active_power_limits = (min = 0.2, max = 5.0),
+            input_active_power_limits = (min = 0.0, max = 5.0),
+            output_active_power_limits = (min = 0.0, max = 5.0),
             reactive_power_limits = nothing,
         ),
         HybridSystem(
@@ -3174,8 +3300,8 @@ function build_c_sys5_hybrid(; kwargs...)
             # operation_cost = TwoPartCost(nothing),
             interconnection_rating = 10.0,
             interconnection_impedance = nothing,
-            input_active_power_limits = (min = 0.5, max = 10.0),
-            output_active_power_limits = (min = 0.5, max = 10.0),
+            input_active_power_limits = (min = 0.0, max = 10.0),
+            output_active_power_limits = (min = 0.0, max = 10.0),
             reactive_power_limits = nothing,
         ),
         HybridSystem(
@@ -3192,8 +3318,8 @@ function build_c_sys5_hybrid(; kwargs...)
             # operation_cost = TwoPartCost(nothing),
             interconnection_rating = 10.0,
             interconnection_impedance = nothing,
-            input_active_power_limits = (min = 0.5, max = 10.0),
-            output_active_power_limits = (min = 0.5, max = 10.0),
+            input_active_power_limits = (min = 0.0, max = 10.0),
+            output_active_power_limits = (min = 0.0, max = 10.0),
             reactive_power_limits = nothing,
         ),
         HybridSystem(
@@ -3211,8 +3337,8 @@ function build_c_sys5_hybrid(; kwargs...)
             # operation_cost = MarketBidCost(nothing),
             interconnection_rating = 15.0,
             interconnection_impedance = nothing,
-            input_active_power_limits = (min = 0.5, max = 15.0),
-            output_active_power_limits = (min = 0.5, max = 15.0),
+            input_active_power_limits = (min = 0.0, max = 15.0),
+            output_active_power_limits = (min = 0.0, max = 15.0),
             reactive_power_limits = nothing,
         ),
     ]

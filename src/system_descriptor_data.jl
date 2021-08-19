@@ -224,6 +224,27 @@ const SYSTEM_CATELOG = [
         build_function = build_5_bus_hydro_wk_sys,
     ),
     SystemDescriptor(
+        name = "5_bus_hydro_uc_sys_with_targets",
+        description = "5-bus hydro unit commitment data with energy targets",
+        category = SIIPExampleSystems,
+        raw_data = joinpath(PACKAGE_DIR, "data"),
+        build_function = build_5_bus_hydro_uc_sys_targets,
+    ),
+    SystemDescriptor(
+        name = "5_bus_hydro_ed_sys_with_targets",
+        description = "5-bus hydro economic dispatch data with energy targets",
+        category = SIIPExampleSystems,
+        raw_data = joinpath(PACKAGE_DIR, "data"),
+        build_function = build_5_bus_hydro_ed_sys_targets,
+    ),
+    SystemDescriptor(
+        name = "5_bus_hydro_wk_sys_with_targets",
+        description = "5-bus hydro system for weekly dispatch with energy targets",
+        category = SIIPExampleSystems,
+        raw_data = joinpath(PACKAGE_DIR, "data"),
+        build_function = build_5_bus_hydro_wk_sys_targets,
+    ),
+    SystemDescriptor(
         name = "psse_RTS_GMLC_sys",
         description = "PSSE .raw RTS-GMLC system",
         category = PSSETestSystems,
