@@ -1,4 +1,4 @@
-const SYSTEM_CATELOG = [
+const SYSTEM_CATALOG = [
     SystemDescriptor(
         name = "c_sys14",
         description = "14-bus system",
@@ -131,6 +131,13 @@ const SYSTEM_CATELOG = [
         category = PSITestSystems,
         raw_data = "data/data_5bus_pu.jl",
         build_function = build_c_sys5_uc,
+    ),
+    SystemDescriptor(
+        name = "c_sys5_uc_re",
+        description = "5-bus system for Unit Commitment Simulations with Renewable Units",
+        category = PSITestSystems,
+        raw_data = "data/data_5bus_pu.jl",
+        build_function = build_c_sys5_uc_re,
     ),
     SystemDescriptor(
         name = "c_sys5_pglib",

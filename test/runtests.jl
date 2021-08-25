@@ -11,7 +11,7 @@ using PowerSystemCaseBuilder
 const PSB = PowerSystemCaseBuilder
 
 @testset "Test Serializtion/De-Serializtion" begin
-    system_catelog = SystemCatalog(SYSTEM_CATELOG)
+    system_catelog = SystemCatalog(SYSTEM_CATALOG)
     for (type, descriptor_dict) in system_catelog.data
         for (name, descriptor) in descriptor_dict
             name == "c_sys5_hybrid" && continue

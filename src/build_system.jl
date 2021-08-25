@@ -26,7 +26,7 @@ function build_system(
     add_reserves = get(kwargs, :add_reserves, false)
     force_build = get(kwargs, :force_build, false)
     skip_serialization = get(kwargs, :skip_serialization, false)
-    system_catelog = get(kwargs, :system_catelog, SystemCatalog(SYSTEM_CATELOG))
+    system_catelog = get(kwargs, :system_catelog, SystemCatalog(SYSTEM_CATALOG))
     sys_descriptor = get_system_descriptor(category, system_catelog, name)
     if !is_serialized(name, add_forecasts, add_reserves) || force_build
         check_serialized_storage()
