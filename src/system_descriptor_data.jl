@@ -1,4 +1,4 @@
-const SYSTEM_CATELOG = [
+const SYSTEM_CATALOG = [
     SystemDescriptor(
         name = "c_sys14",
         description = "14-bus system",

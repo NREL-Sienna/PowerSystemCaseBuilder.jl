@@ -19,7 +19,7 @@ export show_categories
 export list_systems
 export show_systems
 
-export SYSTEM_CATELOG
+export SYSTEM_CATALOG
 
 # imports
 import InfrastructureSystems
