@@ -763,13 +763,6 @@ const SYSTEM_CATALOG = [
         build_function = build_dynamic_inverter_sys,
     ),
     SystemDescriptor(
-        name = "dynamic_inverter_sys",
-        description = "PSY test dynamic inverter system",
-        category = PSYTestSystems,
-        raw_data = "",
-        build_function = build_dynamic_inverter_sys,
-    ),
-    SystemDescriptor(
         name = "c_sys5_bat_ems",
         description = "5-bus system with Storage Device with EMS",
         category = PSITestSystems,
