@@ -133,7 +133,6 @@ function build_c_sys5_re(; kwargs...)
         end
     end
 
-
     if get(kwargs, :add_reserves, false)
         reserve_re = reserve5_re(PSY.get_components(PSY.RenewableDispatch, c_sys5_re))
         PSY.add_service!(
@@ -926,7 +925,6 @@ function build_c_sys5_uc(; kwargs...)
         end
     end
 
-
     if get(kwargs, :add_reserves, false)
         reserve_uc = reserve5(PSY.get_components(PSY.ThermalStandard, c_sys5_uc))
         PSY.add_service!(
@@ -962,8 +960,7 @@ function build_c_sys5_uc(; kwargs...)
                 PSY.Deterministic("requirement", forecast_data),
             )
         end
-        for (ix, serv) in
-            enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_uc))
+        for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_uc))
             forecast_data = SortedDict{Dates.DateTime, Vector{IS.PWL}}()
             for t in 1:2
                 ini_time = timestamp(ORDC_cost_ts[t])[1]
@@ -1069,8 +1066,7 @@ function build_c_sys5_uc_re(; kwargs...)
                 PSY.Deterministic("requirement", forecast_data),
             )
         end
-        for (ix, serv) in
-            enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_uc))
+        for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_uc))
             forecast_data = SortedDict{Dates.DateTime, Vector{IS.PWL}}()
             for t in 1:2
                 ini_time = timestamp(ORDC_cost_ts[t])[1]
