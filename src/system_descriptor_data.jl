@@ -140,6 +140,13 @@ const SYSTEM_CATALOG = [
         build_function = build_c_sys5_uc_re,
     ),
     SystemDescriptor(
+        name = "c_sys5_ed_re",
+        description = "5-bus system for Economic Dispatch Simulations with Renewable Units",
+        category = PSITestSystems,
+        raw_data = "data/data_5bus_pu.jl",
+        build_function = build_c_sys5_ed_re,
+    ),
+    SystemDescriptor(
         name = "c_sys5_pglib",
         description = "5-bus with ThermalMultiStart",
         category = PSITestSystems,
