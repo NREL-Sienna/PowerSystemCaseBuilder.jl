@@ -950,23 +950,33 @@ function build_c_sys5_uc(; kwargs...)
             reserve_uc[4],
             PSY.get_components(PSY.ThermalStandard, c_sys5_uc),
         )
-            for (ix, serv) in
-                enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_uc))
-                forecast_data = SortedDict{Dates.DateTime, Vector{IS.PWL}}()
-                for t in 1:2
-                    ini_time = timestamp(ORDC_cost_ts[t])[1]
-                    forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
-                end
-                resolution = timestamp(ORDC_cost_ts[1])[2] - timestamp(ORDC_cost_ts[1])[1]
-                PSY.set_variable_cost!(
-                    c_sys5_uc,
-                    serv,
-                    PSY.Deterministic("variable_cost", forecast_data, resolution),
-                )
+        for serv in PSY.get_components(PSY.VariableReserve, c_sys5_uc)
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ini_time = timestamp(Reserve_ts[t])[1]
+                forecast_data[ini_time] = Reserve_ts[t]
             end
+            PSY.add_time_series!(
+                c_sys5_uc,
+                serv,
+                PSY.Deterministic("requirement", forecast_data),
+            )
+        end
+        for (ix, serv) in
+            enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_uc))
+            forecast_data = SortedDict{Dates.DateTime, Vector{IS.PWL}}()
+            for t in 1:2
+                ini_time = timestamp(ORDC_cost_ts[t])[1]
+                forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
+            end
+            resolution = timestamp(ORDC_cost_ts[1])[2] - timestamp(ORDC_cost_ts[1])[1]
+            PSY.set_variable_cost!(
+                c_sys5_uc,
+                serv,
+                PSY.Deterministic("variable_cost", forecast_data, resolution),
+            )
         end
     end
-
     return c_sys5_uc
 end
 
