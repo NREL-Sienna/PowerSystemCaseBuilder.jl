@@ -961,8 +961,7 @@ function build_c_sys5_uc(; kwargs...)
             )
         end
 
-        for (ix, serv) in
-            enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_uc))
+        for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_uc))
             forecast_data = SortedDict{Dates.DateTime, Vector{IS.PWL}}()
             for t in 1:2
                 ini_time = timestamp(ORDC_cost_ts[t])[1]
@@ -1069,10 +1068,9 @@ function build_c_sys5_uc_re(; kwargs...)
             )
         end
 
-        for (ix, serv) in
-            enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_uc))
+        for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_uc))
             forecast_data = SortedDict{Dates.DateTime, Vector{IS.PWL}}()
-            for t in 1:
+            for t in 1:2
                 ini_time = timestamp(ORDC_cost_ts[t])[1]
                 forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
             end
