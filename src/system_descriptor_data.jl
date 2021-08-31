@@ -749,6 +749,13 @@ const SYSTEM_CATALOG = [
         build_function = build_psse_3bus_no_cls_sys,
     ),
     SystemDescriptor(
+        name = "psse_renewable_parsing_1",
+        description = "PSSE 3-bus Test system with REPCA, REECB and REGCA",
+        category = PSSETestSystems,
+        raw_data = joinpath(PACKAGE_DIR, "data", "PSSE_test"),
+        build_function = psse_renewable_parsing_1,
+    ),
+    SystemDescriptor(
         name = "dynamic_inverter_sys",
         description = "PSY test dynamic inverter system",
         category = PSYTestSystems,
