@@ -3132,6 +3132,20 @@ function build_psse_3bus_sexs_sys(; kwargs...)
     return sys
 end
 
+function build_psse_240_case_renewable_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    data_dir = get_raw_data(; kwargs...)
+    file_path = joinpath(data_dir, "240busWECC_2018_PSS33.raw")
+    dyr_file = joinpath(data_dir, "240busWECC_2018_PSS.dyr")
+    sys = PSY.System(
+        file_path,
+        dyr_file;
+        bus_name_formatter = x -> string(x["name"]) * "-" * string(x["index"]),
+        sys_kwargs...,
+    )
+    return sys
+end
+
 function build_psse_3bus_no_cls_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
