@@ -743,7 +743,7 @@ const SYSTEM_CATALOG = [
     ),
     SystemDescriptor(
         name = "psse_240_case_renewable_sys",
-        description = "PSSE 3-bus Test system with SEXS",
+        description = "PSSE 240 Bus Case system with Renewables https://www.nrel.gov/grid/test-case-repository.html",
         category = PSSETestSystems,
         raw_data = joinpath(PACKAGE_DIR, "data", "PSSE_test"),
         build_function = build_psse_240_case_renewable_sys,
