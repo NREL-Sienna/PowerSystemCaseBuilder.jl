@@ -3061,7 +3061,7 @@ end
 function psse_renewable_parsing_1(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
-    file_path = joinpath(data_dir, "Benchmark_4ger_33_2015_RENA.raw")
+    file_path = joinpath(data_dir, "Benchmark_4ger_33_2015_RENA.RAW")
     dyr_file = joinpath(data_dir, "Benchmark_4ger_33_2015_RENA.dyr")
     sys = PSY.System(file_path, dyr_file; sys_kwargs...)
     return sys
