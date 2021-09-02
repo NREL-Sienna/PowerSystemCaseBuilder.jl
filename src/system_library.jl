@@ -1179,10 +1179,10 @@ function build_c_sys5_ed(; kwargs...)
         for (ix, l) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2 # loop over days
-                ta = load_timeseries_DA[t][ix]
+                ta = ren_timeseries_DA[t][ix]
                 for i in 1:length(ta) # loop over hours
                     ini_time = timestamp(ta[i]) #get the hour
-                    data = when(load_timeseries_RT[t][ix], hour, hour(ini_time[1])) # get the subset ts for that hour
+                    data = when(ren_timeseries_DA[t][ix], hour, hour(ini_time[1])) # get the subset ts for that hour
                     forecast_data[ini_time[1]] = data
                 end
             end
@@ -1195,10 +1195,10 @@ function build_c_sys5_ed(; kwargs...)
         for (ix, l) in enumerate(PSY.get_components(PSY.InterruptibleLoad, c_sys5_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2 # loop over days
-                ta = load_timeseries_DA[t][ix]
+                ta = Iload_timeseries_DA[t][ix]
                 for i in 1:length(ta) # loop over hours
                     ini_time = timestamp(ta[i]) #get the hour
-                    data = when(load_timeseries_RT[t][ix], hour, hour(ini_time[1])) # get the subset ts for that hour
+                    data = when(Iload_timeseries_DA[t][ix], hour, hour(ini_time[1])) # get the subset ts for that hour
                     forecast_data[ini_time[1]] = data
                 end
             end
