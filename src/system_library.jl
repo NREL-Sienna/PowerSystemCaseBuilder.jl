@@ -1198,7 +1198,7 @@ function build_c_sys5_ed(; kwargs...)
                 ta = Iload_timeseries_DA[t][ix]
                 for i in 1:length(ta) # loop over hours
                     ini_time = timestamp(ta[i]) #get the hour
-                    data = when(Iload_timeseries_DA[t][ix], hour, hour(ini_time[1])) # get the subset ts for that hour
+                    data = when(Iload_timeseries_RT[t][ix], hour, hour(ini_time[1])) # get the subset ts for that hour
                     forecast_data[ini_time[1]] = data
                 end
             end
