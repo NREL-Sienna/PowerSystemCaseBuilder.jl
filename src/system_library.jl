@@ -1002,6 +1002,115 @@ function build_c_sys5_uc(; kwargs...)
     return c_sys5_uc
 end
 
+function build_c_sys5_uc_non_spin(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    nodes = nodes5()
+    c_sys5_uc = PSY.System(
+        100.0,
+        nodes,
+        vcat(thermal_pglib_generators5(nodes), thermal_generators5_uc_testing(nodes)),
+        loads5(nodes),
+        branches5(nodes);
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
+        sys_kwargs...,
+    )
+
+    if get(kwargs, :add_forecasts, true)
+        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_uc))
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ini_time = timestamp(load_timeseries_DA[t][ix])[1]
+                forecast_data[ini_time] = load_timeseries_DA[t][ix]
+            end
+            PSY.add_time_series!(
+                c_sys5_uc,
+                l,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
+        end
+    end
+    if get(kwargs, :add_single_time_series, false)
+        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_uc))
+            PSY.add_time_series!(
+                c_sys5_uc,
+                l,
+                PSY.SingleTimeSeries("max_active_power", load_timeseries_DA[1][ix]),
+            )
+        end
+    end
+    if get(kwargs, :add_reserves, false)
+        reserve_uc = reserve5(PSY.get_components(PSY.ThermalStandard, c_sys5_uc))
+        PSY.add_service!(
+            c_sys5_uc,
+            reserve_uc[1],
+            PSY.get_components(PSY.ThermalStandard, c_sys5_uc),
+        )
+        PSY.add_service!(
+            c_sys5_uc,
+            reserve_uc[2],
+            [collect(PSY.get_components(PSY.ThermalStandard, c_sys5_uc))[end]],
+        )
+        PSY.add_service!(
+            c_sys5_uc,
+            reserve_uc[3],
+            PSY.get_components(PSY.ThermalStandard, c_sys5_uc),
+        )
+        # ORDC Curve
+        PSY.add_service!(
+            c_sys5_uc,
+            reserve_uc[4],
+            PSY.get_components(PSY.ThermalStandard, c_sys5_uc),
+        )
+        # Non-spinning reserve
+        PSY.add_service!(
+            c_sys5_uc,
+            reserve_uc[5],
+            PSY.get_components(PSY.ThermalGen, c_sys5_uc),
+        )
+
+        for serv in PSY.get_components(PSY.VariableReserve, c_sys5_uc)
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ini_time = timestamp(Reserve_ts[t])[1]
+                forecast_data[ini_time] = Reserve_ts[t]
+            end
+            PSY.add_time_series!(
+                c_sys5_uc,
+                serv,
+                PSY.Deterministic("requirement", forecast_data),
+            )
+        end
+
+        for serv in PSY.get_components(PSY.VariableReserveNonSpinning, c_sys5_uc)
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ini_time = timestamp(Reserve_ts[t])[1]
+                forecast_data[ini_time] = Reserve_ts[t]
+            end
+            PSY.add_time_series!(
+                c_sys5_uc,
+                serv,
+                PSY.Deterministic("requirement", forecast_data),
+            )
+        end
+
+        for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_uc))
+            forecast_data = SortedDict{Dates.DateTime, Vector{IS.PWL}}()
+            for t in 1:2
+                ini_time = timestamp(ORDC_cost_ts[t])[1]
+                forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
+            end
+            resolution = timestamp(ORDC_cost_ts[1])[2] - timestamp(ORDC_cost_ts[1])[1]
+            PSY.set_variable_cost!(
+                c_sys5_uc,
+                serv,
+                PSY.Deterministic("variable_cost", forecast_data, resolution),
+            )
+        end
+    end
+    return c_sys5_uc
+end
+
 function build_c_sys5_uc_re(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()

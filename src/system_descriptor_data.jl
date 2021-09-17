@@ -133,6 +133,13 @@ const SYSTEM_CATALOG = [
         build_function = build_c_sys5_uc,
     ),
     SystemDescriptor(
+        name = "c_sys5_uc_non_spin",
+        description = "5-bus system for Unit Commitment with Non-Spinning Reserve Simulations",
+        category = PSITestSystems,
+        raw_data = "data/data_5bus_pu.jl",
+        build_function = build_c_sys5_uc_non_spin,
+    ),
+    SystemDescriptor(
         name = "c_sys5_uc_re",
         description = "5-bus system for Unit Commitment Simulations with Renewable Units",
         category = PSITestSystems,
