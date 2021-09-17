@@ -533,8 +533,8 @@ thermal_generators5_uc_testing(nodes) = [
         fuel = ThermalFuels.COAL,
         active_power_limits = (min = 0.2, max = 0.40),
         reactive_power_limits = (min = -0.30, max = 0.30),
-        ramp_limits = nothing,
-        time_limits = nothing,
+        ramp_limits = (up = 0.40, down = 0.40),
+        time_limits = (up = 0.0, down = 0.0),
         operation_cost = ThreePartCost((0.0, 14.0), 0.0, 4.0, 2.0),
         base_power = 100.0,
     ),
@@ -551,7 +551,7 @@ thermal_generators5_uc_testing(nodes) = [
         active_power_limits = (min = 0.65, max = 1.70),
         reactive_power_limits = (min = -1.275, max = 1.275),
         ramp_limits = (up = 0.02 * 2.2125, down = 0.02 * 2.2125),
-        time_limits = nothing,
+        time_limits = (up = 0.0, down = 0.0),
         operation_cost = ThreePartCost((0.0, 15.0), 0.0, 1.5, 0.75),
         base_power = 100.0,
     ),
@@ -957,6 +957,7 @@ reserve5(thermal_generators5) = [
         maximum([gen.active_power_limits[:max] for gen in thermal_generators5]) .* 0.001,
     ),
     ReserveDemandCurve{ReserveUp}(nothing, "ORDC1", true, 0.6),
+    VariableReserveNonSpinning("NonSpinningReserve", true, 0.5, maximum([gen.active_power_limits[:max] for gen in thermal_generators5]) .* 0.001),
 ]
 
 reserve5_re(renewable_generators5) = [
@@ -1035,9 +1036,9 @@ load_timeseries_RT = [
         TimeSeries.TimeArray(RealTime, repeat(loadbus4_ts_DA, inner = 12)),
     ],
     [
-        TimeSeries.TimeArray(RealTime + Day(1), rand(288) * 0.1 + repeat(loadbus2_ts_DA, inner = 12)),
-        TimeSeries.TimeArray(RealTime + Day(1), rand(288) * 0.1 + repeat(loadbus3_ts_DA, inner = 12)),
-        TimeSeries.TimeArray(RealTime + Day(1), rand(288) * 0.1 + repeat(loadbus4_ts_DA, inner = 12)),
+        TimeSeries.TimeArray(RealTime + Day(1), rand(288) * 0.01 + repeat(loadbus2_ts_DA, inner = 12)),
+        TimeSeries.TimeArray(RealTime + Day(1), rand(288) * 0.01 + repeat(loadbus3_ts_DA, inner = 12)),
+        TimeSeries.TimeArray(RealTime + Day(1), rand(288) * 0.01 + repeat(loadbus4_ts_DA, inner = 12)),
     ],
 ]
 
