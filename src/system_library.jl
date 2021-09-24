@@ -132,20 +132,25 @@ function build_c_sys5_re(; kwargs...)
             )
         end
     end
-
     if get(kwargs, :add_single_time_series, false)
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_re))
             PSY.add_time_series!(
                 c_sys5_re,
                 l,
-                PSY.SingleTimeSeries("max_active_power", load_timeseries_DA[1][ix]),
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    vcat(load_timeseries_DA[1][ix], load_timeseries_DA[2][ix]),
+                ),
             )
         end
         for (ix, r) in enumerate(PSY.get_components(RenewableGen, c_sys5_re))
             PSY.add_time_series!(
                 c_sys5_re,
                 r,
-                PSY.SingleTimeSeries("max_active_power", ren_timeseries_DA[1][ix]),
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    vcat(ren_timeseries_DA[1][ix], ren_timeseries_DA[2][ix]),
+                ),
             )
         end
     end
@@ -357,7 +362,54 @@ function build_c_sys5_hyd(; kwargs...)
             )
         end
     end
-
+    if get(kwargs, :add_single_time_series, false)
+        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hyd))
+            PSY.add_time_series!(
+                c_sys5_hyd,
+                l,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    vcat(load_timeseries_DA[1][ix], load_timeseries_DA[2][ix]),
+                ),
+            )
+        end
+        for (ix, r) in enumerate(PSY.get_components(PSY.HydroGen, c_sys5_hyd))
+            PSY.add_time_series!(
+                c_sys5_hyd,
+                r,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    vcat(hydro_timeseries_DA[1][ix], hydro_timeseries_DA[2][ix]),
+                ),
+            )
+        end
+        for (ix, r) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd))
+            PSY.add_time_series!(
+                c_sys5_hyd,
+                r,
+                PSY.SingleTimeSeries(
+                    "hydro_budget",
+                    vcat(hydro_budget_DA[1][ix], hydro_budget_DA[2][ix]),
+                ),
+            )
+            PSY.add_time_series!(
+                c_sys5_hyd,
+                r,
+                PSY.SingleTimeSeries(
+                    "inflow",
+                    vcat(storage_target_DA[1][ix], storage_target_DA[2][ix]),
+                ),
+            )
+            PSY.add_time_series!(
+                c_sys5_hyd,
+                r,
+                PSY.SingleTimeSeries(
+                    "storage_target",
+                    vcat(hydro_budget_DA[1][ix], hydro_budget_DA[2][ix]),
+                ),
+            )
+        end
+    end
     if get(kwargs, :add_reserves, false)
         reserve_hy = reserve5_hy(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd))
         PSY.add_service!(
@@ -479,7 +531,54 @@ function build_c_sys5_hyd_ems(; kwargs...)
             )
         end
     end
-
+    if get(kwargs, :add_single_time_series, false)
+        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hyd))
+            PSY.add_time_series!(
+                c_sys5_hyd,
+                l,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    vcat(load_timeseries_DA[1][ix], load_timeseries_DA[2][ix]),
+                ),
+            )
+        end
+        for (ix, r) in enumerate(PSY.get_components(PSY.HydroGen, c_sys5_hyd))
+            PSY.add_time_series!(
+                c_sys5_hyd,
+                r,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    vcat(hydro_timeseries_DA[1][ix], hydro_timeseries_DA[2][ix]),
+                ),
+            )
+        end
+        for (ix, r) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd))
+            PSY.add_time_series!(
+                c_sys5_hyd,
+                r,
+                PSY.SingleTimeSeries(
+                    "hydro_budget",
+                    vcat(hydro_budget_DA[1][ix], hydro_budget_DA[2][ix]),
+                ),
+            )
+            PSY.add_time_series!(
+                c_sys5_hyd,
+                r,
+                PSY.SingleTimeSeries(
+                    "inflow",
+                    vcat(storage_target_DA[1][ix], storage_target_DA[2][ix]),
+                ),
+            )
+            PSY.add_time_series!(
+                c_sys5_hyd,
+                r,
+                PSY.SingleTimeSeries(
+                    "storage_target",
+                    vcat(hydro_budget_DA[1][ix], hydro_budget_DA[2][ix]),
+                ),
+            )
+        end
+    end
     if get(kwargs, :add_reserves, false)
         reserve_hy = reserve5_hy(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd))
         PSY.add_service!(
@@ -572,7 +671,28 @@ function build_c_sys5_bat(; kwargs...)
             )
         end
     end
-
+    if get(kwargs, :add_single_time_series, false)
+        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_bat))
+            PSY.add_time_series!(
+                c_sys5_bat,
+                l,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    vcat(load_timeseries_DA[1][ix], load_timeseries_DA[2][ix]),
+                ),
+            )
+        end
+        for (ix, r) in enumerate(PSY.get_components(RenewableGen, c_sys5_bat))
+            PSY.add_time_series!(
+                c_sys5_bat,
+                r,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    vcat(ren_timeseries_DA[1][ix], ren_timeseries_DA[2][ix]),
+                ),
+            )
+        end
+    end
     if get(kwargs, :add_reserves, false)
         reserve_bat = reserve5_re(PSY.get_components(PSY.RenewableDispatch, c_sys5_bat))
         PSY.add_service!(
@@ -945,7 +1065,10 @@ function build_c_sys5_uc(; kwargs...)
             PSY.add_time_series!(
                 c_sys5_uc,
                 l,
-                PSY.SingleTimeSeries("max_active_power", load_timeseries_DA[1][ix]),
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    vcat(load_timeseries_DA[1][ix], load_timeseries_DA[2][ix]),
+                ),
             )
         end
     end
@@ -1034,7 +1157,10 @@ function build_c_sys5_uc_non_spin(; kwargs...)
             PSY.add_time_series!(
                 c_sys5_uc,
                 l,
-                PSY.SingleTimeSeries("max_active_power", load_timeseries_DA[1][ix]),
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    vcat(load_timeseries_DA[1][ix], load_timeseries_DA[2][ix]),
+                ),
             )
         end
     end
@@ -1170,21 +1296,30 @@ function build_c_sys5_uc_re(; kwargs...)
             PSY.add_time_series!(
                 c_sys5_uc,
                 l,
-                PSY.SingleTimeSeries("max_active_power", load_timeseries_DA[1][ix]),
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    vcat(load_timeseries_DA[1][ix], load_timeseries_DA[2][ix]),
+                ),
             )
         end
         for (ix, r) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_uc))
             PSY.add_time_series!(
                 c_sys5_uc,
                 r,
-                PSY.SingleTimeSeries("max_active_power", ren_timeseries_DA[1][ix]),
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    vcat(ren_timeseries_DA[1][ix], ren_timeseries_DA[2][ix]),
+                ),
             )
         end
         for (ix, i) in enumerate(PSY.get_components(PSY.InterruptibleLoad, c_sys5_uc))
             PSY.add_time_series!(
                 c_sys5_uc,
                 i,
-                PSY.SingleTimeSeries("max_active_power", Iload_timeseries_DA[1][ix]),
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    vcat(Iload_timeseries_DA[1][ix], Iload_timeseries_DA[2][ix]),
+                ),
             )
         end
     end
@@ -2027,7 +2162,18 @@ function build_c_sys5_pglib(; kwargs...)
             )
         end
     end
-
+    if get(kwargs, :add_single_time_series, false)
+        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_uc))
+            PSY.add_time_series!(
+                c_sys5_uc,
+                l,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    vcat(load_timeseries_DA[1][ix], load_timeseries_DA[2][ix]),
+                ),
+            )
+        end
+    end
     if get(kwargs, :add_reserves, false)
         reserve_uc = reserve5(PSY.get_components(PSY.ThermalMultiStart, c_sys5_uc))
         PSY.add_service!(
@@ -2371,7 +2517,7 @@ function build_pwl_marketbid_sys(; kwargs...)
         data = market_bid_gen2_data,
         resolution = Hour(1),
     )
-    market_bid_load = [[1.3, 2.1], [1.3, 2.1]]
+    market_bid_load = [[0.5, 0.6], [0.5, 0.6]]
     for (ix, date) in enumerate(range(ini_time; length = 2, step = Hour(1)))
         DA_load_forecast[date] =
             TimeSeries.TimeArray([date, date + Hour(1)], market_bid_load[ix])
@@ -3424,7 +3570,38 @@ function build_c_sys5_bat_ems(; kwargs...)
             add_time_series!(c_sys5_bat, r, Deterministic("storage_target", forecast_data))
         end
     end
-
+    if get(kwargs, :add_single_time_series, false)
+        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_bat))
+            PSY.add_time_series!(
+                c_sys5_bat,
+                l,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    vcat(load_timeseries_DA[1][ix], load_timeseries_DA[2][ix]),
+                ),
+            )
+        end
+        for (ix, r) in enumerate(PSY.get_components(RenewableGen, c_sys5_bat))
+            PSY.add_time_series!(
+                c_sys5_bat,
+                r,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    vcat(ren_timeseries_DA[1][ix], ren_timeseries_DA[2][ix]),
+                ),
+            )
+        end
+        for (ix, b) in enumerate(PSY.get_components(PSY.BatteryEMS, c_sys5_bat))
+            PSY.add_time_series!(
+                c_sys5_bat,
+                b,
+                PSY.SingleTimeSeries(
+                    "storage_target",
+                    vcat(storage_target_DA[1][ix], storage_target_DA[2][ix]),
+                ),
+            )
+        end
+    end
     if get(kwargs, :add_reserves, false)
         reserve_bat = reserve5_re(get_components(RenewableDispatch, c_sys5_bat))
         add_service!(c_sys5_bat, reserve_bat[1], get_components(PSY.BatteryEMS, c_sys5_bat))
