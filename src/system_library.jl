@@ -3854,7 +3854,6 @@ function build_c_sys5_hybrid(; kwargs...)
     return c_sys5_hybrid
 end
 
-
 function build_c_sys5_hybrid_uc(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
@@ -3904,7 +3903,7 @@ function build_c_sys5_hybrid_uc(; kwargs...)
             input_active_power_limits = (min = 0.0, max = 5.0),
             output_active_power_limits = (min = 0.0, max = 5.0),
             reactive_power_limits = (min = 0.0, max = 1.0),
-        )
+        ),
     ]
 
     c_sys5_hybrid = PSY.System(
