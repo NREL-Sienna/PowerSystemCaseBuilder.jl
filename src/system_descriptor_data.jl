@@ -798,6 +798,13 @@ const SYSTEM_CATALOG = [
         build_function = build_c_sys5_hybrid,
     ),
     SystemDescriptor(
+        name = "c_sys5_hybrid_uc",
+        description = "5-bus system with Hybrid devices and thermal UC devices",
+        category = PSITestSystems,
+        raw_data = "data/data_5bus_pu.jl",
+        build_function = build_c_sys5_hybrid_uc,
+    ),
+    SystemDescriptor(
         name = "5_bus_matpower_DA",
         description = "matpower 5-bus system with DA time series",
         category = SIIPExampleSystems,
