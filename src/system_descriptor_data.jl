@@ -298,6 +298,14 @@ const SYSTEM_CATALOG = [
         build_function = build_modified_RTS_GMLC_RT_sys,
         download_function = download_RTS,
     ),
+    SystemDescriptor(
+        name = "modified_tamu_ercot_da_system",
+        description = "Modified tamu ercot day ahead system",
+        category = PSITestSystems,
+        raw_data = joinpath(PACKAGE_DIR, "data", "tamu_ercot"),
+        build_function = build_modified_tamu_ercot_da_sys,
+        download_function = download_modified_tamu_ercot_da,
+    ),
     # SystemDescriptor(
     #     name =  "US_sys",
     #     description =  "US test system",
