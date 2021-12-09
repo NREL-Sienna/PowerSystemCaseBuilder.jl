@@ -30,7 +30,11 @@ const SERIALIZE_FILE_EXTENSIONS =
     [".json", "_validation_descriptors.json", "_time_series_storage.h5"]
 
 function download_RTS(; kwargs...)
-    PowerSystems.download("https://github.com/GridMod/RTS-GMLC", "master", joinpath(PACKAGE_DIR, "data"))
+    PowerSystems.download(
+        "https://github.com/GridMod/RTS-GMLC",
+        "master",
+        joinpath(PACKAGE_DIR, "data"),
+    )
 end
 
 function download_modified_tamu_ercot_da(; kwargs...)
