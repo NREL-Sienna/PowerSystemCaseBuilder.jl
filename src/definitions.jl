@@ -30,11 +30,15 @@ const SERIALIZE_FILE_EXTENSIONS =
     [".json", "_validation_descriptors.json", "_time_series_storage.h5"]
 
 function download_RTS(; kwargs...)
-    PowerSystems.download("https://github.com/GridMod/RTS-GMLC", "master", "./data")
+    PowerSystems.download(
+        "https://github.com/GridMod/RTS-GMLC",
+        "master",
+        joinpath(PACKAGE_DIR, "data"),
+    )
 end
 
 function download_modified_tamu_ercot_da(; kwargs...)
-    directory = abspath(normpath("./data"))
+    directory = abspath(normpath(joinpath(PACKAGE_DIR, "data")))
     data = joinpath(directory, "tamu_ercot")
     # This is temporary place for hosting the dataset.
     data_urls = Dict(
