@@ -984,8 +984,8 @@ ORDC_cost_ts = [
 
 # TODO: add a sensible cost for hybrid devices
 hybrid_cost_ts = [
-    TimeSeries.TimeArray(DayAhead, repeat([45.0], 24)),
-    TimeSeries.TimeArray(DayAhead + Day(1), repeat([45.0], 24)),
+    TimeSeries.TimeArray(DayAhead, repeat([25.0], 24)),
+    TimeSeries.TimeArray(DayAhead + Day(1), repeat([25.0], 24)),
 ]
 
 Reserve_ts = [TimeSeries.TimeArray(DayAhead, rand(24)), TimeSeries.TimeArray(DayAhead + Day(1), rand(24))]
@@ -1027,6 +1027,11 @@ storage_target_RT = [
 hydro_budget_RT = [
     [TimeSeries.TimeArray(RealTime, repeat(hydro_inflow_ts_DA  * 0.8, inner = 12))],
     [TimeSeries.TimeArray(RealTime + Day(1), repeat(hydro_inflow_ts_DA  * 0.8, inner = 12))],
+];
+
+hybrid_cost_ts_RT = [
+    [TimeSeries.TimeArray(RealTime, repeat([25.0], 288))],
+    [TimeSeries.TimeArray(RealTime + Day(1), ones(288) * 0.1 + repeat([25.0], 288))],
 ];
 
 load_timeseries_RT = [

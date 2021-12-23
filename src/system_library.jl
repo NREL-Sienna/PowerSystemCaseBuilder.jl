@@ -3980,6 +3980,148 @@ function build_c_sys5_hybrid_uc(; kwargs...)
     return c_sys5_hybrid
 end
 
+function build_c_sys5_hybrid_ed(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    nodes = nodes5()
+    thermals = thermal_generators5(nodes)
+    loads = loads5(nodes)
+    renewables = renewable_generators5(nodes)
+    _battery(nodes, bus, name) = PSY.BatteryEMS(
+        name = name,
+        prime_mover = PrimeMovers.BA,
+        available = true,
+        bus = nodes[bus],
+        initial_energy = 5.0,
+        state_of_charge_limits = (min = 0.10, max = 7.0),
+        rating = 7.0,
+        active_power = 2.0,
+        input_active_power_limits = (min = 0.0, max = 2.0),
+        output_active_power_limits = (min = 0.0, max = 2.0),
+        efficiency = (in = 0.80, out = 0.90),
+        reactive_power = 0.0,
+        reactive_power_limits = (min = -2.0, max = 2.0),
+        base_power = 100.0,
+        storage_target = 0.2,
+        operation_cost = PSY.StorageManagementCost(
+            variable = PSY.VariableCost(0.0),
+            fixed = 0.0,
+            start_up = 0.0,
+            shut_down = 0.0,
+            energy_shortage_cost = 50.0,
+            energy_surplus_cost = 40.0,
+        ),
+    )
+    hyd = [
+        HybridSystem(
+            name = "RE+battery",
+            available = true,
+            status = true,
+            bus = nodes[1],
+            active_power = 6.0,
+            reactive_power = 1.0,
+            thermal_unit = nothing,
+            electric_load = nothing,
+            storage = _battery(nodes, 1, "batt_hybrid_1"),
+            renewable_unit = renewables[1],
+            base_power = 100.0,
+            interconnection_rating = 5.0,
+            interconnection_impedance = Complex(0.1),
+            input_active_power_limits = (min = 0.0, max = 5.0),
+            output_active_power_limits = (min = 0.0, max = 5.0),
+            reactive_power_limits = (min = 0.0, max = 1.0),
+        ),
+    ]
+
+    c_sys5_hybrid = PSY.System(
+        100.0,
+        nodes,
+        thermal_generators5(nodes),
+        renewable_generators5(nodes),
+        loads5(nodes),
+        branches5(nodes);
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
+        sys_kwargs...,
+    )
+
+    for d in hyd
+        PSY.add_component!(c_sys5_hybrid, d)
+        set_operation_cost!(d, MarketBidCost(nothing))
+    end
+
+    if get(kwargs, :add_forecasts, true)
+        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hybrid))
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2 # loop over days
+                ta = load_timeseries_DA[t][ix]
+                for i in 1:length(ta) # loop over hours
+                    ini_time = timestamp(ta[i]) #get the hour
+                    data = when(load_timeseries_RT[t][ix], hour, hour(ini_time[1])) # get the subset ts for that hour
+                    forecast_data[ini_time[1]] = data
+                end
+            end
+            PSY.add_time_series!(
+                c_sys5_hybrid,
+                l,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
+        end
+        for (ix, l) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_hybrid))
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ta = ren_timeseries_DA[t][ix]
+                for i in 1:length(ta)
+                    ini_time = timestamp(ta[i])
+                    data = when(ren_timeseries_RT[t][ix], hour, hour(ini_time[1]))
+                    forecast_data[ini_time[1]] = data
+                end
+            end
+            PSY.add_time_series!(
+                c_sys5_hybrid,
+                l,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
+        end
+        _re_devices = filter!(
+            x -> !isnothing(PSY.get_renewable_unit(x)),
+            collect(PSY.get_components(PSY.HybridSystem, c_sys5_hybrid)),
+        )
+        for (ix, hy) in enumerate(_re_devices)
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ta = ren_timeseries_DA[t][ix]
+                for i in 1:length(ta)
+                    ini_time = timestamp(ta[i])
+                    data = when(ren_timeseries_RT[t][ix], hour, hour(ini_time[1]))
+                    forecast_data[ini_time[1]] = data
+                end
+            end
+            PSY.add_time_series!(
+                c_sys5_hybrid,
+                PSY.get_renewable_unit(hy),
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
+        end
+        for (ix, h) in enumerate(PSY.get_components(PSY.HybridSystem, c_sys5_hybrid))
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ta = hybrid_cost_ts[t]
+                for i in 1:length(ta)
+                    ini_time = timestamp(ta[i])
+                    data = when(hybrid_cost_ts_RT[t][1], hour, hour(ini_time[1]))
+                    forecast_data[ini_time[1]] = data
+                end
+            end
+            set_variable_cost!(
+                c_sys5_hybrid,
+                h,
+                PSY.Deterministic("variable_cost", forecast_data),
+            )
+        end
+    end
+
+    return c_sys5_hybrid
+end
+
 function build_RTS_GMLC_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     RTS_GMLC_DIR = get_raw_data(; kwargs...)
