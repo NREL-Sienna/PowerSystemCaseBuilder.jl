@@ -298,6 +298,15 @@ const SYSTEM_CATALOG = [
         build_function = build_modified_RTS_GMLC_RT_sys,
         download_function = download_RTS,
     ),
+     SystemDescriptor(
+        name = "modified_RTS_GMLC_realization_sys",
+        description = "Modified RTS-GMLC Full system for real-time simulations
+            with modifications to reserve definitions to improve feasibility",
+        category = PSITestSystems,
+        raw_data = joinpath(PACKAGE_DIR, "data", "RTS-GMLC-master"),
+        build_function = build_modified_RTS_GMLC_realization_sys,
+        download_function = download_RTS,
+    ),
     SystemDescriptor(
         name = "modified_tamu_ercot_da_system",
         description = "Modified tamu ercot day ahead system",
