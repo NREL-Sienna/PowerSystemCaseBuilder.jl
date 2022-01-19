@@ -4267,7 +4267,7 @@ function build_modified_RTS_GMLC_DA_sys(; kwargs...)
     return sys
 end
 
-function build_modified_RTS_GMLC_RT_sys(; kwargs...)
+function build_modified_RTS_GMLC_realization_sys(; kwargs...)
     sys = make_modified_RTS_GMLC_sys(Minute(5); kwargs...)
     # Add area renewable energy forecasts for RT model
     area_mapping = PSY.get_aggregation_topology_mapping(PSY.Area, sys)
@@ -4278,6 +4278,11 @@ function build_modified_RTS_GMLC_RT_sys(; kwargs...)
             PSY.set_area!(b, PSY.get_component(PSY.Area, sys, "1"))
         end
     end
+    return sys
+end
+
+function build_modified_RTS_GMLC_RT_sys(; kwargs...)
+    sys = build_modified_RTS_GMLC_realization_sys(; kwargs...)
     PSY.transform_single_time_series!(sys, 12, Minute(15))
     return sys
 end

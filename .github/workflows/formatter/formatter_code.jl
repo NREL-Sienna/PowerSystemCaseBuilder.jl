@@ -1,3 +1,10 @@
+using Pkg
+Pkg.activate(@__DIR__)
+Pkg.instantiate()
+Pkg.update()
+
+using JuliaFormatter
+
 main_paths = ["./src", "./test"]
 for main_path in main_paths
     for (root, dir, files) in walkdir(main_path)
