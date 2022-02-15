@@ -3820,6 +3820,7 @@ function build_c_sys5_hybrid(; kwargs...)
                 PSY.get_electric_load(hy),
                 PSY.Deterministic("max_active_power", forecast_data),
             )
+            PSY.copy_subcomponent_time_series!(hy, PSY.get_electric_load(hy))
         end
         _re_devices = filter!(
             x -> !isnothing(PSY.get_renewable_unit(x)),
@@ -3836,6 +3837,7 @@ function build_c_sys5_hybrid(; kwargs...)
                 PSY.get_renewable_unit(hy),
                 PSY.Deterministic("max_active_power", forecast_data),
             )
+            PSY.copy_subcomponent_time_series!(hy, PSY.get_renewable_unit(hy))
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HybridSystem, c_sys5_hybrid))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
@@ -3962,6 +3964,7 @@ function build_c_sys5_hybrid_uc(; kwargs...)
                 PSY.get_renewable_unit(hy),
                 PSY.Deterministic("max_active_power", forecast_data),
             )
+            PSY.copy_subcomponent_time_series!(hy, PSY.get_renewable_unit(hy))
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HybridSystem, c_sys5_hybrid))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
@@ -4100,6 +4103,7 @@ function build_c_sys5_hybrid_ed(; kwargs...)
                 PSY.get_renewable_unit(hy),
                 PSY.Deterministic("max_active_power", forecast_data),
             )
+            PSY.copy_subcomponent_time_series!(hy, PSY.get_renewable_unit(hy))
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HybridSystem, c_sys5_hybrid))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
