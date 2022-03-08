@@ -11,7 +11,7 @@ Accepted Key Words:
 - `add_reserves::Bool`: Default is `false`
 - `force_build::Bool`: `true` runs entire build process, `false` (Default) uses deserializiation if possible
 - `skip_serialization::Bool`: Default is `false`
-- `system_catelog::SystemCatalog`
+- `system_catalog::SystemCatalog`
 - `assign_new_uuids::Bool`: Assign new UUIDs to the system and all components if
    deserialization is used. Default is `true`.
 """
