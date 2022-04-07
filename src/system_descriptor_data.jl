@@ -21,6 +21,20 @@ const SYSTEM_CATALOG = [
         build_function = build_c_sys5,
     ),
     SystemDescriptor(
+        name = "c_sys5_pjm",
+        description = "5-bus system",
+        category = PSITestSystems,
+        raw_data = "data/data_5bus_pu.jl",
+        build_function = build_c_sys5_pjm,
+    ),
+    SystemDescriptor(
+        name = "c_sys5_pjm_rt",
+        description = "5-bus system",
+        category = PSITestSystems,
+        raw_data = "data/data_5bus_pu.jl",
+        build_function = build_c_sys5_pjm_rt,
+    ),
+    SystemDescriptor(
         name = "c_sys5_bat",
         description = "5-bus system with Storage Device",
         category = PSITestSystems,
