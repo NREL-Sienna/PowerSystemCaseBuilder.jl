@@ -43,20 +43,24 @@ function build_c_sys5_pjm(; kwargs...)
         sys_kwargs...,
     )
 
-    sys_dataset = HDF5.h5read(joinpath(PACKAGE_DIR, "data", "PJM_5_BUS_7_DAYS.h5"), "Main Input File")
-    timeseries_dataset = HDF5.h5read(joinpath(PACKAGE_DIR, "data", "PJM_5_BUS_7_DAYS.h5"),"Time Series Data")
+    sys_dataset =
+        HDF5.h5read(joinpath(PACKAGE_DIR, "data", "PJM_5_BUS_7_DAYS.h5"), "Main Input File")
+    timeseries_dataset = HDF5.h5read(
+        joinpath(PACKAGE_DIR, "data", "PJM_5_BUS_7_DAYS.h5"),
+        "Time Series Data",
+    )
     refdate = first(DayAhead)
     da_load_time_series = DateTime[]
     da_load_time_series_val = Float64[]
     for i in 1:7
         for v in timeseries_dataset["DA Load Data"]["DA_LOAD_DAY_$(i)"]
-            h = refdate + Hour(v.HOUR + (i-1)*24)
+            h = refdate + Hour(v.HOUR + (i - 1) * 24)
             push!(da_load_time_series, h)
             push!(da_load_time_series_val, v.LOAD)
         end
     end
-    
-    da_timearray = TimeArray(da_load_time_series, da_load_time_series_val);
+
+    da_timearray = TimeArray(da_load_time_series, da_load_time_series_val)
     bus_dist_fact = ("Bus2" => 0.33, "Bus3" => 0.33, "Bus4" => 0.34)
     if get(kwargs, :add_forecasts, true)
         for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5))
@@ -83,19 +87,23 @@ function build_c_sys5_pjm_rt(; kwargs...)
         sys_kwargs...,
     )
 
-    sys_dataset = HDF5.h5read(joinpath(PACKAGE_DIR, "data", "PJM_5_BUS_7_DAYS.h5"), "Main Input File")
-    timeseries_dataset = HDF5.h5read(joinpath(PACKAGE_DIR, "data", "PJM_5_BUS_7_DAYS.h5"),"Time Series Data")
+    sys_dataset =
+        HDF5.h5read(joinpath(PACKAGE_DIR, "data", "PJM_5_BUS_7_DAYS.h5"), "Main Input File")
+    timeseries_dataset = HDF5.h5read(
+        joinpath(PACKAGE_DIR, "data", "PJM_5_BUS_7_DAYS.h5"),
+        "Time Series Data",
+    )
     refdate = first(DayAhead)
     rt_load_time_series = DateTime[]
     rt_load_time_series_val = Float64[]
     for i in 1:7
         for v in timeseries_dataset["Actual Load Data"]["ACTUAL_LOAD_DAY_$(i).xls"]
-            h = refdate + Second(round(v.Time*86400)) + Day(i-1)
+            h = refdate + Second(round(v.Time * 86400)) + Day(i - 1)
             push!(rt_load_time_series, h)
-            push!(rt_load_time_series_val,v.Load)
+            push!(rt_load_time_series_val, v.Load)
         end
     end
-    rt_timearray = TimeArray(rt_load_time_series, rt_load_time_series_val);
+    rt_timearray = TimeArray(rt_load_time_series, rt_load_time_series_val)
     rt_timearray = collapse(rt_timearray, Minute(5), first, TimeSeries.mean)
     bus_dist_fact = ("Bus2" => 0.33, "Bus3" => 0.33, "Bus4" => 0.34)
     if get(kwargs, :add_forecasts, true)
