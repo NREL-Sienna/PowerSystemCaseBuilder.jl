@@ -34,6 +34,7 @@ import TimeSeries
 import Dates
 import Dates: DateTime, Hour, Minute
 import CSV
+import HDF5
 const PSY = PowerSystems
 const IS = InfrastructureSystems
 
