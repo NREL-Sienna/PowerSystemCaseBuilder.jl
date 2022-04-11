@@ -42,7 +42,34 @@ function build_c_sys5_pjm(; kwargs...)
         branches5(nodes);
         sys_kwargs...,
     )
-
+    pv_device = PSY.RenewableDispatch(
+        "PVBus5",
+        true,
+        nodes[3],
+        0.0,
+        0.0,
+        3.84,
+        PrimeMovers.PVe,
+        (min = 0.0, max = 0.0),
+        1.0,
+        TwoPartCost(0.0, 0.0),
+        100.0,
+    )
+    wind_device = PSY.RenewableDispatch(
+        "WindBus1",
+        true,
+        nodes[1],
+        0.0,
+        0.0,
+        4.51,
+        PrimeMovers.WT,
+        (min = 0.0, max = 0.0),
+        1.0,
+        TwoPartCost(0.0, 0.0),
+        100.0,
+    )
+    PSY.add_component!(c_sys5, pv_device)
+    PSY.add_component!(c_sys5, wind_device)
     sys_dataset =
         HDF5.h5read(joinpath(PACKAGE_DIR, "data", "PJM_5_BUS_7_DAYS.h5"), "Main Input File")
     timeseries_dataset = HDF5.h5read(
@@ -59,15 +86,64 @@ function build_c_sys5_pjm(; kwargs...)
             push!(da_load_time_series_val, v.LOAD)
         end
     end
+    re_timeseries = Dict(
+        "PVBus5" => CSV.read(
+            joinpath(
+                PACKAGE_DIR,
+                "data",
+                "forecasts",
+                "5bus_ts",
+                "gen",
+                "Renewable",
+                "PV",
+                "da_solar.csv",
+            ),
+            DataFrame,
+        )[
+            :,
+            :SolarBusC,
+        ],
+        "WindBus1" => CSV.read(
+            joinpath(
+                PACKAGE_DIR,
+                "data",
+                "forecasts",
+                "5bus_ts",
+                "gen",
+                "Renewable",
+                "WIND",
+                "da_wind.csv",
+            ),
+            DataFrame,
+        )[
+            :,
+            :WindBusA,
+        ],
+    )
 
-    da_timearray = TimeArray(da_load_time_series, da_load_time_series_val)
-    bus_dist_fact = ("Bus2" => 0.33, "Bus3" => 0.33, "Bus4" => 0.34)
+    bus_dist_fact = Dict("Bus2" => 0.33, "Bus3" => 0.33, "Bus4" => 0.34)
     if get(kwargs, :add_forecasts, true)
         for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5))
             add_time_series!(
                 c_sys5,
                 l,
-                PSY.SingleTimeSeries("max_active_power", da_timearray),
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    TimeArray(
+                        da_load_time_series,
+                        da_load_time_series_val * bus_dist_fact[PSY.get_name(l)],
+                    ),
+                ),
+            )
+        end
+        for (ix, g) in enumerate(PSY.get_components(RenewableDispatch, c_sys5))
+            add_time_series!(
+                c_sys5,
+                g,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    TimeArray(da_load_time_series, re_timeseries[PSY.get_name(g)]),
+                ),
             )
         end
     end
@@ -86,7 +162,34 @@ function build_c_sys5_pjm_rt(; kwargs...)
         branches5(nodes);
         sys_kwargs...,
     )
-
+    pv_device = PSY.RenewableDispatch(
+        "PVBus5",
+        true,
+        nodes[3],
+        0.0,
+        0.0,
+        3.84,
+        PrimeMovers.PVe,
+        (min = 0.0, max = 0.0),
+        1.0,
+        TwoPartCost(0.0, 0.0),
+        100.0,
+    )
+    wind_device = PSY.RenewableDispatch(
+        "WindBus1",
+        true,
+        nodes[1],
+        0.0,
+        0.0,
+        4.51,
+        PrimeMovers.WT,
+        (min = 0.0, max = 0.0),
+        1.0,
+        TwoPartCost(0.0, 0.0),
+        100.0,
+    )
+    PSY.add_component!(c_sys5, pv_device)
+    PSY.add_component!(c_sys5, wind_device)
     sys_dataset =
         HDF5.h5read(joinpath(PACKAGE_DIR, "data", "PJM_5_BUS_7_DAYS.h5"), "Main Input File")
     timeseries_dataset = HDF5.h5read(
@@ -103,15 +206,69 @@ function build_c_sys5_pjm_rt(; kwargs...)
             push!(rt_load_time_series_val, v.Load)
         end
     end
+
+    re_timeseries = Dict(
+        "PVBus5" => CSV.read(
+            joinpath(
+                PACKAGE_DIR,
+                "data",
+                "forecasts",
+                "5bus_ts",
+                "gen",
+                "Renewable",
+                "PV",
+                "rt_solar.csv",
+            ),
+            DataFrame,
+        )[
+            :,
+            :SolarBusC,
+        ],
+        "WindBus1" => CSV.read(
+            joinpath(
+                PACKAGE_DIR,
+                "data",
+                "forecasts",
+                "5bus_ts",
+                "gen",
+                "Renewable",
+                "WIND",
+                "rt_wind.csv",
+            ),
+            DataFrame,
+        )[
+            :,
+            :WindBusA,
+        ],
+    )
+    rt_re_time_stamps =
+        collect(DateTime("2020-01-01T00:00:00"):Minute(5):DateTime("2020-01-07T23:55:00"))
+
     rt_timearray = TimeArray(rt_load_time_series, rt_load_time_series_val)
     rt_timearray = collapse(rt_timearray, Minute(5), first, TimeSeries.mean)
-    bus_dist_fact = ("Bus2" => 0.33, "Bus3" => 0.33, "Bus4" => 0.34)
+    bus_dist_fact = Dict("Bus2" => 0.33, "Bus3" => 0.33, "Bus4" => 0.34)
     if get(kwargs, :add_forecasts, true)
         for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5))
+            rt_timearray = TimeArray(
+                rt_load_time_series,
+                rt_load_time_series_val * bus_dist_fact[PSY.get_name(l)],
+            )
+            rt_timearray = collapse(rt_timearray, Minute(5), first, TimeSeries.mean)
             add_time_series!(
                 c_sys5,
                 l,
                 PSY.SingleTimeSeries("max_active_power", rt_timearray),
+            )
+        end
+        for (ix, g) in enumerate(PSY.get_components(RenewableDispatch, c_sys5))
+            @show length(rt_re_time_stamps)
+            add_time_series!(
+                c_sys5,
+                g,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    TimeArray(rt_re_time_stamps, re_timeseries[PSY.get_name(g)]),
+                ),
             )
         end
     end
