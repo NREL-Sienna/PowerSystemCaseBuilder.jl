@@ -5135,7 +5135,7 @@ function build_computation_benchmarks(; kwargs...)
 
     sys_kwargs = filter_kwargs(; kwargs...)
     sys_size=get(kwargs, :system_size, 36)
-    @error sys_size
+    
     GF=get(kwargs, :grid_forming, 0.05)
     Gf=get(kwargs, :grid_following, 0.15)
     trip_gen=get(kwargs, :trip_percent, 0.04)
