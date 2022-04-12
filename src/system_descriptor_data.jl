@@ -919,4 +919,11 @@ const SYSTEM_CATALOG = [
         raw_data = "data/data_5bus_pu.jl",
         build_function = build_batt_test_case_f_sys,
     ),
+    SystemDescriptor(
+        name = "computation_benchmarks",
+        description = "Benchmark systems based on modified WSCC 9 Bus system. Available sizes = [9, 18, 36, 72, 144]",
+        category = PSSETestSystems,
+        raw_data = joinpath(PACKAGE_DIR, "data", "psse_raw"),
+        build_function = build_computation_benchmarks,
+    ),
 ]
