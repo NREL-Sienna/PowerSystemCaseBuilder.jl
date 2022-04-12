@@ -5144,7 +5144,7 @@ function build_computation_benchmarks(; kwargs...)
     D_min=get(kwargs, :d_min, 1.0)
 
     data_dir = get_raw_data(; kwargs...)
-    file_path = joinpath(data_dir, "$sys_size Bus benchmark.raw")
+    file_path = joinpath(data_dir, string(sys_size, "_Bus_benchmark.raw"))
     sys = PSY.System(file_path; sys_kwargs...)
     @assert length(PSY.get_components(Bus, sys)) == sys_size
 
