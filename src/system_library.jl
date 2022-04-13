@@ -120,6 +120,7 @@ function build_c_sys5_pjm(; kwargs...)
             :WindBusA,
         ],
     )
+    re_timeseries["WindBus1"] = re_timeseries["WindBus1"]./451
 
     bus_dist_fact = Dict("Bus2" => 0.33, "Bus3" => 0.33, "Bus4" => 0.34)
     peak_load = maximum(da_load_time_series_val)
