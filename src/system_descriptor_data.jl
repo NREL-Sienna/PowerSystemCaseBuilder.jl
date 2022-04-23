@@ -287,11 +287,19 @@ const SYSTEM_CATALOG = [
         build_function = build_test_RTS_GMLC_sys,
     ),
     SystemDescriptor(
-        name = "RTS_GMLC_sys",
+        name = "RTS_GMLC_DA_sys",
         description = "RTS-GMLC Full system from git repo for day-ahead simulations",
         category = PSITestSystems,
         raw_data = joinpath(PACKAGE_DIR, "data", "RTS-GMLC-master"),
-        build_function = build_RTS_GMLC_sys,
+        build_function = build_RTS_GMLC_DA_sys,
+        download_function = download_RTS,
+    ),
+    SystemDescriptor(
+        name = "RTS_GMLC_RT_sys",
+        description = "RTS-GMLC Full system from git repo for day-ahead simulations",
+        category = PSITestSystems,
+        raw_data = joinpath(PACKAGE_DIR, "data", "RTS-GMLC-master"),
+        build_function = build_RTS_GMLC_RT_sys,
         download_function = download_RTS,
     ),
     SystemDescriptor(

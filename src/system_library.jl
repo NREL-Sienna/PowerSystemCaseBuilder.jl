@@ -120,7 +120,7 @@ function build_c_sys5_pjm(; kwargs...)
             :WindBusA,
         ],
     )
-    re_timeseries["WindBus1"] = re_timeseries["WindBus1"]./451
+    re_timeseries["WindBus1"] = re_timeseries["WindBus1"] ./ 451
 
     bus_dist_fact = Dict("Bus2" => 0.33, "Bus3" => 0.33, "Bus4" => 0.34)
     peak_load = maximum(da_load_time_series_val)
@@ -4371,7 +4371,7 @@ function build_c_sys5_hybrid_ed(; kwargs...)
     return c_sys5_hybrid
 end
 
-function build_RTS_GMLC_sys(; kwargs...)
+function build_RTS_GMLC_DA_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     RTS_GMLC_DIR = get_raw_data(; kwargs...)
     RTS_SRC_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "SourceData")
@@ -4383,8 +4383,31 @@ function build_RTS_GMLC_sys(; kwargs...)
         timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
         generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
     )
-    sys = PSY.System(rawsys; time_series_resolution = Dates.Hour(1), sys_kwargs...)
-    PSY.transform_single_time_series!(sys, 48, Dates.Hour(24))
+    resolution = get(kwargs, :time_series_resolution, Dates.Hour(1))
+    sys = PSY.System(rawsys; time_series_resolution = resolution, sys_kwargs...)
+    interval = get(kwargs, :interval, Dates.Hour(24))
+    horizon = get(kwargs, :horizon, 48)
+    PSY.transform_single_time_series!(sys, horizon, interval)
+    return sys
+end
+
+function build_RTS_GMLC_RT_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    RTS_GMLC_DIR = get_raw_data(; kwargs...)
+    RTS_SRC_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "SourceData")
+    RTS_SIIP_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "FormattedData", "SIIP")
+    rawsys = PSY.PowerSystemTableData(
+        RTS_SRC_DIR,
+        100.0,
+        joinpath(RTS_SIIP_DIR, "user_descriptors.yaml"),
+        timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
+        generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
+    )
+    resolution = get(kwargs, :time_series_resolution, Dates.Minute(5))
+    sys = PSY.System(rawsys; time_series_resolution = resolution, sys_kwargs...)
+    interval = get(kwargs, :interval, Dates.Minute(5))
+    horizon = get(kwargs, :horizon, 24)
+    PSY.transform_single_time_series!(sys, horizon, interval)
     return sys
 end
 
