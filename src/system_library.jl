@@ -261,7 +261,6 @@ function build_c_sys5_pjm_rt(; kwargs...)
             )
         end
         for (ix, g) in enumerate(PSY.get_components(RenewableDispatch, c_sys5))
-            @show length(rt_re_time_stamps)
             add_time_series!(
                 c_sys5,
                 g,
