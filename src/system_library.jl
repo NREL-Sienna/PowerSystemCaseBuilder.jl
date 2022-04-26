@@ -253,10 +253,8 @@ function build_c_sys5_pjm_rt(; kwargs...)
     if get(kwargs, :add_forecasts, true)
         for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5))
             set_max_active_power!(l, bus_dist_fact[PSY.get_name(l)] * peak_load / 100)
-            rt_timearray = TimeArray(
-                rt_load_time_series,
-                rt_load_time_series_val./peak_load,
-            )
+            rt_timearray =
+                TimeArray(rt_load_time_series, rt_load_time_series_val ./ peak_load)
             rt_timearray = collapse(rt_timearray, Minute(5), first, TimeSeries.mean)
             add_time_series!(
                 c_sys5,
