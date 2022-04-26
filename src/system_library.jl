@@ -190,8 +190,6 @@ function build_c_sys5_pjm_rt(; kwargs...)
     )
     PSY.add_component!(c_sys5, pv_device)
     PSY.add_component!(c_sys5, wind_device)
-    sys_dataset =
-        HDF5.h5read(joinpath(PACKAGE_DIR, "data", "PJM_5_BUS_7_DAYS.h5"), "Main Input File")
     timeseries_dataset = HDF5.h5read(
         joinpath(PACKAGE_DIR, "data", "PJM_5_BUS_7_DAYS.h5"),
         "Time Series Data",
@@ -241,17 +239,23 @@ function build_c_sys5_pjm_rt(; kwargs...)
             :WindBusA,
         ],
     )
+
+    re_timeseries["WindBus1"] = re_timeseries["WindBus1"] ./ 451
+    re_timeseries["PVBus5"] = re_timeseries["PVBus5"] ./ maximum(re_timeseries["PVBus5"])
+
     rt_re_time_stamps =
-        collect(DateTime("2020-01-01T00:00:00"):Minute(5):DateTime("2020-01-07T23:55:00"))
+        collect(DateTime("2024-01-01T00:00:00"):Minute(5):DateTime("2024-01-07T23:55:00"))
 
     rt_timearray = TimeArray(rt_load_time_series, rt_load_time_series_val)
     rt_timearray = collapse(rt_timearray, Minute(5), first, TimeSeries.mean)
     bus_dist_fact = Dict("Bus2" => 0.33, "Bus3" => 0.33, "Bus4" => 0.34)
+    peak_load = maximum(rt_load_time_series_val)
     if get(kwargs, :add_forecasts, true)
         for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5))
+            set_max_active_power!(l, bus_dist_fact[PSY.get_name(l)] * peak_load / 100)
             rt_timearray = TimeArray(
                 rt_load_time_series,
-                rt_load_time_series_val * bus_dist_fact[PSY.get_name(l)],
+                rt_load_time_series_val./peak_load,
             )
             rt_timearray = collapse(rt_timearray, Minute(5), first, TimeSeries.mean)
             add_time_series!(
