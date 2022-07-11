@@ -31,6 +31,252 @@ function build_c_sys5(; kwargs...)
     return c_sys5
 end
 
+function build_c_sys5_pjm(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    nodes = nodes5()
+    c_sys5 = PSY.System(
+        100.0,
+        nodes,
+        thermal_generators5(nodes),
+        loads5(nodes),
+        branches5(nodes);
+        sys_kwargs...,
+    )
+    pv_device = PSY.RenewableDispatch(
+        "PVBus5",
+        true,
+        nodes[3],
+        0.0,
+        0.0,
+        3.84,
+        PrimeMovers.PVe,
+        (min = 0.0, max = 0.0),
+        1.0,
+        TwoPartCost(0.0, 0.0),
+        100.0,
+    )
+    wind_device = PSY.RenewableDispatch(
+        "WindBus1",
+        true,
+        nodes[1],
+        0.0,
+        0.0,
+        4.51,
+        PrimeMovers.WT,
+        (min = 0.0, max = 0.0),
+        1.0,
+        TwoPartCost(0.0, 0.0),
+        100.0,
+    )
+    PSY.add_component!(c_sys5, pv_device)
+    PSY.add_component!(c_sys5, wind_device)
+    timeseries_dataset = HDF5.h5read(
+        joinpath(PACKAGE_DIR, "data", "PJM_5_BUS_7_DAYS.h5"),
+        "Time Series Data",
+    )
+    refdate = first(DayAhead)
+    da_load_time_series = DateTime[]
+    da_load_time_series_val = Float64[]
+
+    for i in 1:7
+        for v in timeseries_dataset["DA Load Data"]["DA_LOAD_DAY_$(i)"]
+            h = refdate + Hour(v.HOUR + (i - 1) * 24)
+            push!(da_load_time_series, h)
+            push!(da_load_time_series_val, v.LOAD)
+        end
+    end
+
+    re_timeseries = Dict(
+        "PVBus5" => CSV.read(
+            joinpath(
+                PACKAGE_DIR,
+                "data",
+                "forecasts",
+                "5bus_ts",
+                "gen",
+                "Renewable",
+                "PV",
+                "da_solar.csv",
+            ),
+            DataFrame,
+        )[
+            :,
+            :SolarBusC,
+        ],
+        "WindBus1" => CSV.read(
+            joinpath(
+                PACKAGE_DIR,
+                "data",
+                "forecasts",
+                "5bus_ts",
+                "gen",
+                "Renewable",
+                "WIND",
+                "da_wind.csv",
+            ),
+            DataFrame,
+        )[
+            :,
+            :WindBusA,
+        ],
+    )
+    re_timeseries["WindBus1"] = re_timeseries["WindBus1"] ./ 451
+
+    bus_dist_fact = Dict("Bus2" => 0.33, "Bus3" => 0.33, "Bus4" => 0.34)
+    peak_load = maximum(da_load_time_series_val)
+    if get(kwargs, :add_forecasts, true)
+        for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5))
+            set_max_active_power!(l, bus_dist_fact[PSY.get_name(l)] * peak_load / 100)
+            add_time_series!(
+                c_sys5,
+                l,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    TimeArray(da_load_time_series, da_load_time_series_val ./ peak_load),
+                ),
+            )
+        end
+        for (ix, g) in enumerate(PSY.get_components(RenewableDispatch, c_sys5))
+            add_time_series!(
+                c_sys5,
+                g,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    TimeArray(da_load_time_series, re_timeseries[PSY.get_name(g)]),
+                ),
+            )
+        end
+    end
+
+    return c_sys5
+end
+
+function build_c_sys5_pjm_rt(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    nodes = nodes5()
+    c_sys5 = PSY.System(
+        100.0,
+        nodes,
+        thermal_generators5(nodes),
+        loads5(nodes),
+        branches5(nodes);
+        sys_kwargs...,
+    )
+    pv_device = PSY.RenewableDispatch(
+        "PVBus5",
+        true,
+        nodes[3],
+        0.0,
+        0.0,
+        3.84,
+        PrimeMovers.PVe,
+        (min = 0.0, max = 0.0),
+        1.0,
+        TwoPartCost(0.0, 0.0),
+        100.0,
+    )
+    wind_device = PSY.RenewableDispatch(
+        "WindBus1",
+        true,
+        nodes[1],
+        0.0,
+        0.0,
+        4.51,
+        PrimeMovers.WT,
+        (min = 0.0, max = 0.0),
+        1.0,
+        TwoPartCost(0.0, 0.0),
+        100.0,
+    )
+    PSY.add_component!(c_sys5, pv_device)
+    PSY.add_component!(c_sys5, wind_device)
+    timeseries_dataset = HDF5.h5read(
+        joinpath(PACKAGE_DIR, "data", "PJM_5_BUS_7_DAYS.h5"),
+        "Time Series Data",
+    )
+    refdate = first(DayAhead)
+    rt_load_time_series = DateTime[]
+    rt_load_time_series_val = Float64[]
+    for i in 1:7
+        for v in timeseries_dataset["Actual Load Data"]["ACTUAL_LOAD_DAY_$(i).xls"]
+            h = refdate + Second(round(v.Time * 86400)) + Day(i - 1)
+            push!(rt_load_time_series, h)
+            push!(rt_load_time_series_val, v.Load)
+        end
+    end
+
+    re_timeseries = Dict(
+        "PVBus5" => CSV.read(
+            joinpath(
+                PACKAGE_DIR,
+                "data",
+                "forecasts",
+                "5bus_ts",
+                "gen",
+                "Renewable",
+                "PV",
+                "rt_solar.csv",
+            ),
+            DataFrame,
+        )[
+            :,
+            :SolarBusC,
+        ],
+        "WindBus1" => CSV.read(
+            joinpath(
+                PACKAGE_DIR,
+                "data",
+                "forecasts",
+                "5bus_ts",
+                "gen",
+                "Renewable",
+                "WIND",
+                "rt_wind.csv",
+            ),
+            DataFrame,
+        )[
+            :,
+            :WindBusA,
+        ],
+    )
+
+    re_timeseries["WindBus1"] = re_timeseries["WindBus1"] ./ 451
+    re_timeseries["PVBus5"] = re_timeseries["PVBus5"] ./ maximum(re_timeseries["PVBus5"])
+
+    rt_re_time_stamps =
+        collect(DateTime("2024-01-01T00:00:00"):Minute(5):DateTime("2024-01-07T23:55:00"))
+
+    rt_timearray = TimeArray(rt_load_time_series, rt_load_time_series_val)
+    rt_timearray = collapse(rt_timearray, Minute(5), first, TimeSeries.mean)
+    bus_dist_fact = Dict("Bus2" => 0.33, "Bus3" => 0.33, "Bus4" => 0.34)
+    peak_load = maximum(rt_load_time_series_val)
+    if get(kwargs, :add_forecasts, true)
+        for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5))
+            set_max_active_power!(l, bus_dist_fact[PSY.get_name(l)] * peak_load / 100)
+            rt_timearray =
+                TimeArray(rt_load_time_series, rt_load_time_series_val ./ peak_load)
+            rt_timearray = collapse(rt_timearray, Minute(5), first, TimeSeries.mean)
+            add_time_series!(
+                c_sys5,
+                l,
+                PSY.SingleTimeSeries("max_active_power", rt_timearray),
+            )
+        end
+        for (ix, g) in enumerate(PSY.get_components(RenewableDispatch, c_sys5))
+            add_time_series!(
+                c_sys5,
+                g,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    TimeArray(rt_re_time_stamps, re_timeseries[PSY.get_name(g)]),
+                ),
+            )
+        end
+    end
+
+    return c_sys5
+end
+
 function build_c_sys5_ml(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
@@ -4126,7 +4372,7 @@ function build_c_sys5_hybrid_ed(; kwargs...)
     return c_sys5_hybrid
 end
 
-function build_RTS_GMLC_sys(; kwargs...)
+function build_RTS_GMLC_DA_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     RTS_GMLC_DIR = get_raw_data(; kwargs...)
     RTS_SRC_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "SourceData")
@@ -4138,8 +4384,31 @@ function build_RTS_GMLC_sys(; kwargs...)
         timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
         generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
     )
-    sys = PSY.System(rawsys; time_series_resolution = Dates.Hour(1), sys_kwargs...)
-    PSY.transform_single_time_series!(sys, 48, Dates.Hour(24))
+    resolution = get(kwargs, :time_series_resolution, Dates.Hour(1))
+    sys = PSY.System(rawsys; time_series_resolution = resolution, sys_kwargs...)
+    interval = get(kwargs, :interval, Dates.Hour(24))
+    horizon = get(kwargs, :horizon, 48)
+    PSY.transform_single_time_series!(sys, horizon, interval)
+    return sys
+end
+
+function build_RTS_GMLC_RT_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    RTS_GMLC_DIR = get_raw_data(; kwargs...)
+    RTS_SRC_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "SourceData")
+    RTS_SIIP_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "FormattedData", "SIIP")
+    rawsys = PSY.PowerSystemTableData(
+        RTS_SRC_DIR,
+        100.0,
+        joinpath(RTS_SIIP_DIR, "user_descriptors.yaml"),
+        timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
+        generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
+    )
+    resolution = get(kwargs, :time_series_resolution, Dates.Minute(5))
+    sys = PSY.System(rawsys; time_series_resolution = resolution, sys_kwargs...)
+    interval = get(kwargs, :interval, Dates.Minute(5))
+    horizon = get(kwargs, :horizon, 24)
+    PSY.transform_single_time_series!(sys, horizon, interval)
     return sys
 end
 
