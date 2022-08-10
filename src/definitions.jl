@@ -38,7 +38,7 @@ function download_RTS(; kwargs...)
 end
 
 function download_modified_tamu_ercot_da(; kwargs...)
-    directory = abspath(normpath(joinpath(PACKAGE_DIR, "data")))
+    directory = abspath(normpath(joinpath(PACKAGE_DIR, "PowerSystemsTestData")))
     data = joinpath(directory, "tamu_ercot")
     # This is temporary place for hosting the dataset.
     data_urls = Dict(
