@@ -276,7 +276,12 @@ const SYSTEM_CATALOG = [
         name = "psse_RTS_GMLC_sys",
         description = "PSSE .raw RTS-GMLC system",
         category = PSSETestSystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "psse_raw", "RTS-GMLC.RAW"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "psse_raw",
+            "RTS-GMLC.RAW",
+        ),
         build_function = build_psse_RTS_GMLC_sys,
     ),
     SystemDescriptor(
@@ -292,7 +297,6 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = "rts-gmlc",
         build_function = build_RTS_GMLC_DA_sys,
-
     ),
     SystemDescriptor(
         name = "RTS_GMLC_RT_sys",
@@ -300,7 +304,6 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = "rts-gmlc",
         build_function = build_RTS_GMLC_RT_sys,
-
     ),
     SystemDescriptor(
         name = "modified_RTS_GMLC_DA_sys",
@@ -309,7 +312,6 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = "rts-gmlc",
         build_function = build_modified_RTS_GMLC_DA_sys,
-
     ),
     SystemDescriptor(
         name = "modified_RTS_GMLC_RT_sys",
@@ -318,7 +320,6 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = "rts-gmlc",
         build_function = build_modified_RTS_GMLC_RT_sys,
-
     ),
     SystemDescriptor(
         name = "modified_RTS_GMLC_realization_sys",
@@ -327,7 +328,6 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = "rts-gmlc",
         build_function = build_modified_RTS_GMLC_realization_sys,
-
     ),
     SystemDescriptor(
         name = "modified_tamu_ercot_da_system",
@@ -369,7 +369,12 @@ const SYSTEM_CATALOG = [
         name = "matpower_ACTIVSg2000_sys",
         description = "MATPOWER ACTIVSg2000 Test system",
         category = MatPowerTestSystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "matpower", "ACTIVSg2000.m"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "matpower",
+            "ACTIVSg2000.m",
+        ),
         build_function = build_matpower_ACTIVSg2000_sys,
     ),
     SystemDescriptor(
@@ -383,7 +388,12 @@ const SYSTEM_CATALOG = [
         name = "matpower_ACTIVSg10k_sys",
         description = "ACTIVSg10k Test system",
         category = MatPowerTestSystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "matpower", "case_ACTIVSg10k.m"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "matpower",
+            "case_ACTIVSg10k.m",
+        ),
         build_function = build_matpower_ACTIVSg10k_sys,
     ),
     SystemDescriptor(
@@ -397,14 +407,24 @@ const SYSTEM_CATALOG = [
         name = "matpower_case3_tnep_sys",
         description = "Matpower Test system",
         category = MatPowerTestSystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "matpower", "case3_tnep.m"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "matpower",
+            "case3_tnep.m",
+        ),
         build_function = build_matpower_case3_tnep_sys,
     ),
     SystemDescriptor(
         name = "matpower_case5_asym_sys",
         description = "Matpower Test system",
         category = MatPowerTestSystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "matpower", "case5_asym.m"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "matpower",
+            "case5_asym.m",
+        ),
         build_function = build_matpower_case5_asym_sys,
     ),
     SystemDescriptor(
@@ -425,28 +445,48 @@ const SYSTEM_CATALOG = [
         name = "matpower_case5_pwlc_sys",
         description = "Matpower Test system",
         category = MatPowerTestSystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "matpower", "case5_pwlc.m"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "matpower",
+            "case5_pwlc.m",
+        ),
         build_function = build_matpower_case5_pwlc_sys,
     ),
     SystemDescriptor(
         name = "matpower_case5_re_intid_sys",
         description = "Matpower Test system",
         category = MatPowerTestSystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "matpower", "case5_re_intid.m"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "matpower",
+            "case5_re_intid.m",
+        ),
         build_function = build_matpower_case5_re_intid_sys,
     ),
     SystemDescriptor(
         name = "matpower_case5_re_uc_pwl_sys",
         description = "Matpower Test system",
         category = MatPowerTestSystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "matpower", "case5_re_uc_pwl.m"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "matpower",
+            "case5_re_uc_pwl.m",
+        ),
         build_function = build_matpower_case5_re_uc_pwl_sys,
     ),
     SystemDescriptor(
         name = "matpower_case5_re_uc_sys",
         description = "Matpower Test system",
         category = MatPowerTestSystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "matpower", "case5_re_uc.m"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "matpower",
+            "case5_re_uc.m",
+        ),
         build_function = build_matpower_case5_re_uc_sys,
     ),
     SystemDescriptor(
@@ -460,14 +500,24 @@ const SYSTEM_CATALOG = [
         name = "matpower_case5_th_intid_sys",
         description = "Matpower Test system",
         category = MatPowerTestSystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "matpower", "case5_th_intid.m"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "matpower",
+            "case5_th_intid.m",
+        ),
         build_function = build_matpower_case5_th_intid_sys,
     ),
     SystemDescriptor(
         name = "matpower_case5_tnep_sys",
         description = "Matpower Test system",
         category = MatPowerTestSystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "matpower", "case5_tnep.m"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "matpower",
+            "case5_tnep.m",
+        ),
         build_function = build_matpower_case5_tnep_sys,
     ),
     SystemDescriptor(
@@ -488,7 +538,12 @@ const SYSTEM_CATALOG = [
         name = "matpower_case7_tplgy_sys",
         description = "Matpower Test system",
         category = MatPowerTestSystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "matpower", "case7_tplgy.m"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "matpower",
+            "case7_tplgy.m",
+        ),
         build_function = build_matpower_case7_tplgy_sys,
     ),
     SystemDescriptor(
@@ -516,7 +571,12 @@ const SYSTEM_CATALOG = [
         name = "matpower_frankenstein_00_sys",
         description = "Matpower Frankenstein Test system",
         category = MatPowerTestSystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "matpower", "frankenstein_00.m"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "matpower",
+            "frankenstein_00.m",
+        ),
         build_function = build_matpower_frankenstein_00_sys,
     ),
     SystemDescriptor(
@@ -530,7 +590,13 @@ const SYSTEM_CATALOG = [
         name = "matpower_case5_strg_sys",
         description = "Matpower Test system",
         category = MatPowerTestSystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "pm_data", "matpower", "case5_strg.m"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "pm_data",
+            "matpower",
+            "case5_strg.m",
+        ),
         build_function = build_matpower_case5_strg_sys,
     ),
     SystemDescriptor(
@@ -544,7 +610,12 @@ const SYSTEM_CATALOG = [
         name = "pti_case5_alc_sys",
         description = "PSSE 5-bus alc Test system",
         category = PSSETestSystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "psse_raw", "case5_alc.raw"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "psse_raw",
+            "case5_alc.raw",
+        ),
         build_function = build_pti_case5_alc_sys,
     ),
     SystemDescriptor(
@@ -558,7 +629,12 @@ const SYSTEM_CATALOG = [
         name = "pti_case7_tplgy_sys",
         description = "PSSE 7-bus Test system",
         category = PSSETestSystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "psse_raw", "case7_tplgy.raw"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "psse_raw",
+            "case7_tplgy.raw",
+        ),
         build_function = build_pti_case7_tplgy_sys,
     ),
     SystemDescriptor(
@@ -593,35 +669,60 @@ const SYSTEM_CATALOG = [
         name = "pti_frankenstein_00_2_sys",
         description = "PSSE frankenstein Test system",
         category = PSSETestSystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "psse_raw", "frankenstein_00_2.raw"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "psse_raw",
+            "frankenstein_00_2.raw",
+        ),
         build_function = build_pti_frankenstein_00_2_sys,
     ),
     SystemDescriptor(
         name = "pti_frankenstein_00_sys",
         description = "PSSE frankenstein Test system",
         category = PSSETestSystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "psse_raw", "frankenstein_00.raw"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "psse_raw",
+            "frankenstein_00.raw",
+        ),
         build_function = build_pti_frankenstein_00_sys,
     ),
     SystemDescriptor(
         name = "pti_frankenstein_20_sys",
         description = "PSSE frankenstein Test system",
         category = PSSETestSystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "psse_raw", "frankenstein_20.raw"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "psse_raw",
+            "frankenstein_20.raw",
+        ),
         build_function = build_pti_frankenstein_20_sys,
     ),
     SystemDescriptor(
         name = "pti_frankenstein_70_sys",
         description = "PSSE frankenstein Test system",
         category = PSSETestSystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "psse_raw", "frankenstein_70.raw"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "psse_raw",
+            "frankenstein_70.raw",
+        ),
         build_function = build_pti_frankenstein_70_sys,
     ),
     SystemDescriptor(
         name = "pti_parser_test_a_sys",
         description = "PSSE Test system",
         category = PSSETestSystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "psse_raw", "parser_test_a.raw"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "psse_raw",
+            "parser_test_a.raw",
+        ),
         build_function = build_pti_parser_test_a_sys,
     ),
     # SystemDescriptor(
@@ -751,7 +852,12 @@ const SYSTEM_CATALOG = [
         name = "pti_vsc_hvdc_test_sys",
         description = "PSSE Test system",
         category = PSSETestSystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "psse_raw", "vsc-hvdc_test.raw"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "psse_raw",
+            "vsc-hvdc_test.raw",
+        ),
         build_function = build_pti_vsc_hvdc_test_sys,
     ),
     SystemDescriptor(
@@ -849,21 +955,36 @@ const SYSTEM_CATALOG = [
         name = "5_bus_matpower_DA",
         description = "matpower 5-bus system with DA time series",
         category = PSISystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "matpower", "case5_re_uc.m"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "matpower",
+            "case5_re_uc.m",
+        ),
         build_function = build_5_bus_matpower_DA,
     ),
     SystemDescriptor(
         name = "5_bus_matpower_RT",
         description = "matpower 5-bus system with RT time series",
         category = PSISystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "matpower", "case5_re_uc.m"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "matpower",
+            "case5_re_uc.m",
+        ),
         build_function = build_5_bus_matpower_RT,
     ),
     SystemDescriptor(
         name = "5_bus_matpower_AGC",
         description = "matpower 5-bus system with AGC time series",
         category = PSISystems,
-        raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "matpower", "case5_re_uc.m"),
+        raw_data = joinpath(
+            PACKAGE_DIR,
+            "PowerSystemsTestData",
+            "matpower",
+            "case5_re_uc.m",
+        ),
         build_function = build_5_bus_matpower_AGC,
     ),
     SystemDescriptor(
