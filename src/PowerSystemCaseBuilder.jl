@@ -49,9 +49,13 @@ include("system_build_stats.jl")
 include("system_descriptor.jl")
 include("system_catalog.jl")
 
-include("system_descriptor_data.jl")
+
+
+include("utils/download.jl")
 include("utils/print.jl")
 include("utils/utils.jl")
+
 include("build_system.jl")
+include("system_descriptor_data.jl")
 
 end # module
