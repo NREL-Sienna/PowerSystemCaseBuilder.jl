@@ -69,14 +69,6 @@ function unzip(::Type{Windows}, filename, directory)
     @assert success(`$path_7z x $filename -y -o$directory`) "Unable to extract $filename to $directory"
 end
 
-function download_RTS(; kwargs...)
-    download(
-        "https://github.com/GridMod/RTS-GMLC",
-        "master",
-        joinpath(PACKAGE_DIR, "data"),
-    )
-end
-
 function download_modified_tamu_ercot_da(; kwargs...)
     directory = abspath(normpath(joinpath(PACKAGE_DIR, "data")))
     data = joinpath(directory, "tamu_ercot")

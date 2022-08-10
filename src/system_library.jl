@@ -1,5 +1,5 @@
-include(joinpath(PACKAGE_DIR, "data", "data_5bus_pu.jl"))
-include(joinpath(PACKAGE_DIR, "data", "data_14bus_pu.jl"))
+include(joinpath(PACKAGE_DIR, "PowerSystemCaseData", "psy_data", "data_5bus_pu.jl"))
+include(joinpath(PACKAGE_DIR, "PowerSystemCaseData", "psy_data", "data_14bus_pu.jl"))
 
 function build_c_sys5(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)

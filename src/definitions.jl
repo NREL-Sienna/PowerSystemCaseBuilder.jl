@@ -1,10 +1,12 @@
 abstract type SystemCategory <: PowerSystemCaseBuilderType end
 struct PSYTestSystems <: SystemCategory end
-struct PSITestSystems <: SystemCategory end
-struct SIIPExampleSystems <: SystemCategory end
-struct PSIDTestSystems <: SystemCategory end
 struct PSSETestSystems <: SystemCategory end
 struct MatPowerTestSystems <: SystemCategory end
+struct PSITestSystems <: SystemCategory end
+struct PSIDTestSystems <: SystemCategory end
+
+struct PSISystems <: SystemCategory end
+struct PSIDSystems <: SystemCategory end
 
 const PACKAGE_DIR = joinpath(dirname(dirname(pathof(PowerSystemCaseBuilder))))
 
