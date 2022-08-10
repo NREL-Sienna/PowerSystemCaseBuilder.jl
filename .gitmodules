@@ -1,0 +1,3 @@
+[submodule "PowerSystemsTestData"]
+	path = PowerSystemsTestData
+	url = https://github.com/NREL-SIIP/PowerSystemsTestData
