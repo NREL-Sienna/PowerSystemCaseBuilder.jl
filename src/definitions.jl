@@ -1,13 +1,3 @@
-abstract type SystemCategory <: PowerSystemCaseBuilderType end
-struct PSYTestSystems <: SystemCategory end
-struct PSSETestSystems <: SystemCategory end
-struct MatPowerTestSystems <: SystemCategory end
-struct PSITestSystems <: SystemCategory end
-struct PSIDTestSystems <: SystemCategory end
-
-struct PSISystems <: SystemCategory end
-struct PSIDSystems <: SystemCategory end
-
 const PACKAGE_DIR = joinpath(dirname(dirname(pathof(PowerSystemCaseBuilder))))
 
 const SYSTEM_DESCRIPTORS_FILE = joinpath(PACKAGE_DIR, "src", "system_descriptor.jl")
@@ -30,3 +20,6 @@ const SEARCH_DIRS = [
 
 const SERIALIZE_FILE_EXTENSIONS =
     [".json", "_validation_descriptors.json", "_time_series_storage.h5"]
+
+const AVAILABLE_PSID_PSSE_AVRS_TEST =
+    ["AC1A", "AC1A_SAT", "EXAC1", "EXST1", "SEXS", "SEXS_noTe"]
