@@ -10,8 +10,8 @@ export PSYTestSystems
 export PSITestSystems
 export SIIPExampleSystems
 export PSIDTestSystems
-export PSSETestSystems
-export MatPowerTestSystems
+export PSSEParsingTestSystems
+export MatpowerTestSystems
 
 export build_system
 export list_categories
@@ -39,8 +39,19 @@ import DataFrames: DataFrame
 const PSY = PowerSystems
 const IS = InfrastructureSystems
 
-# includes
 abstract type PowerSystemCaseBuilderType <: IS.InfrastructureSystemsType end
+
+abstract type SystemCategory <: PowerSystemCaseBuilderType end
+struct PSYTestSystems <: SystemCategory end
+struct PSSEParsingTestSystems <: SystemCategory end
+struct MatpowerTestSystems <: SystemCategory end
+struct PSITestSystems <: SystemCategory end
+struct PSIDTestSystems <: SystemCategory end
+
+struct PSISystems <: SystemCategory end
+struct PSIDSystems <: SystemCategory end
+
+# includes
 
 include("definitions.jl")
 include("system_library.jl")
