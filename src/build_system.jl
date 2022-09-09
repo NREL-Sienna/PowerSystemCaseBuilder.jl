@@ -21,8 +21,8 @@ function build_system(
     print_stat::Bool = false;
     kwargs...,
 )
-    system_catelog = get(kwargs, :system_catelog, SystemCatalog(SYSTEM_CATALOG))
-    sys_descriptor = get_system_descriptor(category, system_catelog, name)
+    system_catalog = get(kwargs, :system_catalog, SystemCatalog(SYSTEM_CATALOG))
+    sys_descriptor = get_system_descriptor(category, system_catalog, name)
     return _build_system(category, name, sys_descriptor, print_stat; kwargs...)
 end
 
@@ -32,8 +32,8 @@ function build_system(
     print_stat::Bool = false;
     kwargs...,
 )
-    system_catelog = get(kwargs, :system_catelog, SystemCatalog(SYSTEM_CATALOG))
-    sys_descriptor = get_system_descriptor(category, system_catelog, name)
+    system_catalog = get(kwargs, :system_catalog, SystemCatalog(SYSTEM_CATALOG))
+    sys_descriptor = get_system_descriptor(category, system_catalog, name)
     psid_kwargs = check_kwargs_psid(; kwargs...)
     if !isempty(psid_kwargs)
         kwarg_type = first(values(psid_kwargs))

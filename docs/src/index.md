@@ -14,7 +14,7 @@ of testing or prototyping power system models. This package facilitates open sha
 The main features include:
 
 - Comprehensive and extensible library of power systems for modeling.
-- Automated serialization/de-serialization of cateloged Systems.
+- Automated serialization/de-serialization of cataloged Systems.
 
 
 `PowerSystemCaseBuilder.jl` is an active project under development, and we welcome your feedback,
