@@ -106,8 +106,8 @@ end
 function build_psse_3bus_gen_cls_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
-    file_path = joinpath(data_dir, "ThreeBusNetwork.raw")
-    dyr_file = joinpath(data_dir, "TestGENCLS.dyr")
+    file_path = joinpath(data_dir, "psse_raw", "ThreeBusNetwork.raw")
+    dyr_file = joinpath(data_dir, "psse_dyr", "TestGENCLS.dyr")
     sys = PSY.System(file_path, dyr_file; sys_kwargs...)
     return sys
 end
@@ -115,8 +115,8 @@ end
 function psse_renewable_parsing_1(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
-    file_path = joinpath(data_dir, "Benchmark_4ger_33_2015_RENA.RAW")
-    dyr_file = joinpath(data_dir, "Benchmark_4ger_33_2015_RENA.dyr")
+    file_path = joinpath(data_dir, "psse_raw", "Benchmark_4ger_33_2015_RENA.RAW")
+    dyr_file = joinpath(data_dir, "psse_dyr", "Benchmark_4ger_33_2015_RENA.dyr")
     sys = PSY.System(file_path, dyr_file; sys_kwargs...)
     return sys
 end
@@ -124,8 +124,8 @@ end
 function build_psse_3bus_sexs_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
-    file_path = joinpath(data_dir, "ThreeBusNetwork.raw")
-    dyr_file = joinpath(data_dir, "test_SEXS.dyr")
+    file_path = joinpath(data_dir, "psse_raw", "ThreeBusNetwork.raw")
+    dyr_file = joinpath(data_dir, "psse_dyr", "test_SEXS.dyr")
     sys = PSY.System(file_path, dyr_file; sys_kwargs...)
     return sys
 end
@@ -133,8 +133,8 @@ end
 function build_psse_original_240_case(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
-    file_path = joinpath(data_dir, "240busWECC_2018_PSS33.raw")
-    dyr_file = joinpath(data_dir, "240busWECC_2018_PSS.dyr")
+    file_path = joinpath(data_dir, "psse_raw", "240busWECC_2018_PSS33.raw")
+    dyr_file = joinpath(data_dir, "psse_dyr", "240busWECC_2018_PSS.dyr")
     sys = PSY.System(
         file_path,
         dyr_file;
