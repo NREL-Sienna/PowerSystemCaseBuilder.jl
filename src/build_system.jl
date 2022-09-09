@@ -49,6 +49,29 @@ function build_system(
     )
 end
 
+function build_system(
+    category::Type{T},
+    name::String,
+    print_stat::Bool = false;
+    kwargs...,
+) where {T <: Union{PSITestSystems, PSIDSystems}}
+    system_catalog = get(kwargs, :system_catalog, SystemCatalog(SYSTEM_CATALOG))
+    sys_descriptor = get_system_descriptor(category, system_catalog, name)
+    psid_kwargs = check_kwargs_psid(; kwargs...)
+    if !isempty(psid_kwargs)
+        kwarg_type = first(values(psid_kwargs))
+        name = "$(name)_$kwarg_type"
+    end
+    return _build_system(
+        category,
+        name,
+        sys_descriptor,
+        print_stat;
+        add_forecasts = true,
+        kwargs...,
+    )
+end
+
 function _build_system(
     category::Type{<:SystemCategory},
     name::String,
@@ -57,7 +80,7 @@ function _build_system(
     kwargs...,
 )
     assign_new_uuids = get(kwargs, :assign_new_uuids, true)
-    add_forecasts = get(kwargs, :add_forecasts, true)
+    add_forecasts = get(kwargs, :add_forecasts, false)
     add_reserves = get(kwargs, :add_reserves, false)
     force_build = get(kwargs, :force_build, false)
     skip_serialization = get(kwargs, :skip_serialization, false)
