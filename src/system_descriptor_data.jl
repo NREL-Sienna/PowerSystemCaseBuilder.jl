@@ -1142,6 +1142,34 @@ const SYSTEM_CATALOG = [
         build_function = build_psid_test_threebus_multimachine,
     ),
     SystemDescriptor(
+        name = "psid_test_threebus_psat_avrs",
+        description = "PSID Three Bus TG Type I and AVR Type II Test Case", # Old Test 13
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/data_tests/ThreeBusNetwork.raw",
+        build_function = build_psid_test_threebus_psat_avrs,
+    ),
+    SystemDescriptor(
+        name = "psid_test_threebus_vsm_reference",
+        description = "PSID Three Bus Inverter Reference Test Case", # Old Test 14
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/data_tests/ThreeBusMulti.raw",
+        build_function = build_psid_test_threebus_vsm_reference,
+    ),
+    SystemDescriptor(
+        name = "psid_test_threebus_genrou_avr",
+        description = "PSID Three Bus GENROU with PSAT AVRs Test Case", # Old Test 17
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/psse/GENs/GENROU/ThreeBusMulti.raw",
+        build_function = build_psid_test_threebus_genrou_avr,
+    ),
+    SystemDescriptor(
+        name = "psid_test_droop_inverter",
+        description = "PSID Two Bus Droop GFM Inverter Test Case", # Old Test 23
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/data_tests/OMIB_DARCO_PSR.raw",
+        build_function = build_psid_test_droop_inverter,
+    ),
+    SystemDescriptor(
         name = "psid_psse_test_exp_load",
         description = "PSID Exponential Load Test Case", # Old Test 37
         category = PSIDTestSystems,

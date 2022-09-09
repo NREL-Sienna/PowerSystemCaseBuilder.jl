@@ -262,14 +262,14 @@ function build_psid_test_threebus_marconato(; kwargs...)
 
     function dyn_gen_marconato(generator)
         return PSY.DynamicGenerator(
-            name = PSY.get_name(generator), #static generator
-            ω_ref = 1.0, # ω_ref
-            machine = machine_marconato(), #machine
-            shaft = shaft_no_damping(), #shaft
-            avr = avr_type1(), #avr
-            prime_mover = tg_none(), #tg
+            name = PSY.get_name(generator),
+            ω_ref = 1.0,
+            machine = machine_marconato(),
+            shaft = shaft_no_damping(),
+            avr = avr_type1(),
+            prime_mover = tg_none(),
             pss = pss_none(),
-        ) #pss
+        )
     end
 
     for g in get_components(Generator, threebus_sys)
@@ -292,14 +292,14 @@ function build_psid_test_threebus_simple_anderson(; kwargs...)
 
     function dyn_gen_simple_anderson(generator)
         return PSY.DynamicGenerator(
-            name = PSY.get_name(generator), #static generator
-            ω_ref = 1.0, # ω_ref
-            machine = machine_simple_anderson(), #machine
-            shaft = shaft_no_damping(), #shaft
-            avr = avr_type1(), #avr
-            prime_mover = tg_none(), #tg
+            name = PSY.get_name(generator),
+            ω_ref = 1.0,
+            machine = machine_simple_anderson(),
+            shaft = shaft_no_damping(),
+            avr = avr_type1(),
+            prime_mover = tg_none(),
             pss = pss_none(),
-        ) #pss
+        )
     end
 
     for g in get_components(Generator, threebus_sys)
@@ -322,14 +322,14 @@ function build_psid_test_threebus_anderson(; kwargs...)
 
     function dyn_gen_anderson(generator)
         return PSY.DynamicGenerator(
-            name = PSY.get_name(generator), #static generator
-            ω_ref = 1.0, # ω_ref
-            machine = machine_anderson(), #machine
-            shaft = shaft_no_damping(), #shaft
-            avr = avr_type1(), #avr
-            prime_mover = tg_none(), #tg
+            name = PSY.get_name(generator),
+            ω_ref = 1.0,
+            machine = machine_anderson(),
+            shaft = shaft_no_damping(),
+            avr = avr_type1(),
+            prime_mover = tg_none(),
             pss = pss_none(),
-        ) #pss
+        )
     end
 
     for g in get_components(Generator, threebus_sys)
@@ -358,25 +358,25 @@ function build_psid_test_threebus_5shaft(; kwargs...)
     function dyn_gen_five_mass_shaft_order(generator)
         return PSY.DynamicGenerator(
             name = PSY.get_name(generator),
-            ω_ref = 1.0, # ω_ref,
-            machine = machine_oneDoneQ(), #machine
-            shaft = shaft_fivemass(), #shaft
-            avr = avr_type1(), #avr
+            ω_ref = 1.0,
+            machine = machine_oneDoneQ(),
+            shaft = shaft_fivemass(),
+            avr = avr_type1(),
             prime_mover = tg_none(),
             pss = pss_none(),
-        ) #pss
+        )
     end
 
     function dyn_gen_first_order(generator)
         return PSY.DynamicGenerator(
             name = PSY.get_name(generator),
-            ω_ref = 1.0, # ω_ref,
-            machine = machine_oneDoneQ(), #machine
-            shaft = shaft_damping(), #shaft
-            avr = avr_type1(), #avr
-            prime_mover = tg_none(), #tg
+            ω_ref = 1.0,
+            machine = machine_oneDoneQ(),
+            shaft = shaft_damping(),
+            avr = avr_type1(),
+            prime_mover = tg_none(),
             pss = pss_none(),
-        ) #pss
+        )
     end
 
     for g in get_components(Generator, threebus_sys)
@@ -405,10 +405,10 @@ function build_psid_test_vsm_inverter(; kwargs...)
     function inv_darco(static_device)
         return PSY.DynamicInverter(
             PSY.get_name(static_device),
-            1.0, #ω_ref
-            converter_low_power(), #converter
-            outer_control(), #outercontrol
-            inner_control(), #inner_control
+            1.0,
+            converter_low_power(),
+            outer_control(),
+            inner_control(),
             dc_source_lv(),
             pll(),
             filt(),
@@ -436,25 +436,25 @@ function build_psid_test_threebus_machine_vsm(; kwargs...)
     function dyn_gen_second_order(generator)
         return DynamicGenerator(
             name = PSY.get_name(generator),
-            ω_ref = 1.0, # ω_ref,
-            machine = machine_oneDoneQ(), #machine
-            shaft = shaft_no_damping(), #shaft
-            avr = avr_type1(), #avr
-            prime_mover = tg_none(), #tg
-            pss = pss_none(), #pss
+            ω_ref = 1.0,
+            machine = machine_oneDoneQ(),
+            shaft = shaft_no_damping(),
+            avr = avr_type1(),
+            prime_mover = tg_none(),
+            pss = pss_none(),
         )
     end
 
     function inv_case78(static_device)
         return DynamicInverter(
             name = PSY.get_name(static_device),
-            ω_ref = 1.0, # ω_ref,
-            converter = converter_high_power(), #converter
-            outer_control = outer_control(), #outer control
-            inner_control = inner_control(), #inner control voltage source
-            dc_source = dc_source_lv(), #dc source
-            freq_estimator = pll(), #pll
-            filter = filt(), #filter
+            ω_ref = 1.0,
+            converter = converter_high_power(),
+            outer_control = outer_control(),
+            inner_control = inner_control(),
+            dc_source = dc_source_lv(),
+            freq_estimator = pll(),
+            filter = filt(),
         )
     end
 
@@ -491,11 +491,11 @@ function build_psid_test_threebus_multimachine(; kwargs...)
     function dyn_gen_multi(generator)
         return PSY.DynamicGenerator(
             name = PSY.get_name(generator),
-            ω_ref = 1.0, # ω_ref,
-            machine = machine_classic(), #machine
-            shaft = shaft_damping(), #shaft
-            avr = avr_none(), #avr
-            prime_mover = tg_none(), #tg
+            ω_ref = 1.0,
+            machine = machine_classic(),
+            shaft = shaft_damping(),
+            avr = avr_none(),
+            prime_mover = tg_none(),
             pss = pss_none(),
         )
     end
@@ -503,16 +503,15 @@ function build_psid_test_threebus_multimachine(; kwargs...)
     function dyn_gen_multi_tg(generator)
         return PSY.DynamicGenerator(
             name = PSY.get_name(generator),
-            ω_ref = 1.0, # ω_ref,
-            machine = machine_classic(), #machine
-            shaft = shaft_damping(), #shaft
-            avr = avr_none(), #avr
-            prime_mover = tg_type2(), #tg
+            ω_ref = 1.0,
+            machine = machine_classic(),
+            shaft = shaft_damping(),
+            avr = avr_none(),
+            prime_mover = tg_type2(),
             pss = pss_none(),
         )
     end
 
-    # Add dynamic generators to the system (each gen is linked through a static one)
     for g in get_components(Generator, threebus_sys)
         if get_number(get_bus(g)) == 101
             case_gen = dyn_gen_multi(g)
@@ -524,4 +523,162 @@ function build_psid_test_threebus_multimachine(; kwargs...)
     end
 
     return threebus_sys
+end
+
+function build_psid_test_threebus_psat_avrs(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    raw_file = get_raw_data(; kwargs...)
+    threebus_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    add_source_to_ref(threebus_sys)
+
+    function dyn_gen_avr_type2(generator)
+        return PSY.DynamicGenerator(
+            name = PSY.get_name(generator),
+            ω_ref = 1.0,
+            machine = machine_oneDoneQ(),
+            shaft = shaft_no_damping(),
+            avr = avr_type2(),
+            prime_mover = tg_type1(),
+            pss = pss_none(),
+        )
+    end
+
+    function dyn_gen_simple_avr(generator)
+        return PSY.DynamicGenerator(
+            name = PSY.get_name(generator),
+            ω_ref = 1.0,
+            machine = machine_oneDoneQ(),
+            shaft = shaft_no_damping(),
+            avr = avr_propr(),
+            prime_mover = tg_none(),
+            pss = pss_none(),
+        )
+    end
+
+    for l in get_components(PSY.PowerLoad, threebus_sys)
+        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    end
+
+    for g in get_components(Generator, threebus_sys)
+        if get_number(get_bus(g)) == 102
+            case_gen = dyn_gen_avr_type2(g)
+            add_component!(threebus_sys, case_gen, g)
+        elseif get_number(get_bus(g)) == 103
+            case_gen = dyn_gen_simple_avr(g)
+            add_component!(threebus_sys, case_gen, g)
+        end
+    end
+
+    return threebus_sys
+end
+
+function build_psid_test_threebus_vsm_reference(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    raw_file = get_raw_data(; kwargs...)
+    threebus_sys = System(raw_file, runchecks = false; sys_kwargs...)
+
+    function inv_case78(static_device)
+        return DynamicInverter(
+            name = PSY.get_name(static_device),
+            ω_ref = 1.0, # ω_ref,
+            converter = converter_high_power(),
+            outer_control = outer_control(),
+            inner_control = inner_control(),
+            dc_source = dc_source_lv(),
+            freq_estimator = pll(),
+            filter = filt(),
+        )
+    end
+
+    function dyn_gen_multi_tg(generator)
+        return PSY.DynamicGenerator(
+            name = PSY.get_name(generator),
+            ω_ref = 1.0,
+            machine = machine_classic(),
+            shaft = shaft_damping(),
+            avr = avr_none(),
+            prime_mover = tg_type2(),
+            pss = pss_none(),
+        )
+    end
+
+    for g in get_components(Generator, threebus_sys)
+        if get_number(get_bus(g)) == 101
+            case_gen = inv_case78(g)
+            add_component!(threebus_sys, case_gen, g)
+        elseif get_number(get_bus(g)) == 102
+            case_gen = dyn_gen_multi_tg(g)
+            add_component!(threebus_sys, case_gen, g)
+        end
+    end
+
+    for l in get_components(PSY.PowerLoad, threebus_sys)
+        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    end
+
+    return threebus_sys
+end
+
+function build_psid_test_threebus_genrou_avr(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    raw_file = get_raw_data(; kwargs...)
+    sys = System(raw_file, runchecks = false; sys_kwargs...)
+
+    #Replace Gen101 by Source
+    remove_component!(ThermalStandard, sys, "generator-101-1")
+    add_source_to_ref(sys)
+
+    function dyn_gen_genrou(generator)
+        return PSY.DynamicGenerator(
+            name = PSY.get_name(generator),
+            ω_ref = 1.0,
+            machine = machine_genrou(),
+            shaft = shaft_genrou(),
+            avr = avr_type1(),
+            prime_mover = tg_none(),
+            pss = pss_none(),
+        )
+    end
+
+    for l in get_components(PSY.PowerLoad, sys)
+        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    end
+
+    #Add GENROU to System
+    g = get_component(ThermalStandard, sys, "generator-102-1")
+    dyn_gen = dyn_gen_genrou(g)
+    add_component!(sys, dyn_gen, g)
+
+    return sys
+end
+
+function build_psid_test_droop_inverter(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    raw_file = get_raw_data(; kwargs...)
+    omib_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    add_source_to_ref(omib_sys)
+
+    ############### Data Dynamic devices ########################
+    function inv_darco_droop(static_device)
+        return PSY.DynamicInverter(
+            PSY.get_name(static_device),
+            1.0, # ω_ref
+            converter_low_power(), # converter
+            outer_control_droop(), # outer control
+            inner_control(), # inner control
+            dc_source_lv(), # dc source
+            no_pll(), # no pll
+            filt(), # filter
+        )
+    end
+
+    for l in get_components(PSY.PowerLoad, omib_sys)
+        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    end
+
+    device = [g for g in get_components(Generator, omib_sys)][1]
+    case_inv = inv_darco_droop(device)
+    add_component!(omib_sys, case_inv, device)
+
+    return omib_sys
 end
