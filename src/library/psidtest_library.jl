@@ -283,3 +283,147 @@ function build_psid_test_threebus_marconato(; kwargs...)
 
     return threebus_sys
 end
+
+function build_psid_test_threebus_simple_anderson(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    raw_file =  get_raw_data(; kwargs...)
+    threebus_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    add_source_to_ref(threebus_sys)
+
+    function dyn_gen_simple_anderson(generator)
+        return PSY.DynamicGenerator(
+            name = PSY.get_name(generator), #static generator
+            ω_ref = 1.0, # ω_ref
+            machine = machine_simple_anderson(), #machine
+            shaft = shaft_no_damping(), #shaft
+            avr = avr_type1(), #avr
+            prime_mover = tg_none(), #tg
+            pss = pss_none(),
+        ) #pss
+    end
+    
+    for g in get_components(Generator, threebus_sys)
+        case_gen = dyn_gen_simple_anderson(g)
+        add_component!(threebus_sys, case_gen, g)
+    end
+    
+    for l in get_components(PSY.PowerLoad, threebus_sys)
+        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    end
+
+    return threebus_sys
+end
+
+function build_psid_test_threebus_anderson(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    raw_file =  get_raw_data(; kwargs...)
+    threebus_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    add_source_to_ref(threebus_sys)
+
+    function dyn_gen_anderson(generator)
+        return PSY.DynamicGenerator(
+            name = PSY.get_name(generator), #static generator
+            ω_ref = 1.0, # ω_ref
+            machine = machine_anderson(), #machine
+            shaft = shaft_no_damping(), #shaft
+            avr = avr_type1(), #avr
+            prime_mover = tg_none(), #tg
+            pss = pss_none(),
+        ) #pss
+    end
+    
+    for g in get_components(Generator, threebus_sys)
+        case_gen = dyn_gen_anderson(g)
+        add_component!(threebus_sys, case_gen, g)
+    end
+    
+    for l in get_components(PSY.PowerLoad, threebus_sys)
+        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    end
+
+    return threebus_sys
+end
+
+function build_psid_test_threebus_5shaft(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    raw_file =  get_raw_data(; kwargs...)
+    threebus_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    add_source_to_ref(threebus_sys)
+
+    #Reduce generator output
+    for g in get_components(Generator, threebus_sys)
+        g.active_power = 0.75
+    end
+
+    function dyn_gen_five_mass_shaft_order(generator)
+        return PSY.DynamicGenerator(
+            name = PSY.get_name(generator),
+            ω_ref = 1.0, # ω_ref,
+            machine = machine_oneDoneQ(), #machine
+            shaft = shaft_fivemass(), #shaft
+            avr = avr_type1(), #avr
+            prime_mover = tg_none(),
+            pss = pss_none(),
+        ) #pss
+    end
+    
+    function dyn_gen_first_order(generator)
+        return PSY.DynamicGenerator(
+            name = PSY.get_name(generator),
+            ω_ref = 1.0, # ω_ref,
+            machine = machine_oneDoneQ(), #machine
+            shaft = shaft_damping(), #shaft
+            avr = avr_type1(), #avr
+            prime_mover = tg_none(), #tg
+            pss = pss_none(),
+        ) #pss
+    end
+    
+    for g in get_components(Generator, threebus_sys)
+        if get_number(get_bus(g)) == 103
+            case_gen = dyn_gen_five_mass_shaft_order(g)
+            add_component!(threebus_sys, case_gen, g)
+        elseif get_number(get_bus(g)) == 102
+            case_inv = dyn_gen_first_order(g)
+            add_component!(threebus_sys, case_inv, g)
+        end
+    end
+    
+    for l in get_components(PSY.PowerLoad, threebus_sys)
+        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    end
+
+    return threebus_sys
+end
+
+function build_psid_test_VSM_inverter(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    raw_file =  get_raw_data(; kwargs...)
+    omib_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    add_source_to_ref(omib_sys)
+
+    function inv_darco(static_device)
+        return PSY.DynamicInverter(
+            PSY.get_name(static_device),
+            1.0, #ω_ref
+            converter_low_power(), #converter
+            outer_control(), #outercontrol
+            inner_control(), #inner_control
+            dc_source_lv(),
+            pll(),
+            filt(),
+        ) #pss
+    end
+    
+    for l in get_components(PSY.PowerLoad, omib_sys)
+        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    end
+    
+    #Attach dynamic generator. Currently use PSS/e format based on bus #.
+    device = [g for g in get_components(Generator, omib_sys)][1]
+    case_inv = inv_darco(device)
+    add_component!(omib_sys, case_inv, device)
+
+    return omib_sys
+end
+

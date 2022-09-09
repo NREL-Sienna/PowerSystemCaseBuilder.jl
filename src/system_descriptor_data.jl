@@ -1087,10 +1087,38 @@ const SYSTEM_CATALOG = [
     ),
     SystemDescriptor(
         name = "psid_test_threebus_marconato",
-        description = "PSID Three Bus Simple Marconato Test Case", # Old Test 03
+        description = "PSID Three Bus Simple Marconato Test Case", # Old Test 04
         category = PSIDTestSystems,
         raw_data = "PowerSystemsTestData/psid_tests/data_tests/ThreeBusNetwork.raw",
         build_function = build_psid_test_threebus_marconato,
+    ),
+    SystemDescriptor(
+        name = "psid_test_threebus_simple_anderson",
+        description = "PSID Three Bus Simple Anderson-Fouad Test Case", # Old Test 05
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/data_tests/ThreeBusNetwork.raw",
+        build_function = build_psid_test_threebus_simple_anderson,
+    ),
+    SystemDescriptor(
+        name = "psid_test_threebus_anderson",
+        description = "PSID Three Bus Anderson-Fouad Test Case", # Old Test 06
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/data_tests/ThreeBusNetwork.raw",
+        build_function = build_psid_test_threebus_anderson,
+    ),
+    SystemDescriptor(
+        name = "psid_test_threebus_5shaft",
+        description = "PSID Three Bus 5-shaft Test Case", # Old Test 07
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/data_tests/ThreeBusNetwork.raw",
+        build_function = build_psid_test_threebus_5shaft,
+    ),
+    SystemDescriptor(
+        name = "psid_test_VSM_inverter",
+        description = "PSID Two Bus D'Arco VSM Inverter Test Case", # Old Test 08
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/data_tests/OMIB_DARCO_PSR.raw",
+        build_function = build_psid_test_VSM_inverter,
     ),
     SystemDescriptor(
         name = "psid_psse_test_exp_load",
