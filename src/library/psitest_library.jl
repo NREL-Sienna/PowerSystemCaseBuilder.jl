@@ -796,7 +796,7 @@ function build_c_sys5_il(; kwargs...)
                 PSY.Deterministic("max_active_power", forecast_data),
             )
         end
-        for (ix, i) in enumerate(PSY.get_components(PSY.InterruptibleLoad, c_sys5_il))
+        for (ix, i) in enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_il))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(Iload_timeseries_DA[t][ix])[1]
@@ -811,22 +811,22 @@ function build_c_sys5_il(; kwargs...)
     end
 
     if get(kwargs, :add_reserves, false)
-        reserve_il = reserve5_il(PSY.get_components(PSY.InterruptibleLoad, c_sys5_il))
+        reserve_il = reserve5_il(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_il))
         PSY.add_service!(
             c_sys5_il,
             reserve_il[1],
-            PSY.get_components(PSY.InterruptibleLoad, c_sys5_il),
+            PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_il),
         )
         PSY.add_service!(
             c_sys5_il,
             reserve_il[2],
-            [collect(PSY.get_components(PSY.InterruptibleLoad, c_sys5_il))[end]],
+            [collect(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_il))[end]],
         )
         # ORDC
         PSY.add_service!(
             c_sys5_il,
             reserve_il[3],
-            PSY.get_components(PSY.InterruptibleLoad, c_sys5_il),
+            PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_il),
         )
         for (ix, serv) in enumerate(PSY.get_components(PSY.VariableReserve, c_sys5_il))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
@@ -975,7 +975,7 @@ function build_sys_ramp_testing(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
         PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
-    load = PSY.PowerLoad("Bus1", true, node, nothing, 0.4, 0.9861, 100.0, 1.0, 2.0)
+    load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gen_ramp = [
         PSY.ThermalStandard(
             name = "Alta",
@@ -1274,7 +1274,7 @@ function build_c_sys5_uc_re(; kwargs...)
                 PSY.Deterministic("max_active_power", forecast_data),
             )
         end
-        for (ix, i) in enumerate(PSY.get_components(PSY.InterruptibleLoad, c_sys5_uc))
+        for (ix, i) in enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_uc))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(Iload_timeseries_DA[t][ix])[1]
@@ -1309,7 +1309,7 @@ function build_c_sys5_uc_re(; kwargs...)
                 ),
             )
         end
-        for (ix, i) in enumerate(PSY.get_components(PSY.InterruptibleLoad, c_sys5_uc))
+        for (ix, i) in enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_uc))
             PSY.add_time_series!(
                 c_sys5_uc,
                 i,
@@ -1433,7 +1433,7 @@ function build_c_sys5_ed(; kwargs...)
                 PSY.Deterministic("max_active_power", forecast_data),
             )
         end
-        for (ix, l) in enumerate(PSY.get_components(PSY.InterruptibleLoad, c_sys5_ed))
+        for (ix, l) in enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2 # loop over days
                 ta = Iload_timeseries_DA[t][ix]
@@ -1574,7 +1574,7 @@ function build_c_sys5_hy_uc(; kwargs...)
                 PSY.Deterministic("max_active_power", forecast_data),
             )
         end
-        for (ix, i) in enumerate(PSY.get_components(PSY.InterruptibleLoad, c_sys5_hy_uc))
+        for (ix, i) in enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_hy_uc))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(Iload_timeseries_DA[t][ix])[1]
@@ -1691,7 +1691,7 @@ function build_c_sys5_hy_ems_uc(; kwargs...)
                 PSY.Deterministic("max_active_power", forecast_data),
             )
         end
-        for (ix, i) in enumerate(PSY.get_components(PSY.InterruptibleLoad, c_sys5_hy_uc))
+        for (ix, i) in enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_hy_uc))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(Iload_timeseries_DA[t][ix])[1]
@@ -1821,7 +1821,7 @@ function build_c_sys5_hy_ed(; kwargs...)
                 PSY.Deterministic("hydro_budget", forecast_data),
             )
         end
-        for (ix, l) in enumerate(PSY.get_components(PSY.InterruptibleLoad, c_sys5_hy_ed))
+        for (ix, l) in enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_hy_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = Iload_timeseries_DA[t][ix]
@@ -1971,7 +1971,7 @@ function build_c_sys5_hy_ems_ed(; kwargs...)
                 PSY.Deterministic("hydro_budget", forecast_data),
             )
         end
-        for (ix, l) in enumerate(PSY.get_components(PSY.InterruptibleLoad, c_sys5_hy_ed))
+        for (ix, l) in enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_hy_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = Iload_timeseries_DA[t][ix]
@@ -2110,7 +2110,7 @@ function build_c_sys5_phes_ed(; kwargs...)
                 PSY.Deterministic("outflow", forecast_data),
             )
         end
-        for (ix, l) in enumerate(PSY.get_components(PSY.InterruptibleLoad, c_sys5_phes_ed))
+        for (ix, l) in enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_phes_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = Iload_timeseries_DA[t][ix]
@@ -2209,7 +2209,7 @@ function build_sos_test_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
         PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
-    load = PSY.PowerLoad("Bus1", true, node, nothing, 0.4, 0.9861, 100.0, 1.0, 2.0)
+    load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gens_cost_sos = [
         PSY.ThermalStandard(
             name = "Alta",
@@ -2302,7 +2302,7 @@ function build_pwl_test_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
         PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
-    load = PSY.PowerLoad("Bus1", true, node, nothing, 0.4, 0.9861, 100.0, 1.0, 2.0)
+    load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gens_cost = [
         PSY.ThermalStandard(
             name = "Alta",
@@ -2371,7 +2371,7 @@ function build_duration_test_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
         PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
-    load = PSY.PowerLoad("Bus1", true, node, nothing, 0.4, 0.9861, 100.0, 1.0, 2.0)
+    load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     DA_dur = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
             "1/1/2024  6:00:00",
@@ -2434,7 +2434,7 @@ function build_pwl_marketbid_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
         PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
-    load = PSY.PowerLoad("Bus1", true, node, nothing, 0.4, 0.9861, 100.0, 1.0, 2.0)
+    load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gens_cost = [
         PSY.ThermalStandard(
             name = "Alta",
@@ -3232,7 +3232,7 @@ function build_hydro_test_case_b_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
         PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
-    load = PSY.PowerLoad("Bus1", true, node, nothing, 0.4, 0.9861, 100.0, 1.0, 2.0)
+    load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
             "1/1/2024  2:00:00",
@@ -3294,7 +3294,7 @@ function build_hydro_test_case_c_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
         PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
-    load = PSY.PowerLoad("Bus1", true, node, nothing, 0.4, 0.9861, 100.0, 1.0, 2.0)
+    load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
             "1/1/2024  2:00:00",
@@ -3356,7 +3356,7 @@ function build_hydro_test_case_d_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
         PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
-    load = PSY.PowerLoad("Bus1", true, node, nothing, 0.4, 0.9861, 100.0, 1.0, 2.0)
+    load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
             "1/1/2024  2:00:00",
@@ -3418,7 +3418,7 @@ function build_hydro_test_case_e_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
         PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
-    load = PSY.PowerLoad("Bus1", true, node, nothing, 0.4, 0.9861, 100.0, 1.0, 2.0)
+    load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
             "1/1/2024  2:00:00",
@@ -3480,7 +3480,7 @@ function build_hydro_test_case_f_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
         PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
-    load = PSY.PowerLoad("Bus1", true, node, nothing, 0.4, 0.9861, 100.0, 1.0, 2.0)
+    load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
             "1/1/2024  2:00:00",
@@ -3542,7 +3542,7 @@ function build_batt_test_case_b_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
         PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
-    load = PSY.PowerLoad("Bus1", true, node, nothing, 0.4, 0.9861, 100.0, 1.0, 2.0)
+    load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
             "1/1/2024  2:00:00",
@@ -3617,7 +3617,7 @@ function build_batt_test_case_c_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
         PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
-    load = PSY.PowerLoad("Bus1", true, node, nothing, 0.4, 0.9861, 100.0, 1.0, 2.0)
+    load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
             "1/1/2024  2:00:00",
@@ -3692,7 +3692,7 @@ function build_batt_test_case_d_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
         PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
-    load = PSY.PowerLoad("Bus1", true, node, nothing, 0.4, 0.9861, 100.0, 1.0, 2.0)
+    load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
             "1/1/2024  3:00:00",
@@ -3767,7 +3767,7 @@ function build_batt_test_case_e_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
         PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
-    load = PSY.PowerLoad("Bus1", true, node, nothing, 0.4, 0.9861, 100.0, 1.0, 2.0)
+    load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
             "1/1/2024  2:00:00",
@@ -3842,7 +3842,7 @@ function build_batt_test_case_f_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
         PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
-    load = PSY.PowerLoad("Bus1", true, node, nothing, 0.2, 0.9861, 100.0, 1.0, 2.0)
+    load = PSY.PowerLoad("Bus1", true, node, 0.2, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
             "1/1/2024  2:00:00",
