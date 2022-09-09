@@ -147,8 +147,8 @@ end
 function build_psse_3bus_no_cls_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
-    file_path = joinpath(data_dir, "ThreeBusNetwork.raw")
-    dyr_file = joinpath(data_dir, "Test-NoCLS.dyr")
+    file_path = joinpath(data_dir, "psse_raw", "ThreeBusNetwork.raw")
+    dyr_file = joinpath(data_dir, "psse_dyr", "Test-NoCLS.dyr")
     sys = PSY.System(file_path, dyr_file; sys_kwargs...)
     return sys
 end
