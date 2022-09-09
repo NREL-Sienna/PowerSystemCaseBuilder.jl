@@ -1574,7 +1574,8 @@ function build_c_sys5_hy_uc(; kwargs...)
                 PSY.Deterministic("max_active_power", forecast_data),
             )
         end
-        for (ix, i) in enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_hy_uc))
+        for (ix, i) in
+            enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_hy_uc))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(Iload_timeseries_DA[t][ix])[1]
@@ -1691,7 +1692,8 @@ function build_c_sys5_hy_ems_uc(; kwargs...)
                 PSY.Deterministic("max_active_power", forecast_data),
             )
         end
-        for (ix, i) in enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_hy_uc))
+        for (ix, i) in
+            enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_hy_uc))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(Iload_timeseries_DA[t][ix])[1]
@@ -1821,7 +1823,8 @@ function build_c_sys5_hy_ed(; kwargs...)
                 PSY.Deterministic("hydro_budget", forecast_data),
             )
         end
-        for (ix, l) in enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_hy_ed))
+        for (ix, l) in
+            enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_hy_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = Iload_timeseries_DA[t][ix]
@@ -1971,7 +1974,8 @@ function build_c_sys5_hy_ems_ed(; kwargs...)
                 PSY.Deterministic("hydro_budget", forecast_data),
             )
         end
-        for (ix, l) in enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_hy_ed))
+        for (ix, l) in
+            enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_hy_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = Iload_timeseries_DA[t][ix]
@@ -2110,7 +2114,8 @@ function build_c_sys5_phes_ed(; kwargs...)
                 PSY.Deterministic("outflow", forecast_data),
             )
         end
-        for (ix, l) in enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_phes_ed))
+        for (ix, l) in
+            enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_phes_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = Iload_timeseries_DA[t][ix]
