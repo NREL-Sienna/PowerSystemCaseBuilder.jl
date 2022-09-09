@@ -1065,8 +1065,36 @@ const SYSTEM_CATALOG = [
         build_function = build_psid_psse_test_pss,
     ),
     SystemDescriptor(
+        name = "psid_test_omib",
+        description = "PSID OMIB Test Case", # Old Test 01
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/data_tests/OMIB.raw",
+        build_function = build_psid_test_omib,
+    ),
+    SystemDescriptor(
+        name = "psid_test_threebus_oneDoneQ",
+        description = "PSID Three Bus One-d-One-q Test Case", # Old Test 02
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/data_tests/ThreeBusNetwork.raw",
+        build_function = build_psid_test_threebus_oneDoneQ,
+    ),
+    SystemDescriptor(
+        name = "psid_test_threebus_simple_marconato",
+        description = "PSID Three Bus Simple Marconato Test Case", # Old Test 03
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/data_tests/ThreeBusNetwork.raw",
+        build_function = build_psid_test_threebus_simple_marconato,
+    ),
+    SystemDescriptor(
+        name = "psid_test_threebus_marconato",
+        description = "PSID Three Bus Simple Marconato Test Case", # Old Test 03
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/data_tests/ThreeBusNetwork.raw",
+        build_function = build_psid_test_threebus_marconato,
+    ),
+    SystemDescriptor(
         name = "psid_psse_test_exp_load",
-        description = "PSID Exponential Load Test Case",
+        description = "PSID Exponential Load Test Case", # Old Test 37
         category = PSIDTestSystems,
         raw_data = "PowerSystemsTestData/psid_tests/psse/LOAD",
         build_function = build_psid_psse_test_exp_load,
@@ -1075,7 +1103,7 @@ const SYSTEM_CATALOG = [
         name = "psid_psse_test_constantP_load",
         description = "PSID Constant Power Load Test Case",
         category = PSIDTestSystems,
-        raw_data = "PowerSystemsTestData/psid_tests/psse/LOAD",
+        raw_data = "PowerSystemsTestData/psid_tests/psse/LOAD", # Old Test 37
         build_function = build_psid_psse_test_constantP_load,
     ),
 ]

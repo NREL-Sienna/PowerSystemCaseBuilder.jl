@@ -164,3 +164,122 @@ function build_psid_psse_test_constantP_load(; kwargs...)
     sys = System(raw_file, dyr_file; sys_kwargs...)
     return sys
 end
+
+function build_psid_test_omib(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    raw_file =  get_raw_data(; kwargs...)
+    omib_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    add_source_to_ref(omib_sys)
+
+    function dyn_gen_classic(generator)
+        return DynamicGenerator(
+            name = PSY.get_name(generator),
+            ω_ref = 1.0,
+            machine = machine_classic(),
+            shaft = shaft_damping(),
+            avr = avr_none(),
+            prime_mover = tg_none(),
+            pss = pss_none(),
+        )
+    end
+
+    gen = [g for g in get_components(Generator, omib_sys)][1]
+    case_gen = dyn_gen_classic(gen)
+    add_component!(omib_sys, case_gen, gen)
+
+    for l in get_components(PSY.PowerLoad, omib_sys)
+        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    end
+
+    return omib_sys
+end
+
+function build_psid_test_threebus_oneDoneQ(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    raw_file =  get_raw_data(; kwargs...)
+    threebus_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    add_source_to_ref(threebus_sys)
+
+    function dyn_gen_oneDoneQ(generator)
+        return PSY.DynamicGenerator(
+            name = PSY.get_name(generator),
+            ω_ref = 1.0,
+            machine = machine_oneDoneQ(), 
+            shaft = shaft_no_damping(), 
+            avr = avr_type1(), 
+            prime_mover = tg_none(), 
+            pss = pss_none(),
+        ) 
+    end
+
+    for g in get_components(Generator, threebus_sys)
+        case_gen = dyn_gen_oneDoneQ(g)
+        add_component!(threebus_sys, case_gen, g)
+    end
+
+    for l in get_components(PSY.PowerLoad, threebus_sys)
+        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    end
+
+    return threebus_sys
+end
+
+function build_psid_test_threebus_simple_marconato(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    raw_file =  get_raw_data(; kwargs...)
+    threebus_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    add_source_to_ref(threebus_sys)
+
+    function dyn_gen_simple_marconato(generator)
+        return PSY.DynamicGenerator(
+            name = PSY.get_name(generator), 
+            ω_ref = 1.0, 
+            machine = machine_simple_marconato(), 
+            shaft = shaft_no_damping(), 
+            avr = avr_type1(), 
+            prime_mover = tg_none(), 
+            pss = pss_none(),
+        ) 
+    end
+
+    for g in get_components(Generator, threebus_sys)
+        case_gen = dyn_gen_simple_marconato(g)
+        add_component!(threebus_sys, case_gen, g)
+    end
+
+    for l in get_components(PSY.PowerLoad, threebus_sys)
+        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    end
+
+    return threebus_sys
+end
+
+function build_psid_test_threebus_marconato(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    raw_file =  get_raw_data(; kwargs...)
+    threebus_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    add_source_to_ref(threebus_sys)
+
+    function dyn_gen_marconato(generator)
+        return PSY.DynamicGenerator(
+            name = PSY.get_name(generator), #static generator
+            ω_ref = 1.0, # ω_ref
+            machine = machine_marconato(), #machine
+            shaft = shaft_no_damping(), #shaft
+            avr = avr_type1(), #avr
+            prime_mover = tg_none(), #tg
+            pss = pss_none(),
+        ) #pss
+    end
+    
+    for g in get_components(Generator, threebus_sys)
+        case_gen = dyn_gen_marconato(g)
+        add_component!(threebus_sys, case_gen, g)
+    end
+    
+    for l in get_components(PSY.PowerLoad, threebus_sys)
+        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    end
+
+    return threebus_sys
+end
