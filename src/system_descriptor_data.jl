@@ -1114,11 +1114,32 @@ const SYSTEM_CATALOG = [
         build_function = build_psid_test_threebus_5shaft,
     ),
     SystemDescriptor(
-        name = "psid_test_VSM_inverter",
+        name = "psid_test_vsm_inverter",
         description = "PSID Two Bus D'Arco VSM Inverter Test Case", # Old Test 08
         category = PSIDTestSystems,
         raw_data = "PowerSystemsTestData/psid_tests/data_tests/OMIB_DARCO_PSR.raw",
-        build_function = build_psid_test_VSM_inverter,
+        build_function = build_psid_test_vsm_inverter,
+    ),
+    SystemDescriptor(
+        name = "psid_test_threebus_machine_vsm",
+        description = "PSID Three Bus One-d-One-q Machine against VSM Inverter Test Case", # Old Test 09 and 10
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/data_tests/ThreeBusNetwork.raw",
+        build_function = build_psid_test_threebus_machine_vsm,
+    ),
+    SystemDescriptor(
+        name = "psid_test_threebus_machine_vsm_dynlines",
+        description = "PSID Three Bus One-d-One-q Machine against VSM Inverter Test Case with Dynamic Lines", # Old Test 11
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/data_tests/ThreeBusNetwork.raw",
+        build_function = build_psid_test_threebus_machine_vsm_dynlines,
+    ),
+    SystemDescriptor(
+        name = "psid_test_threebus_multimachine",
+        description = "PSID Three Bus Multi-Machine Test Case", # Old Test 12
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/data_tests/ThreeBusMulti.raw",
+        build_function = build_psid_test_threebus_multimachine,
     ),
     SystemDescriptor(
         name = "psid_psse_test_exp_load",

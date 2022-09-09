@@ -12,16 +12,16 @@ PSID_BUILD_TESTS = Dict(
         if haskey(PSID_BUILD_TESTS, name)
             args = PSID_BUILD_TESTS[name]
             for dyn_type in args[2]
-                sys =
-                    build_system(PSIDTestSystems, name; force_build = true, (args[1] => dyn_type))
+                sys = build_system(
+                    PSIDTestSystems,
+                    name;
+                    force_build = true,
+                    (args[1] => dyn_type),
+                )
                 @test isa(sys, System)
                 # build a new system from json
                 @test PSB.is_serialized("$(name)_$(dyn_type)", false, false)
-                sys2 = build_system(
-                    PSIDTestSystems,
-                    name;
-                    (args[1] => dyn_type),
-                )
+                sys2 = build_system(PSIDTestSystems, name; (args[1] => dyn_type))
                 @test isa(sys2, System)
 
                 PSB.clear_serialized_system(name)
@@ -32,10 +32,7 @@ PSID_BUILD_TESTS = Dict(
             @test isa(sys, System)
             # build a new system from json
             @test PSB.is_serialized(name, false, false)
-            sys2 = build_system(
-                PSIDTestSystems,
-                name;
-            )
+            sys2 = build_system(PSIDTestSystems, name;)
             @test isa(sys2, System)
 
             PSB.clear_serialized_system(name)

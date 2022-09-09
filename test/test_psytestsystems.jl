@@ -3,9 +3,12 @@
     for (name, descriptor) in system_catalog.data[PSYTestSystems]
         # build a new system from scratch
         for forecasts in [true, false]
-            sys = build_system(PSYTestSystems, name;
-            add_forecasts = forecasts,
-            force_build = true)
+            sys = build_system(
+                PSYTestSystems,
+                name;
+                add_forecasts = forecasts,
+                force_build = true,
+            )
 
             @test isa(sys, System)
             # build a new system from json
