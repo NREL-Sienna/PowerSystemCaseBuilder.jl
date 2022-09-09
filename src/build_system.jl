@@ -19,15 +19,48 @@ function build_system(
     category::Type{<:SystemCategory},
     name::String,
     print_stat::Bool = false;
-    assign_new_uuids = true,
     kwargs...,
 )
+    system_catelog = get(kwargs, :system_catelog, SystemCatalog(SYSTEM_CATALOG))
+    sys_descriptor = get_system_descriptor(category, system_catelog, name)
+    return _build_system(category, name, sys_descriptor, print_stat; kwargs...)
+end
+
+function build_system(
+    category::Type{PSIDTestSystems},
+    name::String,
+    print_stat::Bool = false;
+    kwargs...,
+)
+    system_catelog = get(kwargs, :system_catelog, SystemCatalog(SYSTEM_CATALOG))
+    sys_descriptor = get_system_descriptor(category, system_catelog, name)
+    psid_kwargs = check_kwargs_psid(; kwargs...)
+    if !isempty(psid_kwargs)
+        kwarg_type = first(values(psid_kwargs))
+        name = "$(name)_$kwarg_type"
+    end
+    return _build_system(
+        category,
+        name,
+        sys_descriptor,
+        print_stat;
+        add_forecasts = false,
+        kwargs...,
+    )
+end
+
+function _build_system(
+    category::Type{<:SystemCategory},
+    name::String,
+    sys_descriptor::SystemDescriptor,
+    print_stat::Bool = false;
+    kwargs...,
+)
+    assign_new_uuids = get(kwargs, :assign_new_uuids, true)
     add_forecasts = get(kwargs, :add_forecasts, true)
     add_reserves = get(kwargs, :add_reserves, false)
     force_build = get(kwargs, :force_build, false)
     skip_serialization = get(kwargs, :skip_serialization, false)
-    system_catelog = get(kwargs, :system_catelog, SystemCatalog(SYSTEM_CATALOG))
-    sys_descriptor = get_system_descriptor(category, system_catelog, name)
     if !is_serialized(name, add_forecasts, add_reserves) || force_build
         check_serialized_storage()
         download_function = get_download_function(sys_descriptor)
