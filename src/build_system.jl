@@ -57,7 +57,7 @@ function _build_system(
     kwargs...,
 )
     assign_new_uuids = get(kwargs, :assign_new_uuids, true)
-    add_forecasts = get(kwargs, :add_forecasts, true)
+    add_forecasts = get(kwargs, :add_forecasts, false)
     add_reserves = get(kwargs, :add_reserves, false)
     force_build = get(kwargs, :force_build, false)
     skip_serialization = get(kwargs, :skip_serialization, false)

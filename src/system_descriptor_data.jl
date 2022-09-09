@@ -572,7 +572,7 @@ const SYSTEM_CATALOG = [
         raw_data = joinpath(
             PACKAGE_DIR,
             "PowerSystemsTestData",
-            "pm_data",
+            "matpower",
             "matpower",
             "case5_strg.m",
         ),
