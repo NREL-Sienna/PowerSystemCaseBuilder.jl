@@ -573,7 +573,6 @@ const SYSTEM_CATALOG = [
             PACKAGE_DIR,
             "PowerSystemsTestData",
             "matpower",
-            "matpower",
             "case5_strg.m",
         ),
         build_function = build_matpower,
