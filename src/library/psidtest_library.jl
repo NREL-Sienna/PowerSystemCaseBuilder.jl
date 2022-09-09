@@ -91,7 +91,7 @@ function build_psid_psse_test_gen(; kwargs...)
         dyr_file = joinpath(data_dir, "GENSAE/ThreeBus_GENSAE.dyr")
     elseif gen_type == "GENSAL"
         raw_file = joinpath(data_dir, "GENSAL/ThreeBusMulti.raw")
-        dyr_file = joinpath(data_dir, "GENSAL/ThreeBus_GENSAE.dyr")
+        dyr_file = joinpath(data_dir, "GENSAL/ThreeBus_GENSAL.dyr")
     else
         error(
             "Kwarg gen_type = $(gen_type) for PSID/PSSE test not supported. Available kwargs are: $(AVAILABLE_PSID_PSSE_GENS_TEST)",
