@@ -2,26 +2,24 @@
     system_catalog = SystemCatalog(SYSTEM_CATALOG)
     for (name, descriptor) in system_catalog.data[PSYTestSystems]
         # build a new system from scratch
-        for forecasts in [true, false], reserves in [true, false]
+        for forecasts in [true, false]
             sys = build_system(PSYTestSystems, name;
             add_forecasts = forecasts,
-            add_reserves = reserves,
             force_build = true)
 
             @test isa(sys, System)
             # build a new system from json
-            @test PSB.is_serialized(name, forecasts, reserves)
+            @test PSB.is_serialized(name, forecasts, false)
             sys2 = build_system(
                 PSYTestSystems,
                 name;
                 add_forecasts = forecasts,
-                add_reserves = reserves,
                 force_build = true,
             )
             @test isa(sys2, System)
 
             PSB.clear_serialized_system(name)
-            @test !PSB.is_serialized(name, forecasts, reserves)
+            @test !PSB.is_serialized(name, forecasts, false)
         end
     end
 end
