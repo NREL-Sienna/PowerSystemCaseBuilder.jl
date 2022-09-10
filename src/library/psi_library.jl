@@ -74,7 +74,7 @@ function build_c_sys5_pjm(; kwargs...)
             joinpath(
                 PACKAGE_DIR,
                 "PowerSystemsTestData",
-                "forecasts",
+                "5-Bus",
                 "5bus_ts",
                 "gen",
                 "Renewable",
@@ -193,7 +193,7 @@ function build_c_sys5_pjm_rt(; kwargs...)
             joinpath(
                 PACKAGE_DIR,
                 "PowerSystemsTestData",
-                "forecasts",
+                "5-bus",
                 "5bus_ts",
                 "gen",
                 "Renewable",
