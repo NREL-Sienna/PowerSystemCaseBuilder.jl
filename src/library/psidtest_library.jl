@@ -442,7 +442,7 @@ function build_psid_test_threebus_machine_vsm(; kwargs...)
 end
 
 function build_psid_test_threebus_machine_vsm_dynlines(; kwargs...)
-    threebus_sys = build_psid_test_threebus_machine_vsm(; kwargs...)
+    threebus_sys = build_psid_test_threebus_machine_vsm(; force_build = true, kwargs...)
     dyn_branch = DynamicBranch(get_component(Branch, threebus_sys, "BUS 2-BUS 3-i_1"))
     add_component!(threebus_sys, dyn_branch)
 
@@ -666,7 +666,7 @@ function build_psid_test_gfoll_inverter(; kwargs...)
             dc_source_lv(), # dc source
             reduced_pll(), # pll
             filt_gfoll(), # filter
-        ) 
+        )
     end
 
     for l in get_components(PSY.PowerLoad, omib_sys)
@@ -689,11 +689,11 @@ function build_psid_test_threebus_multimachine_dynlines(; kwargs...)
     function dyn_gen_marconato(generator)
         return PSY.DynamicGenerator(
             name = PSY.get_name(generator),
-            ω_ref = 1.0, 
-            machine = machine_marconato(), 
+            ω_ref = 1.0,
+            machine = machine_marconato(),
             shaft = shaft_no_damping(),
-            avr = AVRSimple(1.0), 
-            prime_mover = tg_none(), 
+            avr = AVRSimple(1.0),
+            prime_mover = tg_none(),
             pss = pss_none(),
         )
     end
@@ -701,10 +701,10 @@ function build_psid_test_threebus_multimachine_dynlines(; kwargs...)
     function dyn_gen_marconato_tg(generator)
         return PSY.DynamicGenerator(
             name = PSY.get_name(generator),
-            ω_ref = 1.0, 
+            ω_ref = 1.0,
             machine = machine_marconato(),
             shaft = shaft_no_damping(),
-            avr = AVRSimple(1.0), 
+            avr = AVRSimple(1.0),
             prime_mover = tg_type2(),
             pss = pss_none(),
         )
@@ -766,17 +766,17 @@ function build_psid_test_pvs(; kwargs...)
             pss = pss_none(),
         )
     end
-    
+
     #Attach dynamic generator
     gen = [g for g in get_components(Generator, sys)][1]
     case_gen = dyn_gen_second_order(gen)
     add_component!(sys, case_gen, gen)
-    
+
     #Attach periodic variable source
     source = [s for s in get_components(Source, sys)][1]
     pvs = pvs_simple(source)
     add_component!(sys, pvs, source)
-    
+
     for l in get_components(PSY.PowerLoad, sys)
         PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
     end
@@ -803,7 +803,7 @@ function build_psid_psse_test_constantP_load(; kwargs...)
 end
 
 function build_psid_psse_test_constantI_load(; kwargs...)
-    sys = build_psid_psse_test_constantP_load(; kwargs...)
+    sys = build_psid_psse_test_constantP_load(; force_build = true, kwargs...)
     for l in get_components(PSY.PowerLoad, sys)
         PSY.set_model!(l, PSY.LoadModels.ConstantCurrent)
     end
@@ -811,7 +811,7 @@ function build_psid_psse_test_constantI_load(; kwargs...)
 end
 
 function build_psid_psse_test_exp_load(; kwargs...)
-    sys = build_psid_psse_test_constantP_load(; kwargs...)
+    sys = build_psid_psse_test_constantP_load(; force_build = true, kwargs...)
     for l in collect(get_components(PSY.PowerLoad, sys))
         exp_load = PSY.ExponentialLoad(
             name = PSY.get_name(l),
@@ -828,5 +828,32 @@ function build_psid_psse_test_exp_load(; kwargs...)
         PSY.remove_component!(sys, l)
         PSY.add_component!(sys, exp_load)
     end
+    return sys
+end
+
+function build_psid_test_indmotor(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    data_dir = get_raw_data(; kwargs...)
+    raw_file = joinpath(data_dir, "TVC_System_motor.raw")
+    dyr_file = joinpath(data_dir, "TVC_System_motor.dyr")
+    sys = System(raw_file, dyr_file; sys_kwargs...)
+    return sys
+end
+
+function build_psid_test_5th_indmotor(; kwargs...)
+    sys = build_psid_test_indmotor(; force_build = true, kwargs...)
+    load = first(get_components(PSY.ElectricLoad, sys))
+    # Include the induction motor
+    dynamic_injector = Ind_Motor(load)
+    add_component!(sys, dynamic_injector, load)
+    return sys
+end
+
+function build_psid_test_3rd_indmotor(; kwargs...)
+    sys = build_psid_test_indmotor(; force_build = true, kwargs...)
+    load = first(get_components(PSY.ElectricLoad, sys))
+    # Include the induction motor
+    dynamic_injector = Ind_Motor3rd(load)
+    add_component!(sys, dynamic_injector, load)
     return sys
 end

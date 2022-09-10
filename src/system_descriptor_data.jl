@@ -1238,4 +1238,25 @@ const SYSTEM_CATALOG = [
         raw_data = "PowerSystemsTestData/psid_tests/psse/ANDES",
         build_function = build_psid_11bus_andes,
     ),
+    SystemDescriptor(
+        name = "psid_test_indmotor",
+        description = "PSID System without Induction Motor Test Case", # Old Test 37
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/data_tests",
+        build_function = build_psid_test_indmotor,
+    ),
+    SystemDescriptor(
+        name = "psid_test_5th_indmotor",
+        description = "PSID System with 5th-order Induction Motor Test Case", # Old Test 37
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/data_tests",
+        build_function = build_psid_test_5th_indmotor,
+    ),
+    SystemDescriptor(
+        name = "psid_test_3rd_indmotor",
+        description = "PSID System with 3rd-order Induction Motor Test Case", # Old Test 38
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/data_tests",
+        build_function = build_psid_test_3rd_indmotor,
+    ),
 ]
