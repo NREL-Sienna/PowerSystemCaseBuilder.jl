@@ -287,7 +287,7 @@ const SYSTEM_CATALOG = [
     SystemDescriptor(
         name = "test_RTS_GMLC_sys",
         description = "RTS-GMLC test system with day-ahead forecast",
-        category = PSISystems,
+        category = PSITestSystems,
         raw_data = joinpath(PACKAGE_DIR, "PowerSystemsTestData", "RTS_GMLC"),
         build_function = build_test_RTS_GMLC_sys,
     ),

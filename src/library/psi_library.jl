@@ -38,7 +38,7 @@ function build_c_sys5_pjm(; kwargs...)
     PSY.add_component!(c_sys5, pv_device)
     PSY.add_component!(c_sys5, wind_device)
     timeseries_dataset = HDF5.h5read(
-        joinpath(PACKAGE_DIR, "data", "PJM_5_BUS_7_DAYS.h5"),
+        joinpath(PACKAGE_DIR, "PowerSystemsTestData", "5-bus", "PJM_5_BUS_7_DAYS.h5"),
         "Time Series Data",
     )
     refdate = first(DayAhead)
@@ -57,8 +57,8 @@ function build_c_sys5_pjm(; kwargs...)
         "PVBus5" => CSV.read(
             joinpath(
                 PACKAGE_DIR,
-                "data",
-                "forecasts",
+                "PowerSystemsTestData",
+                "5-bus",
                 "5bus_ts",
                 "gen",
                 "Renewable",
@@ -73,8 +73,8 @@ function build_c_sys5_pjm(; kwargs...)
         "WindBus1" => CSV.read(
             joinpath(
                 PACKAGE_DIR,
-                "data",
-                "forecasts",
+                "PowerSystemsTestData",
+                "5-Bus",
                 "5bus_ts",
                 "gen",
                 "Renewable",
@@ -158,7 +158,7 @@ function build_c_sys5_pjm_rt(; kwargs...)
     PSY.add_component!(c_sys5, pv_device)
     PSY.add_component!(c_sys5, wind_device)
     timeseries_dataset = HDF5.h5read(
-        joinpath(PACKAGE_DIR, "data", "PJM_5_BUS_7_DAYS.h5"),
+        joinpath(PACKAGE_DIR, "PowerSystemsTestData", "5-bus", "PJM_5_BUS_7_DAYS.h5"),
         "Time Series Data",
     )
     refdate = first(DayAhead)
@@ -176,8 +176,8 @@ function build_c_sys5_pjm_rt(; kwargs...)
         "PVBus5" => CSV.read(
             joinpath(
                 PACKAGE_DIR,
-                "data",
-                "forecasts",
+                "PowerSystemsTestData",
+                "5-bus",
                 "5bus_ts",
                 "gen",
                 "Renewable",
@@ -192,8 +192,8 @@ function build_c_sys5_pjm_rt(; kwargs...)
         "WindBus1" => CSV.read(
             joinpath(
                 PACKAGE_DIR,
-                "data",
-                "forecasts",
+                "PowerSystemsTestData",
+                "5-bus",
                 "5bus_ts",
                 "gen",
                 "Renewable",
@@ -251,10 +251,7 @@ function build_5_bus_hydro_uc_sys(; kwargs...)
         data_dir,
         100.0,
         joinpath(data_dir, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(
-            data_dir,
-            "generator_mapping.yaml",
-        ),
+        generator_mapping_file = joinpath(data_dir, "generator_mapping.yaml"),
     )
     if get(kwargs, :add_forecasts, true)
         c_sys5_hy_uc = PSY.System(
@@ -283,10 +280,7 @@ function build_5_bus_hydro_uc_sys_targets(; kwargs...)
         data_dir,
         100.0,
         joinpath(data_dir, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(
-            data_dir,
-            "generator_mapping.yaml",
-        ),
+        generator_mapping_file = joinpath(data_dir, "generator_mapping.yaml"),
     )
     if get(kwargs, :add_forecasts, true)
         c_sys5_hy_uc = PSY.System(
@@ -325,10 +319,7 @@ function build_5_bus_hydro_ed_sys(; kwargs...)
         data_dir,
         100.0,
         joinpath(data_dir, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(
-            data_dir,
-            "generator_mapping.yaml",
-        ),
+        generator_mapping_file = joinpath(data_dir, "generator_mapping.yaml"),
     )
     c_sys5_hy_ed = PSY.System(
         rawsys,
@@ -353,10 +344,7 @@ function build_5_bus_hydro_ed_sys_targets(; kwargs...)
         data_dir,
         100.0,
         joinpath(data_dir, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(
-            data_dir,
-            "generator_mapping.yaml",
-        ),
+        generator_mapping_file = joinpath(data_dir, "generator_mapping.yaml"),
     )
     c_sys5_hy_ed = PSY.System(
         rawsys,
@@ -392,10 +380,7 @@ function build_5_bus_hydro_wk_sys(; kwargs...)
         data_dir,
         100.0,
         joinpath(data_dir, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(
-            data_dir,
-            "generator_mapping.yaml",
-        ),
+        generator_mapping_file = joinpath(data_dir, "generator_mapping.yaml"),
     )
     c_sys5_hy_wk = PSY.System(
         rawsys,
@@ -420,10 +405,7 @@ function build_5_bus_hydro_wk_sys_targets(; kwargs...)
         data_dir,
         100.0,
         joinpath(data_dir, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(
-            data_dir,
-            "generator_mapping.yaml",
-        ),
+        generator_mapping_file = joinpath(data_dir, "generator_mapping.yaml"),
     )
     c_sys5_hy_wk = PSY.System(
         rawsys,
