@@ -1169,6 +1169,27 @@ const SYSTEM_CATALOG = [
         build_function = build_psid_test_droop_inverter,
     ),
     SystemDescriptor(
+        name = "psid_test_gfoll_inverter",
+        description = "PSID Two Bus Grid Following Inverter Test Case", # Old Test 24
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/data_tests/OMIB_DARCO_PSR.raw",
+        build_function = build_psid_test_gfoll_inverter,
+    ),
+    SystemDescriptor(
+        name = "psid_test_threebus_multimachine_dynlines",
+        description = "PSID Three Bus Multi-Machine with Dynamic Lines Test Case", # Old Test 25
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/data_tests/ThreeBusMultiLoad.raw",
+        build_function = build_psid_test_threebus_multimachine_dynlines,
+    ),
+    SystemDescriptor(
+        name = "psid_test_pvs",
+        description = "PSID OMIB with Periodic Variable Source Test Case", # Old Test 28
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/data_tests/OMIB.raw",
+        build_function = build_psid_test_pvs,
+    ),
+    SystemDescriptor(
         name = "psid_psse_test_exp_load",
         description = "PSID Exponential Load Test Case", # Old Test 37
         category = PSIDTestSystems,
