@@ -682,3 +682,138 @@ function build_psid_test_droop_inverter(; kwargs...)
 
     return omib_sys
 end
+
+function build_psid_test_gfoll_inverter(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    raw_file = get_raw_data(; kwargs...)
+    omib_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    add_source_to_ref(omib_sys)
+
+    ############### Data Dynamic devices ########################
+    function inv_gfoll(static_device)
+        return PSY.DynamicInverter(
+            PSY.get_name(static_device),
+            1.0, # ω_ref
+            converter_low_power(), # converter
+            outer_control_gfoll(), # outercontrol
+            current_mode_inner(), # inner_control
+            dc_source_lv(), # dc source
+            reduced_pll(), # pll
+            filt_gfoll(), # filter
+        ) 
+    end
+
+    for l in get_components(PSY.PowerLoad, omib_sys)
+        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    end
+
+    device = [g for g in get_components(Generator, omib_sys)][1]
+    case_inv = inv_gfoll(device)
+    add_component!(omib_sys, case_inv, device)
+
+    return omib_sys
+end
+
+function build_psid_test_threebus_multimachine_dynlines(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    raw_file = get_raw_data(; kwargs...)
+    sys = System(raw_file, runchecks = false; sys_kwargs...)
+
+    ############### Data Dynamic devices ########################
+    function dyn_gen_marconato(generator)
+        return PSY.DynamicGenerator(
+            name = PSY.get_name(generator),
+            ω_ref = 1.0, 
+            machine = machine_marconato(), 
+            shaft = shaft_no_damping(),
+            avr = AVRSimple(1.0), 
+            prime_mover = tg_none(), 
+            pss = pss_none(),
+        )
+    end
+
+    function dyn_gen_marconato_tg(generator)
+        return PSY.DynamicGenerator(
+            name = PSY.get_name(generator),
+            ω_ref = 1.0, 
+            machine = machine_marconato(),
+            shaft = shaft_no_damping(),
+            avr = AVRSimple(1.0), 
+            prime_mover = tg_type2(),
+            pss = pss_none(),
+        )
+    end
+
+    # Add dynamic generators to the system (each gen is linked through a static one)
+    for g in get_components(Generator, sys)
+        if get_number(get_bus(g)) == 101
+            case_gen = dyn_gen_marconato_tg(g)
+            add_component!(sys, case_gen, g)
+        elseif get_number(get_bus(g)) == 102
+            case_gen = dyn_gen_marconato(g)
+            add_component!(sys, case_gen, g)
+        end
+    end
+
+    # Transform all lines into dynamic lines
+    for line in collect(get_components(Line, sys))
+        dyn_line = DynamicBranch(line)
+        add_component!(sys, dyn_line)
+    end
+
+    for l in get_components(PSY.PowerLoad, sys)
+        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    end
+
+    return sys
+end
+
+function build_psid_test_pvs(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    raw_file = get_raw_data(; kwargs...)
+    sys = System(raw_file, runchecks = false; sys_kwargs...)
+    add_source_to_ref(sys)
+
+    ############### Data Dynamic devices ########################
+    function pvs_simple(source)
+        return PeriodicVariableSource(
+            name = PSY.get_name(source),
+            R_th = PSY.get_R_th(source),
+            X_th = PSY.get_X_th(source),
+            internal_voltage_bias = 1.0,
+            internal_voltage_frequencies = [2 * pi],
+            internal_voltage_coefficients = [(1.0, 0.0)],
+            internal_angle_bias = 0.0,
+            internal_angle_frequencies = [2 * pi],
+            internal_angle_coefficients = [(0.0, 1.0)],
+        )
+    end
+
+    function dyn_gen_second_order(generator)
+        return DynamicGenerator(
+            name = PSY.get_name(generator),
+            ω_ref = 1.0,
+            machine = machine_oneDoneQ(),
+            shaft = shaft_no_damping(),
+            avr = avr_type1(),
+            prime_mover = tg_none(),
+            pss = pss_none(),
+        )
+    end
+    
+    #Attach dynamic generator
+    gen = [g for g in get_components(Generator, sys)][1]
+    case_gen = dyn_gen_second_order(gen)
+    add_component!(sys, case_gen, gen)
+    
+    #Attach periodic variable source
+    source = [s for s in get_components(Source, sys)][1]
+    pvs = pvs_simple(source)
+    add_component!(sys, pvs, source)
+    
+    for l in get_components(PSY.PowerLoad, sys)
+        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    end
+
+    return sys
+end
