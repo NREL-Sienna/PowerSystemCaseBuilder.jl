@@ -1225,10 +1225,17 @@ const SYSTEM_CATALOG = [
         build_function = build_psid_psse_test_exp_load,
     ),
     SystemDescriptor(
-        name = "psid_psse_test_4bus_multigen",
+        name = "psid_4bus_multigen",
         description = "PSID Multiple Generators in Single-Bus Test Case", # Old Test 35
         category = PSIDSystems,
         raw_data = "PowerSystemsTestData/psid_tests/psse/MultiGen",
-        build_function = build_psid_test_4bus_multigen,
+        build_function = build_psid_4bus_multigen,
+    ),
+    SystemDescriptor(
+        name = "psid_11bus_andes",
+        description = "PSID 11-bus Kundur System compared against Andes", # Old Test 36
+        category = PSIDSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/psse/ANDES",
+        build_function = build_psid_11bus_andes,
     ),
 ]
