@@ -27,11 +27,11 @@ function build_system(
 end
 
 function build_system(
-    category::Type{PSIDTestSystems},
+    category::Type{T},
     name::String,
     print_stat::Bool = false;
     kwargs...,
-)
+) where {T <: Union{PSIDTestSystems, PSIDSystems}}
     system_catalog = get(kwargs, :system_catalog, SystemCatalog(SYSTEM_CATALOG))
     sys_descriptor = get_system_descriptor(category, system_catalog, name)
     psid_kwargs = check_kwargs_psid(; kwargs...)
@@ -54,7 +54,7 @@ function build_system(
     name::String,
     print_stat::Bool = false;
     kwargs...,
-) where {T <: Union{PSITestSystems, PSIDSystems}}
+) where {T <: Union{PSITestSystems, PSISystems}}
     system_catalog = get(kwargs, :system_catalog, SystemCatalog(SYSTEM_CATALOG))
     sys_descriptor = get_system_descriptor(category, system_catalog, name)
     psid_kwargs = check_kwargs_psid(; kwargs...)
