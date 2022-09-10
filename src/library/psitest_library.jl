@@ -2570,15 +2570,14 @@ function build_5_bus_matpower_RT(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     file_path = get_raw_data(; kwargs...)
     data_dir = dirname(dirname(file_path))
-    pm_data = PowerSystems.PowerModelsData(file_path)
 
-    FORECASTS_DIR = joinpath(data_dir, "forecasts", "5bus_ts", "7day")
+    FORECASTS_DIR = joinpath(data_dir, "5bus_ts", "7day")
 
     tsp = IS.read_time_series_file_metadata(
         joinpath(FORECASTS_DIR, "timeseries_pointers_rt_7day.json"),
     )
 
-    sys = System(pm_data)
+    sys = System(file_path; sys_kwargs...)
 
     add_time_series!(sys, tsp)
     transform_single_time_series!(sys, 12, Hour(1))
