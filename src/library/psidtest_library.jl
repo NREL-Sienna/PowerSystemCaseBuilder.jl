@@ -131,40 +131,6 @@ function build_psid_psse_test_pss(; kwargs...)
     return pss_sys
 end
 
-function build_psid_psse_test_exp_load(; kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
-    data_dir = get_raw_data(; kwargs...)
-    raw_file = joinpath(data_dir, "ThreeBusMulti.raw")
-    dyr_file = joinpath(data_dir, "ThreeBus_GENROU.dyr")
-    sys = System(raw_file, dyr_file; sys_kwargs...)
-    for l in collect(get_components(PSY.PowerLoad, sys))
-        exp_load = PSY.ExponentialLoad(
-            name = PSY.get_name(l),
-            available = PSY.get_available(l),
-            bus = PSY.get_bus(l),
-            active_power = PSY.get_active_power(l),
-            reactive_power = PSY.get_reactive_power(l),
-            active_power_coefficient = 0.0, # Constant Power
-            reactive_power_coefficient = 0.0, # Constant Power
-            base_power = PSY.get_base_power(l),
-            max_active_power = PSY.get_max_active_power(l),
-            max_reactive_power = PSY.get_max_reactive_power(l),
-        )
-        PSY.remove_component!(sys, l)
-        PSY.add_component!(sys, exp_load)
-    end
-    return sys
-end
-
-function build_psid_psse_test_constantP_load(; kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
-    data_dir = get_raw_data(; kwargs...)
-    raw_file = joinpath(data_dir, "ThreeBusMulti.raw")
-    dyr_file = joinpath(data_dir, "ThreeBus_GENROU.dyr")
-    sys = System(raw_file, dyr_file; sys_kwargs...)
-    return sys
-end
-
 function build_psid_test_omib(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     raw_file = get_raw_data(; kwargs...)
@@ -815,5 +781,52 @@ function build_psid_test_pvs(; kwargs...)
         PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
     end
 
+    return sys
+end
+
+###########################
+# Add Test 29 systems here
+###########################
+
+function build_psid_test_ieee_9bus(; kwargs...)
+    json_file = get_raw_data(; kwargs...)
+    return System(json_file)
+end
+
+function build_psid_psse_test_constantP_load(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    data_dir = get_raw_data(; kwargs...)
+    raw_file = joinpath(data_dir, "ThreeBusMulti.raw")
+    dyr_file = joinpath(data_dir, "ThreeBus_GENROU.dyr")
+    sys = System(raw_file, dyr_file; sys_kwargs...)
+    return sys
+end
+
+function build_psid_psse_test_constantI_load(; kwargs...)
+    sys = build_psid_psse_test_constantP_load(; kwargs...)
+    for l in get_components(PSY.PowerLoad, sys)
+        PSY.set_model!(l, PSY.LoadModels.ConstantCurrent)
+    end
+    return sys
+end
+
+function build_psid_psse_test_exp_load(; kwargs...)
+    sys = build_psid_psse_test_constantP_load(; kwargs...)
+    for l in collect(get_components(PSY.PowerLoad, sys))
+        exp_load = PSY.ExponentialLoad(
+            name = PSY.get_name(l),
+            available = PSY.get_available(l),
+            bus = PSY.get_bus(l),
+            active_power = PSY.get_active_power(l),
+            reactive_power = PSY.get_reactive_power(l),
+            active_power_coefficient = 0.0, # Constant Power
+            reactive_power_coefficient = 0.0, # Constant Power
+            base_power = PSY.get_base_power(l),
+            max_active_power = PSY.get_max_active_power(l),
+            max_reactive_power = PSY.get_max_reactive_power(l),
+        )
+        PSY.remove_component!(sys, l)
+        PSY.add_component!(sys, exp_load)
+    end
     return sys
 end

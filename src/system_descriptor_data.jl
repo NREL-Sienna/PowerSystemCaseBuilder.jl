@@ -1188,19 +1188,47 @@ const SYSTEM_CATALOG = [
         category = PSIDTestSystems,
         raw_data = "PowerSystemsTestData/psid_tests/data_tests/OMIB.raw",
         build_function = build_psid_test_pvs,
+    ), # TO ADD TEST 29
+    SystemDescriptor(
+        name = "psid_test_ieee_9bus",
+        description = "PSID IEEE 9-bus system with Anderson-Fouad Machine Test Case", # Old Test 32
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/data_tests/9BusSystem.json",
+        build_function = build_psid_test_ieee_9bus,
+    ),
+    SystemDescriptor(
+        name = "psid_test_ieee_9bus",
+        description = "PSID IEEE 9-bus system with Anderson-Fouad Machine Test Case", # Old Test 32
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/data_tests/9BusSystem.json",
+        build_function = build_psid_test_ieee_9bus,
+    ),
+    SystemDescriptor(
+        name = "psid_psse_test_constantP_load",
+        description = "PSID Constant Power Load Test Case", # Old Test 33
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/psse/LOAD", 
+        build_function = build_psid_psse_test_constantP_load,
+    ),
+    SystemDescriptor(
+        name = "psid_psse_test_constantI_load",
+        description = "PSID Constant Current Load Test Case", # Old Test 33
+        category = PSIDTestSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/psse/LOAD", 
+        build_function = build_psid_psse_test_constantI_load,
     ),
     SystemDescriptor(
         name = "psid_psse_test_exp_load",
-        description = "PSID Exponential Load Test Case", # Old Test 37
+        description = "PSID Exponential Load Test Case", # Old Test 34
         category = PSIDTestSystems,
         raw_data = "PowerSystemsTestData/psid_tests/psse/LOAD",
         build_function = build_psid_psse_test_exp_load,
     ),
     SystemDescriptor(
-        name = "psid_psse_test_constantP_load",
-        description = "PSID Constant Power Load Test Case",
-        category = PSIDTestSystems,
-        raw_data = "PowerSystemsTestData/psid_tests/psse/LOAD", # Old Test 37
-        build_function = build_psid_psse_test_constantP_load,
+        name = "psid_psse_test_4bus_multigen",
+        description = "PSID Multiple Generators in Single-Bus Test Case", # Old Test 35
+        category = PSIDSystems,
+        raw_data = "PowerSystemsTestData/psid_tests/psse/MultiGen",
+        build_function = build_psid_test_4bus_multigen,
     ),
 ]
