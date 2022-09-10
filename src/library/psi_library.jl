@@ -248,12 +248,11 @@ function build_5_bus_hydro_uc_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
     rawsys = PSY.PowerSystemTableData(
-        joinpath(data_dir, "5-bus-hydro"),
+        data_dir,
         100.0,
-        joinpath(data_dir, "5-bus-hydro", "user_descriptors.yaml");
+        joinpath(data_dir, "user_descriptors.yaml");
         generator_mapping_file = joinpath(
             data_dir,
-            "5-bus-hydro",
             "generator_mapping.yaml",
         ),
     )
@@ -262,7 +261,6 @@ function build_5_bus_hydro_uc_sys(; kwargs...)
             rawsys,
             timeseries_metadata_file = joinpath(
                 data_dir,
-                "forecasts",
                 "5bus_ts",
                 "7day",
                 "timeseries_pointers_da_7day.json",
@@ -282,12 +280,11 @@ function build_5_bus_hydro_uc_sys_targets(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
     rawsys = PSY.PowerSystemTableData(
-        joinpath(data_dir, "5-bus-hydro"),
+        data_dir,
         100.0,
-        joinpath(data_dir, "5-bus-hydro", "user_descriptors.yaml");
+        joinpath(data_dir, "user_descriptors.yaml");
         generator_mapping_file = joinpath(
             data_dir,
-            "5-bus-hydro",
             "generator_mapping.yaml",
         ),
     )
@@ -296,7 +293,6 @@ function build_5_bus_hydro_uc_sys_targets(; kwargs...)
             rawsys,
             timeseries_metadata_file = joinpath(
                 data_dir,
-                "forecasts",
                 "5bus_ts",
                 "7day",
                 "timeseries_pointers_da_7day.json",
@@ -326,12 +322,11 @@ function build_5_bus_hydro_ed_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
     rawsys = PSY.PowerSystemTableData(
-        joinpath(data_dir, "5-bus-hydro"),
+        data_dir,
         100.0,
-        joinpath(data_dir, "5-bus-hydro", "user_descriptors.yaml");
+        joinpath(data_dir, "user_descriptors.yaml");
         generator_mapping_file = joinpath(
             data_dir,
-            "5-bus-hydro",
             "generator_mapping.yaml",
         ),
     )
@@ -339,7 +334,6 @@ function build_5_bus_hydro_ed_sys(; kwargs...)
         rawsys,
         timeseries_metadata_file = joinpath(
             data_dir,
-            "forecasts",
             "5bus_ts",
             "7day",
             "timeseries_pointers_rt_7day.json",
@@ -356,12 +350,11 @@ function build_5_bus_hydro_ed_sys_targets(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
     rawsys = PSY.PowerSystemTableData(
-        joinpath(data_dir, "5-bus-hydro"),
+        data_dir,
         100.0,
-        joinpath(data_dir, "5-bus-hydro", "user_descriptors.yaml");
+        joinpath(data_dir, "user_descriptors.yaml");
         generator_mapping_file = joinpath(
             data_dir,
-            "5-bus-hydro",
             "generator_mapping.yaml",
         ),
     )
@@ -369,7 +362,6 @@ function build_5_bus_hydro_ed_sys_targets(; kwargs...)
         rawsys,
         timeseries_metadata_file = joinpath(
             data_dir,
-            "forecasts",
             "5bus_ts",
             "7day",
             "timeseries_pointers_rt_7day.json",
@@ -397,12 +389,11 @@ function build_5_bus_hydro_wk_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
     rawsys = PSY.PowerSystemTableData(
-        joinpath(data_dir, "5-bus-hydro"),
+        data_dir,
         100.0,
-        joinpath(data_dir, "5-bus-hydro", "user_descriptors.yaml");
+        joinpath(data_dir, "user_descriptors.yaml");
         generator_mapping_file = joinpath(
             data_dir,
-            "5-bus-hydro",
             "generator_mapping.yaml",
         ),
     )
@@ -410,7 +401,6 @@ function build_5_bus_hydro_wk_sys(; kwargs...)
         rawsys,
         timeseries_metadata_file = joinpath(
             data_dir,
-            "forecasts",
             "5bus_ts",
             "7day",
             "timeseries_pointers_wk_7day.json",
@@ -427,12 +417,11 @@ function build_5_bus_hydro_wk_sys_targets(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
     rawsys = PSY.PowerSystemTableData(
-        joinpath(data_dir, "5-bus-hydro"),
+        data_dir,
         100.0,
-        joinpath(data_dir, "5-bus-hydro", "user_descriptors.yaml");
+        joinpath(data_dir, "user_descriptors.yaml");
         generator_mapping_file = joinpath(
             data_dir,
-            "5-bus-hydro",
             "generator_mapping.yaml",
         ),
     )
@@ -440,7 +429,6 @@ function build_5_bus_hydro_wk_sys_targets(; kwargs...)
         rawsys,
         timeseries_metadata_file = joinpath(
             data_dir,
-            "forecasts",
             "5bus_ts",
             "7day",
             "timeseries_pointers_wk_7day.json",
