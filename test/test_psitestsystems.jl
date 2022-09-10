@@ -1,4 +1,4 @@
-@testset "Test Serialization/De-Serialization PSI Tests" begin
+@testset "Test Serialization/De-Serialization PSI Cases" begin
     system_catalog = SystemCatalog(SYSTEM_CATALOG)
     for (name, descriptor) in system_catalog.data[PSITestSystems]
         # build a new system from scratch
