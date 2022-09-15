@@ -1,7 +1,0 @@
-[submodule "PowerSystemsTestData"]
-	path = PowerSystemsTestData
-	url = https://github.com/NREL-SIIP/PowerSystemsTestData
-	branch = jd/data_reorganization
-[submodule "rts-gmlc"]
-	path = rts-gmlc
-	url = https://github.com/gridmod/rts-gmlc

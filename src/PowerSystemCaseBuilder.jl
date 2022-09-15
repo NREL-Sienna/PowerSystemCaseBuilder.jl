@@ -39,6 +39,8 @@ import Dates: DateTime, Hour, Minute
 import CSV
 import HDF5
 import DataFrames: DataFrame
+import LazyArtifacts
+
 const PSY = PowerSystems
 const IS = InfrastructureSystems
 
