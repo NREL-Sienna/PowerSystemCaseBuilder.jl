@@ -22,3 +22,10 @@ function build_pti(; kwargs...)
     sys = PSY.System(PSY.PowerModelsData(file_path), sys_kwargs...)
     return sys
 end
+
+function build_pti_30(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    file_path = get_raw_data(; kwargs...)
+    sys = PSY.System(PSY.PowerFlowDataNetwork(file_path), sys_kwargs...)
+    return sys
+end

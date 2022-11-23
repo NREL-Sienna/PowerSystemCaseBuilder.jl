@@ -699,6 +699,13 @@ const SYSTEM_CATALOG = [
         build_function = build_pti,
     ),
     SystemDescriptor(
+        name = "PSSE 30 Test System",
+        description = "PSSE 30 Test system",
+        category = PSSEParsingTestSystems,
+        raw_data = joinpath(DATA_DIR, "psse_raw", "synthetic_data_v30.raw"),
+        build_function = build_pti_30,
+    ),
+    SystemDescriptor(
         name = "psse_Benchmark_4ger_33_2015_sys",
         description = "Test parsing of PSSE Benchmark system",
         category = PSYTestSystems,
