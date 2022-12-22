@@ -282,6 +282,13 @@ const SYSTEM_CATALOG = [
         build_function = build_test_RTS_GMLC_sys,
     ),
     SystemDescriptor(
+        name = "test_RTS_GMLC_sys_with_hybrid",
+        description = "RTS-GMLC test system with day-ahead forecast and HybridSystem",
+        category = PSITestSystems,
+        raw_data = joinpath(DATA_DIR, "RTS_GMLC"),
+        build_function = build_test_RTS_GMLC_sys_with_hybrid,
+    ),
+    SystemDescriptor(
         name = "RTS_GMLC_DA_sys",
         description = "RTS-GMLC Full system from git repo for day-ahead simulations",
         category = PSISystems,

@@ -2628,6 +2628,33 @@ function build_test_RTS_GMLC_sys(; kwargs...)
     end
 end
 
+function build_test_RTS_GMLC_sys_with_hybrid(; kwargs...)
+    sys = build_test_RTS_GMLC_sys(; kwargs...)
+    thermal_unit = first(get_components(ThermalStandard, sys))
+    bus = get_bus(thermal_unit)
+    electric_load = first(get_components(PowerLoad, sys))
+    storage = first(get_components(GenericBattery, sys))
+    renewable_unit = first(get_components(RenewableDispatch, sys))
+
+    name = "Test H"
+    h_sys = HybridSystem(
+        name = name,
+        available = true,
+        status = true,
+        bus = bus,
+        active_power = 1.0,
+        reactive_power = 1.0,
+        thermal_unit = thermal_unit,
+        electric_load = electric_load,
+        storage = storage,
+        renewable_unit = renewable_unit,
+        base_power = 100.0,
+        operation_cost = TwoPartCost(nothing),
+    )
+    add_component!(sys, h_sys)
+    return sys
+end
+
 function build_c_sys5_bat_ems(; kwargs...)
     time_series_in_memory = get(kwargs, :time_series_in_memory, true)
     nodes = nodes5()
