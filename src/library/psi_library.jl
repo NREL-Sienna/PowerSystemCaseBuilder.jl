@@ -496,9 +496,9 @@ function make_modified_RTS_GMLC_sys(resolution::Dates.TimePeriod = Hour(1); kwar
     spin_reserve_R2 = PSY.get_component(PSY.VariableReserve, sys, "Spin_Up_R2")
     spin_reserve_R3 = PSY.get_component(PSY.VariableReserve, sys, "Spin_Up_R3")
     for g in PSY.get_components(
+        x -> PSY.get_prime_mover(x) in [PSY.PrimeMovers.CT, PSY.PrimeMovers.CC],
         PSY.ThermalStandard,
         sys,
-        x -> PSY.get_prime_mover(x) in [PSY.PrimeMovers.CT, PSY.PrimeMovers.CC],
     )
         if PSY.get_fuel(g) == PSY.ThermalFuels.DISTILLATE_FUEL_OIL
             PSY.remove_component!(sys, g)
@@ -520,7 +520,7 @@ function make_modified_RTS_GMLC_sys(resolution::Dates.TimePeriod = Hour(1); kwar
         "214_SYNC_COND_1",
         "212_CSP_1",
     ]
-    for d in PSY.get_components(PSY.Generator, sys, x -> x.name ∈ names)
+    for d in PSY.get_components(x -> x.name ∈ names, PSY.Generator, sys)
         PSY.remove_component!(sys, d)
     end
     for br in PSY.get_components(PSY.DCBranch, sys)
@@ -531,9 +531,9 @@ function make_modified_RTS_GMLC_sys(resolution::Dates.TimePeriod = Hour(1); kwar
     end
     # Remove large Coal and Nuclear from reserves
     for d in PSY.get_components(
+        x -> (occursin(r"STEAM|NUCLEAR", PSY.get_name(x))),
         PSY.ThermalStandard,
         sys,
-        x -> (occursin(r"STEAM|NUCLEAR", PSY.get_name(x))),
     )
         PSY.get_fuel(d) == PSY.ThermalFuels.COAL &&
             (PSY.set_ramp_limits!(d, (up = 0.001, down = 0.001)))
@@ -568,18 +568,18 @@ function make_modified_RTS_GMLC_sys(resolution::Dates.TimePeriod = Hour(1); kwar
     end
 
     for g in PSY.get_components(
+        x -> PSY.get_prime_mover(x) == PSY.PrimeMovers.PVe,
         PSY.RenewableDispatch,
         sys,
-        x -> PSY.get_prime_mover(x) == PSY.PrimeMovers.PVe,
     )
         rat_ = PSY.get_rating(g)
         PSY.set_rating!(g, DISPATCH_INCREASE * rat_)
     end
 
     for g in PSY.get_components(
+        x -> PSY.get_prime_mover(x) == PSY.PrimeMovers.PVe,
         PSY.RenewableFix,
         sys,
-        x -> PSY.get_prime_mover(x) == PSY.PrimeMovers.PVe,
     )
         rat_ = PSY.get_rating(g)
         PSY.set_rating!(g, FIX_DECREASE * rat_)
