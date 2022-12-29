@@ -405,13 +405,6 @@ const SYSTEM_CATALOG = [
         build_function = build_matpower,
     ),
     SystemDescriptor(
-        name = "matpower_case5_re_intid_sys",
-        description = "Matpower Test system",
-        category = MatpowerTestSystems,
-        raw_data = joinpath(DATA_DIR, "matpower", "case5_re_intid.m"),
-        build_function = build_matpower,
-    ),
-    SystemDescriptor(
         name = "matpower_case5_re_uc_pwl_sys",
         description = "Matpower Test system",
         category = MatpowerTestSystems,
@@ -430,13 +423,6 @@ const SYSTEM_CATALOG = [
         description = "Matpower Test system",
         category = MatpowerTestSystems,
         raw_data = joinpath(DATA_DIR, "matpower", "case5_re.m"),
-        build_function = build_matpower,
-    ),
-    SystemDescriptor(
-        name = "matpower_case5_th_intid_sys",
-        description = "Matpower Test system",
-        category = MatpowerTestSystems,
-        raw_data = joinpath(DATA_DIR, "matpower", "case5_th_intid.m"),
         build_function = build_matpower,
     ),
     SystemDescriptor(
