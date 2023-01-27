@@ -918,8 +918,8 @@ function build_c_sys5_reg(; kwargs...)
 
     area = PSY.Area("1")
     PSY.add_component!(c_sys5_reg, area)
-    [PSY.set_area!(b, area) for b in PSY.get_components(PSY.Bus, c_sys5_reg)]
-    AGC_service = PSY.AGC(;
+    [PSY.set_area!(b, area) for b in PSY.get_components(PSY.ACBus, c_sys5_reg)]
+    AGC_service = PSY.AGC(
         name = "AGC_Area1",
         available = true,
         bias = 739.0,
@@ -977,7 +977,7 @@ end
 function build_sys_ramp_testing(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gen_ramp = [
         PSY.ThermalStandard(;
@@ -1381,7 +1381,7 @@ end
 function build_c_sys5_pwl_uc(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     c_sys5_uc = build_c_sys5_uc(; sys_kwargs...)
-    thermal = thermal_generators5_pwl(collect(PSY.get_components(PSY.Bus, c_sys5_uc)))
+    thermal = thermal_generators5_pwl(collect(PSY.get_components(PSY.ACBus, c_sys5_uc)))
     for d in thermal
         PSY.add_component!(c_sys5_uc, d)
     end
@@ -1459,7 +1459,7 @@ end
 function build_c_sys5_pwl_ed(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     c_sys5_ed = build_c_sys5_ed(; sys_kwargs...)
-    thermal = thermal_generators5_pwl(collect(PSY.get_components(PSY.Bus, c_sys5_ed)))
+    thermal = thermal_generators5_pwl(collect(PSY.get_components(PSY.ACBus, c_sys5_ed)))
     for d in thermal
         PSY.add_component!(c_sys5_ed, d)
     end
@@ -1470,7 +1470,7 @@ function build_c_sys5_pwl_ed_nonconvex(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     c_sys5_ed = build_c_sys5_ed(; sys_kwargs...)
     thermal =
-        thermal_generators5_pwl_nonconvex(collect(PSY.get_components(PSY.Bus, c_sys5_ed)))
+        thermal_generators5_pwl_nonconvex(collect(PSY.get_components(PSY.ACBus, c_sys5_ed)))
     for d in thermal
         PSY.add_component!(c_sys5_ed, d)
     end
@@ -2216,7 +2216,7 @@ end
 function build_sos_test_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gens_cost_sos = [
         PSY.ThermalStandard(;
@@ -2309,7 +2309,7 @@ end
 function build_pwl_test_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gens_cost = [
         PSY.ThermalStandard(;
@@ -2378,7 +2378,7 @@ end
 function build_duration_test_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     DA_dur = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -2441,7 +2441,7 @@ end
 function build_pwl_marketbid_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gens_cost = [
         PSY.ThermalStandard(;
@@ -3265,7 +3265,7 @@ end
 function build_hydro_test_case_b_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3327,7 +3327,7 @@ end
 function build_hydro_test_case_c_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3389,7 +3389,7 @@ end
 function build_hydro_test_case_d_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3451,7 +3451,7 @@ end
 function build_hydro_test_case_e_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3513,7 +3513,7 @@ end
 function build_hydro_test_case_f_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3575,7 +3575,7 @@ end
 function build_batt_test_case_b_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3650,7 +3650,7 @@ end
 function build_batt_test_case_c_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3725,7 +3725,7 @@ end
 function build_batt_test_case_d_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3800,7 +3800,7 @@ end
 function build_batt_test_case_e_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3875,7 +3875,7 @@ end
 function build_batt_test_case_f_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.2, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
