@@ -12,8 +12,8 @@ function SystemDescriptor(;
     name,
     description,
     category,
-    raw_data,
     build_function,
+    raw_data = "",
     download_function = nothing,
     stats = nothing,
 )

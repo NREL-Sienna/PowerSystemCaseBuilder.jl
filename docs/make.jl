@@ -15,9 +15,7 @@ makedocs(
     modules = [PowerSystemCaseBuilder],
     strict = true,
     authors = "Sourabh Dalvi",
-    pages = Any[
-        "Introduction" => "index.md",
-    ],
+    pages = Any["Introduction" => "index.md",],
 )
 
 deploydocs(

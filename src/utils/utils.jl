@@ -73,3 +73,8 @@ function filter_kwargs(; kwargs...)
     system_kwargs = filter(x -> in(first(x), PSY.SYSTEM_KWARGS), kwargs)
     return system_kwargs
 end
+
+function check_kwargs_psid(; kwargs...)
+    psid_kwargs = filter(x -> in(first(x), ACCEPTED_PSID_TEST_SYSTEMS_KWARGS), kwargs)
+    return psid_kwargs
+end

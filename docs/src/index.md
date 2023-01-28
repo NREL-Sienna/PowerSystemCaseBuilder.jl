@@ -7,14 +7,14 @@ CurrentModule = PowerSystemCaseBuilder
 ## Overview
 
 `PowerSystemCaseBuilder.jl` is a [`Julia`](http://www.julialang.org) package that provides a library
-of power systems test cases using `PowerSystems.jl` data model. `PowerSystemCaseBuilder.jl` is a 
-simple tool to build power system's ranging from 5-bus systems to entire US grid for the purpose 
+of power systems test cases using `PowerSystems.jl` data model. `PowerSystemCaseBuilder.jl` is a
+simple tool to build power system's ranging from 5-bus systems to entire US grid for the purpose
 of testing or prototyping power system models. This package facilitates open sharing of large number of data sets for Power Systems modeling.
 
 The main features include:
 
 - Comprehensive and extensible library of power systems for modeling.
-- Automated serialization/de-serialization of cateloged Systems.
+- Automated serialization/de-serialization of cataloged Systems.
 
 
 `PowerSystemCaseBuilder.jl` is an active project under development, and we welcome your feedback,

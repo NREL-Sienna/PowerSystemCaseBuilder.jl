@@ -1,12 +1,6 @@
-abstract type SystemCategory <: PowerSystemCaseBuilderType end
-struct PSYTestSystems <: SystemCategory end
-struct PSITestSystems <: SystemCategory end
-struct SIIPExampleSystems <: SystemCategory end
-struct PSIDTestSystems <: SystemCategory end
-struct PSSETestSystems <: SystemCategory end
-struct MatPowerTestSystems <: SystemCategory end
-
 const PACKAGE_DIR = joinpath(dirname(dirname(pathof(PowerSystemCaseBuilder))))
+const DATA_DIR = joinpath(LazyArtifacts.artifact"CaseData", "PowerSystemsTestData-1.0-dev3")
+const RTS_DIR = joinpath(LazyArtifacts.artifact"rts", "RTS-GMLC-0.2.2")
 
 const SYSTEM_DESCRIPTORS_FILE = joinpath(PACKAGE_DIR, "src", "system_descriptor.jl")
 
@@ -29,30 +23,21 @@ const SEARCH_DIRS = [
 const SERIALIZE_FILE_EXTENSIONS =
     [".json", "_validation_descriptors.json", "_time_series_storage.h5"]
 
-function download_RTS(; kwargs...)
-    PowerSystems.download(
-        "https://github.com/GridMod/RTS-GMLC",
-        "master",
-        joinpath(PACKAGE_DIR, "data"),
-    )
-end
+const ACCEPTED_PSID_TEST_SYSTEMS_KWARGS = [:avr_type, :tg_type, :pss_type, :gen_type]
+const AVAILABLE_PSID_PSSE_AVRS_TEST =
+    ["AC1A", "AC1A_SAT", "EXAC1", "EXST1", "SEXS", "SEXS_noTE"]
 
-function download_modified_tamu_ercot_da(; kwargs...)
-    directory = abspath(normpath(joinpath(PACKAGE_DIR, "data")))
-    data = joinpath(directory, "tamu_ercot")
-    # This is temporary place for hosting the dataset.
-    data_urls = Dict(
-        "DA_sys.json" => "https://www.dropbox.com/sh/uzohjqzoyinyyas/AAC40qKEowAbGax-yYiB_4wna/DA_sys.json?dl=1",
-        "DA_sys_validation_descriptors.json" => "https://www.dropbox.com/sh/uzohjqzoyinyyas/AADWU21wuWW62Fl5SP4ubo8Va/DA_sys_validation_descriptors.json?dl=1",
-        "DA_sys_time_series_storage.h5" => "https://www.dropbox.com/sh/uzohjqzoyinyyas/AADURazsNKxO5l4_1wBiW8qsa/DA_sys_time_series_storage.h5?dl=1",
-    )
-    if !isdir(data)
-        @info "Downloading TAMU ERCOT dataset."
-        mkpath(data)
-        for (file, urls) in data_urls
-            tempfilename = Base.download(urls)
-            mv(tempfilename, joinpath(data, file), force = true)
-        end
-    end
-    return data
-end
+const AVAILABLE_PSID_PSSE_TGS_TEST = ["GAST", "HYGOV", "TGOV1"]
+
+const AVAILABLE_PSID_PSSE_GENS_TEST = [
+    "GENCLS",
+    "GENROE",
+    "GENROE_SAT",
+    "GENROU",
+    "GENROU_NoSAT",
+    "GENROU_SAT",
+    "GENSAE",
+    "GENSAL",
+]
+
+const AVAILABLE_PSID_PSSE_PSS_TEST = ["STAB1", "IEEEST", "IEEEST_FILTER"]
