@@ -2542,7 +2542,7 @@ function build_5_bus_matpower_DA(; kwargs...)
     data_dir = dirname(dirname(file_path))
     pm_data = PowerSystems.PowerModelsData(file_path)
 
-    FORECASTS_DIR = joinpath(data_dir, "5-bus", "5bus_ts", "7day")
+    FORECASTS_DIR = joinpath(data_dir, "5-Bus", "5bus_ts", "7day")
 
     tsp = IS.read_time_series_file_metadata(
         joinpath(FORECASTS_DIR, "timeseries_pointers_da_7day.json"),
@@ -2571,7 +2571,7 @@ function build_5_bus_matpower_RT(; kwargs...)
     file_path = get_raw_data(; kwargs...)
     data_dir = dirname(dirname(file_path))
 
-    FORECASTS_DIR = joinpath(data_dir, "5-bus", "5bus_ts", "7day")
+    FORECASTS_DIR = joinpath(data_dir, "5-Bus", "5bus_ts", "7day")
 
     tsp = IS.read_time_series_file_metadata(
         joinpath(FORECASTS_DIR, "timeseries_pointers_rt_7day.json"),
@@ -2591,7 +2591,7 @@ function build_5_bus_matpower_AGC(; kwargs...)
     data_dir = dirname(dirname(file_path))
     pm_data = PowerSystems.PowerModelsData(file_path)
 
-    FORECASTS_DIR = joinpath(data_dir, "5-bus", "5bus_ts", "7day")
+    FORECASTS_DIR = joinpath(data_dir, "5-Bus", "5bus_ts", "7day")
 
     tsp = IS.read_time_series_file_metadata(
         joinpath(FORECASTS_DIR, "timeseries_pointers_agc_7day.json"),

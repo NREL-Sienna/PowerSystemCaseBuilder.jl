@@ -38,7 +38,7 @@ function build_c_sys5_pjm(; kwargs...)
     PSY.add_component!(c_sys5, pv_device)
     PSY.add_component!(c_sys5, wind_device)
     timeseries_dataset =
-        HDF5.h5read(joinpath(DATA_DIR, "5-bus", "PJM_5_BUS_7_DAYS.h5"), "Time Series Data")
+        HDF5.h5read(joinpath(DATA_DIR, "5-Bus", "PJM_5_BUS_7_DAYS.h5"), "Time Series Data")
     refdate = first(DayAhead)
     da_load_time_series = DateTime[]
     da_load_time_series_val = Float64[]
@@ -55,7 +55,7 @@ function build_c_sys5_pjm(; kwargs...)
         "PVBus5" => CSV.read(
             joinpath(
                 DATA_DIR,
-                "5-bus",
+                "5-Bus",
                 "5bus_ts",
                 "gen",
                 "Renewable",
@@ -154,7 +154,7 @@ function build_c_sys5_pjm_rt(; kwargs...)
     PSY.add_component!(c_sys5, pv_device)
     PSY.add_component!(c_sys5, wind_device)
     timeseries_dataset =
-        HDF5.h5read(joinpath(DATA_DIR, "5-bus", "PJM_5_BUS_7_DAYS.h5"), "Time Series Data")
+        HDF5.h5read(joinpath(DATA_DIR, "5-Bus", "PJM_5_BUS_7_DAYS.h5"), "Time Series Data")
     refdate = first(DayAhead)
     rt_load_time_series = DateTime[]
     rt_load_time_series_val = Float64[]
@@ -170,7 +170,7 @@ function build_c_sys5_pjm_rt(; kwargs...)
         "PVBus5" => CSV.read(
             joinpath(
                 DATA_DIR,
-                "5-bus",
+                "5-Bus",
                 "5bus_ts",
                 "gen",
                 "Renewable",
@@ -185,7 +185,7 @@ function build_c_sys5_pjm_rt(; kwargs...)
         "WindBus1" => CSV.read(
             joinpath(
                 DATA_DIR,
-                "5-bus",
+                "5-Bus",
                 "5bus_ts",
                 "gen",
                 "Renewable",
