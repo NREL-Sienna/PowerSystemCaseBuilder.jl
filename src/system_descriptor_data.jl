@@ -195,7 +195,14 @@ const SYSTEM_CATALOG = [
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_reg,
     ),
-    SystemDescriptor(;
+    SystemDescriptor(
+        name = "sys10_pjm_ac_dc",
+        description = "10-bus system (duplicate 5-bus PJM) with 4-DC bus system",
+        category = PSISystems,
+        raw_data = joinpath(DATA_DIR, "psy_data", "data_10bus_ac_dc_pu.jl"),
+        build_function = build_sys_10bus_ac_dc,
+    ),
+    SystemDescriptor(
         name = "c_ramp_test",
         description = "1-bus for ramp testing",
         category = PSITestSystems,
