@@ -1030,6 +1030,54 @@ function build_sys_ramp_testing(; kwargs...)
     return ramp_test_sys
 end
 
+function build_sys_10bus_ac_dc(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    nodes = nodes10()
+    nodesdc = nodes10_dc()
+    branchesdc = branches10_dc(nodesdc)
+    ipcs = ipcs_10bus(nodes, nodesdc)
+    
+    sys = System(
+        100.0,
+        nodes,
+        thermal_generators10(nodes),
+        loads10(nodes),
+        branches10_ac(nodes),
+        sys_kwargs...
+    )
+
+    # Add DC Buses
+    for n in nodesdc
+        add_component!(sys, n)
+    end
+    # Add DC Branches
+    for l in branchesdc
+        add_component!(sys, l)
+    end
+    # Add IPCs
+    for i in ipcs
+        add_component!(sys, i)
+    end
+
+    # Add TimeSeries to Loads
+    resolution = Dates.Hour(1)
+    loads = get_components(PowerLoad, sys)
+    for l in loads
+        if occursin("nodeB", get_name(l))
+            data = Dict(DateTime("2020-01-01T00:00:00") => loadbusB_ts_DA)
+            add_time_series!(sys, l, Deterministic("active_power", data, resolution))
+        elseif occursin("nodeC", get_name(l))
+            data = Dict(DateTime("2020-01-01T00:00:00") => loadbusC_ts_DA)
+            add_time_series!(sys, l, Deterministic("active_power", data, resolution))
+        else
+            data = Dict(DateTime("2020-01-01T00:00:00") => loadbusD_ts_DA)
+            add_time_series!(sys, l, Deterministic("active_power", data, resolution))
+        end
+    end
+
+    return sys
+end
+
 function build_c_sys5_uc(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
