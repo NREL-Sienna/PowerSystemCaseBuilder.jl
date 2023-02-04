@@ -1039,14 +1039,14 @@ function build_sys_10bus_ac_dc(; kwargs...)
     nodesdc = nodes10_dc()
     branchesdc = branches10_dc(nodesdc)
     ipcs = ipcs_10bus(nodes, nodesdc)
-    
+
     sys = System(
         100.0,
         nodes,
         thermal_generators10(nodes),
         loads10(nodes),
         branches10_ac(nodes),
-        sys_kwargs...
+        sys_kwargs...,
     )
 
     # Add DC Buses
