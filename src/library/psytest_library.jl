@@ -166,7 +166,17 @@ function build_dynamic_inverter_sys(; kwargs...)
             nothing,
             nothing,
         ), #Base voltage in kV
-        PSY.ACBus(2, "Bus 2", "PV", 0, 1.045, (min = 0.94, max = 1.06), 69, nothing, nothing),
+        PSY.ACBus(
+            2,
+            "Bus 2",
+            "PV",
+            0,
+            1.045,
+            (min = 0.94, max = 1.06),
+            69,
+            nothing,
+            nothing,
+        ),
     ]
 
     battery = PSY.GenericBattery(
