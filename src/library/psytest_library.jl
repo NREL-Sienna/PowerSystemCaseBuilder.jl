@@ -155,7 +155,7 @@ end
 function build_dynamic_inverter_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes_OMIB = [
-        PSY.Bus(
+        PSY.ACBus(
             1, #number
             "Bus 1", #Name
             "REF", #BusType (REF, PV, PQ)
@@ -166,7 +166,17 @@ function build_dynamic_inverter_sys(; kwargs...)
             nothing,
             nothing,
         ), #Base voltage in kV
-        PSY.Bus(2, "Bus 2", "PV", 0, 1.045, (min = 0.94, max = 1.06), 69, nothing, nothing),
+        PSY.ACBus(
+            2,
+            "Bus 2",
+            "PV",
+            0,
+            1.045,
+            (min = 0.94, max = 1.06),
+            69,
+            nothing,
+            nothing,
+        ),
     ]
 
     battery = PSY.GenericBattery(
