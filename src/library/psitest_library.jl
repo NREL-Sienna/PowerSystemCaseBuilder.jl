@@ -1040,7 +1040,7 @@ function build_sys_10bus_ac_dc(; kwargs...)
     branchesdc = branches10_dc(nodesdc)
     ipcs = ipcs_10bus(nodes, nodesdc)
 
-    sys = System(
+    sys = PSY.System(
         100.0,
         nodes,
         thermal_generators10(nodes),
@@ -1051,30 +1051,30 @@ function build_sys_10bus_ac_dc(; kwargs...)
 
     # Add DC Buses
     for n in nodesdc
-        add_component!(sys, n)
+        PSY.add_component!(sys, n)
     end
     # Add DC Branches
     for l in branchesdc
-        add_component!(sys, l)
+        PSY.add_component!(sys, l)
     end
     # Add IPCs
     for i in ipcs
-        add_component!(sys, i)
+        PSY.add_component!(sys, i)
     end
 
     # Add TimeSeries to Loads
     resolution = Dates.Hour(1)
-    loads = get_components(PowerLoad, sys)
+    loads = PSY.get_components(PowerLoad, sys)
     for l in loads
-        if occursin("nodeB", get_name(l))
+        if occursin("nodeB", PSY.get_name(l))
             data = Dict(DateTime("2020-01-01T00:00:00") => loadbusB_ts_DA)
-            add_time_series!(sys, l, Deterministic("active_power", data, resolution))
-        elseif occursin("nodeC", get_name(l))
+            PSY.add_time_series!(sys, l, Deterministic("active_power", data, resolution))
+        elseif occursin("nodeC", PSY.get_name(l))
             data = Dict(DateTime("2020-01-01T00:00:00") => loadbusC_ts_DA)
-            add_time_series!(sys, l, Deterministic("active_power", data, resolution))
+            PSY.add_time_series!(sys, l, Deterministic("active_power", data, resolution))
         else
             data = Dict(DateTime("2020-01-01T00:00:00") => loadbusD_ts_DA)
-            add_time_series!(sys, l, Deterministic("active_power", data, resolution))
+            PSY.add_time_series!(sys, l, Deterministic("active_power", data, resolution))
         end
     end
 
