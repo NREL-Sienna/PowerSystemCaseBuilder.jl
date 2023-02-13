@@ -1068,13 +1068,13 @@ function build_sys_10bus_ac_dc(; kwargs...)
     for l in loads
         if occursin("nodeB", PSY.get_name(l))
             data = Dict(DateTime("2020-01-01T00:00:00") => loadbusB_ts_DA)
-            PSY.add_time_series!(sys, l, Deterministic("active_power", data, resolution))
+            PSY.add_time_series!(sys, l, Deterministic("max_active_power", data, resolution))
         elseif occursin("nodeC", PSY.get_name(l))
             data = Dict(DateTime("2020-01-01T00:00:00") => loadbusC_ts_DA)
-            PSY.add_time_series!(sys, l, Deterministic("active_power", data, resolution))
+            PSY.add_time_series!(sys, l, Deterministic("max_active_power", data, resolution))
         else
             data = Dict(DateTime("2020-01-01T00:00:00") => loadbusD_ts_DA)
-            PSY.add_time_series!(sys, l, Deterministic("active_power", data, resolution))
+            PSY.add_time_series!(sys, l, Deterministic("max_active_power", data, resolution))
         end
     end
 
