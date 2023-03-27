@@ -1110,4 +1110,11 @@ const SYSTEM_CATALOG = [
         raw_data = joinpath(DATA_DIR, "psid_tests", "data_tests"),
         build_function = build_psid_test_3rd_indmotor,
     ),
+    SystemDescriptor(
+        name = "2Area 5 Bus System",
+        description = "PSI test system with two areas connected with an HVDC Line", # Old Test 38
+        category = PSISystems,
+        raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
+        build_function = build_two_zone_5_bus,
+    ),
 ]
