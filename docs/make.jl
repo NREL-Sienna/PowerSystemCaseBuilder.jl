@@ -22,7 +22,7 @@ deploydocs(
     repo = "github.com/NREL-Sienna/PowerSystemCaseBuilder.jl.git",
     target = "build",
     branch = "gh-pages",
-    devbranch = "master",
+    devbranch = "main",
     devurl = "dev",
     versions = ["stable" => "v^", "v#.#"],
 )

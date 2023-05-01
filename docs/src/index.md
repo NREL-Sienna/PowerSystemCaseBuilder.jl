@@ -34,7 +34,7 @@ The latest stable release of PowerSystemCaseBuilder can be installed using the J
 For the current development version, "checkout" this package with
 
 ```julia
-] add PowerSystemCaseBuilder#master
+] add PowerSystemCaseBuilder#main
 ```
 
 ------------
