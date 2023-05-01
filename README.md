@@ -2,7 +2,7 @@
 
 [![Main - CI](https://github.com/NREL-Sienna/PowerSystemCaseBuilder.jl/workflows/Main%20-%20CI/badge.svg)](https://github.com/NREL-Sienna/PowerSystemCaseBuilder.jl/actions/workflows/main-tests.yml)
 [![codecov](https://codecov.io/gh/NREL-Sienna/PowerSystemCaseBuilder.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/NREL-Sienna/PowerSystemCaseBuilder.jl)
-[<img src="https://img.shields.io/badge/slack-@SIIP/PSB-blue.svg?logo=slack">](https://join.slack.com/t/nrel-sienna/shared_invite/zt-glam9vdu-o8A9TwZTZqqNTKHa7q3BpQ)
+[<img src="https://img.shields.io/badge/slack-@Sienna/PSB-sienna.svg?logo=slack">](https://join.slack.com/t/nrel-sienna/shared_invite/zt-glam9vdu-o8A9TwZTZqqNTKHa7q3BpQ)
 [![PowerSystemCaseBuilder.jl Downloads](https://shields.io/endpoint?url=https://pkgs.genieframework.com/api/v1/badge/PowerSystemCaseBuilder)](https://pkgs.genieframework.com?packages=PowerSystemCaseBuilder)
 
 ## Show all systems for all categories.
