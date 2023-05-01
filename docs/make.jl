@@ -19,7 +19,7 @@ makedocs(
 )
 
 deploydocs(
-    repo = "github.com/NREL-SIIP/PowerSystemCaseBuilder.jl.git",
+    repo = "github.com/NREL-Sienna/PowerSystemCaseBuilder.jl.git",
     target = "build",
     branch = "gh-pages",
     devbranch = "master",

@@ -20,7 +20,7 @@ The main features include:
 `PowerSystemCaseBuilder.jl` is an active project under development, and we welcome your feedback,
 suggestions, and bug reports.
 
-**Note**: `PowerSystemCaseBuilder.jl` uses [`PowerSystems.jl`](https://github.com/NREL-SIIP/PowerSystems.jl)
+**Note**: `PowerSystemCaseBuilder.jl` uses [`PowerSystems.jl`](https://github.com/NREL-Sienna/PowerSystems.jl)
 as a utility library. For most users there is no need to import `PowerSystems.jl`.
 
 ## Installation
