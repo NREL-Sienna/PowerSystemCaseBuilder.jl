@@ -466,6 +466,41 @@ function build_RTS_GMLC_RT_sys(; kwargs...)
     return sys
 end
 
+
+function build_RTS_GMLC_DA_sys_noTS(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    RTS_GMLC_DIR = get_raw_data(; kwargs...)
+    RTS_SRC_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "SourceData")
+    RTS_SIIP_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "FormattedData", "SIIP")
+    rawsys = PSY.PowerSystemTableData(
+        RTS_SRC_DIR,
+        100.0,
+        joinpath(RTS_SIIP_DIR, "user_descriptors.yaml"),
+        timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
+        generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
+    )
+    resolution = get(kwargs, :time_series_resolution, Dates.Hour(1))
+    sys = PSY.System(rawsys; time_series_resolution = resolution, sys_kwargs...)
+    return sys
+end
+
+function build_RTS_GMLC_RT_sys_noTS(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    RTS_GMLC_DIR = get_raw_data(; kwargs...)
+    RTS_SRC_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "SourceData")
+    RTS_SIIP_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "FormattedData", "SIIP")
+    rawsys = PSY.PowerSystemTableData(
+        RTS_SRC_DIR,
+        100.0,
+        joinpath(RTS_SIIP_DIR, "user_descriptors.yaml"),
+        timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
+        generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
+    )
+    resolution = get(kwargs, :time_series_resolution, Dates.Minute(5))
+    sys = PSY.System(rawsys; time_series_resolution = resolution, sys_kwargs...)
+    return sys
+end
+
 function make_modified_RTS_GMLC_sys(resolution::Dates.TimePeriod = Hour(1); kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     RTS_GMLC_DIR = get_raw_data(; kwargs...)
@@ -591,6 +626,11 @@ end
 function build_modified_RTS_GMLC_DA_sys(; kwargs...)
     sys = make_modified_RTS_GMLC_sys(; kwargs...)
     PSY.transform_single_time_series!(sys, 48, Hour(24))
+    return sys
+end
+
+function build_modified_RTS_GMLC_DA_sys_noTS(; kwargs...)
+    sys = make_modified_RTS_GMLC_sys(; kwargs...)
     return sys
 end
 
