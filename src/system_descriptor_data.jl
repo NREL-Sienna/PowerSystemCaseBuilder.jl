@@ -311,6 +311,14 @@ const SYSTEM_CATALOG = [
         build_function = build_modified_RTS_GMLC_DA_sys,
     ),
     SystemDescriptor(
+        name = "modified_RTS_GMLC_DA_sys_noTS",
+        description = "Modified RTS-GMLC Full system for day-ahead simulations
+            with modifications to reserve definitions to improve feasibility",
+        category = PSISystems,
+        raw_data = RTS_DIR,
+        build_function = build_modified_RTS_GMLC_DA_sys_noTS,
+    ),
+    SystemDescriptor(
         name = "modified_RTS_GMLC_RT_sys",
         description = "Modified RTS-GMLC Full system for real-time simulations
             with modifications to reserve definitions to improve feasibility",
