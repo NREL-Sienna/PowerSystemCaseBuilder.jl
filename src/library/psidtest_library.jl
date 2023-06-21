@@ -1,3 +1,54 @@
+function transform_load_to_constant_impedance(load::PSY.StandardLoad)
+    # Total Load Calculations
+    active_power, reactive_power, max_active_power, max_reactive_power =
+        _compute_total_load_parameters(load)
+    # Set Impedance Power
+    PSY.set_impedance_active_power!(load, active_power)
+    PSY.set_impedance_reactive_power!(load, reactive_power)
+    PSY.set_max_impedance_active_power!(load, max_active_power)
+    PSY.set_max_impedance_reactive_power!(load, max_reactive_power)
+    # Set everything else to zero
+    PSY.set_constant_active_power!(load, 0.0)
+    PSY.set_constant_reactive_power!(load, 0.0)
+    PSY.set_max_constant_active_power!(load, 0.0)
+    PSY.set_max_constant_reactive_power!(load, 0.0)
+    PSY.set_current_active_power!(load, 0.0)
+    PSY.set_current_reactive_power!(load, 0.0)
+    PSY.set_max_current_active_power!(load, 0.0)
+    PSY.set_max_current_reactive_power!(load, 0.0)
+    return
+end
+
+function _compute_total_load_parameters(load::PSY.StandardLoad)
+    @warn "Load data is transformed under the assumption of a 1.0 p.u. Voltage Magnitude"
+    # Constant Power Data
+    constant_active_power = PSY.get_constant_active_power(load)
+    constant_reactive_power = PSY.get_constant_reactive_power(load)
+    max_constant_active_power = PSY.get_max_constant_active_power(load)
+    max_constant_reactive_power = PSY.get_max_constant_reactive_power(load)
+    # Constant Current Data
+    current_active_power = PSY.get_current_active_power(load)
+    current_reactive_power = PSY.get_current_reactive_power(load)
+    max_current_active_power = PSY.get_max_current_active_power(load)
+    max_current_reactive_power = PSY.get_max_current_reactive_power(load)
+    # Constant Admittance Data
+    impedance_active_power = PSY.get_impedance_active_power(load)
+    impedance_reactive_power = PSY.get_impedance_reactive_power(load)
+    max_impedance_active_power = PSY.get_max_impedance_active_power(load)
+    max_impedance_reactive_power = PSY.get_max_impedance_reactive_power(load)
+    # Total Load Calculations
+    active_power = constant_active_power + current_active_power + impedance_active_power
+    reactive_power =
+        constant_reactive_power + current_reactive_power + impedance_reactive_power
+    max_active_power =
+        max_constant_active_power + max_current_active_power + max_impedance_active_power
+    max_reactive_power =
+        max_constant_reactive_power +
+        max_current_reactive_power +
+        max_impedance_reactive_power
+    return active_power, reactive_power, max_active_power, max_reactive_power
+end
+
 function build_psid_psse_test_avr(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
@@ -54,9 +105,11 @@ function build_psid_psse_test_tg(; kwargs...)
         )
     end
     tg_sys = System(raw_file, dyr_file; sys_kwargs...)
-    for l in get_components(PSY.PowerLoad, tg_sys)
-        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+
+    for l in get_components(PSY.StandardLoad, tg_sys)
+        transform_load_to_constant_impedance(l)
     end
+
     return tg_sys
 end
 
@@ -98,9 +151,11 @@ function build_psid_psse_test_gen(; kwargs...)
         )
     end
     gen_sys = System(raw_file, dyr_file; sys_kwargs...)
-    for l in get_components(PSY.PowerLoad, gen_sys)
-        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+
+    for l in get_components(PSY.StandardLoad, gen_sys)
+        transform_load_to_constant_impedance(l)
     end
+
     return gen_sys
 end
 
@@ -125,20 +180,22 @@ function build_psid_psse_test_pss(; kwargs...)
         )
     end
     pss_sys = System(raw_file, dyr_file; sys_kwargs...)
-    for l in get_components(PSY.PowerLoad, pss_sys)
-        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+
+    for l in get_components(PSY.StandardLoad, pss_sys)
+        transform_load_to_constant_impedance(l)
     end
+
     return pss_sys
 end
 
 function build_psid_test_omib(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     raw_file = get_raw_data(; kwargs...)
-    omib_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    omib_sys = System(raw_file; runchecks = false, sys_kwargs...)
     add_source_to_ref(omib_sys)
 
     function dyn_gen_classic(generator)
-        return DynamicGenerator(
+        return DynamicGenerator(;
             name = PSY.get_name(generator),
             ω_ref = 1.0,
             machine = machine_classic(),
@@ -153,8 +210,8 @@ function build_psid_test_omib(; kwargs...)
     case_gen = dyn_gen_classic(gen)
     add_component!(omib_sys, case_gen, gen)
 
-    for l in get_components(PSY.PowerLoad, omib_sys)
-        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    for l in get_components(PSY.StandardLoad, omib_sys)
+        transform_load_to_constant_impedance(l)
     end
 
     return omib_sys
@@ -163,11 +220,11 @@ end
 function build_psid_test_threebus_oneDoneQ(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     raw_file = get_raw_data(; kwargs...)
-    threebus_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    threebus_sys = System(raw_file; runchecks = false, sys_kwargs...)
     add_source_to_ref(threebus_sys)
 
     function dyn_gen_oneDoneQ(generator)
-        return PSY.DynamicGenerator(
+        return PSY.DynamicGenerator(;
             name = PSY.get_name(generator),
             ω_ref = 1.0,
             machine = machine_oneDoneQ(),
@@ -183,8 +240,8 @@ function build_psid_test_threebus_oneDoneQ(; kwargs...)
         add_component!(threebus_sys, case_gen, g)
     end
 
-    for l in get_components(PSY.PowerLoad, threebus_sys)
-        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    for l in get_components(PSY.StandardLoad, threebus_sys)
+        transform_load_to_constant_impedance(l)
     end
 
     return threebus_sys
@@ -193,11 +250,11 @@ end
 function build_psid_test_threebus_simple_marconato(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     raw_file = get_raw_data(; kwargs...)
-    threebus_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    threebus_sys = System(raw_file; runchecks = false, sys_kwargs...)
     add_source_to_ref(threebus_sys)
 
     function dyn_gen_simple_marconato(generator)
-        return PSY.DynamicGenerator(
+        return PSY.DynamicGenerator(;
             name = PSY.get_name(generator),
             ω_ref = 1.0,
             machine = machine_simple_marconato(),
@@ -213,8 +270,8 @@ function build_psid_test_threebus_simple_marconato(; kwargs...)
         add_component!(threebus_sys, case_gen, g)
     end
 
-    for l in get_components(PSY.PowerLoad, threebus_sys)
-        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    for l in get_components(PSY.StandardLoad, threebus_sys)
+        transform_load_to_constant_impedance(l)
     end
 
     return threebus_sys
@@ -223,11 +280,11 @@ end
 function build_psid_test_threebus_marconato(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     raw_file = get_raw_data(; kwargs...)
-    threebus_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    threebus_sys = System(raw_file; runchecks = false, sys_kwargs...)
     add_source_to_ref(threebus_sys)
 
     function dyn_gen_marconato(generator)
-        return PSY.DynamicGenerator(
+        return PSY.DynamicGenerator(;
             name = PSY.get_name(generator),
             ω_ref = 1.0,
             machine = machine_marconato(),
@@ -243,8 +300,8 @@ function build_psid_test_threebus_marconato(; kwargs...)
         add_component!(threebus_sys, case_gen, g)
     end
 
-    for l in get_components(PSY.PowerLoad, threebus_sys)
-        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    for l in get_components(PSY.StandardLoad, threebus_sys)
+        transform_load_to_constant_impedance(l)
     end
 
     return threebus_sys
@@ -253,11 +310,11 @@ end
 function build_psid_test_threebus_simple_anderson(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     raw_file = get_raw_data(; kwargs...)
-    threebus_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    threebus_sys = System(raw_file; runchecks = false, sys_kwargs...)
     add_source_to_ref(threebus_sys)
 
     function dyn_gen_simple_anderson(generator)
-        return PSY.DynamicGenerator(
+        return PSY.DynamicGenerator(;
             name = PSY.get_name(generator),
             ω_ref = 1.0,
             machine = machine_simple_anderson(),
@@ -273,8 +330,8 @@ function build_psid_test_threebus_simple_anderson(; kwargs...)
         add_component!(threebus_sys, case_gen, g)
     end
 
-    for l in get_components(PSY.PowerLoad, threebus_sys)
-        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    for l in get_components(PSY.StandardLoad, threebus_sys)
+        transform_load_to_constant_impedance(l)
     end
 
     return threebus_sys
@@ -283,11 +340,11 @@ end
 function build_psid_test_threebus_anderson(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     raw_file = get_raw_data(; kwargs...)
-    threebus_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    threebus_sys = System(raw_file; runchecks = false, sys_kwargs...)
     add_source_to_ref(threebus_sys)
 
     function dyn_gen_anderson(generator)
-        return PSY.DynamicGenerator(
+        return PSY.DynamicGenerator(;
             name = PSY.get_name(generator),
             ω_ref = 1.0,
             machine = machine_anderson(),
@@ -303,8 +360,8 @@ function build_psid_test_threebus_anderson(; kwargs...)
         add_component!(threebus_sys, case_gen, g)
     end
 
-    for l in get_components(PSY.PowerLoad, threebus_sys)
-        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    for l in get_components(PSY.StandardLoad, threebus_sys)
+        transform_load_to_constant_impedance(l)
     end
 
     return threebus_sys
@@ -313,7 +370,7 @@ end
 function build_psid_test_threebus_5shaft(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     raw_file = get_raw_data(; kwargs...)
-    threebus_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    threebus_sys = System(raw_file; runchecks = false, sys_kwargs...)
     add_source_to_ref(threebus_sys)
 
     #Reduce generator output
@@ -322,7 +379,7 @@ function build_psid_test_threebus_5shaft(; kwargs...)
     end
 
     function dyn_gen_five_mass_shaft_order(generator)
-        return PSY.DynamicGenerator(
+        return PSY.DynamicGenerator(;
             name = PSY.get_name(generator),
             ω_ref = 1.0,
             machine = machine_oneDoneQ(),
@@ -334,7 +391,7 @@ function build_psid_test_threebus_5shaft(; kwargs...)
     end
 
     function dyn_gen_first_order(generator)
-        return PSY.DynamicGenerator(
+        return PSY.DynamicGenerator(;
             name = PSY.get_name(generator),
             ω_ref = 1.0,
             machine = machine_oneDoneQ(),
@@ -355,8 +412,8 @@ function build_psid_test_threebus_5shaft(; kwargs...)
         end
     end
 
-    for l in get_components(PSY.PowerLoad, threebus_sys)
-        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    for l in get_components(PSY.StandardLoad, threebus_sys)
+        transform_load_to_constant_impedance(l)
     end
 
     return threebus_sys
@@ -365,7 +422,7 @@ end
 function build_psid_test_vsm_inverter(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     raw_file = get_raw_data(; kwargs...)
-    omib_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    omib_sys = System(raw_file; runchecks = false, sys_kwargs...)
     add_source_to_ref(omib_sys)
 
     function inv_darco(static_device)
@@ -381,8 +438,8 @@ function build_psid_test_vsm_inverter(; kwargs...)
         ) #pss
     end
 
-    for l in get_components(PSY.PowerLoad, omib_sys)
-        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    for l in get_components(PSY.StandardLoad, omib_sys)
+        transform_load_to_constant_impedance(l)
     end
 
     #Attach dynamic generator. Currently use PSS/e format based on bus #.
@@ -396,11 +453,11 @@ end
 function build_psid_test_threebus_machine_vsm(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     raw_file = get_raw_data(; kwargs...)
-    threebus_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    threebus_sys = System(raw_file; runchecks = false, sys_kwargs...)
     add_source_to_ref(threebus_sys)
 
     function dyn_gen_second_order(generator)
-        return DynamicGenerator(
+        return DynamicGenerator(;
             name = PSY.get_name(generator),
             ω_ref = 1.0,
             machine = machine_oneDoneQ(),
@@ -412,7 +469,7 @@ function build_psid_test_threebus_machine_vsm(; kwargs...)
     end
 
     function inv_case78(static_device)
-        return DynamicInverter(
+        return DynamicInverter(;
             name = PSY.get_name(static_device),
             ω_ref = 1.0,
             converter = converter_high_power(),
@@ -434,8 +491,8 @@ function build_psid_test_threebus_machine_vsm(; kwargs...)
         end
     end
 
-    for l in get_components(PSY.PowerLoad, threebus_sys)
-        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    for l in get_components(PSY.StandardLoad, threebus_sys)
+        transform_load_to_constant_impedance(l)
     end
 
     return threebus_sys
@@ -452,10 +509,10 @@ end
 function build_psid_test_threebus_multimachine(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     raw_file = get_raw_data(; kwargs...)
-    threebus_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    threebus_sys = System(raw_file; runchecks = false, sys_kwargs...)
 
     function dyn_gen_multi(generator)
-        return PSY.DynamicGenerator(
+        return PSY.DynamicGenerator(;
             name = PSY.get_name(generator),
             ω_ref = 1.0,
             machine = machine_classic(),
@@ -467,7 +524,7 @@ function build_psid_test_threebus_multimachine(; kwargs...)
     end
 
     function dyn_gen_multi_tg(generator)
-        return PSY.DynamicGenerator(
+        return PSY.DynamicGenerator(;
             name = PSY.get_name(generator),
             ω_ref = 1.0,
             machine = machine_classic(),
@@ -488,17 +545,21 @@ function build_psid_test_threebus_multimachine(; kwargs...)
         end
     end
 
+    for l in get_components(PSY.StandardLoad, threebus_sys)
+        transform_load_to_constant_impedance(l)
+    end
+
     return threebus_sys
 end
 
 function build_psid_test_threebus_psat_avrs(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     raw_file = get_raw_data(; kwargs...)
-    threebus_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    threebus_sys = System(raw_file; runchecks = false, sys_kwargs...)
     add_source_to_ref(threebus_sys)
 
     function dyn_gen_avr_type2(generator)
-        return PSY.DynamicGenerator(
+        return PSY.DynamicGenerator(;
             name = PSY.get_name(generator),
             ω_ref = 1.0,
             machine = machine_oneDoneQ(),
@@ -510,7 +571,7 @@ function build_psid_test_threebus_psat_avrs(; kwargs...)
     end
 
     function dyn_gen_simple_avr(generator)
-        return PSY.DynamicGenerator(
+        return PSY.DynamicGenerator(;
             name = PSY.get_name(generator),
             ω_ref = 1.0,
             machine = machine_oneDoneQ(),
@@ -521,8 +582,8 @@ function build_psid_test_threebus_psat_avrs(; kwargs...)
         )
     end
 
-    for l in get_components(PSY.PowerLoad, threebus_sys)
-        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    for l in get_components(PSY.StandardLoad, threebus_sys)
+        transform_load_to_constant_impedance(l)
     end
 
     for g in get_components(Generator, threebus_sys)
@@ -541,10 +602,10 @@ end
 function build_psid_test_threebus_vsm_reference(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     raw_file = get_raw_data(; kwargs...)
-    threebus_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    threebus_sys = System(raw_file; runchecks = false, sys_kwargs...)
 
     function inv_case78(static_device)
-        return DynamicInverter(
+        return DynamicInverter(;
             name = PSY.get_name(static_device),
             ω_ref = 1.0, # ω_ref,
             converter = converter_high_power(),
@@ -557,7 +618,7 @@ function build_psid_test_threebus_vsm_reference(; kwargs...)
     end
 
     function dyn_gen_multi_tg(generator)
-        return PSY.DynamicGenerator(
+        return PSY.DynamicGenerator(;
             name = PSY.get_name(generator),
             ω_ref = 1.0,
             machine = machine_classic(),
@@ -578,8 +639,8 @@ function build_psid_test_threebus_vsm_reference(; kwargs...)
         end
     end
 
-    for l in get_components(PSY.PowerLoad, threebus_sys)
-        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    for l in get_components(PSY.StandardLoad, threebus_sys)
+        transform_load_to_constant_impedance(l)
     end
 
     return threebus_sys
@@ -588,14 +649,14 @@ end
 function build_psid_test_threebus_genrou_avr(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     raw_file = get_raw_data(; kwargs...)
-    sys = System(raw_file, runchecks = false; sys_kwargs...)
+    sys = System(raw_file; runchecks = false, sys_kwargs...)
 
     #Replace Gen101 by Source
     remove_component!(ThermalStandard, sys, "generator-101-1")
     add_source_to_ref(sys)
 
     function dyn_gen_genrou(generator)
-        return PSY.DynamicGenerator(
+        return PSY.DynamicGenerator(;
             name = PSY.get_name(generator),
             ω_ref = 1.0,
             machine = machine_genrou(),
@@ -606,8 +667,8 @@ function build_psid_test_threebus_genrou_avr(; kwargs...)
         )
     end
 
-    for l in get_components(PSY.PowerLoad, sys)
-        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    for l in get_components(PSY.StandardLoad, threebus_sys)
+        transform_load_to_constant_impedance(l)
     end
 
     #Add GENROU to System
@@ -621,7 +682,7 @@ end
 function build_psid_test_droop_inverter(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     raw_file = get_raw_data(; kwargs...)
-    omib_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    omib_sys = System(raw_file; runchecks = false, sys_kwargs...)
     add_source_to_ref(omib_sys)
 
     ############### Data Dynamic devices ########################
@@ -638,8 +699,8 @@ function build_psid_test_droop_inverter(; kwargs...)
         )
     end
 
-    for l in get_components(PSY.PowerLoad, omib_sys)
-        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    for l in get_components(PSY.StandardLoad, omib_sys)
+        transform_load_to_constant_impedance(l)
     end
 
     device = [g for g in get_components(Generator, omib_sys)][1]
@@ -652,7 +713,7 @@ end
 function build_psid_test_gfoll_inverter(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     raw_file = get_raw_data(; kwargs...)
-    omib_sys = System(raw_file, runchecks = false; sys_kwargs...)
+    omib_sys = System(raw_file; runchecks = false, sys_kwargs...)
     add_source_to_ref(omib_sys)
 
     ############### Data Dynamic devices ########################
@@ -669,8 +730,8 @@ function build_psid_test_gfoll_inverter(; kwargs...)
         )
     end
 
-    for l in get_components(PSY.PowerLoad, omib_sys)
-        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    for l in get_components(PSY.StandardLoad, threebus_sys)
+        transform_load_to_constant_impedance(l)
     end
 
     device = [g for g in get_components(Generator, omib_sys)][1]
@@ -683,11 +744,11 @@ end
 function build_psid_test_threebus_multimachine_dynlines(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     raw_file = get_raw_data(; kwargs...)
-    sys = System(raw_file, runchecks = false; sys_kwargs...)
+    sys = System(raw_file; runchecks = false, sys_kwargs...)
 
     ############### Data Dynamic devices ########################
     function dyn_gen_marconato(generator)
-        return PSY.DynamicGenerator(
+        return PSY.DynamicGenerator(;
             name = PSY.get_name(generator),
             ω_ref = 1.0,
             machine = machine_marconato(),
@@ -699,7 +760,7 @@ function build_psid_test_threebus_multimachine_dynlines(; kwargs...)
     end
 
     function dyn_gen_marconato_tg(generator)
-        return PSY.DynamicGenerator(
+        return PSY.DynamicGenerator(;
             name = PSY.get_name(generator),
             ω_ref = 1.0,
             machine = machine_marconato(),
@@ -727,8 +788,8 @@ function build_psid_test_threebus_multimachine_dynlines(; kwargs...)
         add_component!(sys, dyn_line)
     end
 
-    for l in get_components(PSY.PowerLoad, sys)
-        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    for l in get_components(PSY.StandardLoad, threebus_sys)
+        transform_load_to_constant_impedance(l)
     end
 
     return sys
@@ -737,12 +798,12 @@ end
 function build_psid_test_pvs(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     raw_file = get_raw_data(; kwargs...)
-    sys = System(raw_file, runchecks = false; sys_kwargs...)
+    sys = System(raw_file; runchecks = false, sys_kwargs...)
     add_source_to_ref(sys)
 
     ############### Data Dynamic devices ########################
     function pvs_simple(source)
-        return PeriodicVariableSource(
+        return PeriodicVariableSource(;
             name = PSY.get_name(source),
             R_th = PSY.get_R_th(source),
             X_th = PSY.get_X_th(source),
@@ -756,7 +817,7 @@ function build_psid_test_pvs(; kwargs...)
     end
 
     function dyn_gen_second_order(generator)
-        return DynamicGenerator(
+        return DynamicGenerator(;
             name = PSY.get_name(generator),
             ω_ref = 1.0,
             machine = machine_oneDoneQ(),
@@ -777,8 +838,8 @@ function build_psid_test_pvs(; kwargs...)
     pvs = pvs_simple(source)
     add_component!(sys, pvs, source)
 
-    for l in get_components(PSY.PowerLoad, sys)
-        PSY.set_model!(l, PSY.LoadModels.ConstantImpedance)
+    for l in get_components(PSY.StandardLoad, sys)
+        transform_load_to_constant_impedance(l)
     end
 
     return sys
@@ -813,7 +874,7 @@ end
 function build_psid_psse_test_exp_load(; kwargs...)
     sys = build_psid_psse_test_constantP_load(; force_build = true, kwargs...)
     for l in collect(get_components(PSY.PowerLoad, sys))
-        exp_load = PSY.ExponentialLoad(
+        exp_load = PSY.ExponentialLoad(;
             name = PSY.get_name(l),
             available = PSY.get_available(l),
             bus = PSY.get_bus(l),

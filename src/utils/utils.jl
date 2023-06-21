@@ -21,7 +21,7 @@ function clear_serialized_system(name::String)
         for file in file_names
             if isfile(joinpath(dir, file))
                 @debug "Deleting file" file
-                rm(joinpath(dir, file), force = true)
+                rm(joinpath(dir, file); force = true)
             end
         end
     end
@@ -31,7 +31,7 @@ end
 function clear_all_serialized_system()
     for dir in SEARCH_DIRS
         @debug "Deleting dir" dir
-        rm(dir, force = true, recursive = true)
+        rm(dir; force = true, recursive = true)
     end
     check_serialized_storage()
     return

@@ -247,7 +247,7 @@ function build_5_bus_hydro_uc_sys(; kwargs...)
     )
     if get(kwargs, :add_forecasts, true)
         c_sys5_hy_uc = PSY.System(
-            rawsys,
+            rawsys;
             timeseries_metadata_file = joinpath(
                 data_dir,
                 "5bus_ts",
@@ -276,7 +276,7 @@ function build_5_bus_hydro_uc_sys_targets(; kwargs...)
     )
     if get(kwargs, :add_forecasts, true)
         c_sys5_hy_uc = PSY.System(
-            rawsys,
+            rawsys;
             timeseries_metadata_file = joinpath(
                 data_dir,
                 "5bus_ts",
@@ -290,7 +290,7 @@ function build_5_bus_hydro_uc_sys_targets(; kwargs...)
     else
         c_sys5_hy_uc = PSY.System(rawsys; sys_kwargs...)
     end
-    cost = PSY.StorageManagementCost(
+    cost = PSY.StorageManagementCost(;
         variable = VariableCost(0.15),
         fixed = 0.0,
         start_up = 0.0,
@@ -314,7 +314,7 @@ function build_5_bus_hydro_ed_sys(; kwargs...)
         generator_mapping_file = joinpath(data_dir, "generator_mapping.yaml"),
     )
     c_sys5_hy_ed = PSY.System(
-        rawsys,
+        rawsys;
         timeseries_metadata_file = joinpath(
             data_dir,
             "5bus_ts",
@@ -339,7 +339,7 @@ function build_5_bus_hydro_ed_sys_targets(; kwargs...)
         generator_mapping_file = joinpath(data_dir, "generator_mapping.yaml"),
     )
     c_sys5_hy_ed = PSY.System(
-        rawsys,
+        rawsys;
         timeseries_metadata_file = joinpath(
             data_dir,
             "5bus_ts",
@@ -349,7 +349,7 @@ function build_5_bus_hydro_ed_sys_targets(; kwargs...)
         time_series_in_memory = true,
         sys_kwargs...,
     )
-    cost = PSY.StorageManagementCost(
+    cost = PSY.StorageManagementCost(;
         variable = VariableCost(0.15),
         fixed = 0.0,
         start_up = 0.0,
@@ -375,7 +375,7 @@ function build_5_bus_hydro_wk_sys(; kwargs...)
         generator_mapping_file = joinpath(data_dir, "generator_mapping.yaml"),
     )
     c_sys5_hy_wk = PSY.System(
-        rawsys,
+        rawsys;
         timeseries_metadata_file = joinpath(
             data_dir,
             "5bus_ts",
@@ -400,7 +400,7 @@ function build_5_bus_hydro_wk_sys_targets(; kwargs...)
         generator_mapping_file = joinpath(data_dir, "generator_mapping.yaml"),
     )
     c_sys5_hy_wk = PSY.System(
-        rawsys,
+        rawsys;
         timeseries_metadata_file = joinpath(
             data_dir,
             "5bus_ts",
@@ -410,7 +410,7 @@ function build_5_bus_hydro_wk_sys_targets(; kwargs...)
         time_series_in_memory = true,
         sys_kwargs...,
     )
-    cost = PSY.StorageManagementCost(
+    cost = PSY.StorageManagementCost(;
         variable = VariableCost(0.15),
         fixed = 0.0,
         start_up = 0.0,
@@ -434,7 +434,7 @@ function build_RTS_GMLC_DA_sys(; kwargs...)
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
-        joinpath(RTS_SIIP_DIR, "user_descriptors.yaml"),
+        joinpath(RTS_SIIP_DIR, "user_descriptors.yaml");
         timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
         generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
     )
@@ -454,7 +454,7 @@ function build_RTS_GMLC_RT_sys(; kwargs...)
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
-        joinpath(RTS_SIIP_DIR, "user_descriptors.yaml"),
+        joinpath(RTS_SIIP_DIR, "user_descriptors.yaml");
         timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
         generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
     )
@@ -477,7 +477,7 @@ function make_modified_RTS_GMLC_sys(resolution::Dates.TimePeriod = Hour(1); kwar
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
-        joinpath(RTS_SIIP_DIR, "user_descriptors.yaml"),
+        joinpath(RTS_SIIP_DIR, "user_descriptors.yaml");
         timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
         generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
     )
