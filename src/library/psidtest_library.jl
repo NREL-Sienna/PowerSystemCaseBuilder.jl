@@ -730,7 +730,7 @@ function build_psid_test_gfoll_inverter(; kwargs...)
         )
     end
 
-    for l in get_components(PSY.StandardLoad, threebus_sys)
+    for l in get_components(PSY.StandardLoad, omib_sys)
         transform_load_to_constant_impedance(l)
     end
 
