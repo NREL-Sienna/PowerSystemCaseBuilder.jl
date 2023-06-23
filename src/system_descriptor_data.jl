@@ -1048,13 +1048,6 @@ const SYSTEM_CATALOG = [
         build_function = build_psid_test_ieee_9bus,
     ),
     SystemDescriptor(;
-        name = "psid_test_ieee_9bus",
-        description = "PSID IEEE 9-bus system with Anderson-Fouad Machine Test Case", # Old Test 32
-        category = PSIDTestSystems,
-        raw_data = joinpath(DATA_DIR, "psid_tests", "data_tests", "9BusSystem.json"),
-        build_function = build_psid_test_ieee_9bus,
-    ),
-    SystemDescriptor(;
         name = "psid_psse_test_constantP_load",
         description = "PSID Constant Power Load Test Case", # Old Test 33
         category = PSIDTestSystems,
