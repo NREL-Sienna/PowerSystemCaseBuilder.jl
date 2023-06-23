@@ -13,9 +13,9 @@ function build_tamu_ACTIVSg2000_sys(; kwargs...)
 
     # make system
     sys = PSY.System(
-        pm_data,
+        pm_data;
         bus_name_formatter = bus_name_formatter,
-        load_name_formatter = load_name_formatter;
+        load_name_formatter = load_name_formatter,
         sys_kwargs...,
     )
 
@@ -42,7 +42,7 @@ function build_tamu_ACTIVSg2000_sys(; kwargs...)
     end
 
     loads = DataFrames.DataFrame(
-        CSV.File(load_file, skipto = 3, header = fixed_cols),
+        CSV.File(load_file; skipto = 3, header = fixed_cols);
         copycols = false,
     )
 
@@ -169,7 +169,7 @@ function build_dynamic_inverter_sys(; kwargs...)
         PSY.Bus(2, "Bus 2", "PV", 0, 1.045, (min = 0.94, max = 1.06), 69, nothing, nothing),
     ]
 
-    battery = PSY.GenericBattery(
+    battery = PSY.GenericBattery(;
         name = "Battery",
         prime_mover = PSY.PrimeMovers.BA,
         available = true,
@@ -196,7 +196,7 @@ function build_dynamic_inverter_sys(; kwargs...)
             true, #available
             0.0, #active power flow initial condition (from-to)
             0.0, #reactive power flow initial condition (from-to)
-            Arc(from = nodes_OMIB[1], to = nodes_OMIB[2]), #Connection between buses
+            Arc(; from = nodes_OMIB[1], to = nodes_OMIB[2]), #Connection between buses
             0.01, #resistance in pu
             0.05, #reactance in pu
             (from = 0.0, to = 0.0), #susceptance in pu

@@ -919,7 +919,7 @@ function build_c_sys5_reg(; kwargs...)
     area = PSY.Area("1")
     PSY.add_component!(c_sys5_reg, area)
     [PSY.set_area!(b, area) for b in PSY.get_components(PSY.Bus, c_sys5_reg)]
-    AGC_service = PSY.AGC(
+    AGC_service = PSY.AGC(;
         name = "AGC_Area1",
         available = true,
         bias = 739.0,
@@ -960,10 +960,13 @@ function build_c_sys5_reg(; kwargs...)
     contributing_devices = Vector()
     for g in PSY.get_components(PSY.Generator, c_sys5_reg)
         droop =
-            isa(g, PSY.ThermalStandard) ? 0.04 * PSY.get_base_power(g) :
-            0.05 * PSY.get_base_power(g)
+            if isa(g, PSY.ThermalStandard)
+                0.04 * PSY.get_base_power(g)
+            else
+                0.05 * PSY.get_base_power(g)
+            end
         p_factor = (up = 1.0, dn = 1.0)
-        t = PSY.RegulationDevice(g, participation_factor = p_factor, droop = droop)
+        t = PSY.RegulationDevice(g; participation_factor = p_factor, droop = droop)
         PSY.add_component!(c_sys5_reg, t)
         push!(contributing_devices, t)
     end
@@ -977,7 +980,7 @@ function build_sys_ramp_testing(; kwargs...)
         PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gen_ramp = [
-        PSY.ThermalStandard(
+        PSY.ThermalStandard(;
             name = "Alta",
             available = true,
             status = true,
@@ -994,7 +997,7 @@ function build_sys_ramp_testing(; kwargs...)
             operation_cost = PSY.ThreePartCost((0.0, 14.0), 0.0, 4.0, 2.0),
             base_power = 100.0,
         ),
-        PSY.ThermalStandard(
+        PSY.ThermalStandard(;
             name = "Park City",
             available = true,
             status = true,
@@ -2216,7 +2219,7 @@ function build_sos_test_sys(; kwargs...)
         PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gens_cost_sos = [
-        PSY.ThermalStandard(
+        PSY.ThermalStandard(;
             name = "Alta",
             available = true,
             status = true,
@@ -2238,7 +2241,7 @@ function build_sos_test_sys(; kwargs...)
             ),
             base_power = 100.0,
         ),
-        PSY.ThermalStandard(
+        PSY.ThermalStandard(;
             name = "Park City",
             available = true,
             status = true,
@@ -2309,7 +2312,7 @@ function build_pwl_test_sys(; kwargs...)
         PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gens_cost = [
-        PSY.ThermalStandard(
+        PSY.ThermalStandard(;
             name = "Alta",
             available = true,
             status = true,
@@ -2331,7 +2334,7 @@ function build_pwl_test_sys(; kwargs...)
             ),
             base_power = 100.0,
         ),
-        PSY.ThermalStandard(
+        PSY.ThermalStandard(;
             name = "Park City",
             available = true,
             status = true,
@@ -2384,7 +2387,7 @@ function build_duration_test_sys(; kwargs...)
         ),
     )
     gens_dur = [
-        PSY.ThermalStandard(
+        PSY.ThermalStandard(;
             name = "Alta",
             available = true,
             status = true,
@@ -2402,7 +2405,7 @@ function build_duration_test_sys(; kwargs...)
             base_power = 100.0,
             time_at_status = 2.0,
         ),
-        PSY.ThermalStandard(
+        PSY.ThermalStandard(;
             name = "Park City",
             available = true,
             status = false,
@@ -2441,7 +2444,7 @@ function build_pwl_marketbid_sys(; kwargs...)
         PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gens_cost = [
-        PSY.ThermalStandard(
+        PSY.ThermalStandard(;
             name = "Alta",
             available = true,
             status = true,
@@ -2455,14 +2458,14 @@ function build_pwl_marketbid_sys(; kwargs...)
             reactive_power_limits = nothing,
             time_limits = nothing,
             ramp_limits = nothing,
-            operation_cost = PSY.MarketBidCost(
+            operation_cost = PSY.MarketBidCost(;
                 no_load = 0.0,
                 start_up = (hot = 0.0, warm = 0.0, cold = 0.0),
                 shut_down = 0.0,
             ),
             base_power = 100.0,
         ),
-        PSY.ThermalMultiStart(
+        PSY.ThermalMultiStart(;
             name = "115_STEAM_1",
             available = true,
             status = true,
@@ -2479,7 +2482,7 @@ function build_pwl_marketbid_sys(; kwargs...)
             time_limits = (up = 4.0, down = 2.0),
             start_time_limits = (hot = 2.0, warm = 4.0, cold = 12.0),
             start_types = 3,
-            operation_cost = PSY.MarketBidCost(
+            operation_cost = PSY.MarketBidCost(;
                 no_load = 0.0,
                 start_up = (hot = 393.28, warm = 455.37, cold = 703.76),
                 shut_down = 0.0,
@@ -2499,7 +2502,7 @@ function build_pwl_marketbid_sys(; kwargs...)
             [(589.99, 22.0), (884.99, 33.0), (1210.04, 44.0), (1543.44, 55.0)],
         ],
     )
-    market_bid_gen1 = PSY.Deterministic(
+    market_bid_gen1 = PSY.Deterministic(;
         name = "variable_cost",
         data = market_bid_gen1_data,
         resolution = Hour(1),
@@ -2514,7 +2517,7 @@ function build_pwl_marketbid_sys(; kwargs...)
             [(0.0, 5.0), (300.1, 7.33), (600.72, 9.67), (900.1, 12.0)],
         ],
     )
-    market_bid_gen2 = PSY.Deterministic(
+    market_bid_gen2 = PSY.Deterministic(;
         name = "variable_cost",
         data = market_bid_gen2_data,
         resolution = Hour(1),
@@ -2610,7 +2613,7 @@ function build_test_RTS_GMLC_sys(; kwargs...)
         rawsys = PSY.PowerSystemTableData(
             RTS_GMLC_DIR,
             100.0,
-            joinpath(RTS_GMLC_DIR, "user_descriptors.yaml"),
+            joinpath(RTS_GMLC_DIR, "user_descriptors.yaml");
             timeseries_metadata_file = joinpath(RTS_GMLC_DIR, "timeseries_pointers.json"),
             generator_mapping_file = joinpath(RTS_GMLC_DIR, "generator_mapping.yaml"),
         )
@@ -2637,7 +2640,7 @@ function build_test_RTS_GMLC_sys_with_hybrid(; kwargs...)
     renewable_unit = first(get_components(RenewableDispatch, sys))
 
     name = "Test H"
-    h_sys = HybridSystem(
+    h_sys = HybridSystem(;
         name = name,
         available = true,
         status = true,
@@ -2813,7 +2816,7 @@ function build_c_sys5_hybrid(; kwargs...)
     thermals = thermal_generators5(nodes)
     loads = loads5(nodes)
     renewables = renewable_generators5(nodes)
-    _battery(nodes, bus, name) = PSY.BatteryEMS(
+    _battery(nodes, bus, name) = PSY.BatteryEMS(;
         name = name,
         prime_mover = PrimeMovers.BA,
         available = true,
@@ -2829,7 +2832,7 @@ function build_c_sys5_hybrid(; kwargs...)
         reactive_power_limits = (min = -2.0, max = 2.0),
         base_power = 100.0,
         storage_target = 0.2,
-        operation_cost = PSY.StorageManagementCost(
+        operation_cost = PSY.StorageManagementCost(;
             variable = PSY.VariableCost(0.0),
             fixed = 0.0,
             start_up = 0.0,
@@ -2839,7 +2842,7 @@ function build_c_sys5_hybrid(; kwargs...)
         ),
     )
     hyd = [
-        HybridSystem(
+        HybridSystem(;
             name = "RE+battery",
             available = true,
             status = true,
@@ -2857,7 +2860,7 @@ function build_c_sys5_hybrid(; kwargs...)
             output_active_power_limits = (min = 0.0, max = 5.0),
             reactive_power_limits = (min = 0.0, max = 1.0),
         ),
-        HybridSystem(
+        HybridSystem(;
             name = "thermal+battery",
             available = true,
             status = true,
@@ -2875,7 +2878,7 @@ function build_c_sys5_hybrid(; kwargs...)
             output_active_power_limits = (min = 0.0, max = 10.0),
             reactive_power_limits = (min = 0.0, max = 1.0),
         ),
-        HybridSystem(
+        HybridSystem(;
             name = "load+battery",
             available = true,
             status = true,
@@ -2892,7 +2895,7 @@ function build_c_sys5_hybrid(; kwargs...)
             output_active_power_limits = (min = 0.0, max = 10.0),
             reactive_power_limits = (min = 0.0, max = 1.0),
         ),
-        HybridSystem(
+        HybridSystem(;
             name = "all_hybrid",
             available = true,
             status = true,
@@ -2995,7 +2998,7 @@ function build_c_sys5_hybrid_uc(; kwargs...)
     thermals = thermal_generators5(nodes)
     loads = loads5(nodes)
     renewables = renewable_generators5(nodes)
-    _battery(nodes, bus, name) = PSY.BatteryEMS(
+    _battery(nodes, bus, name) = PSY.BatteryEMS(;
         name = name,
         prime_mover = PrimeMovers.BA,
         available = true,
@@ -3011,7 +3014,7 @@ function build_c_sys5_hybrid_uc(; kwargs...)
         reactive_power_limits = (min = -2.0, max = 2.0),
         base_power = 100.0,
         storage_target = 0.2,
-        operation_cost = PSY.StorageManagementCost(
+        operation_cost = PSY.StorageManagementCost(;
             variable = PSY.VariableCost(0.0),
             fixed = 0.0,
             start_up = 0.0,
@@ -3021,7 +3024,7 @@ function build_c_sys5_hybrid_uc(; kwargs...)
         ),
     )
     hyd = [
-        HybridSystem(
+        HybridSystem(;
             name = "RE+battery",
             available = true,
             status = true,
@@ -3122,7 +3125,7 @@ function build_c_sys5_hybrid_ed(; kwargs...)
     thermals = thermal_generators5(nodes)
     loads = loads5(nodes)
     renewables = renewable_generators5(nodes)
-    _battery(nodes, bus, name) = PSY.BatteryEMS(
+    _battery(nodes, bus, name) = PSY.BatteryEMS(;
         name = name,
         prime_mover = PrimeMovers.BA,
         available = true,
@@ -3138,7 +3141,7 @@ function build_c_sys5_hybrid_ed(; kwargs...)
         reactive_power_limits = (min = -2.0, max = 2.0),
         base_power = 100.0,
         storage_target = 0.2,
-        operation_cost = PSY.StorageManagementCost(
+        operation_cost = PSY.StorageManagementCost(;
             variable = PSY.VariableCost(0.0),
             fixed = 0.0,
             start_up = 0.0,
@@ -3148,7 +3151,7 @@ function build_c_sys5_hybrid_ed(; kwargs...)
         ),
     )
     hyd = [
-        HybridSystem(
+        HybridSystem(;
             name = "RE+battery",
             available = true,
             status = true,
@@ -3270,7 +3273,7 @@ function build_hydro_test_case_b_sys(; kwargs...)
             "d/m/y  H:M:S",
         ),
     )
-    hydro = HydroEnergyReservoir(
+    hydro = HydroEnergyReservoir(;
         name = "HydroEnergyReservoir",
         available = true,
         bus = node,
@@ -3282,7 +3285,7 @@ function build_hydro_test_case_b_sys(; kwargs...)
         reactive_power_limits = (min = 0.0, max = 7.0),
         ramp_limits = (up = 7.0, down = 7.0),
         time_limits = nothing,
-        operation_cost = PSY.StorageManagementCost(
+        operation_cost = PSY.StorageManagementCost(;
             variable = VariableCost(0.15),
             fixed = 0.0,
             start_up = 0.0,
@@ -3332,7 +3335,7 @@ function build_hydro_test_case_c_sys(; kwargs...)
             "d/m/y  H:M:S",
         ),
     )
-    hydro = HydroEnergyReservoir(
+    hydro = HydroEnergyReservoir(;
         name = "HydroEnergyReservoir",
         available = true,
         bus = node,
@@ -3344,7 +3347,7 @@ function build_hydro_test_case_c_sys(; kwargs...)
         reactive_power_limits = (min = 0.0, max = 7.0),
         ramp_limits = (up = 7.0, down = 7.0),
         time_limits = nothing,
-        operation_cost = PSY.StorageManagementCost(
+        operation_cost = PSY.StorageManagementCost(;
             variable = VariableCost(0.15),
             fixed = 0.0,
             start_up = 0.0,
@@ -3394,7 +3397,7 @@ function build_hydro_test_case_d_sys(; kwargs...)
             "d/m/y  H:M:S",
         ),
     )
-    hydro = HydroEnergyReservoir(
+    hydro = HydroEnergyReservoir(;
         name = "HydroEnergyReservoir",
         available = true,
         bus = node,
@@ -3406,7 +3409,7 @@ function build_hydro_test_case_d_sys(; kwargs...)
         reactive_power_limits = (min = 0.0, max = 7.0),
         ramp_limits = (up = 7.0, down = 7.0),
         time_limits = nothing,
-        operation_cost = PSY.StorageManagementCost(
+        operation_cost = PSY.StorageManagementCost(;
             variable = VariableCost(0.15),
             fixed = 0.0,
             start_up = 0.0,
@@ -3456,7 +3459,7 @@ function build_hydro_test_case_e_sys(; kwargs...)
             "d/m/y  H:M:S",
         ),
     )
-    hydro = HydroEnergyReservoir(
+    hydro = HydroEnergyReservoir(;
         name = "HydroEnergyReservoir",
         available = true,
         bus = node,
@@ -3468,7 +3471,7 @@ function build_hydro_test_case_e_sys(; kwargs...)
         reactive_power_limits = (min = 0.0, max = 7.0),
         ramp_limits = (up = 7.0, down = 7.0),
         time_limits = nothing,
-        operation_cost = PSY.StorageManagementCost(
+        operation_cost = PSY.StorageManagementCost(;
             variable = VariableCost(0.15),
             fixed = 0.0,
             start_up = 0.0,
@@ -3518,7 +3521,7 @@ function build_hydro_test_case_f_sys(; kwargs...)
             "d/m/y  H:M:S",
         ),
     )
-    hydro = HydroEnergyReservoir(
+    hydro = HydroEnergyReservoir(;
         name = "HydroEnergyReservoir",
         available = true,
         bus = node,
@@ -3530,7 +3533,7 @@ function build_hydro_test_case_f_sys(; kwargs...)
         reactive_power_limits = (min = 0.0, max = 7.0),
         ramp_limits = (up = 7.0, down = 7.0),
         time_limits = nothing,
-        operation_cost = PSY.StorageManagementCost(
+        operation_cost = PSY.StorageManagementCost(;
             variable = VariableCost(0.15),
             fixed = 0.0,
             start_up = 0.0,
@@ -3610,7 +3613,7 @@ function build_batt_test_case_b_sys(; kwargs...)
         reactive_power_limits = (min = -2.0, max = 2.0),
         base_power = 100.0,
         storage_target = 0.2,
-        operation_cost = PSY.StorageManagementCost(
+        operation_cost = PSY.StorageManagementCost(;
             variable = PSY.VariableCost(0.0),
             fixed = 0.0,
             start_up = 0.0,
@@ -3685,7 +3688,7 @@ function build_batt_test_case_c_sys(; kwargs...)
         reactive_power_limits = (min = -2.0, max = 2.0),
         base_power = 100.0,
         storage_target = 0.2,
-        operation_cost = PSY.StorageManagementCost(
+        operation_cost = PSY.StorageManagementCost(;
             variable = PSY.VariableCost(0.0),
             fixed = 0.0,
             start_up = 0.0,
@@ -3760,7 +3763,7 @@ function build_batt_test_case_d_sys(; kwargs...)
         reactive_power_limits = (min = -2.0, max = 2.0),
         base_power = 100.0,
         storage_target = 0.2,
-        operation_cost = PSY.StorageManagementCost(
+        operation_cost = PSY.StorageManagementCost(;
             variable = PSY.VariableCost(0.0),
             fixed = 0.0,
             start_up = 0.0,
@@ -3835,7 +3838,7 @@ function build_batt_test_case_e_sys(; kwargs...)
         reactive_power_limits = (min = -2.0, max = 2.0),
         base_power = 100.0,
         storage_target = 0.2,
-        operation_cost = PSY.StorageManagementCost(
+        operation_cost = PSY.StorageManagementCost(;
             variable = PSY.VariableCost(0.0),
             fixed = 0.0,
             start_up = 0.0,
@@ -3910,7 +3913,7 @@ function build_batt_test_case_f_sys(; kwargs...)
         reactive_power_limits = (min = -2.0, max = 2.0),
         base_power = 100.0,
         storage_target = 0.2,
-        operation_cost = PSY.StorageManagementCost(
+        operation_cost = PSY.StorageManagementCost(;
             variable = PSY.VariableCost(0.0),
             fixed = 0.0,
             start_up = 0.0,

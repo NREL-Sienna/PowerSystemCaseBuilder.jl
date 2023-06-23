@@ -6,9 +6,9 @@ if isfile("docs/src/howto/.DS_Store.md")
     rm("docs/src/howto/.DS_Store.md")
 end
 
-makedocs(
+makedocs(;
     sitename = "PowerSystemCaseBuilder.jl",
-    format = Documenter.HTML(
+    format = Documenter.HTML(;
         mathengine = Documenter.MathJax(),
         prettyurls = get(ENV, "CI", nothing) == "true",
     ),
@@ -18,7 +18,7 @@ makedocs(
     pages = Any["Introduction" => "index.md",],
 )
 
-deploydocs(
+deploydocs(;
     repo = "github.com/NREL-Sienna/PowerSystemCaseBuilder.jl.git",
     target = "build",
     branch = "gh-pages",

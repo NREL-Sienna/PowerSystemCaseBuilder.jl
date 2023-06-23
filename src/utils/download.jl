@@ -83,7 +83,7 @@ function download_modified_tamu_ercot_da(; kwargs...)
         mkpath(data)
         for (file, urls) in data_urls
             tempfilename = Base.download(urls)
-            mv(tempfilename, joinpath(data, file), force = true)
+            mv(tempfilename, joinpath(data, file); force = true)
         end
     end
     return data
