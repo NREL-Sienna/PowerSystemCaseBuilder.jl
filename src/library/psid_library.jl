@@ -47,8 +47,8 @@ end
 
 function build_psid_14bus_multigen(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    @show data_dir = get_raw_data(; kwargs...)
-    @show raw_file = joinpath(data_dir, "14bus.raw")
+    data_dir = get_raw_data(; kwargs...)
+    raw_file = joinpath(data_dir, "14bus.raw")
     dyr_file = joinpath(data_dir, "dyn_data.dyr")
 
     sys = System(raw_file, dyr_file; sys_kwargs...)
