@@ -1132,6 +1132,14 @@ const SYSTEM_CATALOG = [
         name = "14 Bus Base Case",
         description = "14 Bus Dynamic Test System Case",
         category = PSIDSystems,
+        raw_data = joinpath(DATA_DIR, "psid_tests", "data_examples"),
         build_function = build_psid_14bus_multigen,
     ),
+    SystemDescriptor(;
+    name = "3 Bus Inverter Base",
+    description = "3 Bus Base System for tutorials",
+    category = PSIDSystems,
+    raw_data = joinpath(DATA_DIR, "psid_tests", "data_examples"),
+    build_function = build_3bus_inverter,
+),
 ]
