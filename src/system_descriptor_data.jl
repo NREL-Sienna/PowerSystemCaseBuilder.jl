@@ -1127,5 +1127,5 @@ const SYSTEM_CATALOG = [
         description = "WECC 240 Bus case dynamic data with some modifications",
         category = PSIDSystems,
         build_function = build_psid_3bus,
-),
+    ),
 ]
