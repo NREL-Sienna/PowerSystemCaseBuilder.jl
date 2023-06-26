@@ -47,13 +47,21 @@ end
 
 function build_psid_14bus_multigen(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    data_dir = get_raw_data(; kwargs...)
-    raw_file = joinpath(data_dir, "14Bus.raw")
+    @show data_dir = get_raw_data(; kwargs...)
+    @show raw_file = joinpath(data_dir, "14bus.raw")
     dyr_file = joinpath(data_dir, "dyn_data.dyr")
 
     sys = System(raw_file, dyr_file; sys_kwargs...)
     for l in get_components(PSY.StandardLoad, sys)
         transform_load_to_constant_impedance(l)
     end
+    return sys
+end
+
+function build_3bus_inverter(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    data_dir = get_raw_data(; kwargs...)
+    raw_file = joinpath(data_dir, "ThreeBusInverter.raw")
+    sys = System(raw_file; sys_kwargs...)
     return sys
 end
