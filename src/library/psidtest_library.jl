@@ -667,7 +667,7 @@ function build_psid_test_threebus_genrou_avr(; kwargs...)
         )
     end
 
-    for l in get_components(PSY.StandardLoad, threebus_sys)
+    for l in get_components(PSY.StandardLoad, sys)
         transform_load_to_constant_impedance(l)
     end
 
@@ -788,7 +788,7 @@ function build_psid_test_threebus_multimachine_dynlines(; kwargs...)
         add_component!(sys, dyn_line)
     end
 
-    for l in get_components(PSY.StandardLoad, threebus_sys)
+    for l in get_components(PSY.StandardLoad, sys)
         transform_load_to_constant_impedance(l)
     end
 

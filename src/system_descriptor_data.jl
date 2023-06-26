@@ -1105,9 +1105,27 @@ const SYSTEM_CATALOG = [
     ),
     SystemDescriptor(;
         name = "2Area 5 Bus System",
-        description = "PSI test system with two areas connected with an HVDC Line", # Old Test 38
+        description = "PSI test system with two areas connected with an HVDC Line",
         category = PSISystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_two_zone_5_bus,
+    ),
+    SystemDescriptor(;
+        name = "OMIB System",
+        description = "OMIB case with 2 state machine for examples",
+        category = PSIDSystems,
+        build_function = build_psid_omib,
+    ),
+    SystemDescriptor(;
+        name = "Three Bus Dynamic data Example System",
+        description = "Three Bus case for examples",
+        category = PSIDSystems,
+        build_function = build_psid_3bus,
+    ),
+    SystemDescriptor(;
+        name = "WECC 240 Bus",
+        description = "WECC 240 Bus case dynamic data with some modifications",
+        category = PSIDSystems,
+        build_function = build_psid_3bus,
     ),
 ]
