@@ -1132,6 +1132,6 @@ const SYSTEM_CATALOG = [
         name = "14 Bus Base Case",
         description = "14 Bus Dynamic Test System Case",
         category = PSIDSystems,
-        build_function = bbuild_psid_14bus_multigen,
+        build_function = build_psid_14bus_multigen,
     ),
 ]
