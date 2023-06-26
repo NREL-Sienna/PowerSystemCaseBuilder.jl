@@ -1128,4 +1128,10 @@ const SYSTEM_CATALOG = [
         category = PSIDSystems,
         build_function = build_wecc_240_dynamic,
     ),
+    SystemDescriptor(;
+        name = "14 Bus Base Case",
+        description = "14 Bus Dynamic Test System Case",
+        category = PSIDSystems,
+        build_function = bbuild_psid_14bus_multigen,
+    ),
 ]
