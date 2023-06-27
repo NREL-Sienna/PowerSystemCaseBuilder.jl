@@ -1142,4 +1142,25 @@ const SYSTEM_CATALOG = [
         raw_data = joinpath(DATA_DIR, "psid_tests", "data_examples"),
         build_function = build_3bus_inverter,
     ),
+    SystemDescriptor(;
+        name = "2 Bus Load Tutorial",
+        description = "2 Bus Base System for load tutorials",
+        category = PSIDSystems,
+        raw_data = joinpath(DATA_DIR, "psid_tests", "data_examples", "Omib_Load.raw"),
+        build_function = build_psid_load_tutorial_omib,
+    ),
+    SystemDescriptor(;
+        name = "2 Bus Load Tutorial GENROU",
+        description = "2 Bus Base System for load tutorials with GENROU",
+        category = PSIDSystems,
+        raw_data = joinpath(DATA_DIR, "psid_tests", "data_examples", "Omib_Load.raw"),
+        build_function = build_psid_load_tutorial_genrou,
+    ),
+    SystemDescriptor(;
+        name = "2 Bus Load Tutorial Droop",
+        description = "2 Bus Base System for load tutorials with Droop Inverter",
+        category = PSIDSystems,
+        raw_data = joinpath(DATA_DIR, "psid_tests", "data_examples", "Omib_Load.raw"),
+        build_function = build_psid_load_tutorial_droop,
+    ),
 ]
