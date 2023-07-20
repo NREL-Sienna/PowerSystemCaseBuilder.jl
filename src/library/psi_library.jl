@@ -466,7 +466,6 @@ function build_RTS_GMLC_RT_sys(; kwargs...)
     return sys
 end
 
-
 function build_RTS_GMLC_DA_sys_noTS(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     RTS_GMLC_DIR = get_raw_data(; kwargs...)
@@ -475,7 +474,7 @@ function build_RTS_GMLC_DA_sys_noTS(; kwargs...)
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
-        joinpath(RTS_SIIP_DIR, "user_descriptors.yaml"),
+        joinpath(RTS_SIIP_DIR, "user_descriptors.yaml");
         timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
         generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
     )
@@ -492,7 +491,7 @@ function build_RTS_GMLC_RT_sys_noTS(; kwargs...)
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
-        joinpath(RTS_SIIP_DIR, "user_descriptors.yaml"),
+        joinpath(RTS_SIIP_DIR, "user_descriptors.yaml");
         timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
         generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
     )
