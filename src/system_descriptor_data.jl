@@ -296,11 +296,25 @@ const SYSTEM_CATALOG = [
         build_function = build_RTS_GMLC_DA_sys,
     ),
     SystemDescriptor(;
+        name = "RTS_GMLC_DA_sys_noForecast",
+        description = "RTS-GMLC Full system from git repo for day-ahead simulations",
+        category = PSISystems,
+        raw_data = RTS_DIR,
+        build_function = build_RTS_GMLC_DA_sys_noForecast,
+    ),
+    SystemDescriptor(;
         name = "RTS_GMLC_RT_sys",
         description = "RTS-GMLC Full system from git repo for day-ahead simulations",
         category = PSISystems,
         raw_data = RTS_DIR,
         build_function = build_RTS_GMLC_RT_sys,
+    ),
+    SystemDescriptor(;
+        name = "RTS_GMLC_RT_sys_noForecast",
+        description = "RTS-GMLC Full system from git repo for day-ahead simulations",
+        category = PSISystems,
+        raw_data = RTS_DIR,
+        build_function = build_RTS_GMLC_RT_sys_noForecast,
     ),
     SystemDescriptor(;
         name = "modified_RTS_GMLC_DA_sys",
@@ -311,12 +325,28 @@ const SYSTEM_CATALOG = [
         build_function = build_modified_RTS_GMLC_DA_sys,
     ),
     SystemDescriptor(;
+        name = "modified_RTS_GMLC_DA_sys_noForecast",
+        description = "Modified RTS-GMLC Full system for day-ahead simulations
+            with modifications to reserve definitions to improve feasibility",
+        category = PSISystems,
+        raw_data = RTS_DIR,
+        build_function = build_modified_RTS_GMLC_DA_sys_noForecast,
+    ),
+    SystemDescriptor(;
         name = "modified_RTS_GMLC_RT_sys",
         description = "Modified RTS-GMLC Full system for real-time simulations
             with modifications to reserve definitions to improve feasibility",
         category = PSISystems,
         raw_data = RTS_DIR,
         build_function = build_modified_RTS_GMLC_RT_sys,
+    ),
+    SystemDescriptor(;
+        name = "modified_RTS_GMLC_RT_sys_noForecast",
+        description = "Modified RTS-GMLC Full system for real-time simulations
+            with modifications to reserve definitions to improve feasibility",
+        category = PSISystems,
+        raw_data = RTS_DIR,
+        build_function = build_modified_RTS_GMLC_RT_sys_noForecast,
     ),
     SystemDescriptor(;
         name = "modified_RTS_GMLC_realization_sys",
