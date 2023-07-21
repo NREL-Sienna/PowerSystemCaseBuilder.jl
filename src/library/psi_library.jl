@@ -466,7 +466,7 @@ function build_RTS_GMLC_RT_sys(; kwargs...)
     return sys
 end
 
-function build_RTS_GMLC_DA_sys_noTS(; kwargs...)
+function build_RTS_GMLC_DA_sys_noForecast(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     RTS_GMLC_DIR = get_raw_data(; kwargs...)
     RTS_SRC_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "SourceData")
@@ -483,7 +483,7 @@ function build_RTS_GMLC_DA_sys_noTS(; kwargs...)
     return sys
 end
 
-function build_RTS_GMLC_RT_sys_noTS(; kwargs...)
+function build_RTS_GMLC_RT_sys_noForecast(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     RTS_GMLC_DIR = get_raw_data(; kwargs...)
     RTS_SRC_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "SourceData")
@@ -628,7 +628,7 @@ function build_modified_RTS_GMLC_DA_sys(; kwargs...)
     return sys
 end
 
-function build_modified_RTS_GMLC_DA_sys_noTS(; kwargs...)
+function build_modified_RTS_GMLC_DA_sys_noForecast(; kwargs...)
     sys = make_modified_RTS_GMLC_sys(; kwargs...)
     return sys
 end
@@ -650,6 +650,11 @@ end
 function build_modified_RTS_GMLC_RT_sys(; kwargs...)
     sys = build_modified_RTS_GMLC_realization_sys(; kwargs...)
     PSY.transform_single_time_series!(sys, 12, Minute(15))
+    return sys
+end
+
+function build_modified_RTS_GMLC_RT_sys_noForecast(; kwargs...)
+    sys = build_modified_RTS_GMLC_realization_sys(; kwargs...)
     return sys
 end
 
