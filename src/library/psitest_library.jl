@@ -2866,7 +2866,7 @@ function build_c_sys5_hybrid(; kwargs...)
     renewables = renewable_generators5(nodes)
     _battery(nodes, bus, name) = PSY.BatteryEMS(;
         name = name,
-        prime_mover = PrimeMovers.BA,
+        prime_mover_type = PrimeMovers.BA,
         available = true,
         bus = nodes[bus],
         initial_energy = 5.0,
@@ -3048,7 +3048,7 @@ function build_c_sys5_hybrid_uc(; kwargs...)
     renewables = renewable_generators5(nodes)
     _battery(nodes, bus, name) = PSY.BatteryEMS(;
         name = name,
-        prime_mover = PrimeMovers.BA,
+        prime_mover_type = PrimeMovers.BA,
         available = true,
         bus = nodes[bus],
         initial_energy = 5.0,
@@ -3175,7 +3175,7 @@ function build_c_sys5_hybrid_ed(; kwargs...)
     renewables = renewable_generators5(nodes)
     _battery(nodes, bus, name) = PSY.BatteryEMS(;
         name = name,
-        prime_mover = PrimeMovers.BA,
+        prime_mover_type = PrimeMovers.BA,
         available = true,
         bus = nodes[bus],
         initial_energy = 5.0,
@@ -3328,7 +3328,7 @@ function build_hydro_test_case_b_sys(; kwargs...)
         active_power = 0.0,
         reactive_power = 0.0,
         rating = 7.0,
-        prime_mover = PrimeMovers.HY,
+        prime_mover_type = PrimeMovers.HY,
         active_power_limits = (min = 0.0, max = 7.0),
         reactive_power_limits = (min = 0.0, max = 7.0),
         ramp_limits = (up = 7.0, down = 7.0),
@@ -3390,7 +3390,7 @@ function build_hydro_test_case_c_sys(; kwargs...)
         active_power = 0.0,
         reactive_power = 0.0,
         rating = 7.0,
-        prime_mover = PrimeMovers.HY,
+        prime_mover_type = PrimeMovers.HY,
         active_power_limits = (min = 0.0, max = 7.0),
         reactive_power_limits = (min = 0.0, max = 7.0),
         ramp_limits = (up = 7.0, down = 7.0),
@@ -3452,7 +3452,7 @@ function build_hydro_test_case_d_sys(; kwargs...)
         active_power = 0.0,
         reactive_power = 0.0,
         rating = 7.0,
-        prime_mover = PrimeMovers.HY,
+        prime_mover_type = PrimeMovers.HY,
         active_power_limits = (min = 0.0, max = 7.0),
         reactive_power_limits = (min = 0.0, max = 7.0),
         ramp_limits = (up = 7.0, down = 7.0),
@@ -3514,7 +3514,7 @@ function build_hydro_test_case_e_sys(; kwargs...)
         active_power = 0.0,
         reactive_power = 0.0,
         rating = 7.0,
-        prime_mover = PrimeMovers.HY,
+        prime_mover_type = PrimeMovers.HY,
         active_power_limits = (min = 0.0, max = 7.0),
         reactive_power_limits = (min = 0.0, max = 7.0),
         ramp_limits = (up = 7.0, down = 7.0),
@@ -3576,7 +3576,7 @@ function build_hydro_test_case_f_sys(; kwargs...)
         active_power = 0.0,
         reactive_power = 0.0,
         rating = 7.0,
-        prime_mover = PrimeMovers.HY,
+        prime_mover_type = PrimeMovers.HY,
         active_power_limits = (min = 0.0, max = 7.0),
         reactive_power_limits = (min = 0.0, max = 7.0),
         ramp_limits = (up = 7.0, down = 7.0),
@@ -3647,7 +3647,7 @@ function build_batt_test_case_b_sys(; kwargs...)
 
     batt = PSY.BatteryEMS(;
         name = "Bat2",
-        prime_mover = PrimeMovers.BA,
+        prime_mover_type = PrimeMovers.BA,
         available = true,
         bus = node,
         initial_energy = 5.0,
@@ -3722,7 +3722,7 @@ function build_batt_test_case_c_sys(; kwargs...)
 
     batt = PSY.BatteryEMS(;
         name = "Bat2",
-        prime_mover = PrimeMovers.BA,
+        prime_mover_type = PrimeMovers.BA,
         available = true,
         bus = node,
         initial_energy = 2.0,
@@ -3797,7 +3797,7 @@ function build_batt_test_case_d_sys(; kwargs...)
 
     batt = PSY.BatteryEMS(;
         name = "Bat2",
-        prime_mover = PrimeMovers.BA,
+        prime_mover_type = PrimeMovers.BA,
         available = true,
         bus = node,
         initial_energy = 2.0,
@@ -3872,7 +3872,7 @@ function build_batt_test_case_e_sys(; kwargs...)
 
     batt = PSY.BatteryEMS(;
         name = "Bat2",
-        prime_mover = PrimeMovers.BA,
+        prime_mover_type = PrimeMovers.BA,
         available = true,
         bus = node,
         initial_energy = 2.0,
@@ -3947,7 +3947,7 @@ function build_batt_test_case_f_sys(; kwargs...)
 
     batt = PSY.BatteryEMS(;
         name = "Bat2",
-        prime_mover = PrimeMovers.BA,
+        prime_mover_type = PrimeMovers.BA,
         available = true,
         bus = node,
         initial_energy = 1.0,
