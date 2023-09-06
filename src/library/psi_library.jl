@@ -832,7 +832,7 @@ function build_two_zone_5_bus(; kwargs...)
             2.00,
             (min = -0.7, max = 0.7),
         ),
-        HVDCLine(
+        TwoTerminalHVDCLine(
             "nodeC-nodeC2",
             true,
             0.0,
