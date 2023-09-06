@@ -1,7 +1,7 @@
 name = "PowerSystemCaseBuilder"
 uuid = "f00506e0-b84f-492a-93c2-c0a9afc4364e"
 authors = ["Sourabh Dalvi", "Jose Daniel Lara"]
-version = "1.1.0"
+version = "1.2.0"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
@@ -23,7 +23,7 @@ DataFrames = "1"
 DataStructures = "~0.18"
 HDF5 = "0.16"
 InfrastructureSystems = "^1.21"
-PowerSystems = "2"
+PowerSystems = "3"
 PrettyTables = "2"
 TimeSeries = "~0.22, 0.23"
 julia = "^1.6"
