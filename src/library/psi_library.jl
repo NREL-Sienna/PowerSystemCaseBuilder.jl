@@ -530,7 +530,7 @@ function make_modified_RTS_GMLC_sys(resolution::Dates.TimePeriod = Hour(1); kwar
     spin_reserve_R2 = PSY.get_component(PSY.VariableReserve, sys, "Spin_Up_R2")
     spin_reserve_R3 = PSY.get_component(PSY.VariableReserve, sys, "Spin_Up_R3")
     for g in PSY.get_components(
-        x -> PSY.get_prime_mover(x) in [PSY.PrimeMovers.CT, PSY.PrimeMovers.CC],
+        x -> PSY.get_prime_mover_type(x) in [PSY.PrimeMovers.CT, PSY.PrimeMovers.CC],
         PSY.ThermalStandard,
         sys,
     )
@@ -602,7 +602,7 @@ function make_modified_RTS_GMLC_sys(resolution::Dates.TimePeriod = Hour(1); kwar
     end
 
     for g in PSY.get_components(
-        x -> PSY.get_prime_mover(x) == PSY.PrimeMovers.PVe,
+        x -> PSY.get_prime_mover_type(x) == PSY.PrimeMovers.PVe,
         PSY.RenewableDispatch,
         sys,
     )
@@ -611,7 +611,7 @@ function make_modified_RTS_GMLC_sys(resolution::Dates.TimePeriod = Hour(1); kwar
     end
 
     for g in PSY.get_components(
-        x -> PSY.get_prime_mover(x) == PSY.PrimeMovers.PVe,
+        x -> PSY.get_prime_mover_type(x) == PSY.PrimeMovers.PVe,
         PSY.RenewableFix,
         sys,
     )
@@ -674,16 +674,16 @@ function build_two_zone_5_bus(; kwargs...)
 
     # Buses
     nodes10() = [
-        Bus(1, "nodeA", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
-        Bus(2, "nodeB", "PQ", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
-        Bus(3, "nodeC", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
-        Bus(4, "nodeD", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
-        Bus(5, "nodeE", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
-        Bus(6, "nodeA2", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
-        Bus(7, "nodeB2", "PQ", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
-        Bus(8, "nodeC2", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
-        Bus(9, "nodeD2", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
-        Bus(10, "nodeE2", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
+        ACBus(1, "nodeA", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
+        ACBus(2, "nodeB", "PQ", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
+        ACBus(3, "nodeC", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
+        ACBus(4, "nodeD", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
+        ACBus(5, "nodeE", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
+        ACBus(6, "nodeA2", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
+        ACBus(7, "nodeB2", "PQ", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
+        ACBus(8, "nodeC2", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
+        ACBus(9, "nodeD2", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
+        ACBus(10, "nodeE2", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
     ]
 
     # Lines
@@ -832,7 +832,7 @@ function build_two_zone_5_bus(; kwargs...)
             2.00,
             (min = -0.7, max = 0.7),
         ),
-        HVDCLine(
+        TwoTerminalHVDCLine(
             "nodeC-nodeC2",
             true,
             0.0,
@@ -855,7 +855,7 @@ function build_two_zone_5_bus(; kwargs...)
             active_power = 0.40,
             reactive_power = 0.010,
             rating = 0.5,
-            prime_mover = PrimeMovers.ST,
+            prime_mover_type = PrimeMovers.ST,
             fuel = ThermalFuels.COAL,
             active_power_limits = (min = 0.0, max = 0.40),
             reactive_power_limits = (min = -0.30, max = 0.30),
@@ -872,7 +872,7 @@ function build_two_zone_5_bus(; kwargs...)
             active_power = 1.70,
             reactive_power = 0.20,
             rating = 2.2125,
-            prime_mover = PrimeMovers.ST,
+            prime_mover_type = PrimeMovers.ST,
             fuel = ThermalFuels.COAL,
             active_power_limits = (min = 0.0, max = 1.70),
             reactive_power_limits = (min = -1.275, max = 1.275),
@@ -889,7 +889,7 @@ function build_two_zone_5_bus(; kwargs...)
             active_power = 5.2,
             reactive_power = 1.00,
             rating = 5.2,
-            prime_mover = PrimeMovers.ST,
+            prime_mover_type = PrimeMovers.ST,
             fuel = ThermalFuels.COAL,
             active_power_limits = (min = 0.0, max = 5.20),
             reactive_power_limits = (min = -3.90, max = 3.90),
@@ -906,7 +906,7 @@ function build_two_zone_5_bus(; kwargs...)
             active_power = 2.0,
             reactive_power = 0.40,
             rating = 2.5,
-            prime_mover = PrimeMovers.ST,
+            prime_mover_type = PrimeMovers.ST,
             fuel = ThermalFuels.COAL,
             active_power_limits = (min = 0.0, max = 2.0),
             reactive_power_limits = (min = -1.5, max = 1.5),
@@ -923,7 +923,7 @@ function build_two_zone_5_bus(; kwargs...)
             active_power = 6.0,
             reactive_power = 1.50,
             rating = 0.75,
-            prime_mover = PrimeMovers.ST,
+            prime_mover_type = PrimeMovers.ST,
             fuel = ThermalFuels.COAL,
             active_power_limits = (min = 0.0, max = 6.0),
             reactive_power_limits = (min = -4.50, max = 4.50),
@@ -940,7 +940,7 @@ function build_two_zone_5_bus(; kwargs...)
             active_power = 0.40,
             reactive_power = 0.010,
             rating = 0.5,
-            prime_mover = PrimeMovers.ST,
+            prime_mover_type = PrimeMovers.ST,
             fuel = ThermalFuels.COAL,
             active_power_limits = (min = 0.0, max = 0.40),
             reactive_power_limits = (min = -0.30, max = 0.30),
@@ -957,7 +957,7 @@ function build_two_zone_5_bus(; kwargs...)
             active_power = 1.70,
             reactive_power = 0.20,
             rating = 2.2125,
-            prime_mover = PrimeMovers.ST,
+            prime_mover_type = PrimeMovers.ST,
             fuel = ThermalFuels.COAL,
             active_power_limits = (min = 0.0, max = 1.70),
             reactive_power_limits = (min = -1.275, max = 1.275),
@@ -974,7 +974,7 @@ function build_two_zone_5_bus(; kwargs...)
             active_power = 5.2,
             reactive_power = 1.00,
             rating = 5.2,
-            prime_mover = PrimeMovers.ST,
+            prime_mover_type = PrimeMovers.ST,
             fuel = ThermalFuels.COAL,
             active_power_limits = (min = 0.0, max = 5.20),
             reactive_power_limits = (min = -3.90, max = 3.90),
@@ -991,7 +991,7 @@ function build_two_zone_5_bus(; kwargs...)
             active_power = 2.0,
             reactive_power = 0.40,
             rating = 2.5,
-            prime_mover = PrimeMovers.ST,
+            prime_mover_type = PrimeMovers.ST,
             fuel = ThermalFuels.COAL,
             active_power_limits = (min = 0.0, max = 2.0),
             reactive_power_limits = (min = -1.5, max = 1.5),
@@ -1008,7 +1008,7 @@ function build_two_zone_5_bus(; kwargs...)
             active_power = 6.0,
             reactive_power = 1.50,
             rating = 0.75,
-            prime_mover = PrimeMovers.ST,
+            prime_mover_type = PrimeMovers.ST,
             fuel = ThermalFuels.COAL,
             active_power_limits = (min = 0.0, max = 6.0),
             reactive_power_limits = (min = -4.50, max = 4.50),

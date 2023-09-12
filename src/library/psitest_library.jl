@@ -918,7 +918,7 @@ function build_c_sys5_reg(; kwargs...)
 
     area = PSY.Area("1")
     PSY.add_component!(c_sys5_reg, area)
-    [PSY.set_area!(b, area) for b in PSY.get_components(PSY.Bus, c_sys5_reg)]
+    [PSY.set_area!(b, area) for b in PSY.get_components(PSY.ACBus, c_sys5_reg)]
     AGC_service = PSY.AGC(;
         name = "AGC_Area1",
         available = true,
@@ -977,7 +977,7 @@ end
 function build_sys_ramp_testing(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gen_ramp = [
         PSY.ThermalStandard(;
@@ -988,7 +988,7 @@ function build_sys_ramp_testing(; kwargs...)
             active_power = 0.20, # Active power
             reactive_power = 0.010,
             rating = 0.5,
-            prime_mover = PSY.PrimeMovers.ST,
+            prime_mover_type = PSY.PrimeMovers.ST,
             fuel = PSY.ThermalFuels.COAL,
             active_power_limits = (min = 0.0, max = 0.40),
             reactive_power_limits = nothing,
@@ -1005,7 +1005,7 @@ function build_sys_ramp_testing(; kwargs...)
             active_power = 0.70, # Active Power
             reactive_power = 0.20,
             rating = 2.0,
-            prime_mover = PSY.PrimeMovers.ST,
+            prime_mover_type = PSY.PrimeMovers.ST,
             fuel = PSY.ThermalFuels.COAL,
             active_power_limits = (min = 0.7, max = 2.20),
             reactive_power_limits = nothing,
@@ -1031,6 +1031,66 @@ function build_sys_ramp_testing(; kwargs...)
     PSY.add_component!(ramp_test_sys, gen_ramp[2])
     PSY.add_time_series!(ramp_test_sys, load, load_forecast_ramp)
     return ramp_test_sys
+end
+
+function build_sys_10bus_ac_dc(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    nodes = nodes10()
+    nodesdc = nodes10_dc()
+    branchesdc = branches10_dc(nodesdc)
+    ipcs = ipcs_10bus(nodes, nodesdc)
+
+    sys = PSY.System(
+        100.0,
+        nodes,
+        thermal_generators10(nodes),
+        loads10(nodes),
+        branches10_ac(nodes),
+        sys_kwargs...,
+    )
+
+    # Add DC Buses
+    for n in nodesdc
+        PSY.add_component!(sys, n)
+    end
+    # Add DC Branches
+    for l in branchesdc
+        PSY.add_component!(sys, l)
+    end
+    # Add IPCs
+    for i in ipcs
+        PSY.add_component!(sys, i)
+    end
+
+    # Add TimeSeries to Loads
+    resolution = Dates.Hour(1)
+    loads = PSY.get_components(PowerLoad, sys)
+    for l in loads
+        if occursin("nodeB", PSY.get_name(l))
+            data = Dict(DateTime("2020-01-01T00:00:00") => loadbusB_ts_DA)
+            PSY.add_time_series!(
+                sys,
+                l,
+                Deterministic("max_active_power", data, resolution),
+            )
+        elseif occursin("nodeC", PSY.get_name(l))
+            data = Dict(DateTime("2020-01-01T00:00:00") => loadbusC_ts_DA)
+            PSY.add_time_series!(
+                sys,
+                l,
+                Deterministic("max_active_power", data, resolution),
+            )
+        else
+            data = Dict(DateTime("2020-01-01T00:00:00") => loadbusD_ts_DA)
+            PSY.add_time_series!(
+                sys,
+                l,
+                Deterministic("max_active_power", data, resolution),
+            )
+        end
+    end
+
+    return sys
 end
 
 function build_c_sys5_uc(; kwargs...)
@@ -1381,7 +1441,7 @@ end
 function build_c_sys5_pwl_uc(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     c_sys5_uc = build_c_sys5_uc(; sys_kwargs...)
-    thermal = thermal_generators5_pwl(collect(PSY.get_components(PSY.Bus, c_sys5_uc)))
+    thermal = thermal_generators5_pwl(collect(PSY.get_components(PSY.ACBus, c_sys5_uc)))
     for d in thermal
         PSY.add_component!(c_sys5_uc, d)
     end
@@ -1459,7 +1519,7 @@ end
 function build_c_sys5_pwl_ed(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     c_sys5_ed = build_c_sys5_ed(; sys_kwargs...)
-    thermal = thermal_generators5_pwl(collect(PSY.get_components(PSY.Bus, c_sys5_ed)))
+    thermal = thermal_generators5_pwl(collect(PSY.get_components(PSY.ACBus, c_sys5_ed)))
     for d in thermal
         PSY.add_component!(c_sys5_ed, d)
     end
@@ -1470,7 +1530,7 @@ function build_c_sys5_pwl_ed_nonconvex(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     c_sys5_ed = build_c_sys5_ed(; sys_kwargs...)
     thermal =
-        thermal_generators5_pwl_nonconvex(collect(PSY.get_components(PSY.Bus, c_sys5_ed)))
+        thermal_generators5_pwl_nonconvex(collect(PSY.get_components(PSY.ACBus, c_sys5_ed)))
     for d in thermal
         PSY.add_component!(c_sys5_ed, d)
     end
@@ -2216,7 +2276,7 @@ end
 function build_sos_test_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gens_cost_sos = [
         PSY.ThermalStandard(;
@@ -2227,7 +2287,7 @@ function build_sos_test_sys(; kwargs...)
             active_power = 0.52,
             reactive_power = 0.010,
             rating = 0.5,
-            prime_mover = PSY.PrimeMovers.ST,
+            prime_mover_type = PSY.PrimeMovers.ST,
             fuel = PSY.ThermalFuels.COAL,
             active_power_limits = (min = 0.22, max = 0.55),
             reactive_power_limits = nothing,
@@ -2249,7 +2309,7 @@ function build_sos_test_sys(; kwargs...)
             active_power = 0.62,
             reactive_power = 0.20,
             rating = 2.2125,
-            prime_mover = PSY.PrimeMovers.ST,
+            prime_mover_type = PSY.PrimeMovers.ST,
             fuel = PSY.ThermalFuels.COAL,
             active_power_limits = (min = 0.62, max = 1.55),
             reactive_power_limits = nothing,
@@ -2309,7 +2369,7 @@ end
 function build_pwl_test_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gens_cost = [
         PSY.ThermalStandard(;
@@ -2320,7 +2380,7 @@ function build_pwl_test_sys(; kwargs...)
             active_power = 0.52,
             reactive_power = 0.010,
             rating = 0.5,
-            prime_mover = PSY.PrimeMovers.ST,
+            prime_mover_type = PSY.PrimeMovers.ST,
             fuel = PSY.ThermalFuels.COAL,
             active_power_limits = (min = 0.22, max = 0.55),
             reactive_power_limits = nothing,
@@ -2342,7 +2402,7 @@ function build_pwl_test_sys(; kwargs...)
             active_power = 0.62,
             reactive_power = 0.20,
             rating = 221.25,
-            prime_mover = PSY.PrimeMovers.ST,
+            prime_mover_type = PSY.PrimeMovers.ST,
             fuel = PSY.ThermalFuels.COAL,
             active_power_limits = (min = 0.62, max = 1.55),
             reactive_power_limits = nothing,
@@ -2378,7 +2438,7 @@ end
 function build_duration_test_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     DA_dur = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -2395,7 +2455,7 @@ function build_duration_test_sys(; kwargs...)
             active_power = 0.40,
             reactive_power = 0.010,
             rating = 0.5,
-            prime_mover = PSY.PrimeMovers.ST,
+            prime_mover_type = PSY.PrimeMovers.ST,
             fuel = PSY.ThermalFuels.COAL,
             active_power_limits = (min = 0.3, max = 0.9),
             reactive_power_limits = nothing,
@@ -2413,7 +2473,7 @@ function build_duration_test_sys(; kwargs...)
             active_power = 1.70,
             reactive_power = 0.20,
             rating = 2.2125,
-            prime_mover = PSY.PrimeMovers.ST,
+            prime_mover_type = PSY.PrimeMovers.ST,
             fuel = PSY.ThermalFuels.COAL,
             active_power_limits = (min = 0.7, max = 2.2),
             reactive_power_limits = nothing,
@@ -2441,7 +2501,7 @@ end
 function build_pwl_marketbid_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gens_cost = [
         PSY.ThermalStandard(;
@@ -2452,7 +2512,7 @@ function build_pwl_marketbid_sys(; kwargs...)
             active_power = 0.52,
             reactive_power = 0.010,
             rating = 0.5,
-            prime_mover = PSY.PrimeMovers.ST,
+            prime_mover_type = PSY.PrimeMovers.ST,
             fuel = PSY.ThermalFuels.COAL,
             active_power_limits = (min = 0.22, max = 0.55),
             reactive_power_limits = nothing,
@@ -2473,7 +2533,7 @@ function build_pwl_marketbid_sys(; kwargs...)
             active_power = 0.05,
             reactive_power = 0.010,
             rating = 0.12,
-            prime_mover = PSY.PrimeMovers.ST,
+            prime_mover_type = PSY.PrimeMovers.ST,
             fuel = PSY.ThermalFuels.COAL,
             active_power_limits = (min = 0.05, max = 0.12),
             reactive_power_limits = (min = -0.30, max = 0.30),
@@ -2818,7 +2878,7 @@ function build_c_sys5_hybrid(; kwargs...)
     renewables = renewable_generators5(nodes)
     _battery(nodes, bus, name) = PSY.BatteryEMS(;
         name = name,
-        prime_mover = PrimeMovers.BA,
+        prime_mover_type = PrimeMovers.BA,
         available = true,
         bus = nodes[bus],
         initial_energy = 5.0,
@@ -3000,7 +3060,7 @@ function build_c_sys5_hybrid_uc(; kwargs...)
     renewables = renewable_generators5(nodes)
     _battery(nodes, bus, name) = PSY.BatteryEMS(;
         name = name,
-        prime_mover = PrimeMovers.BA,
+        prime_mover_type = PrimeMovers.BA,
         available = true,
         bus = nodes[bus],
         initial_energy = 5.0,
@@ -3127,7 +3187,7 @@ function build_c_sys5_hybrid_ed(; kwargs...)
     renewables = renewable_generators5(nodes)
     _battery(nodes, bus, name) = PSY.BatteryEMS(;
         name = name,
-        prime_mover = PrimeMovers.BA,
+        prime_mover_type = PrimeMovers.BA,
         available = true,
         bus = nodes[bus],
         initial_energy = 5.0,
@@ -3265,7 +3325,7 @@ end
 function build_hydro_test_case_b_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3280,7 +3340,7 @@ function build_hydro_test_case_b_sys(; kwargs...)
         active_power = 0.0,
         reactive_power = 0.0,
         rating = 7.0,
-        prime_mover = PrimeMovers.HY,
+        prime_mover_type = PrimeMovers.HY,
         active_power_limits = (min = 0.0, max = 7.0),
         reactive_power_limits = (min = 0.0, max = 7.0),
         ramp_limits = (up = 7.0, down = 7.0),
@@ -3327,7 +3387,7 @@ end
 function build_hydro_test_case_c_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3342,7 +3402,7 @@ function build_hydro_test_case_c_sys(; kwargs...)
         active_power = 0.0,
         reactive_power = 0.0,
         rating = 7.0,
-        prime_mover = PrimeMovers.HY,
+        prime_mover_type = PrimeMovers.HY,
         active_power_limits = (min = 0.0, max = 7.0),
         reactive_power_limits = (min = 0.0, max = 7.0),
         ramp_limits = (up = 7.0, down = 7.0),
@@ -3389,7 +3449,7 @@ end
 function build_hydro_test_case_d_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3404,7 +3464,7 @@ function build_hydro_test_case_d_sys(; kwargs...)
         active_power = 0.0,
         reactive_power = 0.0,
         rating = 7.0,
-        prime_mover = PrimeMovers.HY,
+        prime_mover_type = PrimeMovers.HY,
         active_power_limits = (min = 0.0, max = 7.0),
         reactive_power_limits = (min = 0.0, max = 7.0),
         ramp_limits = (up = 7.0, down = 7.0),
@@ -3451,7 +3511,7 @@ end
 function build_hydro_test_case_e_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3466,7 +3526,7 @@ function build_hydro_test_case_e_sys(; kwargs...)
         active_power = 0.0,
         reactive_power = 0.0,
         rating = 7.0,
-        prime_mover = PrimeMovers.HY,
+        prime_mover_type = PrimeMovers.HY,
         active_power_limits = (min = 0.0, max = 7.0),
         reactive_power_limits = (min = 0.0, max = 7.0),
         ramp_limits = (up = 7.0, down = 7.0),
@@ -3513,7 +3573,7 @@ end
 function build_hydro_test_case_f_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3528,7 +3588,7 @@ function build_hydro_test_case_f_sys(; kwargs...)
         active_power = 0.0,
         reactive_power = 0.0,
         rating = 7.0,
-        prime_mover = PrimeMovers.HY,
+        prime_mover_type = PrimeMovers.HY,
         active_power_limits = (min = 0.0, max = 7.0),
         reactive_power_limits = (min = 0.0, max = 7.0),
         ramp_limits = (up = 7.0, down = 7.0),
@@ -3575,7 +3635,7 @@ end
 function build_batt_test_case_b_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3599,7 +3659,7 @@ function build_batt_test_case_b_sys(; kwargs...)
 
     batt = PSY.BatteryEMS(;
         name = "Bat2",
-        prime_mover = PrimeMovers.BA,
+        prime_mover_type = PrimeMovers.BA,
         available = true,
         bus = node,
         initial_energy = 5.0,
@@ -3650,7 +3710,7 @@ end
 function build_batt_test_case_c_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3674,7 +3734,7 @@ function build_batt_test_case_c_sys(; kwargs...)
 
     batt = PSY.BatteryEMS(;
         name = "Bat2",
-        prime_mover = PrimeMovers.BA,
+        prime_mover_type = PrimeMovers.BA,
         available = true,
         bus = node,
         initial_energy = 2.0,
@@ -3725,7 +3785,7 @@ end
 function build_batt_test_case_d_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3749,7 +3809,7 @@ function build_batt_test_case_d_sys(; kwargs...)
 
     batt = PSY.BatteryEMS(;
         name = "Bat2",
-        prime_mover = PrimeMovers.BA,
+        prime_mover_type = PrimeMovers.BA,
         available = true,
         bus = node,
         initial_energy = 2.0,
@@ -3800,7 +3860,7 @@ end
 function build_batt_test_case_e_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3824,7 +3884,7 @@ function build_batt_test_case_e_sys(; kwargs...)
 
     batt = PSY.BatteryEMS(;
         name = "Bat2",
-        prime_mover = PrimeMovers.BA,
+        prime_mover_type = PrimeMovers.BA,
         available = true,
         bus = node,
         initial_energy = 2.0,
@@ -3875,7 +3935,7 @@ end
 function build_batt_test_case_f_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.Bus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.2, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3899,7 +3959,7 @@ function build_batt_test_case_f_sys(; kwargs...)
 
     batt = PSY.BatteryEMS(;
         name = "Bat2",
-        prime_mover = PrimeMovers.BA,
+        prime_mover_type = PrimeMovers.BA,
         available = true,
         bus = node,
         initial_energy = 1.0,
