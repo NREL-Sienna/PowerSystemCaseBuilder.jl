@@ -4006,3 +4006,122 @@ function build_batt_test_case_f_sys(; kwargs...)
 
     return batt_test_case_f_sys
 end
+
+function build_c_sys5_all_components(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    nodes = nodes5()
+    c_sys5_all_components = PSY.System(
+        100.0,
+        nodes,
+        thermal_generators5(nodes),
+        renewable_generators5(nodes),
+        loads5(nodes),
+        hydro_generators5(nodes),
+        branches5(nodes);
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
+        sys_kwargs...,
+    )
+
+    # Boilerplate to handle time series
+    # TODO refactor as per https://github.com/NREL-Sienna/PowerSystemCaseBuilder.jl/issues/66
+    # For now, copied from build_c_sys5_hy_uc excluding the InterruptiblePowerLoad block
+    if get(kwargs, :add_forecasts, true)
+        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_all_components))
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ini_time = timestamp(load_timeseries_DA[t][ix])[1]
+                forecast_data[ini_time] = load_timeseries_DA[t][ix]
+            end
+            PSY.add_time_series!(
+                c_sys5_all_components,
+                l,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
+        end
+        for (ix, h) in
+            enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_all_components))
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
+                forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
+            end
+            PSY.add_time_series!(
+                c_sys5_all_components,
+                h,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
+        end
+        for (ix, h) in
+            enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_all_components))
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ini_time = timestamp(storage_target_DA[t][ix])[1]
+                forecast_data[ini_time] = storage_target_DA[t][ix]
+            end
+            PSY.add_time_series!(
+                c_sys5_all_components,
+                h,
+                PSY.Deterministic("storage_target", forecast_data),
+            )
+        end
+        for (ix, h) in
+            enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_all_components))
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
+                forecast_data[ini_time] = hydro_timeseries_DA[t][ix] .* 0.8
+            end
+            PSY.add_time_series!(
+                c_sys5_all_components,
+                h,
+                PSY.Deterministic("inflow", forecast_data),
+            )
+        end
+        for (ix, h) in
+            enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_all_components))
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ini_time = TimeSeries.timestamp(hydro_budget_DA[t][ix])[1]
+                forecast_data[ini_time] = hydro_budget_DA[t][ix]
+            end
+            PSY.add_time_series!(
+                c_sys5_all_components,
+                h,
+                PSY.Deterministic("hydro_budget", forecast_data),
+            )
+        end
+        for (ix, h) in
+            enumerate(PSY.get_components(PSY.HydroDispatch, c_sys5_all_components))
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
+                forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
+            end
+            PSY.add_time_series!(
+                c_sys5_all_components,
+                h,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
+        end
+        for (ix, r) in
+            enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_all_components))
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ini_time = timestamp(ren_timeseries_DA[t][ix])[1]
+                forecast_data[ini_time] = ren_timeseries_DA[t][ix]
+            end
+            PSY.add_time_series!(
+                c_sys5_all_components,
+                r,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
+        end
+    end
+
+    # TODO: should I handle add_single_time_series? build_c_sys5_hy_uc doesn't
+    # TODO: should I handle add_reserves? build_c_sys5_hy_uc doesn't
+
+    bus3 = PSY.get_component(PowerLoad, c_sys5_all_components, "Bus3")
+    PSY.convert_component!(StandardLoad, bus3, c_sys5_all_components)
+    return c_sys5_all_components
+end
