@@ -114,7 +114,7 @@ function build_c_sys5_ml(; kwargs...)
         end
     end
     line = PSY.get_component(Line, c_sys5_ml, "1")
-    PSY.convert_component!(MonitoredLine, line, c_sys5_ml)
+    PSY.convert_component!(c_sys5_ml, line, MonitoredLine)
     return c_sys5_ml
 end
 
@@ -4122,6 +4122,6 @@ function build_c_sys5_all_components(; kwargs...)
     # TODO: should I handle add_reserves? build_c_sys5_hy_uc doesn't
 
     bus3 = PSY.get_component(PowerLoad, c_sys5_all_components, "Bus3")
-    PSY.convert_component!(StandardLoad, bus3, c_sys5_all_components)
+    PSY.convert_component!(c_sys5_all_components, bus3, StandardLoad)
     return c_sys5_all_components
 end
