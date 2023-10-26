@@ -1200,4 +1200,11 @@ const SYSTEM_CATALOG = [
         raw_data = joinpath(DATA_DIR, "psid_tests", "data_examples", "Omib_Load.raw"),
         build_function = build_psid_load_tutorial_droop,
     ),
+    SystemDescriptor(;
+        name = "c_sys5_all_components",
+        description = "5-Bus system with 5-Bus system with Renewable Energy, Hydro Energy Reservoir, and both StandardLoad and PowerLoad",
+        category = PSITestSystems,
+        raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
+        build_function = build_c_sys5_all_components,
+    ),
 ]
