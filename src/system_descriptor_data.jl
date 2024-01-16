@@ -196,6 +196,13 @@ const SYSTEM_CATALOG = [
         build_function = build_c_sys5_reg,
     ),
     SystemDescriptor(;
+        name = "c_sys5_radial",
+        description = "5-Bus with a radial branches",
+        category = PSITestSystems,
+        raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
+        build_function = build_c_sys5_radial,
+    ),
+    SystemDescriptor(;
         name = "sys10_pjm_ac_dc",
         description = "10-bus system (duplicate 5-bus PJM) with 4-DC bus system",
         category = PSISystems,
