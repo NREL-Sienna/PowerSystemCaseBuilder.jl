@@ -1149,3 +1149,415 @@ function build_two_zone_5_bus(; kwargs...)
     end
     return sys
 end
+
+const COST_PERTURBATION_NOISE = rand(1_000_000)
+
+function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line::Bool)
+    names = [
+        "114_SYNC_COND_1",
+        "314_SYNC_COND_1",
+        "313_STORAGE_1",
+        "214_SYNC_COND_1",
+        "212_CSP_1",
+    ]
+    for sys in [main_sys, twin_sys]
+        for d in get_components(
+            x -> get_fuel(x) == ThermalFuels.DISTILLATE_FUEL_OIL,
+            ThermalStandard,
+            sys,
+        )
+            for s in get_services(d)
+                remove_service!(d, s)
+            end
+            remove_component!(sys, d)
+        end
+        for d in PSY.get_components(x -> x.name ∈ names, PSY.Generator, sys)
+            for s in get_services(d)
+                remove_service!(d, s)
+            end
+            remove_component!(sys, d)
+        end
+        for d in
+            get_components(x -> get_fuel(x) == ThermalFuels.NUCLEAR, ThermalStandard, sys)
+            set_must_run!(d, true)
+        end
+    end
+
+    # clear time series
+    PSY.clear_time_series!(twin_sys)
+
+    # change names of the systems
+    PSY.set_name!(main_sys, "main")
+    PSY.set_name!(twin_sys, "twin")
+
+    # change the names of the areas and loadzones first
+    for type_ in [PSY.Area, PSY.LoadZone]
+        for b in PSY.get_components(type_, twin_sys)
+            name_ = PSY.get_name(b)
+            main_comp = PSY.get_component(type_, main_sys, name_)
+            # remove the component
+            PSY.remove_component!(twin_sys, b)
+            # change name
+            PSY.set_name!(b, name_ * "_twin")
+            # define time series container
+            IS.assign_new_uuid!(b)
+            # add comopnent to the new sys (main)
+            PSY.add_component!(main_sys, b)
+            # check if it has timeseries
+            if PSY.has_time_series(main_comp)
+                PSY.copy_time_series!(b, main_comp)
+            end
+        end
+    end
+
+    # now add the buses
+    for b in PSY.get_components(PSY.ACBus, twin_sys)
+        name_ = PSY.get_name(b)
+        main_comp = PSY.get_component(PSY.ACBus, main_sys, name_)
+        # remove the component
+        PSY.remove_component!(twin_sys, b)
+        # change name
+        PSY.set_name!(b, name_ * "_twin")
+        # change area
+        PSY.set_area!(
+            b,
+            PSY.get_component(
+                Area,
+                main_sys,
+                PSY.get_name(PSY.get_area(main_comp)) * "_twin",
+            ),
+        )
+        # change number
+        PSY.set_number!(b, PSY.get_number(b) + 10000)
+        # add comopnent to the new sys (main)
+        IS.assign_new_uuid!(b)
+        PSY.add_component!(main_sys, b)
+    end
+
+    # now add the Lines
+    from_to_list = []
+    for b in PSY.get_components(PSY.Line, twin_sys)
+        name_ = PSY.get_name(b)
+        main_comp = PSY.get_component(PSY.Line, main_sys, name_)
+        # remove the component
+        PSY.remove_component!(twin_sys, b)
+        b.time_series_container = IS.TimeSeriesContainer()
+        # change name
+        PSY.set_name!(b, name_ * "_twin")
+        # create new component from scratch since copying is not working
+        new_arc = PSY.Arc(;
+            from = PSY.get_component(
+                ACBus,
+                main_sys,
+                PSY.get_name(PSY.get_from_bus(main_comp)) * "_twin",
+            ),
+            to = PSY.get_component(
+                ACBus,
+                main_sys,
+                PSY.get_name(PSY.get_to_bus(main_comp)) * "_twin",
+            ),
+        )
+        # # add arc to the system
+        from_to = (PSY.get_name(new_arc.from), PSY.get_name(new_arc.to))
+        if !(from_to in from_to_list)
+            push!(from_to_list, from_to)
+            PSY.add_component!(main_sys, new_arc)
+        end
+        PSY.set_arc!(b, new_arc)
+        # add comopnent to the new sys (main)
+        IS.assign_new_uuid!(b)
+        PSY.add_component!(main_sys, b)
+    end
+
+    # get the services from twin_sys to main_sys
+    for srvc in PSY.get_components(PSY.Service, twin_sys)
+        name_ = PSY.get_name(srvc)
+        main_comp = PSY.get_component(PSY.Service, main_sys, name_)
+        # remove the component
+        PSY.remove_component!(twin_sys, srvc)
+        # change name
+        PSY.set_name!(srvc, name_ * "_twin")
+        # define time series container
+        IS.assign_new_uuid!(srvc)
+        # add comopnent to the new sys (main)
+        PSY.add_component!(main_sys, srvc)
+        # check if it has timeseries
+        if PSY.has_time_series(main_comp)
+            PSY.copy_time_series!(srvc, main_comp)
+        end
+    end
+
+    # finally add the remaining devices (lines are not present since removed before)
+    for b in PSY.get_components(Device, twin_sys)
+        name_ = PSY.get_name(b)
+        main_comp = PSY.get_component(typeof(b), main_sys, name_)
+        # remove the component and services
+        PSY.clear_services!(b)
+        PSY.remove_component!(twin_sys, b)
+        # change name
+        PSY.set_name!(b, name_ * "_twin")
+        # change bus (already changed)
+        # check if it has services
+        @assert !PSY.has_service(b, PSY.VariableReserve)
+        #check if component has time_series
+        if !PSY.has_time_series(b)
+            # define time series container
+            IS.assign_new_uuid!(b)
+            # add comopnent to the new sys (main)
+            PSY.add_component!(main_sys, b)
+            PSY.copy_time_series!(b, main_comp)
+        else
+            IS.assign_new_uuid!(b)
+            PSY.add_component!(main_sys, b)
+        end
+        # add service to the device to be added to main_sys
+        if length(PSY.get_services(main_comp)) > 0
+            PSY.get_name(b)
+            srvc_ = PSY.get_services(main_comp)
+            for ss in srvc_
+                srvc_type = typeof(ss)
+                srvc_name = PSY.get_name(ss)
+                PSY.add_service!(
+                    b,
+                    PSY.get_component(srvc_type, main_sys, srvc_name * "_twin"),
+                    main_sys,
+                )
+            end
+        end
+        # change scale
+        if typeof(b) <: RenewableGen
+            PSY.set_base_power!(b, 1.2 * PSY.get_base_power(b))
+            PSY.set_base_power!(main_comp, 0.9 * PSY.get_base_power(b))
+        end
+        if typeof(b) <: PowerLoad
+            PSY.set_base_power!(main_comp, 1.2 * PSY.get_base_power(b))
+        end
+    end
+
+    # conncect two buses: one with a AC line and one with a HVDC line.
+    # Consider area 1 and area 1_twin
+
+    # now look at all the buses in area 1
+    area_ = PSY.get_component(PSY.Area, main_sys, "1")
+    buses_ =
+        [b for b in PSY.get_components(PSY.ACBus, main_sys) if PSY.get_area(b) == area_]
+
+    # get lines for those buses
+    br_in_area = []
+    br_per_bus = Dict(PSY.get_name(b) => [] for b in buses_)
+    br_other_areas = []
+
+    for br in PSY.get_components(PSY.Line, main_sys)
+        if PSY.get_from_bus(br) in buses_ || PSY.get_to_bus(br) in buses_
+            if !(br in br_in_area)
+                push!(br_in_area, br)
+            end
+            if PSY.get_from_bus(br) in buses_
+                if !(PSY.get_name(br) in br_per_bus[PSY.get_name(PSY.get_from_bus(br))])
+                    push!(br_per_bus[PSY.get_name(PSY.get_from_bus(br))], PSY.get_name(br))
+                end
+            end
+            if PSY.get_to_bus(br) in buses_
+                if !(PSY.get_name(br) in br_per_bus[PSY.get_name(PSY.get_to_bus(br))])
+                    push!(br_per_bus[PSY.get_name(PSY.get_to_bus(br))], PSY.get_name(br))
+                end
+            end
+            if (PSY.get_from_bus(br) in buses_ && !(PSY.get_to_bus(br) in buses_)) ||
+               (PSY.get_to_bus(br) in buses_ && !(PSY.get_from_bus(br) in buses_))
+                if !(br in br_other_areas)
+                    push!(br_other_areas, PSY.get_name(br))
+                end
+            end
+        end
+    end
+
+    # for now consider Alder (no-leaf) and Avery (leaf)
+    new_ACArc = PSY.Arc(;
+        from = PSY.get_component(PSY.ACBus, main_sys, "Alder"),
+        to = PSY.get_component(PSY.ACBus, main_sys, "Alder_twin"),
+    )
+    PSY.add_component!(main_sys, new_ACArc)
+
+    if HVDC_line
+        new_HVDCLine = PSY.TwoTerminalHVDCLine(;
+            name = "HVDC_interconnection",
+            available = true,
+            active_power_flow = 0.0,
+            arc = get_component(Arc, main_sys, "Alder -> Alder_twin"),
+            active_power_limits_from = (min = -1000.0, max = 1000.0),
+            active_power_limits_to = (min = -1000.0, max = 1000.0),
+            reactive_power_limits_from = (min = -1000.0, max = 1000.0),
+            reactive_power_limits_to = (min = -1000.0, max = 1000.0),
+            loss = (l0 = 0.0, l1 = 0.1),
+            services = Vector{Service}[],
+            ext = Dict{String, Any}(),
+        )
+        PSY.add_component!(main_sys, new_HVDCLine)
+    else
+        new_ACLine = PSY.MonitoredLine(;
+            name = "AC_interconnection",
+            available = true,
+            active_power_flow = 0.0,
+            reactive_power_flow = 0.0,
+            arc = get_component(Arc, main_sys, "Alder -> Alder_twin"),
+            r = 0.042,
+            x = 0.161,
+            b = (from = 0.022, to = 0.022),
+            rate = 1.75,
+            # For now, not binding
+            flow_limits = (from_to = 2.0, to_from = 2.0),
+            angle_limits = (min = -1.57079, max = 1.57079),
+            services = Vector{Service}[],
+            ext = Dict{String, Any}(),
+        )
+        PSY.add_component!(main_sys, new_ACLine)
+    end
+
+    for bat in get_components(GenericBattery, main_sys)
+        set_base_power!(bat, get_base_power(bat) * 10)
+    end
+
+    for r in get_components(
+        x -> get_prime_mover_type(x) == PrimeMovers.CP,
+        RenewableDispatch,
+        main_sys,
+    )
+        clear_services!(r)
+        remove_component!(main_sys, r)
+    end
+
+    for dev in get_components(RenewableFix, main_sys)
+        clear_services!(dev)
+    end
+
+    for dev in
+        get_components(x -> get_fuel(x) == ThermalFuels.NUCLEAR, ThermalStandard, main_sys)
+        clear_services!(dev)
+    end
+
+    for dev in get_components(HydroGen, main_sys)
+        clear_services!(dev)
+    end
+
+    bus_to_change = PSY.get_component(ACBus, main_sys, "Arne_twin")
+    PSY.set_bustype!(bus_to_change, PSY.ACBusTypes.PV)
+
+    # cost perturbation must be the same for each sub-system
+    rand_ix = 1
+    for g in get_components(
+        x -> x.prime_mover_type in [PrimeMovers.CT, PrimeMovers.CC],
+        ThermalStandard,
+        main_sys,
+    )
+        old_pwl_array = get_variable(get_operation_cost(g)) |> get_cost
+        new_pwl_array = similar(old_pwl_array)
+        for (ix, tup) in enumerate(old_pwl_array)
+            if ix ∈ [1, length(old_pwl_array)]
+                noise_val, rand_ix = iterate(COST_PERTURBATION_NOISE, rand_ix)
+                cost_noise = 50.0 * noise_val
+                new_pwl_array[ix] = ((tup[1] + cost_noise), tup[2])
+            else
+                try_again = true
+                while try_again
+                    noise_val, rand_ix = iterate(COST_PERTURBATION_NOISE, rand_ix)
+                    cost_noise = 50.0 * noise_val
+                    noise_val, rand_ix = iterate(COST_PERTURBATION_NOISE, rand_ix)
+                    power_noise = 0.01 * noise_val
+                    slope_previous =
+                        ((tup[1] + cost_noise) - old_pwl_array[ix - 1][1]) /
+                        ((tup[2] - power_noise) - old_pwl_array[ix - 1][2])
+                    slope_next =
+                        (-(tup[1] + cost_noise) + old_pwl_array[ix + 1][1]) /
+                        (-(tup[2] - power_noise) + old_pwl_array[ix + 1][2])
+                    new_pwl_array[ix] = ((tup[1] + cost_noise), (tup[2] - power_noise))
+                    try_again = slope_previous > slope_next
+                end
+            end
+        end
+        get_variable(get_operation_cost(g)).cost = new_pwl_array
+    end
+
+    # set service participation
+    PARTICIPATION = 0.2
+
+    # remove Flex services and fix max participation
+    for srvc in PSY.get_components(PSY.Service, main_sys)
+        PSY.set_max_participation_factor!(srvc, PARTICIPATION)
+        if PSY.get_name(srvc) in ["Flex_Up", "Flex_Down", "Flex_Up_twin", "Flex_Down_twin"]
+            # remove Flex services from DA and RT model
+            PSY.remove_component!(main_sys, srvc)
+        end
+    end
+    return main_sys
+end
+
+function fix_rts_RT_reserve_requirements(DA_sys::PSY.System, RT_sys::PSY.System)
+    horizon_RT = PSY.get_forecast_horizon(RT_sys)
+    interval_RT = PSY.get_forecast_interval(RT_sys)
+    PSY.remove_time_series!(RT_sys, DeterministicSingleTimeSeries)
+
+    # fix the reserve requirements
+    services_DA = PSY.get_components(Service, DA_sys)
+    services_DA_names = PSY.get_name.(services_DA)
+
+    # loop over the different services
+    for name in services_DA_names
+        # Read Reg_Up DA
+        service_da = get_component(Service, DA_sys, name)
+        time_series_da = get_time_series(SingleTimeSeries, service_da, "requirement").data
+        data_da = values(time_series_da)
+
+        # Read Reg_Up RT
+        service_rt = get_component(Service, RT_sys, name)
+        if !has_time_series(service_rt)
+            continue
+        end
+        time_series_rt = get_time_series(SingleTimeSeries, service_rt, "requirement").data
+        dates_rt = timestamp(time_series_rt)
+        data_rt = values(time_series_rt)
+
+        # Do Zero Order-Hold transform
+        rt_data = [
+            data_da[div(k - 1, Int(length(data_rt) / length(data_da))) + 1]
+            for k in 1:length(data_rt)
+        ]
+
+        # check the time series
+        for i in eachindex(data_da)
+            all(data_da[i] .== rt_data[((i - 1) * 12 + 1):(12 * i)])
+        end
+        new_ts = SingleTimeSeries("requirement", TimeArray(dates_rt, rt_data))
+        remove_time_series!(RT_sys, SingleTimeSeries, service_rt, "requirement")
+        add_time_series!(RT_sys, service_rt, new_ts)
+    end
+    transform_single_time_series!(RT_sys, horizon_RT, interval_RT)
+    return RT_sys
+end
+
+function build_AC_TWO_RTO_RTS_1Hr_sys(; kwargs...)
+    main_sys = build_RTS_GMLC_DA_sys(; kwargs...)
+    main_sys = _duplicate_system(main_sys, deepcopy(main_sys), false)
+    return main_sys
+end
+
+function build_HVDC_TWO_RTO_RTS_1Hr_sys(; kwargs...)
+    main_sys = build_RTS_GMLC_DA_sys(; kwargs...)
+    main_sys = _duplicate_system(main_sys, deepcopy(main_sys), true)
+    return main_sys
+end
+
+function build_AC_TWO_RTO_RTS_5Min_sys(; kwargs...)
+    main_sys_DA = build_RTS_GMLC_DA_sys(; kwargs...)
+    main_sys_RT = build_RTS_GMLC_RT_sys(; kwargs...)
+    fix_rts_RT_reserve_requirements(main_sys_DA, main_sys_RT)
+    new_sys = _duplicate_system(main_sys_RT, deepcopy(main_sys_RT), false)
+    return new_sys
+end
+
+function build_HVDC_TWO_RTO_RTS_5Min_sys(; kwargs...)
+    main_sys_DA = build_RTS_GMLC_DA_sys(; kwargs...)
+    main_sys_RT = build_RTS_GMLC_RT_sys(; kwargs...)
+    fix_rts_RT_reserve_requirements(main_sys_DA, main_sys_RT)
+    new_sys = _duplicate_system(main_sys_RT, deepcopy(main_sys_RT), true)
+    return new_sys
+end
