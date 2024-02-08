@@ -1467,7 +1467,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
                         (-(x - power_noise) + old_pwl_array[ix + 1][2])
                     new_pwl_array[ix] = ((y + cost_noise), (x - power_noise))
                     try_again = slope_previous > slope_next
-                    if rand_ix == lenghth(noise_vals)
+                    if rand_ix == length(noise_vals)
                         break
                     end
                 end
