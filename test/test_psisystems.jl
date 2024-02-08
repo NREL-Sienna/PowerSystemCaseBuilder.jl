@@ -28,3 +28,12 @@
         end
     end
 end
+
+@testset "Test PWL functions match in 2-RTO systems" begin
+    sys_twin_rts_DA = build_system(PSISystems, "AC_TWO_RTO_RTS_1Hr_sys")
+    sys_twin_rts_HA = build_system(PSISystems, "AC_TWO_RTO_RTS_5min_sys")
+    for g in get_components(ThermalStandard, sys_twin_rts_DA)
+        component_RT = get_component(ThermalStandard, sys_twin_rts_HA, get_name(g))
+        @test get_variable(get_operation_cost(g)).cost == get_variable(get_operation_cost(component_RT)).cost
+    end
+end
