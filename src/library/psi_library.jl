@@ -1194,7 +1194,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         for b in PSY.get_components(type_, twin_sys)
             name_ = PSY.get_name(b)
             main_comp = PSY.get_component(type_, main_sys, name_)
-            # remove the component
+
             PSY.remove_component!(twin_sys, b)
             # change name
             PSY.set_name!(b, name_ * "_twin")
@@ -1213,7 +1213,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
     for b in PSY.get_components(PSY.ACBus, twin_sys)
         name_ = PSY.get_name(b)
         main_comp = PSY.get_component(PSY.ACBus, main_sys, name_)
-        # remove the component
+
         PSY.remove_component!(twin_sys, b)
         # change name
         PSY.set_name!(b, name_ * "_twin")
@@ -1238,7 +1238,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
     for b in PSY.get_components(PSY.Line, twin_sys)
         name_ = PSY.get_name(b)
         main_comp = PSY.get_component(PSY.Line, main_sys, name_)
-        # remove the component
+
         PSY.remove_component!(twin_sys, b)
         b.time_series_container = IS.TimeSeriesContainer()
         # change name
@@ -1272,7 +1272,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
     for srvc in PSY.get_components(PSY.Service, twin_sys)
         name_ = PSY.get_name(srvc)
         main_comp = PSY.get_component(PSY.Service, main_sys, name_)
-        # remove the component
+
         PSY.remove_component!(twin_sys, srvc)
         # change name
         PSY.set_name!(srvc, name_ * "_twin")
@@ -1290,7 +1290,6 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
     for b in PSY.get_components(Device, twin_sys)
         name_ = PSY.get_name(b)
         main_comp = PSY.get_component(typeof(b), main_sys, name_)
-        # remove the component and services
         PSY.clear_services!(b)
         PSY.remove_component!(twin_sys, b)
         # change name
@@ -1334,9 +1333,6 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
     end
 
     # connect two buses: one with a AC line and one with a HVDC line.
-    # Consider area 1 and area 1_twin
-
-    # now look at all the buses in area 1
     area_ = PSY.get_component(PSY.Area, main_sys, "1")
     buses_ =
         [b for b in PSY.get_components(PSY.ACBus, main_sys) if PSY.get_area(b) == area_]
