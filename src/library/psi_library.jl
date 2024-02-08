@@ -1190,10 +1190,10 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
     PSY.set_name!(twin_sys, "twin")
 
     # change the names of the areas and loadzones first
-    for type_ in [PSY.Area, PSY.LoadZone]
-        for b in PSY.get_components(type_, twin_sys)
+    for component_type in [PSY.Area, PSY.LoadZone]
+        for b in PSY.get_components(component_type, twin_sys)
             name_ = PSY.get_name(b)
-            main_comp = PSY.get_component(type_, main_sys, name_)
+            main_comp = PSY.get_component(component_type, main_sys, name_)
 
             PSY.remove_component!(twin_sys, b)
             # change name
