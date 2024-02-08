@@ -1150,7 +1150,7 @@ function build_two_zone_5_bus(; kwargs...)
     return sys
 end
 
-const COST_PERTURBATION_NOISE = rand(1_000_000)
+const COST_PERTURBATION_NOISE_SEED = 1357
 
 function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line::Bool)
     names = [
@@ -1183,7 +1183,6 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         end
     end
 
-    # clear time series
     PSY.clear_time_series!(twin_sys)
 
     # change names of the systems
@@ -1201,7 +1200,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
             PSY.set_name!(b, name_ * "_twin")
             # define time series container
             IS.assign_new_uuid!(b)
-            # add comopnent to the new sys (main)
+            # add component to the new sys (main)
             PSY.add_component!(main_sys, b)
             # check if it has timeseries
             if PSY.has_time_series(main_comp)
@@ -1229,7 +1228,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         )
         # change number
         PSY.set_number!(b, PSY.get_number(b) + 10000)
-        # add comopnent to the new sys (main)
+        # add component to the new sys (main)
         IS.assign_new_uuid!(b)
         PSY.add_component!(main_sys, b)
     end
@@ -1264,7 +1263,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
             PSY.add_component!(main_sys, new_arc)
         end
         PSY.set_arc!(b, new_arc)
-        # add comopnent to the new sys (main)
+        # add component to the new sys (main)
         IS.assign_new_uuid!(b)
         PSY.add_component!(main_sys, b)
     end
@@ -1279,7 +1278,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         PSY.set_name!(srvc, name_ * "_twin")
         # define time series container
         IS.assign_new_uuid!(srvc)
-        # add comopnent to the new sys (main)
+        # add component to the new sys (main)
         PSY.add_component!(main_sys, srvc)
         # check if it has timeseries
         if PSY.has_time_series(main_comp)
@@ -1303,7 +1302,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         if !PSY.has_time_series(b)
             # define time series container
             IS.assign_new_uuid!(b)
-            # add comopnent to the new sys (main)
+            # add component to the new sys (main)
             PSY.add_component!(main_sys, b)
             PSY.copy_time_series!(b, main_comp)
         else
@@ -1334,7 +1333,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         end
     end
 
-    # conncect two buses: one with a AC line and one with a HVDC line.
+    # connect two buses: one with a AC line and one with a HVDC line.
     # Consider area 1 and area 1_twin
 
     # now look at all the buses in area 1
@@ -1449,28 +1448,32 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         ThermalStandard,
         main_sys,
     )
+        noise_vals = rand(MersenneTwister(COST_PERTURBATION_NOISE_SEED), 100)
         old_pwl_array = get_variable(get_operation_cost(g)) |> get_cost
         new_pwl_array = similar(old_pwl_array)
-        for (ix, tup) in enumerate(old_pwl_array)
+        for (ix, (y, x)) in enumerate(old_pwl_array)
             if ix ∈ [1, length(old_pwl_array)]
-                noise_val, rand_ix = iterate(COST_PERTURBATION_NOISE, rand_ix)
+                noise_val, rand_ix = iterate(noise_vals, rand_ix)
                 cost_noise = 50.0 * noise_val
-                new_pwl_array[ix] = ((tup[1] + cost_noise), tup[2])
+                new_pwl_array[ix] = ((y + cost_noise), x)
             else
                 try_again = true
                 while try_again
-                    noise_val, rand_ix = iterate(COST_PERTURBATION_NOISE, rand_ix)
+                    noise_val, rand_ix = iterate(noise_vals, rand_ix)
                     cost_noise = 50.0 * noise_val
-                    noise_val, rand_ix = iterate(COST_PERTURBATION_NOISE, rand_ix)
+                    noise_val, rand_ix = iterate(noise_vals, rand_ix)
                     power_noise = 0.01 * noise_val
                     slope_previous =
-                        ((tup[1] + cost_noise) - old_pwl_array[ix - 1][1]) /
-                        ((tup[2] - power_noise) - old_pwl_array[ix - 1][2])
+                        ((y + cost_noise) - old_pwl_array[ix - 1][1]) /
+                        ((x - power_noise) - old_pwl_array[ix - 1][2])
                     slope_next =
-                        (-(tup[1] + cost_noise) + old_pwl_array[ix + 1][1]) /
-                        (-(tup[2] - power_noise) + old_pwl_array[ix + 1][2])
-                    new_pwl_array[ix] = ((tup[1] + cost_noise), (tup[2] - power_noise))
+                        (-(y + cost_noise) + old_pwl_array[ix + 1][1]) /
+                        (-(x - power_noise) + old_pwl_array[ix + 1][2])
+                    new_pwl_array[ix] = ((y + cost_noise), (x - power_noise))
                     try_again = slope_previous > slope_next
+                    if rand_ix == lenghth(noise_vals)
+                        break
+                    end
                 end
             end
         end
