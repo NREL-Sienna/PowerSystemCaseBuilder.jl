@@ -1444,20 +1444,20 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         ThermalStandard,
         main_sys,
     )
-        noise_vals = rand(MersenneTwister(COST_PERTURBATION_NOISE_SEED), 100)
+        noise_values = rand(MersenneTwister(COST_PERTURBATION_NOISE_SEED), 1_000_000)
         old_pwl_array = get_variable(get_operation_cost(g)) |> get_cost
         new_pwl_array = similar(old_pwl_array)
         for (ix, (y, x)) in enumerate(old_pwl_array)
             if ix ∈ [1, length(old_pwl_array)]
-                noise_val, rand_ix = iterate(noise_vals, rand_ix)
+                noise_val, rand_ix = iterate(noise_values, rand_ix)
                 cost_noise = 50.0 * noise_val
                 new_pwl_array[ix] = ((y + cost_noise), x)
             else
                 try_again = true
                 while try_again
-                    noise_val, rand_ix = iterate(noise_vals, rand_ix)
+                    noise_val, rand_ix = iterate(noise_values, rand_ix)
                     cost_noise = 50.0 * noise_val
-                    noise_val, rand_ix = iterate(noise_vals, rand_ix)
+                    noise_val, rand_ix = iterate(noise_values, rand_ix)
                     power_noise = 0.01 * noise_val
                     slope_previous =
                         ((y + cost_noise) - old_pwl_array[ix - 1][1]) /
@@ -1467,7 +1467,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
                         (-(x - power_noise) + old_pwl_array[ix + 1][2])
                     new_pwl_array[ix] = ((y + cost_noise), (x - power_noise))
                     try_again = slope_previous > slope_next
-                    if rand_ix == length(noise_vals)
+                    if rand_ix == length(noise_values)
                         break
                     end
                 end
