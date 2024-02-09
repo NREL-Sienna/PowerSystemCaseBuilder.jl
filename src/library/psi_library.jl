@@ -1337,35 +1337,6 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
     buses_ =
         [b for b in PSY.get_components(PSY.ACBus, main_sys) if PSY.get_area(b) == area_]
 
-    # get lines for those buses
-    br_in_area = []
-    br_per_bus = Dict(PSY.get_name(b) => [] for b in buses_)
-    br_other_areas = []
-
-    for br in PSY.get_components(PSY.Line, main_sys)
-        if PSY.get_from_bus(br) in buses_ || PSY.get_to_bus(br) in buses_
-            if !(br in br_in_area)
-                push!(br_in_area, br)
-            end
-            if PSY.get_from_bus(br) in buses_
-                if !(PSY.get_name(br) in br_per_bus[PSY.get_name(PSY.get_from_bus(br))])
-                    push!(br_per_bus[PSY.get_name(PSY.get_from_bus(br))], PSY.get_name(br))
-                end
-            end
-            if PSY.get_to_bus(br) in buses_
-                if !(PSY.get_name(br) in br_per_bus[PSY.get_name(PSY.get_to_bus(br))])
-                    push!(br_per_bus[PSY.get_name(PSY.get_to_bus(br))], PSY.get_name(br))
-                end
-            end
-            if (PSY.get_from_bus(br) in buses_ && !(PSY.get_to_bus(br) in buses_)) ||
-               (PSY.get_to_bus(br) in buses_ && !(PSY.get_from_bus(br) in buses_))
-                if !(br in br_other_areas)
-                    push!(br_other_areas, PSY.get_name(br))
-                end
-            end
-        end
-    end
-
     # for now consider Alder (no-leaf) and Avery (leaf)
     new_ACArc = PSY.Arc(;
         from = PSY.get_component(PSY.ACBus, main_sys, "Alder"),
