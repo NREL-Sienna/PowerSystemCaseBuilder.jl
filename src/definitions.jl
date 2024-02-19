@@ -1,7 +1,33 @@
 const PACKAGE_DIR = joinpath(dirname(dirname(pathof(PowerSystemCaseBuilder))))
-const DATA_DIR =
-    joinpath(LazyArtifacts.artifact"CaseData", "PowerSystemsTestData-3.2")
+const DATA_DIR_KEY = "PSB_DATA_DIR"  # Environment variable to check for data directory
 
+# Gets evaluated at compile time to find the data directory. To re-evaluate, force
+# recompilation with `Base.compilecache(Base.identify_package("PowerSystemCaseBuilder"))`
+function get_data_dir()
+    if haskey(ENV, DATA_DIR_KEY)
+        candidate = ENV[DATA_DIR_KEY]
+        if isdir(candidate)
+            @debug "Using PSB data dir $candidate from environment variable"
+            return candidate
+        else
+            error(
+                "The directory specified by the environment variable $DATA_DIR_KEY, $candidate, does not exist.",
+            )
+        end
+    else
+        candidate = joinpath(LazyArtifacts.artifact"CaseData", "PowerSystemsTestData-3.2")
+        if isdir(candidate)
+            @debug "Using default PSB data dir $candidate"
+            return candidate
+        else
+            error(
+                "No data dir specified by environment variable $DATA_DIR_KEY, and the default, $candidate, does not exist.",
+            )
+        end
+    end
+end
+
+const DATA_DIR = get_data_dir()
 const RTS_DIR = joinpath(LazyArtifacts.artifact"rts", "RTS-GMLC-0.2.2")
 
 const SYSTEM_DESCRIPTORS_FILE = joinpath(PACKAGE_DIR, "src", "system_descriptor.jl")
