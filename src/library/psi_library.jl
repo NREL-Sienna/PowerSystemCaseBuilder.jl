@@ -19,7 +19,7 @@ function build_c_sys5_pjm(; kwargs...)
         PrimeMovers.PVe,
         (min = 0.0, max = 0.0),
         1.0,
-        TwoPartCost(0.0, 0.0),
+        TwoPartCost(LinearFunctionData(0.0), 0.0),
         100.0,
     )
     wind_device = PSY.RenewableDispatch(
@@ -32,7 +32,7 @@ function build_c_sys5_pjm(; kwargs...)
         PrimeMovers.WT,
         (min = 0.0, max = 0.0),
         1.0,
-        TwoPartCost(0.0, 0.0),
+        TwoPartCost(LinearFunctionData(0.0), 0.0),
         100.0,
     )
     PSY.add_component!(c_sys5, pv_device)
@@ -135,7 +135,7 @@ function build_c_sys5_pjm_rt(; kwargs...)
         PrimeMovers.PVe,
         (min = 0.0, max = 0.0),
         1.0,
-        TwoPartCost(0.0, 0.0),
+        TwoPartCost(LinearFunctionData(0.0), 0.0),
         100.0,
     )
     wind_device = PSY.RenewableDispatch(
@@ -148,7 +148,7 @@ function build_c_sys5_pjm_rt(; kwargs...)
         PrimeMovers.WT,
         (min = 0.0, max = 0.0),
         1.0,
-        TwoPartCost(0.0, 0.0),
+        TwoPartCost(LinearFunctionData(0.0), 0.0),
         100.0,
     )
     PSY.add_component!(c_sys5, pv_device)
@@ -291,7 +291,7 @@ function build_5_bus_hydro_uc_sys_targets(; kwargs...)
         c_sys5_hy_uc = PSY.System(rawsys; sys_kwargs...)
     end
     cost = PSY.StorageManagementCost(;
-        variable = VariableCost(0.15),
+        variable = LinearFunctionData(0.15),
         fixed = 0.0,
         start_up = 0.0,
         shut_down = 0.0,
@@ -350,7 +350,7 @@ function build_5_bus_hydro_ed_sys_targets(; kwargs...)
         sys_kwargs...,
     )
     cost = PSY.StorageManagementCost(;
-        variable = VariableCost(0.15),
+        variable = LinearFunctionData(0.15),
         fixed = 0.0,
         start_up = 0.0,
         shut_down = 0.0,
@@ -411,7 +411,7 @@ function build_5_bus_hydro_wk_sys_targets(; kwargs...)
         sys_kwargs...,
     )
     cost = PSY.StorageManagementCost(;
-        variable = VariableCost(0.15),
+        variable = LinearFunctionData(0.15),
         fixed = 0.0,
         start_up = 0.0,
         shut_down = 0.0,
@@ -861,7 +861,12 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -0.30, max = 0.30),
             ramp_limits = nothing,
             time_limits = nothing,
-            operation_cost = ThreePartCost((0.0, 14.0), 0.0, 4.0, 2.0),
+            operation_cost = ThreePartCost(
+                QuadraticFunctionData(0.0, 14.0, 0.0),
+                0.0,
+                4.0,
+                2.0,
+            ),
             base_power = 100.0,
         ),
         ThermalStandard(;
@@ -878,7 +883,12 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -1.275, max = 1.275),
             ramp_limits = (up = 0.02 * 2.2125, down = 0.02 * 2.2125),
             time_limits = (up = 2.0, down = 1.0),
-            operation_cost = ThreePartCost((0.0, 15.0), 0.0, 1.5, 0.75),
+            operation_cost = ThreePartCost(
+                QuadraticFunctionData(0.0, 15.0, 0.0),
+                0.0,
+                1.5,
+                0.75,
+            ),
             base_power = 100.0,
         ),
         ThermalStandard(;
@@ -895,7 +905,12 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -3.90, max = 3.90),
             ramp_limits = (up = 0.012 * 5.2, down = 0.012 * 5.2),
             time_limits = (up = 3.0, down = 2.0),
-            operation_cost = ThreePartCost((0.0, 30.0), 0.0, 3.0, 1.5),
+            operation_cost = ThreePartCost(
+                QuadraticFunctionData(0.0, 30.0, 0.0),
+                0.0,
+                3.0,
+                1.5,
+            ),
             base_power = 100.0,
         ),
         ThermalStandard(;
@@ -912,7 +927,12 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -1.5, max = 1.5),
             ramp_limits = (up = 0.015 * 2.5, down = 0.015 * 2.5),
             time_limits = (up = 2.0, down = 1.0),
-            operation_cost = ThreePartCost((0.0, 40.0), 0.0, 4.0, 2.0),
+            operation_cost = ThreePartCost(
+                QuadraticFunctionData(0.0, 40.0, 0.0),
+                0.0,
+                4.0,
+                2.0,
+            ),
             base_power = 100.0,
         ),
         ThermalStandard(;
@@ -929,7 +949,12 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -4.50, max = 4.50),
             ramp_limits = (up = 0.015 * 7.5, down = 0.015 * 7.5),
             time_limits = (up = 5.0, down = 3.0),
-            operation_cost = ThreePartCost((0.0, 10.0), 0.0, 1.5, 0.75),
+            operation_cost = ThreePartCost(
+                QuadraticFunctionData(0.0, 10.0, 0.0),
+                0.0,
+                1.5,
+                0.75,
+            ),
             base_power = 100.0,
         ),
         ThermalStandard(;
@@ -946,7 +971,12 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -0.30, max = 0.30),
             ramp_limits = nothing,
             time_limits = nothing,
-            operation_cost = ThreePartCost((0.0, 14.0), 0.0, 4.0, 2.0),
+            operation_cost = ThreePartCost(
+                QuadraticFunctionData(0.0, 14.0, 0.0),
+                0.0,
+                4.0,
+                2.0,
+            ),
             base_power = 100.0,
         ),
         ThermalStandard(;
@@ -963,7 +993,12 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -1.275, max = 1.275),
             ramp_limits = (up = 0.02 * 2.2125, down = 0.02 * 2.2125),
             time_limits = (up = 2.0, down = 1.0),
-            operation_cost = ThreePartCost((0.0, 15.0), 0.0, 1.5, 0.75),
+            operation_cost = ThreePartCost(
+                QuadraticFunctionData(0.0, 15.0, 0.0),
+                0.0,
+                1.5,
+                0.75,
+            ),
             base_power = 100.0,
         ),
         ThermalStandard(;
@@ -980,7 +1015,12 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -3.90, max = 3.90),
             ramp_limits = (up = 0.012 * 5.2, down = 0.012 * 5.2),
             time_limits = (up = 3.0, down = 2.0),
-            operation_cost = ThreePartCost((0.0, 30.0), 0.0, 3.0, 1.5),
+            operation_cost = ThreePartCost(
+                QuadraticFunctionData(0.0, 30.0, 0.0),
+                0.0,
+                3.0,
+                1.5,
+            ),
             base_power = 100.0,
         ),
         ThermalStandard(;
@@ -997,7 +1037,12 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -1.5, max = 1.5),
             ramp_limits = (up = 0.015 * 2.5, down = 0.015 * 2.5),
             time_limits = (up = 2.0, down = 1.0),
-            operation_cost = ThreePartCost((0.0, 40.0), 0.0, 4.0, 2.0),
+            operation_cost = ThreePartCost(
+                QuadraticFunctionData(0.0, 40.0, 0.0),
+                0.0,
+                4.0,
+                2.0,
+            ),
             base_power = 100.0,
         ),
         ThermalStandard(;
@@ -1014,7 +1059,12 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -4.50, max = 4.50),
             ramp_limits = (up = 0.015 * 7.5, down = 0.015 * 7.5),
             time_limits = (up = 5.0, down = 3.0),
-            operation_cost = ThreePartCost((0.0, 10.0), 0.0, 1.5, 0.75),
+            operation_cost = ThreePartCost(
+                QuadraticFunctionData(0.0, 10.0, 0.0),
+                0.0,
+                1.5,
+                0.75,
+            ),
             base_power = 100.0,
         ),
     ]
@@ -1195,11 +1245,11 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
             name_ = PSY.get_name(b)
             main_comp = PSY.get_component(component_type, main_sys, name_)
 
+            IS.assign_new_uuid!(twin_sys.data, b)
             PSY.remove_component!(twin_sys, b)
             # change name
             PSY.set_name!(b, name_ * "_twin")
             # define time series container
-            IS.assign_new_uuid!(b)
             # add component to the new sys (main)
             PSY.add_component!(main_sys, b)
             # check if it has timeseries
@@ -1214,6 +1264,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         name_ = PSY.get_name(b)
         main_comp = PSY.get_component(PSY.ACBus, main_sys, name_)
 
+        IS.assign_new_uuid!(twin_sys.data, b)
         PSY.remove_component!(twin_sys, b)
         # change name
         PSY.set_name!(b, name_ * "_twin")
@@ -1229,16 +1280,16 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         # change number
         PSY.set_number!(b, PSY.get_number(b) + 10000)
         # add component to the new sys (main)
-        IS.assign_new_uuid!(b)
         PSY.add_component!(main_sys, b)
     end
 
-    # now add the Lines
+    # now add the ACBranches
     from_to_list = []
-    for b in PSY.get_components(PSY.Line, twin_sys)
+    for b in PSY.get_components(PSY.ACBranch, twin_sys)
         name_ = PSY.get_name(b)
-        main_comp = PSY.get_component(PSY.Line, main_sys, name_)
+        main_comp = PSY.get_component(typeof(b), main_sys, name_)
 
+        IS.assign_new_uuid!(twin_sys.data, b)
         PSY.remove_component!(twin_sys, b)
         b.time_series_container = IS.TimeSeriesContainer()
         # change name
@@ -1264,7 +1315,6 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         end
         PSY.set_arc!(b, new_arc)
         # add component to the new sys (main)
-        IS.assign_new_uuid!(b)
         PSY.add_component!(main_sys, b)
     end
 
@@ -1273,11 +1323,11 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         name_ = PSY.get_name(srvc)
         main_comp = PSY.get_component(PSY.Service, main_sys, name_)
 
+        IS.assign_new_uuid!(twin_sys.data, srvc)
         PSY.remove_component!(twin_sys, srvc)
         # change name
         PSY.set_name!(srvc, name_ * "_twin")
         # define time series container
-        IS.assign_new_uuid!(srvc)
         # add component to the new sys (main)
         PSY.add_component!(main_sys, srvc)
         # check if it has timeseries
@@ -1286,28 +1336,21 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         end
     end
 
-    # finally add the remaining devices (lines are not present since removed before)
+    # finally add the remaining devices (ACBranches are not present since removed before)
     for b in PSY.get_components(Device, twin_sys)
         name_ = PSY.get_name(b)
         main_comp = PSY.get_component(typeof(b), main_sys, name_)
         PSY.clear_services!(b)
+        IS.assign_new_uuid!(twin_sys.data, b)
         PSY.remove_component!(twin_sys, b)
         # change name
         PSY.set_name!(b, name_ * "_twin")
         # change bus (already changed)
         # check if it has services
         @assert !PSY.has_service(b, PSY.VariableReserve)
-        #check if component has time_series
-        if !PSY.has_time_series(b)
-            # define time series container
-            IS.assign_new_uuid!(b)
-            # add component to the new sys (main)
-            PSY.add_component!(main_sys, b)
-            PSY.copy_time_series!(b, main_comp)
-        else
-            IS.assign_new_uuid!(b)
-            PSY.add_component!(main_sys, b)
-        end
+        PSY.add_component!(main_sys, b)
+        PSY.has_time_series(b) && PSY.copy_time_series!(b, main_comp)
+
         # add service to the device to be added to main_sys
         if length(PSY.get_services(main_comp)) > 0
             PSY.get_name(b)
@@ -1416,13 +1459,13 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         main_sys,
     )
         noise_values = rand(MersenneTwister(COST_PERTURBATION_NOISE_SEED), 1_000_000)
-        old_pwl_array = get_variable(get_operation_cost(g)) |> get_cost
+        old_pwl_array = get_variable(get_operation_cost(g)) |> get_points
         new_pwl_array = similar(old_pwl_array)
-        for (ix, (y, x)) in enumerate(old_pwl_array)
+        for (ix, (x, y)) in enumerate(old_pwl_array)
             if ix ∈ [1, length(old_pwl_array)]
                 noise_val, rand_ix = iterate(noise_values, rand_ix)
                 cost_noise = 50.0 * noise_val
-                new_pwl_array[ix] = ((y + cost_noise), x)
+                new_pwl_array[ix] = (x, (y + cost_noise))
             else
                 try_again = true
                 while try_again
@@ -1436,7 +1479,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
                     slope_next =
                         (-(y + cost_noise) + old_pwl_array[ix + 1][1]) /
                         (-(x - power_noise) + old_pwl_array[ix + 1][2])
-                    new_pwl_array[ix] = ((y + cost_noise), (x - power_noise))
+                    new_pwl_array[ix] = ((x - power_noise), (y + cost_noise))
                     try_again = slope_previous > slope_next
                     if rand_ix == length(noise_values)
                         break
@@ -1444,7 +1487,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
                 end
             end
         end
-        get_variable(get_operation_cost(g)).cost = new_pwl_array
+        set_variable!(get_operation_cost(g), PiecewiseLinearPointData(new_pwl_array))
     end
 
     # set service participation
