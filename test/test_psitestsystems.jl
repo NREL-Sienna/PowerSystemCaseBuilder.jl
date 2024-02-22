@@ -38,7 +38,6 @@ end
         @test length(PSY.get_components(PSY.StaticLoad, sys)) >= 2
         @test length(PSY.get_components(PSY.PowerLoad, sys)) >= 1
         @test length(PSY.get_components(PSY.StandardLoad, sys)) >= 1
-        println((PSY.get_components(PSY.StaticLoad, sys)))
     end
     test_c_sys5_all_components()
 end
