@@ -1465,7 +1465,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
             if ix ∈ [1, length(old_pwl_array)]
                 noise_val, rand_ix = iterate(noise_values, rand_ix)
                 cost_noise = 50.0 * noise_val
-                new_pwl_array[ix] = (x, (y + cost_noise))
+                new_pwl_array[ix] = (x = x, y = (y + cost_noise))
             else
                 try_again = true
                 while try_again
@@ -1474,12 +1474,12 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
                     noise_val, rand_ix = iterate(noise_values, rand_ix)
                     power_noise = 0.01 * noise_val
                     slope_previous =
-                        ((y + cost_noise) - old_pwl_array[ix - 1][1]) /
-                        ((x - power_noise) - old_pwl_array[ix - 1][2])
+                        ((y + cost_noise) - old_pwl_array[ix - 1].y) /
+                        ((x - power_noise) - old_pwl_array[ix - 1].x)
                     slope_next =
-                        (-(y + cost_noise) + old_pwl_array[ix + 1][1]) /
-                        (-(x - power_noise) + old_pwl_array[ix + 1][2])
-                    new_pwl_array[ix] = ((x - power_noise), (y + cost_noise))
+                        (-(y + cost_noise) + old_pwl_array[ix + 1].y) /
+                        (-(x - power_noise) + old_pwl_array[ix + 1].x)
+                    new_pwl_array[ix] = (x = (x - power_noise), y = (y + cost_noise))
                     try_again = slope_previous > slope_next
                     if rand_ix == length(noise_values)
                         break
