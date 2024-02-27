@@ -1349,7 +1349,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         # check if it has services
         @assert !PSY.has_service(b, PSY.VariableReserve)
         PSY.add_component!(main_sys, b)
-        PSY.has_time_series(b) && PSY.copy_time_series!(b, main_comp)
+        !PSY.has_time_series(b) && PSY.copy_time_series!(b, main_comp)
 
         # add service to the device to be added to main_sys
         if length(PSY.get_services(main_comp)) > 0
