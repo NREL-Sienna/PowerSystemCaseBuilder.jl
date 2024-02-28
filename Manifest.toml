@@ -151,7 +151,7 @@ version = "2.10.0+0"
 
 [[deps.InfrastructureSystems]]
 deps = ["CSV", "DataFrames", "DataStructures", "Dates", "DocStringExtensions", "H5Zblosc", "HDF5", "InteractiveUtils", "JSON3", "Logging", "Mustache", "Pkg", "PrettyTables", "Random", "StructTypes", "TOML", "TerminalLoggers", "TimeSeries", "UUIDs", "YAML"]
-git-tree-sha1 = "9456ed801c13d0ca001f6ac776ebc4de34750f30"
+git-tree-sha1 = "e46d956e828162c2f17762f52a5b511f27c69ce9"
 repo-rev = "main"
 repo-url = "http://github.com/NREL-Sienna/InfrastructureSystems.jl"
 uuid = "2cd47ed4-ca9b-11e9-27f2-ab636a7671f1"
@@ -557,9 +557,9 @@ version = "1.5.5+0"
 
 [[deps.libaec_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "eddd19a8dea6b139ea97bdc8a0e2667d4b661720"
+git-tree-sha1 = "46bf7be2917b59b761247be3f317ddf75e50e997"
 uuid = "477f73a3-ac25-53e9-8cc3-50b2fa2566f0"
-version = "1.0.6+1"
+version = "1.1.2+0"
 
 [[deps.libblastrampoline_jll]]
 deps = ["Artifacts", "Libdl"]
