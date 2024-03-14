@@ -1,4 +1,4 @@
-function build_c_sys14(; kwargs...)
+function build_c_sys14(supported_arguments::Dict{String, <:Any}; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes14()
     c_sys14 = PSY.System(
@@ -11,7 +11,7 @@ function build_c_sys14(; kwargs...)
         sys_kwargs...,
     )
 
-    if get(kwargs, :add_forecasts, true)
+    if get(supported_arguments, "add_forecasts", true)
         forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
         for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys14))
             ini_time = TimeSeries.timestamp(timeseries_DA14[ix])[1]
@@ -1103,8 +1103,13 @@ function build_sys_10bus_ac_dc(; kwargs...)
     return sys
 end
 
-function build_c_sys5_uc(; kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
+function build_c_sys5_uc(;
+        raw_data:: AbstractString,
+        add_forecasts::Bool,
+        add_single_time_series::Bool,
+        add_reserves::Bool,
+        kwargs...
+    )
     nodes = nodes5()
     c_sys5_uc = PSY.System(
         100.0,
@@ -1112,11 +1117,11 @@ function build_c_sys5_uc(; kwargs...)
         thermal_generators5_uc_testing(nodes),
         loads5(nodes),
         branches5(nodes);
-        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
-        sys_kwargs...,
+        time_series_in_memory = get(kwargs, :time_series_in_memory, true),
+        kwargs...,
     )
-
-    if get(kwargs, :add_forecasts, true)
+    
+    if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_uc))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
@@ -1130,7 +1135,7 @@ function build_c_sys5_uc(; kwargs...)
             )
         end
     end
-    if get(kwargs, :add_single_time_series, false)
+    if add_single_time_series
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_uc))
             PSY.add_time_series!(
                 c_sys5_uc,
@@ -1142,7 +1147,7 @@ function build_c_sys5_uc(; kwargs...)
             )
         end
     end
-    if get(kwargs, :add_reserves, false)
+    if add_reserves
         reserve_uc = reserve5(PSY.get_components(PSY.ThermalStandard, c_sys5_uc))
         PSY.add_service!(
             c_sys5_uc,

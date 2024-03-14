@@ -49,11 +49,29 @@ function get_serialization_dir(has_forecasts::Bool, has_reserves::Bool)
     end
 end
 
+function get_serialization_dir(case_args::Dict{Symbol, <:Any})
+    args_string = join(["$key=$value" for (key, value) in case_args], "_")
+    hash_value = hash(args_string)
+    return joinpath(PACKAGE_DIR, "data", "$hash_value")
+end
+
 get_serialized_filepath(name::String, has_forecasts::Bool, has_reserves::Bool) =
     joinpath(get_serialization_dir(has_forecasts, has_reserves), "$(name).json")
 
+get_serialized_filepath(name::String, case_args::Dict{Symbol, <:Any}) =
+    joinpath(get_serialization_dir(case_args), "$(name).json")
+
 function is_serialized(name::String, has_forecasts::Bool, has_reserves::Bool)
     file_path = get_serialized_filepath(name, has_forecasts, has_reserves)
+    if isfile(file_path)
+        return true
+    else
+        return false
+    end
+end
+
+function is_serialized(name::String, case_args::Dict{Symbol, <:Any})
+    file_path = get_serialized_filepath(name, case_args)
     if isfile(file_path)
         return true
     else
@@ -77,4 +95,9 @@ end
 function check_kwargs_psid(; kwargs...)
     psid_kwargs = filter(x -> in(first(x), ACCEPTED_PSID_TEST_SYSTEMS_KWARGS), kwargs)
     return psid_kwargs
+end
+
+function filter_case_kwargs(; kwargs...)
+    case_kwargs = filter(x -> in(first(x), SUPPORTED_CASE_KWARGS), kwargs)
+    return case_kwargs
 end

@@ -6,6 +6,7 @@ mutable struct SystemDescriptor <: PowerSystemCaseBuilderType
     build_function::Function
     download_function::Union{Nothing, Function}
     stats::Union{Nothing, SystemBuildStats}
+    supported_arguments::Dict{Symbol, Any}
 end
 
 function SystemDescriptor(;
@@ -16,6 +17,7 @@ function SystemDescriptor(;
     raw_data = "",
     download_function = nothing,
     stats = nothing,
+    supported_arguments = Dict{Symbol, Any}()
 )
     return SystemDescriptor(
         name,
@@ -25,6 +27,7 @@ function SystemDescriptor(;
         build_function,
         download_function,
         stats,
+        supported_arguments
     )
 end
 
@@ -35,6 +38,7 @@ get_raw_data(v::SystemDescriptor) = v.raw_data
 get_build_function(v::SystemDescriptor) = v.build_function
 get_download_function(v::SystemDescriptor) = v.download_function
 get_stats(v::SystemDescriptor) = v.stats
+get_supported_arguments(v::SystemDescriptor) = v.supported_arguments
 
 set_name!(v::SystemDescriptor, value::String) = v.name = value
 set_description!(v::SystemDescriptor, value::String) = v.description = value
