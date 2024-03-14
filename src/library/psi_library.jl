@@ -1,5 +1,4 @@
-function build_c_sys5_pjm(; kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
+function build_c_sys5_pjm(; add_forecasts, sys_kwargs...)
     nodes = nodes5()
     c_sys5 = PSY.System(
         100.0,
@@ -87,7 +86,7 @@ function build_c_sys5_pjm(; kwargs...)
 
     bus_dist_fact = Dict("Bus2" => 0.33, "Bus3" => 0.33, "Bus4" => 0.34)
     peak_load = maximum(da_load_time_series_val)
-    if get(kwargs, :add_forecasts, true)
+    if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5))
             set_max_active_power!(l, bus_dist_fact[PSY.get_name(l)] * peak_load / 100)
             add_time_series!(
@@ -114,8 +113,7 @@ function build_c_sys5_pjm(; kwargs...)
     return c_sys5
 end
 
-function build_c_sys5_pjm_rt(; kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
+function build_c_sys5_pjm_rt(; add_forecasts, sys_kwargs...)
     nodes = nodes5()
     c_sys5 = PSY.System(
         100.0,
@@ -209,7 +207,7 @@ function build_c_sys5_pjm_rt(; kwargs...)
     rt_timearray = collapse(rt_timearray, Minute(5), first, TimeSeries.mean)
     bus_dist_fact = Dict("Bus2" => 0.33, "Bus3" => 0.33, "Bus4" => 0.34)
     peak_load = maximum(rt_load_time_series_val)
-    if get(kwargs, :add_forecasts, true)
+    if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5))
             set_max_active_power!(l, bus_dist_fact[PSY.get_name(l)] * peak_load / 100)
             rt_timearray =
@@ -236,7 +234,7 @@ function build_c_sys5_pjm_rt(; kwargs...)
     return c_sys5
 end
 
-function build_5_bus_hydro_uc_sys(; kwargs...)
+function build_5_bus_hydro_uc_sys(; add_forecasts, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
     rawsys = PSY.PowerSystemTableData(
@@ -245,7 +243,7 @@ function build_5_bus_hydro_uc_sys(; kwargs...)
         joinpath(data_dir, "user_descriptors.yaml");
         generator_mapping_file = joinpath(data_dir, "generator_mapping.yaml"),
     )
-    if get(kwargs, :add_forecasts, true)
+    if add_forecasts
         c_sys5_hy_uc = PSY.System(
             rawsys;
             timeseries_metadata_file = joinpath(
@@ -265,7 +263,7 @@ function build_5_bus_hydro_uc_sys(; kwargs...)
     return c_sys5_hy_uc
 end
 
-function build_5_bus_hydro_uc_sys_targets(; kwargs...)
+function build_5_bus_hydro_uc_sys_targets(; add_forecasts, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = get_raw_data(; kwargs...)
     rawsys = PSY.PowerSystemTableData(
@@ -274,7 +272,7 @@ function build_5_bus_hydro_uc_sys_targets(; kwargs...)
         joinpath(data_dir, "user_descriptors.yaml");
         generator_mapping_file = joinpath(data_dir, "generator_mapping.yaml"),
     )
-    if get(kwargs, :add_forecasts, true)
+    if add_forecasts
         c_sys5_hy_uc = PSY.System(
             rawsys;
             timeseries_metadata_file = joinpath(
