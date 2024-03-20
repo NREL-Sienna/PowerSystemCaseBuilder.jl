@@ -1,3 +1,7 @@
+using Base.Filesystem
+using JSON
+using IterTools
+
 function verify_storage_dir(folder::AbstractString = SERIALIZED_DIR)
     directory = abspath(normpath(folder))
     if !isdir(directory)
@@ -37,38 +41,14 @@ function clear_all_serialized_system()
     return
 end
 
-function get_serialization_dir(has_forecasts::Bool, has_reserves::Bool)
-    if has_forecasts && has_reserves
-        return SERIALIZE_FORECASTRESERVE_DIR
-    elseif has_forecasts
-        return SERIALIZE_FORECASTONLY_DIR
-    elseif has_reserves
-        return SERIALIZE_RESERVEONLY_DIR
-    else
-        return SERIALIZE_NOARGS_DIR
-    end
-end
-
 function get_serialization_dir(case_args::Dict{Symbol, <:Any})
     args_string = join(["$key=$value" for (key, value) in case_args], "_")
     hash_value = hash(args_string)
-    return joinpath(PACKAGE_DIR, "data", "$hash_value")
+    return joinpath(PACKAGE_DIR, "data", "serialized_system", "$hash_value")
 end
-
-get_serialized_filepath(name::String, has_forecasts::Bool, has_reserves::Bool) =
-    joinpath(get_serialization_dir(has_forecasts, has_reserves), "$(name).json")
 
 get_serialized_filepath(name::String, case_args::Dict{Symbol, <:Any}) =
     joinpath(get_serialization_dir(case_args), "$(name).json")
-
-function is_serialized(name::String, has_forecasts::Bool, has_reserves::Bool)
-    file_path = get_serialized_filepath(name, has_forecasts, has_reserves)
-    if isfile(file_path)
-        return true
-    else
-        return false
-    end
-end
 
 function is_serialized(name::String, case_args::Dict{Symbol, <:Any})
     file_path = get_serialized_filepath(name, case_args)
@@ -97,7 +77,33 @@ function check_kwargs_psid(; kwargs...)
     return psid_kwargs
 end
 
-function filter_case_kwargs(; kwargs...)
-    case_kwargs = filter(x -> in(first(x), SUPPORTED_CASE_KWARGS), kwargs)
-    return case_kwargs
+"""
+Creates a JSON file informing the user about the meaning of the hash value in the file path
+if it doesn't exist already 
+"""
+function check_parameters_json(case_args::Dict{Symbol, <:Any})
+    dir_path = get_serialization_dir(case_args)
+    file_path = joinpath(dir_path, "case_parameters.json")
+    case_args_json = JSON.json(case_args)
+
+    if !isfile(file_path)
+        open(file_path, "w") do file
+            write(file, case_args_json)
+        end
+    end
+end
+
+function generate_permutations(case_args::Dict{Symbol, Any})
+    keys_arr = collect(keys(case_args))
+    permutations = Dict{Symbol, Bool}[]
+
+    for values in product(Iterators.repeated([true, false], length(keys_arr))...)
+        permutation = Dict{Symbol, Bool}()
+        for (i, key) in enumerate(keys_arr)
+            permutation[key] = values[i]
+        end
+        push!(permutations, permutation)
+    end
+    
+    return permutations
 end

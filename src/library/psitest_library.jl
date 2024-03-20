@@ -1104,8 +1104,8 @@ function build_c_sys5_uc(; add_forecasts, add_single_time_series, add_reserves, 
         thermal_generators5_uc_testing(nodes),
         loads5(nodes),
         branches5(nodes);
-        time_series_in_memory = get(kwargs, :time_series_in_memory, true),
-        kwargs...,
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
+        sys_kwargs...,
     )
 
     if add_forecasts

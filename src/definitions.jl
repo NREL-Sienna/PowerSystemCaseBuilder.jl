@@ -43,5 +43,3 @@ const AVAILABLE_PSID_PSSE_GENS_TEST = [
 ]
 
 const AVAILABLE_PSID_PSSE_PSS_TEST = ["STAB1", "IEEEST", "IEEEST_FILTER"]
-
-const SUPPORTED_CASE_KWARGS = [:add_single_time_series, :add_forecasts, :add_reserves]
