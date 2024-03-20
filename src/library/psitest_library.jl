@@ -3256,6 +3256,7 @@ function build_c_sys5_hybrid_ed(; kwargs...)
     nodes = nodes5()
     thermals = thermal_generators5(nodes)
     loads = loads5(nodes)
+    branches = branches5(nodes)
     renewables = renewable_generators5(nodes)
     _battery(nodes, bus, name) = PSY.BatteryEMS(;
         name = name,
@@ -3306,10 +3307,10 @@ function build_c_sys5_hybrid_ed(; kwargs...)
     c_sys5_hybrid = PSY.System(
         100.0,
         nodes,
-        thermal_generators5(nodes),
-        renewable_generators5(nodes),
-        loads5(nodes),
-        branches5(nodes);
+        thermals,
+        renewables,
+        loads,
+        branches;
         time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
@@ -3366,11 +3367,6 @@ function build_c_sys5_hybrid_ed(; kwargs...)
                     forecast_data[ini_time[1]] = data
                 end
             end
-            PSY.add_time_series!(
-                c_sys5_hybrid,
-                PSY.get_renewable_unit(hy),
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
             PSY.copy_subcomponent_time_series!(hy, PSY.get_renewable_unit(hy))
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HybridSystem, c_sys5_hybrid))
