@@ -2,22 +2,22 @@ mutable struct SystemArgument
     name::Symbol
     default::Any
     allowed_values::Set{<:Any}
-end 
+end
 
-function SystemArgument(;    
+function SystemArgument(;
     name,
     default,
-    allowed_values
+    allowed_values,
 )
     return SystemArgument(
         name,
         default,
-        allowed_values
+        allowed_values,
     )
 end
 
-function get_allowed_values(arg::SystemArgument)    
-    if isemtpy(arg.allowed_values)
+function get_allowed_values(arg::SystemArgument)
+    if isempty(arg.allowed_values)
         error("allowed values are not defined for $arg")
     else
         return arg.allowed_values
@@ -50,7 +50,7 @@ function SystemDescriptor(;
     raw_data = "",
     download_function = nothing,
     stats = nothing,
-    supported_arguments = Vector{SystemArgument}()
+    supported_arguments = Vector{SystemArgument}(),
 )
     return SystemDescriptor(
         name,
@@ -60,7 +60,7 @@ function SystemDescriptor(;
         build_function,
         download_function,
         stats,
-        supported_arguments
+        supported_arguments,
     )
 end
 
@@ -74,6 +74,30 @@ get_stats(v::SystemDescriptor) = v.stats
 get_supported_arguments(v::SystemDescriptor) = v.supported_arguments
 get_supported_arguments_dict(v::SystemDescriptor) =
     Dict(arg.name => arg.default for arg in v.supported_arguments)
+
+function get_supported_args_permutations(v::SystemDescriptor)
+    keys_arr = collect(keys(get_supported_arguments_dict(v)))
+    permutations = Dict{Symbol, Bool}[]
+    supported_arguments = get_supported_arguments(v)
+
+    if !isnothing(supported_arguments)
+        comprehensive_set = Set()
+        for arg in get_supported_arguments(v)
+            set = get_allowed_values(arg)
+            comprehensive_set = union(comprehensive_set, set)
+        end
+
+        for values in product(Iterators.repeated(comprehensive_set, length(keys_arr))...)
+            permutation = Dict{Symbol, Bool}()
+            for (i, key) in enumerate(keys_arr)
+                permutation[key] = values[i]
+            end
+            push!(permutations, permutation)
+        end
+    end
+
+    return permutations
+end
 
 set_name!(v::SystemDescriptor, value::String) = v.name = value
 set_description!(v::SystemDescriptor, value::String) = v.description = value

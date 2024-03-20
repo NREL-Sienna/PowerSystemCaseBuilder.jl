@@ -17,7 +17,7 @@ function check_serialized_storage()
     return
 end
 
-function clear_serialized_system(name::String)
+function clear_serialized_systems(name::String)
     seralized_file_extension =
         [".json", "_validation_descriptors.json", "_time_series_storage.h5"]
     file_names = [name * ext for ext in SERIALIZE_FILE_EXTENSIONS]
@@ -29,6 +29,17 @@ function clear_serialized_system(name::String)
             end
         end
     end
+    return
+end
+
+function clear_serialized_system(name::String, case_args::Dict{Symbol, <:Any})
+    file_path = get_serialized_filepath(name, case_args)
+
+    if isfile(file_path)
+        @debug "Deleting file at " file_path
+        rm(file_path; force = true)
+    end
+
     return
 end
 
@@ -91,19 +102,4 @@ function check_parameters_json(case_args::Dict{Symbol, <:Any})
             write(file, case_args_json)
         end
     end
-end
-
-function generate_permutations(case_args::Dict{Symbol, Any})
-    keys_arr = collect(keys(case_args))
-    permutations = Dict{Symbol, Bool}[]
-
-    for values in product(Iterators.repeated([true, false], length(keys_arr))...)
-        permutation = Dict{Symbol, Bool}()
-        for (i, key) in enumerate(keys_arr)
-            permutation[key] = values[i]
-        end
-        push!(permutations, permutation)
-    end
-    
-    return permutations
 end

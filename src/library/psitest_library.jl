@@ -114,7 +114,12 @@ function build_c_sys5_ml(; add_forecasts, sys_kwargs...)
     return c_sys5_ml
 end
 
-function build_c_sys5_re(; add_forecasts, add_reserves, sys_kwargs...)
+function build_c_sys5_re(;
+    add_forecasts,
+    add_single_time_series,
+    add_reserves,
+    sys_kwargs...,
+)
     nodes = nodes5()
     c_sys5_re = PSY.System(
         100.0,
@@ -226,7 +231,6 @@ function build_c_sys5_re(; add_forecasts, add_reserves, sys_kwargs...)
 end
 
 function build_c_sys5_re_only(; add_forecasts, sys_kwargs...)
-    
     nodes = nodes5()
     c_sys5_re_only = PSY.System(
         100.0,
@@ -311,8 +315,12 @@ function build_c_sys5_hy(; add_forecasts, sys_kwargs...)
     return c_sys5_hy
 end
 
-function build_c_sys5_hyd(; add_forecasts, add_single_time_series, add_reserves, sys_kwargs...)
-    
+function build_c_sys5_hyd(;
+    add_forecasts,
+    add_single_time_series,
+    add_reserves,
+    sys_kwargs...,
+)
     nodes = nodes5()
     c_sys5_hyd = PSY.System(
         100.0,
@@ -480,8 +488,12 @@ function build_c_sys5_hyd(; add_forecasts, add_single_time_series, add_reserves,
     return c_sys5_hyd
 end
 
-function build_c_sys5_hyd_ems(; add_forecasts, add_single_time_series, add_reserves, sys_kwargs...)
-    
+function build_c_sys5_hyd_ems(;
+    add_forecasts,
+    add_single_time_series,
+    add_reserves,
+    sys_kwargs...,
+)
     nodes = nodes5()
     c_sys5_hyd = PSY.System(
         100.0,
@@ -649,7 +661,12 @@ function build_c_sys5_hyd_ems(; add_forecasts, add_single_time_series, add_reser
     return c_sys5_hyd
 end
 
-function build_c_sys5_bat(; add_forecasts, add_single_time_series, add_reserves, sys_kwargs...)
+function build_c_sys5_bat(;
+    add_forecasts,
+    add_single_time_series,
+    add_reserves,
+    sys_kwargs...,
+)
     time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true)
     nodes = nodes5()
     c_sys5_bat = PSY.System(
@@ -763,7 +780,6 @@ function build_c_sys5_bat(; add_forecasts, add_single_time_series, add_reserves,
 end
 
 function build_c_sys5_il(; add_forecasts, add_reserves, sys_kwargs...)
-    
     nodes = nodes5()
     c_sys5_il = PSY.System(
         100.0,
@@ -898,7 +914,7 @@ end
 
 function build_c_sys5_reg(; add_forecasts, sys_kwargs...)
     nodes = nodes5()
-    
+
     c_sys5_reg = PSY.System(
         100.0,
         nodes,
@@ -967,7 +983,6 @@ function build_c_sys5_reg(; add_forecasts, sys_kwargs...)
 end
 
 function build_sys_ramp_testing(; sys_kwargs...)
-    
     node =
         PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
@@ -1036,7 +1051,6 @@ function build_sys_ramp_testing(; sys_kwargs...)
 end
 
 function build_sys_10bus_ac_dc(; sys_kwargs...)
-    
     nodes = nodes10()
     nodesdc = nodes10_dc()
     branchesdc = branches10_dc(nodesdc)
@@ -1095,8 +1109,12 @@ function build_sys_10bus_ac_dc(; sys_kwargs...)
     return sys
 end
 
-function build_c_sys5_uc(; add_forecasts, add_single_time_series, add_reserves, sys_kwargs...)
-    
+function build_c_sys5_uc(;
+    add_forecasts,
+    add_single_time_series,
+    add_reserves,
+    sys_kwargs...,
+)
     nodes = nodes5()
     c_sys5_uc = PSY.System(
         100.0,
@@ -1187,8 +1205,12 @@ function build_c_sys5_uc(; add_forecasts, add_single_time_series, add_reserves, 
     return c_sys5_uc
 end
 
-function build_c_sys5_uc_non_spin(; add_forecasts, add_single_time_series, add_reserves, sys_kwargs...)
-    
+function build_c_sys5_uc_non_spin(;
+    add_forecasts,
+    add_single_time_series,
+    add_reserves,
+    sys_kwargs...,
+)
     nodes = nodes5()
     c_sys5_uc = PSY.System(
         100.0,
@@ -1299,8 +1321,12 @@ function build_c_sys5_uc_non_spin(; add_forecasts, add_single_time_series, add_r
     return c_sys5_uc
 end
 
-function build_c_sys5_uc_re(; add_forecasts, add_single_time_series, add_reserves, sys_kwargs...)
-    
+function build_c_sys5_uc_re(;
+    add_forecasts,
+    add_single_time_series,
+    add_reserves,
+    sys_kwargs...,
+)
     nodes = nodes5()
     c_sys5_uc = PSY.System(
         100.0,
@@ -1441,7 +1467,6 @@ function build_c_sys5_uc_re(; add_forecasts, add_single_time_series, add_reserve
 end
 
 function build_c_sys5_pwl_uc(; sys_kwargs...)
-    
     c_sys5_uc = build_c_sys5_uc(; sys_kwargs...)
     thermal = thermal_generators5_pwl(collect(PSY.get_components(PSY.ACBus, c_sys5_uc)))
     for d in thermal
@@ -1518,7 +1543,6 @@ function build_c_sys5_ed(; add_forecasts, sys_kwargs...)
 end
 
 function build_c_sys5_pwl_ed(; sys_kwargs...)
-    
     c_sys5_ed = build_c_sys5_ed(; sys_kwargs...)
     thermal = thermal_generators5_pwl(collect(PSY.get_components(PSY.ACBus, c_sys5_ed)))
     for d in thermal
@@ -1528,7 +1552,6 @@ function build_c_sys5_pwl_ed(; sys_kwargs...)
 end
 
 function build_c_sys5_pwl_ed_nonconvex(; sys_kwargs...)
-    
     c_sys5_ed = build_c_sys5_ed(; sys_kwargs...)
     thermal =
         thermal_generators5_pwl_nonconvex(collect(PSY.get_components(PSY.ACBus, c_sys5_ed)))
@@ -1538,8 +1561,8 @@ function build_c_sys5_pwl_ed_nonconvex(; sys_kwargs...)
     return c_sys5_ed
 end
 
-function build_c_sys5_hy_uc(; add_forecasts, sys_kwargs...)
-    
+function build_c_sys5_hy_uc(; add_forecasts, kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_hy_uc = PSY.System(
         100.0,
@@ -1657,7 +1680,6 @@ function build_c_sys5_hy_uc(; add_forecasts, sys_kwargs...)
 end
 
 function build_c_sys5_hy_ems_uc(; add_forecasts, sys_kwargs...)
-    
     nodes = nodes5()
     c_sys5_hy_uc = PSY.System(
         100.0,
@@ -2197,8 +2219,12 @@ function build_c_sys5_phes_ed(; add_forecasts, sys_kwargs...)
     return c_sys5_phes_ed
 end
 
-function build_c_sys5_pglib(; add_forecasts, add_single_time_series, add_reserves, sys_kwargs...)
-    
+function build_c_sys5_pglib(;
+    add_forecasts,
+    add_single_time_series,
+    add_reserves,
+    sys_kwargs...,
+)
     nodes = nodes5()
     c_sys5_uc = PSY.System(
         100.0,
@@ -2272,7 +2298,6 @@ function build_c_sys5_pglib(; add_forecasts, add_single_time_series, add_reserve
 end
 
 function build_sos_test_sys(; sys_kwargs...)
-    
     node =
         PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
@@ -2367,7 +2392,6 @@ function build_sos_test_sys(; sys_kwargs...)
 end
 
 function build_pwl_test_sys(; sys_kwargs...)
-    
     node =
         PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
@@ -2446,7 +2470,6 @@ function build_pwl_test_sys(; sys_kwargs...)
 end
 
 function build_duration_test_sys(; sys_kwargs...)
-    
     node =
         PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
@@ -2519,7 +2542,6 @@ function build_duration_test_sys(; sys_kwargs...)
 end
 
 function build_pwl_marketbid_sys(; sys_kwargs...)
-    
     node =
         PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
@@ -2660,7 +2682,6 @@ function build_pwl_marketbid_sys(; sys_kwargs...)
 end
 
 function build_5_bus_matpower_DA(; sys_kwargs...)
-    
     file_path = get_raw_data(; sys_kwargs...)
     data_dir = dirname(dirname(file_path))
     pm_data = PowerSystems.PowerModelsData(file_path)
@@ -2690,7 +2711,6 @@ function build_5_bus_matpower_DA(; sys_kwargs...)
 end
 
 function build_5_bus_matpower_RT(; sys_kwargs...)
-    
     file_path = get_raw_data(; sys_kwargs...)
     data_dir = dirname(dirname(file_path))
 
@@ -2709,7 +2729,6 @@ function build_5_bus_matpower_RT(; sys_kwargs...)
 end
 
 function build_5_bus_matpower_AGC(; sys_kwargs...)
-    
     file_path = get_raw_data(; sys_kwargs...)
     data_dir = dirname(dirname(file_path))
     pm_data = PowerSystems.PowerModelsData(file_path)
@@ -2727,7 +2746,6 @@ function build_5_bus_matpower_AGC(; sys_kwargs...)
 end
 
 function build_test_RTS_GMLC_sys(; sys_kwargs...)
-    
     RTS_GMLC_DIR = get_raw_data(; sys_kwargs...)
     if add_forecasts
         rawsys = PSY.PowerSystemTableData(
@@ -2778,7 +2796,12 @@ function build_test_RTS_GMLC_sys_with_hybrid(; sys_kwargs...)
     return sys
 end
 
-function build_c_sys5_bat_ems(; add_forecasts, add_single_time_series, add_reserves, sys_kwargs...)
+function build_c_sys5_bat_ems(;
+    add_forecasts,
+    add_single_time_series,
+    add_reserves,
+    sys_kwargs...,
+)
     time_series_in_memory = get(kwargs, :time_series_in_memory, true)
     nodes = nodes5()
     c_sys5_bat = System(
@@ -2931,7 +2954,6 @@ function build_c_sys5_pglib_sim(; add_forecasts, add_reserves, sys_kwargs...)
 end
 
 function build_c_sys5_hybrid(; add_forecasts, sys_kwargs...)
-    
     nodes = nodes5()
     thermals = thermal_generators5(nodes)
     loads = loads5(nodes)
@@ -3113,7 +3135,6 @@ function build_c_sys5_hybrid(; add_forecasts, sys_kwargs...)
 end
 
 function build_c_sys5_hybrid_uc(; add_forecasts, sys_kwargs...)
-    
     nodes = nodes5()
     thermals = thermal_generators5(nodes)
     loads = loads5(nodes)
@@ -3240,7 +3261,6 @@ function build_c_sys5_hybrid_uc(; add_forecasts, sys_kwargs...)
 end
 
 function build_c_sys5_hybrid_ed(; add_forecasts, sys_kwargs...)
-    
     nodes = nodes5()
     thermals = thermal_generators5(nodes)
     loads = loads5(nodes)
@@ -3354,12 +3374,13 @@ function build_c_sys5_hybrid_ed(; add_forecasts, sys_kwargs...)
                     forecast_data[ini_time[1]] = data
                 end
             end
+            #applying a patch for the time being with "hy"
             PSY.add_time_series!(
                 c_sys5_hybrid,
-                PSY.get_renewable_unit(hy),
+                hy,
                 PSY.Deterministic("max_active_power", forecast_data),
             )
-            PSY.copy_subcomponent_time_series!(hy, PSY.get_renewable_unit(hy))
+            #PSY.copy_subcomponent_time_series!(hy, PSY.get_renewable_unit(hy))
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HybridSystem, c_sys5_hybrid))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
@@ -3383,7 +3404,6 @@ function build_c_sys5_hybrid_ed(; add_forecasts, sys_kwargs...)
 end
 
 function build_hydro_test_case_b_sys(; sys_kwargs...)
-    
     node =
         PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
@@ -3445,7 +3465,6 @@ function build_hydro_test_case_b_sys(; sys_kwargs...)
 end
 
 function build_hydro_test_case_c_sys(; sys_kwargs...)
-    
     node =
         PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
@@ -3507,7 +3526,6 @@ function build_hydro_test_case_c_sys(; sys_kwargs...)
 end
 
 function build_hydro_test_case_d_sys(; sys_kwargs...)
-    
     node =
         PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
@@ -3569,7 +3587,6 @@ function build_hydro_test_case_d_sys(; sys_kwargs...)
 end
 
 function build_hydro_test_case_e_sys(; sys_kwargs...)
-    
     node =
         PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
@@ -3631,7 +3648,6 @@ function build_hydro_test_case_e_sys(; sys_kwargs...)
 end
 
 function build_hydro_test_case_f_sys(; sys_kwargs...)
-    
     node =
         PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
@@ -3693,7 +3709,6 @@ function build_hydro_test_case_f_sys(; sys_kwargs...)
 end
 
 function build_batt_test_case_b_sys(; sys_kwargs...)
-    
     node =
         PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
@@ -3768,7 +3783,6 @@ function build_batt_test_case_b_sys(; sys_kwargs...)
 end
 
 function build_batt_test_case_c_sys(; sys_kwargs...)
-    
     node =
         PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
@@ -3843,7 +3857,6 @@ function build_batt_test_case_c_sys(; sys_kwargs...)
 end
 
 function build_batt_test_case_d_sys(; sys_kwargs...)
-    
     node =
         PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
@@ -3918,7 +3931,6 @@ function build_batt_test_case_d_sys(; sys_kwargs...)
 end
 
 function build_batt_test_case_e_sys(; sys_kwargs...)
-    
     node =
         PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
@@ -3993,7 +4005,6 @@ function build_batt_test_case_e_sys(; sys_kwargs...)
 end
 
 function build_batt_test_case_f_sys(; sys_kwargs...)
-    
     node =
         PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.2, 0.9861, 100.0, 1.0, 2.0)
@@ -4067,8 +4078,8 @@ function build_batt_test_case_f_sys(; sys_kwargs...)
     return batt_test_case_f_sys
 end
 
-function build_c_sys5_all_components(; add_forecasts, sys_kwargs...)
-    
+function build_c_sys5_all_components(; add_forecasts, sys_kwargs...)    
+
     nodes = nodes5()
     c_sys5_all_components = PSY.System(
         100.0,
