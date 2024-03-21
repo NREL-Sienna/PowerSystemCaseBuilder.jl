@@ -32,12 +32,20 @@ function clear_serialized_systems(name::String)
     return
 end
 
-function clear_serialized_system(name::String, case_args::Dict{Symbol, <:Any})
+function clear_serialized_system(name::String, case_args::Dict{Symbol, <:Any} = Dict{Symbol, Any}())
     file_path = get_serialized_filepath(name, case_args)
 
-    if isfile(file_path)
-        @debug "Deleting file at " file_path
-        rm(file_path; force = true)
+    try
+        if isfile(file_path)
+            @debug "Deleting file at " file_path
+            rm(file_path; force = true)
+        end
+    catch e
+        @show uperm(dirname(file_path))
+        @show gperm(dirname(file_path))
+        @show operm(dirname(file_path))
+        @show readir(dirname(file_path))
+        rethrow()
     end
 
     return
@@ -52,21 +60,37 @@ function clear_all_serialized_system()
     return
 end
 
-function get_serialization_dir(case_args::Dict{Symbol, <:Any})
+function get_serialization_dir(case_args::Dict{Symbol, <:Any} = Dict{Symbol, Any}())
     args_string = join(["$key=$value" for (key, value) in case_args], "_")
     hash_value = hash(args_string)
     return joinpath(PACKAGE_DIR, "data", "serialized_system", "$hash_value")
 end
 
-get_serialized_filepath(name::String, case_args::Dict{Symbol, <:Any}) =
-    joinpath(get_serialization_dir(case_args), "$(name).json")
-
-function is_serialized(name::String, case_args::Dict{Symbol, <:Any})
-    file_path = get_serialized_filepath(name, case_args)
-    if isfile(file_path)
-        return true
+#make sure to have a check for unique name
+function get_serialized_filepath(name::String, case_args::Dict{Symbol, <:Any} = Dict{Symbol, Any}())
+    dir = get_serialization_dir(case_args)
+    if has_duplicates(dir, "$(name).json") 
+        throw(ErrorException("Duplicate file name = $(name).json is detected in directory = $(dir)!"))
     else
-        return false
+        return joinpath(dir, "$(name).json")
+    end
+end
+
+function is_serialized(name::String, case_args::Dict{Symbol, <:Any} = Dict{Symbol, Any}())
+    file_path = get_serialized_filepath(name, case_args)
+
+    try
+        if isfile(file_path)
+            return true
+        else
+            return false
+        end
+    catch e
+        @show uperm(dirname(file_path))
+        @show gperm(dirname(file_path))
+        @show operm(dirname(file_path))
+        @show readir(dirname(file_path))
+        rethrow()
     end
 end
 
@@ -102,4 +126,11 @@ function check_parameters_json(case_args::Dict{Symbol, <:Any})
             write(file, case_args_json)
         end
     end
+end
+
+
+function has_duplicates(directory::String, filename::String)
+    files = readdir(directory)
+    file_count = count(file -> file == filename, files)
+    return file_count > 1
 end

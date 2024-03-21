@@ -24,15 +24,12 @@ function build_system(
     kwargs...,
 )
     sys_descriptor = get_system_descriptor(category, system_catalog, name)
-
     sys_kwargs = filter_kwargs(; kwargs...)
-    sys_args = Dict{Symbol, Any}()
-    merge!(sys_args, Dict(k => v for (k, v) in sys_kwargs))
-    #sys_args = Dict(k => v::Any for (k, v) in sys_kwargs) 
+    sys_args = Dict{Symbol, Any}(k => v for (k, v) in sys_kwargs) 
     sys_keys = keys(sys_args)
 
     psid_kwargs = check_kwargs_psid(; kwargs...)
-    psid_args = Dict(k => v for (k, v) in psid_kwargs)
+    psid_args = Dict{Symbol, Any}(k => v for (k, v) in psid_kwargs)
     psid_keys = keys(psid_args)
 
     case_keys = keys(get_supported_arguments_dict(sys_descriptor))
@@ -42,7 +39,7 @@ function build_system(
         isempty(intersect(psid_keys, case_keys)) &&
         isempty(intersect(sys_keys, case_keys))
     )
-        throw(ErrorException("Collision detected between sys_kwargs and psid_kwargs!"))
+        throw(ErrorException("Collision detected between sys_kwargs, psid_kwargs and case_kwargs!"))
     end
 
     if !isempty(psid_kwargs)
@@ -51,23 +48,20 @@ function build_system(
     end
 
     non_sys_psid_kwargs = setdiff(kwargs, merge(psid_kwargs, sys_kwargs))
-    non_sys_psid_args = Dict(k => v for (k, v) in non_sys_psid_kwargs)
+    non_sys_psid_args = Dict{Symbol, Any}(k => v for (k, v) in non_sys_psid_kwargs)
     key_diff = setdiff(keys(non_sys_psid_args), case_keys)
     if !isempty(key_diff)
         throw(ArgumentError("unsupported kwargs are specified: $key_diff"))
     end
 
-    case_args = Dict{Symbol, Any}()
-    merge!(
-        case_args,
-        merge(get_supported_arguments_dict(sys_descriptor), non_sys_psid_args),
-    )
+    case_args = Dict{Symbol, Any}(merge(get_supported_arguments_dict(sys_descriptor), non_sys_psid_args))
 
     return _build_system(
         name,
         sys_descriptor,
         case_args,
         sys_args,
+        psid_args,
         print_stat;
         force_build,
         assign_new_uuids,
@@ -78,8 +72,9 @@ end
 function _build_system(
     name::String,
     sys_descriptor::SystemDescriptor,
-    case_args::Dict{Symbol, Any},
-    sys_args::Dict{Symbol, Any},
+    case_args::Dict{Symbol, <:Any}, 
+    sys_args::Dict{Symbol, <:Any},
+    psid_args::Dict{Symbol, <:Any},
     print_stat::Bool = false;
     force_build::Bool = false,
     assign_new_uuids::Bool = false,
@@ -96,7 +91,7 @@ function _build_system(
         @info "Building new system $(sys_descriptor.name) from raw data" sys_descriptor.raw_data
         build_func = get_build_function(sys_descriptor)
         start = time()
-        sys = build_func(; raw_data = sys_descriptor.raw_data, case_args..., sys_args...)
+        sys = build_func(; raw_data = sys_descriptor.raw_data, case_args..., sys_args..., psid_args...)
         construct_time = time() - start
         serialized_filepath = get_serialized_filepath(name, case_args)
         start = time()

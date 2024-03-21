@@ -450,6 +450,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_pwl_ed,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_pwl_ed_nonconvex",
@@ -457,6 +464,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_pwl_ed_nonconvex,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_reg",
@@ -602,6 +616,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "RTS_GMLC"),
         build_function = build_test_RTS_GMLC_sys,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "test_RTS_GMLC_sys_with_hybrid",
@@ -609,6 +630,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "RTS_GMLC"),
         build_function = build_test_RTS_GMLC_sys_with_hybrid,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "RTS_GMLC_DA_sys",
@@ -1329,7 +1357,7 @@ const SYSTEM_CATALOG = [
         category = PSIDTestSystems,
         raw_data = joinpath(DATA_DIR, "psid_tests", "psse", "GENs"),
         build_function = build_psid_psse_test_gen,
-    ),
+            ),
     SystemDescriptor(;
         name = "psid_psse_test_pss",
         description = "PSID PSS Test Cases for PSSE Validation",

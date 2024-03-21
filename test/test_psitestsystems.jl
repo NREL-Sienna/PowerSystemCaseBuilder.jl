@@ -1,23 +1,24 @@
 @testset "Test Serialization/De-Serialization PSI Cases" begin
     system_catalog = SystemCatalog(SYSTEM_CATALOG)
     for (name, descriptor) in system_catalog.data[PSITestSystems]
+        # build a new system from scratch
         supported_args_permutations = PSB.get_supported_args_permutations(descriptor)
         for supported_args in supported_args_permutations
             sys = build_system(
                 PSITestSystems,
                 name;
                 force_build = true,
-                supported_args...,
+                supported_args...
             )
             @test isa(sys, System)
-
+            
             # build a new system from json
-            @test PSB.is_serialized(name, supported_args) == true
+            @test PSB.is_serialized(name, supported_args)
             sys2 = build_system(
                 PSITestSystems,
                 name;
                 force_build = true,
-                supported_args...,
+                supported_args...
             )
             @test isa(sys2, System)
 

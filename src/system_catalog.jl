@@ -34,8 +34,13 @@ list_categories(c::SystemCatalog) = sort!([x for x in (keys(c.data))]; by = x ->
 
 function SystemCatalog(system_catalogue::Array{SystemDescriptor} = SYSTEM_CATALOG)
     data = Dict{DataType, Dict{String, SystemDescriptor}}()
+    unique_names = Set{String}()
     for descriptor in system_catalogue
         category = get_category(descriptor)
+        if descriptor.name in unique_names
+            error("duplicate name(s) are detected") 
+        end
+        push!(unique_names, descriptor.name)
         if haskey(data, category)
             push!(data[category], (descriptor.name => descriptor))
         else
