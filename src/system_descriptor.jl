@@ -77,7 +77,7 @@ get_supported_arguments_dict(v::SystemDescriptor) =
 
 function get_supported_args_permutations(v::SystemDescriptor)
     keys_arr = collect(keys(get_supported_arguments_dict(v)))
-    permutations = Dict{Symbol, Bool}[]
+    permutations = Dict{Symbol, Any}[]
     supported_arguments = get_supported_arguments(v)
 
     if !isnothing(supported_arguments)
@@ -88,11 +88,13 @@ function get_supported_args_permutations(v::SystemDescriptor)
         end
 
         for values in product(Iterators.repeated(comprehensive_set, length(keys_arr))...)
-            permutation = Dict{Symbol, Bool}()
+            permutation = Dict{Symbol, Any}()
             for (i, key) in enumerate(keys_arr)
                 permutation[key] = values[i]
             end
-            push!(permutations, permutation)
+            if !isempty(permutation)
+                push!(permutations, permutation)
+            end
         end
     end
 

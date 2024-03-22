@@ -2774,7 +2774,7 @@ function build_5_bus_matpower_AGC(; raw_data, kwargs...)
     return sys
 end
 
-function build_test_RTS_GMLC_sys(; raw_data, add_forecasts,  kwargs...)
+function build_test_RTS_GMLC_sys(; raw_data, add_forecasts, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     if add_forecasts
         rawsys = PSY.PowerSystemTableData(
@@ -4123,7 +4123,7 @@ function build_batt_test_case_f_sys(; raw_data, kwargs...)
 end
 
 function build_c_sys5_all_components(; add_forecasts, raw_data, kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)    
+    sys_kwargs = filter_kwargs(; kwargs...)
 
     nodes = nodes5()
     c_sys5_all_components = PSY.System(

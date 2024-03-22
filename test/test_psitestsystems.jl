@@ -8,17 +8,17 @@
                 PSITestSystems,
                 name;
                 force_build = true,
-                supported_args...
+                supported_args...,
             )
             @test isa(sys, System)
-            
+
             # build a new system from json
             @test PSB.is_serialized(name, supported_args)
             sys2 = build_system(
                 PSITestSystems,
                 name;
                 force_build = true,
-                supported_args...
+                supported_args...,
             )
             @test isa(sys2, System)
 

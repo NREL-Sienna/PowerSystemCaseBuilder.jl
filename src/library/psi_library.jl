@@ -486,7 +486,11 @@ function build_RTS_GMLC_RT_sys_noForecast(; raw_data, kwargs...)
     return sys
 end
 
-function make_modified_RTS_GMLC_sys(resolution::Dates.TimePeriod = Hour(1); raw_data, sys_kwargs...)
+function make_modified_RTS_GMLC_sys(
+    resolution::Dates.TimePeriod = Hour(1);
+    raw_data,
+    sys_kwargs...,
+)
     RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
     RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
     DISPATCH_INCREASE = 2.0

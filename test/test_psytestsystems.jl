@@ -8,7 +8,7 @@
                 PSYTestSystems,
                 name;
                 force_build = true,
-                supported_args...
+                supported_args...,
             )
 
             @test isa(sys, System)
@@ -18,7 +18,7 @@
                 PSYTestSystems,
                 name;
                 force_build = true,
-                supported_args...
+                supported_args...,
             )
             @test isa(sys2, System)
 

@@ -32,7 +32,10 @@ function clear_serialized_systems(name::String)
     return
 end
 
-function clear_serialized_system(name::String, case_args::Dict{Symbol, <:Any} = Dict{Symbol, Any}())
+function clear_serialized_system(
+    name::String,
+    case_args::Dict{Symbol, <:Any} = Dict{Symbol, Any}(),
+)
     file_path = get_serialized_filepath(name, case_args)
 
     try
@@ -67,10 +70,17 @@ function get_serialization_dir(case_args::Dict{Symbol, <:Any} = Dict{Symbol, Any
 end
 
 #make sure to have a check for unique name
-function get_serialized_filepath(name::String, case_args::Dict{Symbol, <:Any} = Dict{Symbol, Any}())
+function get_serialized_filepath(
+    name::String,
+    case_args::Dict{Symbol, <:Any} = Dict{Symbol, Any}(),
+)
     dir = get_serialization_dir(case_args)
-    if isdir(dir) && has_duplicates(dir, "$(name).json") 
-        throw(ErrorException("Duplicate file name = $(name).json is detected in directory = $(dir)!"))
+    if isdir(dir) && has_duplicates(dir, "$(name).json")
+        throw(
+            ErrorException(
+                "Duplicate file name = $(name).json is detected in directory = $(dir)!",
+            ),
+        )
     else
         return joinpath(dir, "$(name).json")
     end
@@ -127,7 +137,6 @@ function check_parameters_json(case_args::Dict{Symbol, <:Any})
         end
     end
 end
-
 
 function has_duplicates(directory::String, filename::String)
     files = readdir(directory)

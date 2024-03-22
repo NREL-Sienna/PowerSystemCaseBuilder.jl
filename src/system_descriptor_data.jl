@@ -1343,6 +1343,13 @@ const SYSTEM_CATALOG = [
         category = PSIDTestSystems,
         raw_data = joinpath(DATA_DIR, "psid_tests", "psse", "AVRs"),
         build_function = build_psid_psse_test_avr,
+        supported_arguments = [
+            SystemArgument(;
+                name = :avr_type,
+                default = "AC1A",
+                allowed_values = Set(AVAILABLE_PSID_PSSE_AVRS_TEST),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "psid_psse_test_tg",
@@ -1350,6 +1357,13 @@ const SYSTEM_CATALOG = [
         category = PSIDTestSystems,
         raw_data = joinpath(DATA_DIR, "psid_tests", "psse", "TGs"),
         build_function = build_psid_psse_test_tg,
+        supported_arguments = [
+            SystemArgument(;
+                name = :tg_type,
+                default = "GAST",
+                allowed_values = Set(AVAILABLE_PSID_PSSE_TGS_TEST),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "psid_psse_test_gen",
@@ -1357,13 +1371,27 @@ const SYSTEM_CATALOG = [
         category = PSIDTestSystems,
         raw_data = joinpath(DATA_DIR, "psid_tests", "psse", "GENs"),
         build_function = build_psid_psse_test_gen,
+        supported_arguments = [
+            SystemArgument(;
+                name = :gen_type,
+                default = "GENCLS",
+                allowed_values = Set(AVAILABLE_PSID_PSSE_GENS_TEST),
             ),
+        ],
+    ),
     SystemDescriptor(;
         name = "psid_psse_test_pss",
         description = "PSID PSS Test Cases for PSSE Validation",
         category = PSIDTestSystems,
         raw_data = joinpath(DATA_DIR, "psid_tests", "psse", "PSSs"),
         build_function = build_psid_psse_test_pss,
+        supported_arguments = [
+            SystemArgument(;
+                name = :pss_type,
+                default = "STAB1",
+                allowed_values = Set(AVAILABLE_PSID_PSSE_PSS_TEST),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "psid_test_omib",
