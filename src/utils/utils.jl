@@ -44,7 +44,7 @@ function clear_serialized_system(name::String, case_args::Dict{Symbol, <:Any} = 
         @show uperm(dirname(file_path))
         @show gperm(dirname(file_path))
         @show operm(dirname(file_path))
-        @show readir(dirname(file_path))
+        @show isdir(dirname(file_path)) && readdir(dirname(file_path))
         rethrow()
     end
 
@@ -69,7 +69,7 @@ end
 #make sure to have a check for unique name
 function get_serialized_filepath(name::String, case_args::Dict{Symbol, <:Any} = Dict{Symbol, Any}())
     dir = get_serialization_dir(case_args)
-    if has_duplicates(dir, "$(name).json") 
+    if isdir(dir) && has_duplicates(dir, "$(name).json") 
         throw(ErrorException("Duplicate file name = $(name).json is detected in directory = $(dir)!"))
     else
         return joinpath(dir, "$(name).json")
@@ -89,7 +89,7 @@ function is_serialized(name::String, case_args::Dict{Symbol, <:Any} = Dict{Symbo
         @show uperm(dirname(file_path))
         @show gperm(dirname(file_path))
         @show operm(dirname(file_path))
-        @show readir(dirname(file_path))
+        @show isdir(dirname(file_path)) && readdir(dirname(file_path))
         rethrow()
     end
 end
