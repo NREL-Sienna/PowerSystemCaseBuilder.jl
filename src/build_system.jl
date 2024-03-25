@@ -25,23 +25,22 @@ function build_system(
 )
     sys_descriptor = get_system_descriptor(category, system_catalog, name)
     sys_kwargs = filter_kwargs(; kwargs...)
-    sys_args = Dict{Symbol, Any}(k => v for (k, v) in sys_kwargs)
-    sys_keys = keys(sys_args)
+    sys_keys = keys(sys_kwargs)
 
     psid_kwargs = check_kwargs_psid(; kwargs...)
-    psid_args = Dict{Symbol, Any}(k => v for (k, v) in psid_kwargs)
-    psid_keys = keys(psid_args)
+    psid_keys = keys(psid_kwargs)
 
-    case_keys = keys(get_supported_arguments_dict(sys_descriptor))
+    case_keys = get_supported_argument_names(sys_descriptor)
 
-    if !(
-        isempty(intersect(sys_keys, psid_keys)) &&
-        isempty(intersect(sys_keys, case_keys))
-    )
-        throw(
-            ErrorException(
-                "Collision detected between sys_kwargs and psid_kwargs or case_kwargs!",
-            ),
+    if !(isempty(intersect(sys_keys, psid_keys)))
+        error(
+            "sys_keys and psid_keys have the overlapping key(s): $(intersect(sys_keys, psid_keys))",
+        )
+    end
+
+    if !(isempty(intersect(sys_keys, case_keys)))
+        error(
+            "sys_keys and case_keys have the overlapping key(s): $(intersect(sys_keys, psid_keys))",
         )
     end
 
@@ -65,8 +64,8 @@ function build_system(
         name,
         sys_descriptor,
         case_args,
-        sys_args,
-        psid_args,
+        sys_kwargs,
+        psid_kwargs,
         print_stat;
         force_build,
         assign_new_uuids,
@@ -108,7 +107,7 @@ function _build_system(
         if !skip_serialization
             PSY.to_json(sys, serialized_filepath; force = true)
             serialize_time = time() - start
-            check_parameters_json(case_args)
+            serialize_case_parameters(case_args)
         end
         # set_stats!(sys_descriptor, SystemBuildStats(construct_time, serialize_time))
     else

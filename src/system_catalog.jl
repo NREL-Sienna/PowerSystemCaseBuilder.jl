@@ -38,7 +38,7 @@ function SystemCatalog(system_catalogue::Array{SystemDescriptor} = SYSTEM_CATALO
     for descriptor in system_catalogue
         category = get_category(descriptor)
         if descriptor.name in unique_names
-            error("duplicate name(s) are detected")
+            error("a duplicate name is detected: $(descriptor.name)")
         end
         push!(unique_names, descriptor.name)
         if haskey(data, category)

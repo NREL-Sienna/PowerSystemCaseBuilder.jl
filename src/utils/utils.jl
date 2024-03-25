@@ -1,6 +1,5 @@
-using Base.Filesystem
-using JSON
-using IterTools
+using JSON3
+import Base.Iterators.product, Base.Iterators.repeated
 
 function verify_storage_dir(folder::AbstractString = SERIALIZED_DIR)
     directory = abspath(normpath(folder))
@@ -44,10 +43,6 @@ function clear_serialized_system(
             rm(file_path; force = true)
         end
     catch e
-        @show uperm(dirname(file_path))
-        @show gperm(dirname(file_path))
-        @show operm(dirname(file_path))
-        @show isdir(dirname(file_path)) && readdir(dirname(file_path))
         rethrow()
     end
 
@@ -69,39 +64,17 @@ function get_serialization_dir(case_args::Dict{Symbol, <:Any} = Dict{Symbol, Any
     return joinpath(PACKAGE_DIR, "data", "serialized_system", "$hash_value")
 end
 
-#make sure to have a check for unique name
 function get_serialized_filepath(
     name::String,
     case_args::Dict{Symbol, <:Any} = Dict{Symbol, Any}(),
 )
     dir = get_serialization_dir(case_args)
-    if isdir(dir) && has_duplicates(dir, "$(name).json")
-        throw(
-            ErrorException(
-                "Duplicate file name = $(name).json is detected in directory = $(dir)!",
-            ),
-        )
-    else
-        return joinpath(dir, "$(name).json")
-    end
+    return joinpath(dir, "$(name).json")
 end
 
 function is_serialized(name::String, case_args::Dict{Symbol, <:Any} = Dict{Symbol, Any}())
     file_path = get_serialized_filepath(name, case_args)
-
-    try
-        if isfile(file_path)
-            return true
-        else
-            return false
-        end
-    catch e
-        @show uperm(dirname(file_path))
-        @show gperm(dirname(file_path))
-        @show operm(dirname(file_path))
-        @show isdir(dirname(file_path)) && readdir(dirname(file_path))
-        rethrow()
-    end
+    return isfile(file_path)
 end
 
 function get_raw_data(; kwargs...)
@@ -126,14 +99,13 @@ end
 Creates a JSON file informing the user about the meaning of the hash value in the file path
 if it doesn't exist already 
 """
-function check_parameters_json(case_args::Dict{Symbol, <:Any})
+function serialize_case_parameters(case_args::Dict{Symbol, <:Any})
     dir_path = get_serialization_dir(case_args)
     file_path = joinpath(dir_path, "case_parameters.json")
-    case_args_json = JSON.json(case_args)
 
     if !isfile(file_path)
         open(file_path, "w") do file
-            write(file, case_args_json)
+            write(file, JSON3.write(case_args))
         end
     end
 end
