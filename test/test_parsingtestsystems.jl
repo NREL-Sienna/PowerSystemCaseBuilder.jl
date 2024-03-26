@@ -7,12 +7,12 @@
 
             @test isa(sys, System)
             # build a new system from json
-            @test PSB.is_serialized(name, false, false)
+            @test PSB.is_serialized(name)
             sys2 = build_system(case_type, name; force_build = true)
             @test isa(sys2, System)
 
             PSB.clear_serialized_system(name)
-            @test !PSB.is_serialized(name, false, false)
+            @test !PSB.is_serialized(name)
         end
     end
 end
