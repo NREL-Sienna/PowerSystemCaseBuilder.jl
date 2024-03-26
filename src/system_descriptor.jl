@@ -3,10 +3,22 @@ struct SystemArgument
     default::Any
     allowed_values::Set{<:Any}
 
-    function SystemArgument(; name, default, allowed_values)
+    function SystemArgument(name, default, allowed_values)
         isempty(allowed_values) && error("allowed_values cannot be empty")
         new(name, default, allowed_values)
     end
+end
+
+function SystemArgument(;
+    name, 
+    default, 
+    allowed_values
+)
+    return SystemArgument(
+        name, 
+        default, 
+        allowed_values
+    )
 end
 
 get_name(arg::SystemArgument) = arg.name
