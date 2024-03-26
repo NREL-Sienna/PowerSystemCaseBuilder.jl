@@ -88,7 +88,6 @@ function _build_system(
         check_serialized_storage()
         download_function = get_download_function(sys_descriptor)
         if !isnothing(download_function)
-            #removing kwargs because they seem not needed, but not completely sure
             filepath = download_function()
             set_raw_data!(sys_descriptor, filepath)
         end

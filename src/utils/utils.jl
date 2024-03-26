@@ -1,6 +1,3 @@
-using JSON3
-import Base.Iterators.product, Base.Iterators.repeated
-
 function verify_storage_dir(folder::AbstractString = SERIALIZED_DIR)
     directory = abspath(normpath(folder))
     if !isdir(directory)
@@ -37,13 +34,9 @@ function clear_serialized_system(
 )
     file_path = get_serialized_filepath(name, case_args)
 
-    try
-        if isfile(file_path)
-            @debug "Deleting file at " file_path
-            rm(file_path; force = true)
-        end
-    catch e
-        rethrow()
+    if isfile(file_path)
+        @debug "Deleting file at " file_path
+        rm(file_path; force = true)
     end
 
     return
@@ -104,14 +97,8 @@ function serialize_case_parameters(case_args::Dict{Symbol, <:Any})
     file_path = joinpath(dir_path, "case_parameters.json")
 
     if !isfile(file_path)
-        open(file_path, "w") do file
-            write(file, JSON3.write(case_args))
+        open(file_path, "w") do io
+            JSON3.write(io, case_args)
         end
     end
-end
-
-function has_duplicates(directory::String, filename::String)
-    files = readdir(directory)
-    file_count = count(file -> file == filename, files)
-    return file_count > 1
 end

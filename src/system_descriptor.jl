@@ -2,21 +2,10 @@ struct SystemArgument
     name::Symbol
     default::Any
     allowed_values::Set{<:Any}
-end
 
-function SystemArgument(;
-    name,
-    default,
-    allowed_values,
-)
-    if isempty(allowed_values)
-        error("allowed values cannot be empty")
-    else
-        return SystemArgument(
-            name,
-            default,
-            allowed_values,
-        )
+    function SystemArgument(; name, default, allowed_values)
+        isempty(allowed_values) && error("allowed_values cannot be empty")
+        new(name, default, allowed_values)
     end
 end
 
@@ -26,7 +15,6 @@ get_allowed_values(arg::SystemArgument) = arg.allowed_values
 
 set_name(arg::SystemArgument, name::Symbol) = arg.name = name
 set_default(arg::SystemArgument, default::Any) = arg.default = default
-set_allowed_values(arg::SystemArgument, values::Set{<:Any}) = arg.allowed_values = values
 
 mutable struct SystemDescriptor <: PowerSystemCaseBuilderType
     name::AbstractString
@@ -85,7 +73,8 @@ function get_supported_args_permutations(v::SystemDescriptor)
             comprehensive_set = union(comprehensive_set, set)
         end
 
-        for values in product(repeated(comprehensive_set, length(keys_arr))...)
+        for values in
+            Iterators.product(Iterators.repeated(comprehensive_set, length(keys_arr))...)
             permutation = Dict{Symbol, Any}()
             for (i, key) in enumerate(keys_arr)
                 permutation[key] = values[i]
