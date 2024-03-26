@@ -10,14 +10,14 @@ struct SystemArgument
 end
 
 function SystemArgument(;
-    name, 
-    default, 
-    allowed_values
+    name,
+    default,
+    allowed_values,
 )
     return SystemArgument(
-        name, 
-        default, 
-        allowed_values
+        name,
+        default,
+        allowed_values,
     )
 end
 
