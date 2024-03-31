@@ -19,7 +19,7 @@ function build_c_sys5_pjm(; kwargs...)
         PrimeMovers.PVe,
         (min = 0.0, max = 0.0),
         1.0,
-        TwoPartCost(LinearFunctionData(0.0), 0.0),
+        RenewableGenerationCost(nothing),
         100.0,
     )
     wind_device = PSY.RenewableDispatch(
@@ -32,7 +32,7 @@ function build_c_sys5_pjm(; kwargs...)
         PrimeMovers.WT,
         (min = 0.0, max = 0.0),
         1.0,
-        TwoPartCost(LinearFunctionData(0.0), 0.0),
+        RenewableGenerationCost(nothing),
         100.0,
     )
     PSY.add_component!(c_sys5, pv_device)
@@ -135,7 +135,7 @@ function build_c_sys5_pjm_rt(; kwargs...)
         PrimeMovers.PVe,
         (min = 0.0, max = 0.0),
         1.0,
-        TwoPartCost(LinearFunctionData(0.0), 0.0),
+        RenewableGenerationCost(nothing),
         100.0,
     )
     wind_device = PSY.RenewableDispatch(
@@ -148,7 +148,7 @@ function build_c_sys5_pjm_rt(; kwargs...)
         PrimeMovers.WT,
         (min = 0.0, max = 0.0),
         1.0,
-        TwoPartCost(LinearFunctionData(0.0), 0.0),
+        RenewableGenerationCost(nothing),
         100.0,
     )
     PSY.add_component!(c_sys5, pv_device)
@@ -290,8 +290,9 @@ function build_5_bus_hydro_uc_sys_targets(; kwargs...)
     else
         c_sys5_hy_uc = PSY.System(rawsys; sys_kwargs...)
     end
-    cost = PSY.StorageManagementCost(;
-        variable = LinearFunctionData(0.15),
+    cost = PSY.StorageCost(;
+        charge_variable_cost = CostCurve(InputOutputCurve(LinearFunctionData(0.15))),
+        discharge_variable_cost = CostCurve(InputOutputCurve(LinearFunctionData(0.15))),
         fixed = 0.0,
         start_up = 0.0,
         shut_down = 0.0,
@@ -349,8 +350,9 @@ function build_5_bus_hydro_ed_sys_targets(; kwargs...)
         time_series_in_memory = true,
         sys_kwargs...,
     )
-    cost = PSY.StorageManagementCost(;
-        variable = LinearFunctionData(0.15),
+    cost = PSY.StorageCost(;
+        charge_variable_cost = CostCurve(InputOutputCurve(LinearFunctionData(0.15))),
+        discharge_variable_cost = CostCurve(InputOutputCurve(LinearFunctionData(0.15))),
         fixed = 0.0,
         start_up = 0.0,
         shut_down = 0.0,
@@ -410,8 +412,9 @@ function build_5_bus_hydro_wk_sys_targets(; kwargs...)
         time_series_in_memory = true,
         sys_kwargs...,
     )
-    cost = PSY.StorageManagementCost(;
-        variable = LinearFunctionData(0.15),
+    cost = PSY.StorageCost(;
+        charge_variable_cost = CostCurve(InputOutputCurve(LinearFunctionData(0.15))),
+        discharge_variable_cost = CostCurve(InputOutputCurve(LinearFunctionData(0.15))),
         fixed = 0.0,
         start_up = 0.0,
         shut_down = 0.0,
@@ -861,8 +864,9 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -0.30, max = 0.30),
             ramp_limits = nothing,
             time_limits = nothing,
-            operation_cost = ThreePartCost(
-                QuadraticFunctionData(0.0, 14.0, 0.0),
+            # Arguments
+            operation_cost = ThermalGenerationCost(
+                CostCurve(InputOutputCurve(QuadraticFunctionData(0.0, 14.0, 0.0))),
                 0.0,
                 4.0,
                 2.0,
@@ -883,8 +887,8 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -1.275, max = 1.275),
             ramp_limits = (up = 0.02 * 2.2125, down = 0.02 * 2.2125),
             time_limits = (up = 2.0, down = 1.0),
-            operation_cost = ThreePartCost(
-                QuadraticFunctionData(0.0, 15.0, 0.0),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(InputOutputCurve(QuadraticFunctionData(0.0, 15.0, 0.0))),
                 0.0,
                 1.5,
                 0.75,
@@ -905,8 +909,8 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -3.90, max = 3.90),
             ramp_limits = (up = 0.012 * 5.2, down = 0.012 * 5.2),
             time_limits = (up = 3.0, down = 2.0),
-            operation_cost = ThreePartCost(
-                QuadraticFunctionData(0.0, 30.0, 0.0),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(InputOutputCurve(QuadraticFunctionData(0.0, 30.0, 0.0))),
                 0.0,
                 3.0,
                 1.5,
@@ -927,8 +931,8 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -1.5, max = 1.5),
             ramp_limits = (up = 0.015 * 2.5, down = 0.015 * 2.5),
             time_limits = (up = 2.0, down = 1.0),
-            operation_cost = ThreePartCost(
-                QuadraticFunctionData(0.0, 40.0, 0.0),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(InputOutputCurve(QuadraticFunctionData(0.0, 40.0, 0.0))),
                 0.0,
                 4.0,
                 2.0,
@@ -949,8 +953,8 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -4.50, max = 4.50),
             ramp_limits = (up = 0.015 * 7.5, down = 0.015 * 7.5),
             time_limits = (up = 5.0, down = 3.0),
-            operation_cost = ThreePartCost(
-                QuadraticFunctionData(0.0, 10.0, 0.0),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(InputOutputCurve(QuadraticFunctionData(0.0, 10.0, 0.0))),
                 0.0,
                 1.5,
                 0.75,
@@ -971,8 +975,8 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -0.30, max = 0.30),
             ramp_limits = nothing,
             time_limits = nothing,
-            operation_cost = ThreePartCost(
-                QuadraticFunctionData(0.0, 14.0, 0.0),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(InputOutputCurve(QuadraticFunctionData(0.0, 14.0, 0.0))),
                 0.0,
                 4.0,
                 2.0,
@@ -993,8 +997,8 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -1.275, max = 1.275),
             ramp_limits = (up = 0.02 * 2.2125, down = 0.02 * 2.2125),
             time_limits = (up = 2.0, down = 1.0),
-            operation_cost = ThreePartCost(
-                QuadraticFunctionData(0.0, 15.0, 0.0),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(InputOutputCurve(QuadraticFunctionData(0.0, 15.0, 0.0))),
                 0.0,
                 1.5,
                 0.75,
@@ -1015,8 +1019,8 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -3.90, max = 3.90),
             ramp_limits = (up = 0.012 * 5.2, down = 0.012 * 5.2),
             time_limits = (up = 3.0, down = 2.0),
-            operation_cost = ThreePartCost(
-                QuadraticFunctionData(0.0, 30.0, 0.0),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(InputOutputCurve(QuadraticFunctionData(0.0, 30.0, 0.0))),
                 0.0,
                 3.0,
                 1.5,
@@ -1037,8 +1041,8 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -1.5, max = 1.5),
             ramp_limits = (up = 0.015 * 2.5, down = 0.015 * 2.5),
             time_limits = (up = 2.0, down = 1.0),
-            operation_cost = ThreePartCost(
-                QuadraticFunctionData(0.0, 40.0, 0.0),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(InputOutputCurve(QuadraticFunctionData(0.0, 40.0, 0.0))),
                 0.0,
                 4.0,
                 2.0,
@@ -1059,8 +1063,8 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -4.50, max = 4.50),
             ramp_limits = (up = 0.015 * 7.5, down = 0.015 * 7.5),
             time_limits = (up = 5.0, down = 3.0),
-            operation_cost = ThreePartCost(
-                QuadraticFunctionData(0.0, 10.0, 0.0),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(InputOutputCurve(QuadraticFunctionData(0.0, 10.0, 0.0))),
                 0.0,
                 1.5,
                 0.75,
@@ -1487,7 +1491,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
                 end
             end
         end
-        set_variable!(get_operation_cost(g), PiecewiseLinearPointData(new_pwl_array))
+        set_variable!(get_operation_cost(g), PiecewiseLinearData(new_pwl_array))
     end
 
     # set service participation

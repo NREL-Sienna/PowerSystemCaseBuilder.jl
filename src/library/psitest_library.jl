@@ -211,7 +211,7 @@ function build_c_sys5_re(; kwargs...)
             )
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_re))
-            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearPointData}}()
+            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearData}}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(ORDC_cost_ts[t])[1]
                 forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
@@ -467,7 +467,7 @@ function build_c_sys5_hyd(; kwargs...)
             )
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearPointData}}()
+            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearData}}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(ORDC_cost_ts[t])[1]
                 forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
@@ -636,7 +636,7 @@ function build_c_sys5_hyd_ems(; kwargs...)
             )
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearPointData}}()
+            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearData}}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(ORDC_cost_ts[t])[1]
                 forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
@@ -750,7 +750,7 @@ function build_c_sys5_bat(; kwargs...)
             )
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_bat))
-            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearPointData}}()
+            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearData}}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(ORDC_cost_ts[t])[1]
                 forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
@@ -841,7 +841,7 @@ function build_c_sys5_il(; kwargs...)
             )
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_il))
-            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearPointData}}()
+            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearData}}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(ORDC_cost_ts[t])[1]
                 forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
@@ -994,8 +994,8 @@ function build_sys_ramp_testing(; kwargs...)
             reactive_power_limits = nothing,
             ramp_limits = nothing,
             time_limits = nothing,
-            operation_cost = PSY.ThreePartCost(
-                QuadraticFunctionData(0.0, 14.0, 0.0),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(InputOutputCurve(QuadraticFunctionData(0.0, 14.0, 0.0))),
                 0.0,
                 4.0,
                 2.0,
@@ -1016,8 +1016,8 @@ function build_sys_ramp_testing(; kwargs...)
             reactive_power_limits = nothing,
             ramp_limits = (up = 0.010625 * 2.0, down = 0.010625 * 2.0),
             time_limits = nothing,
-            operation_cost = PSY.ThreePartCost(
-                QuadraticFunctionData(0.0, 15.0, 0.0),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(InputOutputCurve(QuadraticFunctionData(0.0, 15.0, 0.0))),
                 0.0,
                 1.5,
                 0.75,
@@ -1179,7 +1179,7 @@ function build_c_sys5_uc(; kwargs...)
         end
 
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_uc))
-            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearPointData}}()
+            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearData}}()
             for t in 1:2
                 ini_time = timestamp(ORDC_cost_ts[t])[1]
                 forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
@@ -1291,7 +1291,7 @@ function build_c_sys5_uc_non_spin(; kwargs...)
         end
 
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_uc))
-            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearPointData}}()
+            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearData}}()
             for t in 1:2
                 ini_time = timestamp(ORDC_cost_ts[t])[1]
                 forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
@@ -1431,7 +1431,7 @@ function build_c_sys5_uc_re(; kwargs...)
         end
 
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_uc))
-            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearPointData}}()
+            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearData}}()
             for t in 1:2
                 ini_time = timestamp(ORDC_cost_ts[t])[1]
                 forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
@@ -2304,7 +2304,7 @@ function build_sos_test_sys(; kwargs...)
             time_limits = nothing,
             ramp_limits = nothing,
             operation_cost = PSY.ThreePartCost(
-                PiecewiseLinearPointData(
+                PiecewiseLinearData(
                     [(22.0, 1122.43), (33.0, 1617.43), (44.0, 1742.48), (55.0, 2075.88)]),
                 0.0,
                 5665.23,
@@ -2327,7 +2327,7 @@ function build_sos_test_sys(; kwargs...)
             time_limits = nothing,
             ramp_limits = nothing,
             operation_cost = PSY.ThreePartCost(
-                PiecewiseLinearPointData(
+                PiecewiseLinearData(
                     [
                     (62.0, 1500.19),
                     (92.9, 2132.59),
@@ -2399,7 +2399,7 @@ function build_pwl_test_sys(; kwargs...)
             time_limits = nothing,
             ramp_limits = nothing,
             operation_cost = PSY.ThreePartCost(
-                PiecewiseLinearPointData([
+                PiecewiseLinearData([
                     (22.0, 589.99),
                     (33.0, 884.99),
                     (44.0, 1210.04),
@@ -2426,7 +2426,7 @@ function build_pwl_test_sys(; kwargs...)
             time_limits = nothing,
             ramp_limits = nothing,
             operation_cost = PSY.ThreePartCost(
-                PiecewiseLinearPointData([
+                PiecewiseLinearData([
                     (62.0, 1264.80),
                     (93.0, 1897.20),
                     (124.0, 2594.4787),
@@ -2483,8 +2483,8 @@ function build_duration_test_sys(; kwargs...)
             reactive_power_limits = nothing,
             ramp_limits = nothing,
             time_limits = (up = 4, down = 2),
-            operation_cost = PSY.ThreePartCost(
-                QuadraticFunctionData(0.0, 14.0, 0.0),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(InputOutputCurve(QuadraticFunctionData(0.0, 14.0, 0.0))),
                 0.0,
                 4.0,
                 2.0,
@@ -2506,8 +2506,8 @@ function build_duration_test_sys(; kwargs...)
             reactive_power_limits = nothing,
             ramp_limits = nothing,
             time_limits = (up = 6, down = 4),
-            operation_cost = PSY.ThreePartCost(
-                QuadraticFunctionData(0.0, 15.0, 0.0),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(InputOutputCurve(QuadraticFunctionData(0.0, 15.0, 0.0))),
                 0.0,
                 1.5,
                 0.75,
@@ -2586,13 +2586,13 @@ function build_pwl_marketbid_sys(; kwargs...)
     DA_load_forecast = Dict{Dates.DateTime, TimeSeries.TimeArray}()
     market_bid_gen1_data = Dict(
         ini_time => [
-            PiecewiseLinearPointData([
+            PiecewiseLinearData([
                 (22.0, 589.99),
                 (33.0, 884.99),
                 (44.0, 1210.04),
                 (55.0, 1543.44),
             ]),
-            PiecewiseLinearPointData([
+            PiecewiseLinearData([
                 (22.0, 589.99),
                 (33.0, 884.99),
                 (44.0, 1210.04),
@@ -2600,13 +2600,13 @@ function build_pwl_marketbid_sys(; kwargs...)
             ]),
         ],
         ini_time + Hour(1) => [
-            PiecewiseLinearPointData([
+            PiecewiseLinearData([
                 (22.0, 589.99),
                 (33.0, 884.99),
                 (44.0, 1210.04),
                 (55.0, 1543.44),
             ]),
-            PiecewiseLinearPointData([
+            PiecewiseLinearData([
                 (22.0, 589.99),
                 (33.0, 884.99),
                 (44.0, 1210.04),
@@ -2621,13 +2621,13 @@ function build_pwl_marketbid_sys(; kwargs...)
     )
     market_bid_gen2_data = Dict(
         ini_time => [
-            PiecewiseLinearPointData([
+            PiecewiseLinearData([
                 (5.0, 0.0),
                 (7.33, 290.1),
                 (9.67, 582.72),
                 (12.0, 894.1),
             ]),
-            PiecewiseLinearPointData([
+            PiecewiseLinearData([
                 (5.0, 0.0),
                 (7.33, 300.1),
                 (9.67, 600.72),
@@ -2635,13 +2635,13 @@ function build_pwl_marketbid_sys(; kwargs...)
             ]),
         ],
         ini_time + Hour(1) => [
-            PiecewiseLinearPointData([
+            PiecewiseLinearData([
                 (5.0, 0.0),
                 (7.33, 290.1),
                 (9.67, 582.72),
                 (12.0, 894.1),
             ]),
-            PiecewiseLinearPointData([
+            PiecewiseLinearData([
                 (5.0, 0.0),
                 (7.33, 300.1),
                 (9.67, 600.72),
@@ -2885,7 +2885,7 @@ function build_c_sys5_bat_ems(; kwargs...)
             add_time_series!(c_sys5_bat, serv, Deterministic("requirement", forecast_data))
         end
         for (ix, serv) in enumerate(get_components(ReserveDemandCurve, c_sys5_bat))
-            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearPointData}}()
+            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearData}}()
             for t in 1:2
                 ini_time = timestamp(ORDC_cost_ts[t])[1]
                 forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
@@ -2964,8 +2964,9 @@ function build_c_sys5_hybrid(; kwargs...)
         reactive_power_limits = (min = -2.0, max = 2.0),
         base_power = 100.0,
         storage_target = 0.2,
-        operation_cost = PSY.StorageManagementCost(;
-            variable = PSY.LinearFunctionData(0.0),
+        operation_cost = PSY.StorageCost(;
+            charge_variable_cost = PSY.LinearFunctionData(0.0),
+            discharge_variable_cost = PSY.LinearFunctionData(0.0),
             fixed = 0.0,
             start_up = 0.0,
             shut_down = 0.0,
@@ -3146,8 +3147,9 @@ function build_c_sys5_hybrid_uc(; kwargs...)
         reactive_power_limits = (min = -2.0, max = 2.0),
         base_power = 100.0,
         storage_target = 0.2,
-        operation_cost = PSY.StorageManagementCost(;
-            variable = PSY.LinearFunctionData(0.0),
+        operation_cost = PSY.StorageCost(;
+            charge_variable_cost = PSY.LinearFunctionData(0.0),
+            discharge_variable_cost = PSY.LinearFunctionData(0.0),
             fixed = 0.0,
             start_up = 0.0,
             shut_down = 0.0,
@@ -3273,8 +3275,9 @@ function build_c_sys5_hybrid_ed(; kwargs...)
         reactive_power_limits = (min = -2.0, max = 2.0),
         base_power = 100.0,
         storage_target = 0.2,
-        operation_cost = PSY.StorageManagementCost(;
-            variable = PSY.LinearFunctionData(0.0),
+        operation_cost = PSY.StorageCost(;
+            charge_variable_cost = PSY.LinearFunctionData(0.0),
+            discharge_variable_cost = PSY.LinearFunctionData(0.0),
             fixed = 0.0,
             start_up = 0.0,
             shut_down = 0.0,
@@ -3417,8 +3420,9 @@ function build_hydro_test_case_b_sys(; kwargs...)
         reactive_power_limits = (min = 0.0, max = 7.0),
         ramp_limits = (up = 7.0, down = 7.0),
         time_limits = nothing,
-        operation_cost = PSY.StorageManagementCost(;
-            variable = LinearFunctionData(0.15),
+        operation_cost = PSY.StorageCost(;
+            charge_variable_cost = LinearFunctionData(0.15),
+            discharge_variable_cost = LinearFunctionData(0.15),
             fixed = 0.0,
             start_up = 0.0,
             shut_down = 0.0,
@@ -3479,8 +3483,9 @@ function build_hydro_test_case_c_sys(; kwargs...)
         reactive_power_limits = (min = 0.0, max = 7.0),
         ramp_limits = (up = 7.0, down = 7.0),
         time_limits = nothing,
-        operation_cost = PSY.StorageManagementCost(;
-            variable = LinearFunctionData(0.15),
+        operation_cost = PSY.StorageCost(;
+            charge_variable_cost = LinearFunctionData(0.15),
+            discharge_variable_cost = LinearFunctionData(0.15),
             fixed = 0.0,
             start_up = 0.0,
             shut_down = 0.0,
@@ -3541,8 +3546,9 @@ function build_hydro_test_case_d_sys(; kwargs...)
         reactive_power_limits = (min = 0.0, max = 7.0),
         ramp_limits = (up = 7.0, down = 7.0),
         time_limits = nothing,
-        operation_cost = PSY.StorageManagementCost(;
-            variable = LinearFunctionData(0.15),
+        operation_cost = PSY.StorageCost(;
+            charge_variable_cost = LinearFunctionData(0.15),
+            discharge_variable_cost = LinearFunctionData(0.15),
             fixed = 0.0,
             start_up = 0.0,
             shut_down = 0.0,
@@ -3603,8 +3609,9 @@ function build_hydro_test_case_e_sys(; kwargs...)
         reactive_power_limits = (min = 0.0, max = 7.0),
         ramp_limits = (up = 7.0, down = 7.0),
         time_limits = nothing,
-        operation_cost = PSY.StorageManagementCost(;
-            variable = LinearFunctionData(0.15),
+        operation_cost = PSY.StorageCost(;
+            charge_variable_cost = LinearFunctionData(0.15),
+            discharge_variable_cost = LinearFunctionData(0.15),
             fixed = 0.0,
             start_up = 0.0,
             shut_down = 0.0,
@@ -3665,8 +3672,9 @@ function build_hydro_test_case_f_sys(; kwargs...)
         reactive_power_limits = (min = 0.0, max = 7.0),
         ramp_limits = (up = 7.0, down = 7.0),
         time_limits = nothing,
-        operation_cost = PSY.StorageManagementCost(;
-            variable = LinearFunctionData(0.15),
+        operation_cost = PSY.StorageCost(;
+            charge_variable_cost = LinearFunctionData(0.15),
+            discharge_variable_cost = LinearFunctionData(0.15),
             fixed = 0.0,
             start_up = 0.0,
             shut_down = 0.0,
@@ -3725,7 +3733,7 @@ function build_batt_test_case_b_sys(; kwargs...)
         PrimeMovers.WT,
         (min = -0.800, max = 0.800),
         1.0,
-        TwoPartCost(LinearFunctionData(0.220), 0.0),
+        RenewableGenerationCost(CostCurve(InputOutputCurve(LinearFunctionData(0.220)))),
         100.0,
     )
 
@@ -3745,8 +3753,9 @@ function build_batt_test_case_b_sys(; kwargs...)
         reactive_power_limits = (min = -2.0, max = 2.0),
         base_power = 100.0,
         storage_target = 0.2,
-        operation_cost = PSY.StorageManagementCost(;
-            variable = PSY.LinearFunctionData(0.0),
+        operation_cost = PSY.StorageCost(;
+            charge_variable_cost = LinearFunctionData(0.0),
+            discharge_variable_cost = LinearFunctionData(0.0),
             fixed = 0.0,
             start_up = 0.0,
             shut_down = 0.0,
@@ -3800,7 +3809,7 @@ function build_batt_test_case_c_sys(; kwargs...)
         PrimeMovers.WT,
         (min = -0.800, max = 0.800),
         1.0,
-        TwoPartCost(LinearFunctionData(0.220), 0.0),
+        RenewableGenerationCost(CostCurve(InputOutputCurve(LinearFunctionData(0.220)))),
         100.0,
     )
 
@@ -3820,8 +3829,9 @@ function build_batt_test_case_c_sys(; kwargs...)
         reactive_power_limits = (min = -2.0, max = 2.0),
         base_power = 100.0,
         storage_target = 0.2,
-        operation_cost = PSY.StorageManagementCost(;
-            variable = PSY.LinearFunctionData(0.0),
+        operation_cost = PSY.StorageCost(;
+            charge_variable_cost = LinearFunctionData(0.0),
+            discharge_variable_cost = LinearFunctionData(0.0),
             fixed = 0.0,
             start_up = 0.0,
             shut_down = 0.0,
@@ -3875,7 +3885,7 @@ function build_batt_test_case_d_sys(; kwargs...)
         PrimeMovers.WT,
         (min = -0.800, max = 0.800),
         1.0,
-        TwoPartCost(LinearFunctionData(0.220), 0.0),
+        RenewableGenerationCost(CostCurve(InputOutputCurve(LinearFunctionData(0.220)))),
         100.0,
     )
 
@@ -3895,8 +3905,9 @@ function build_batt_test_case_d_sys(; kwargs...)
         reactive_power_limits = (min = -2.0, max = 2.0),
         base_power = 100.0,
         storage_target = 0.2,
-        operation_cost = PSY.StorageManagementCost(;
-            variable = PSY.LinearFunctionData(0.0),
+        operation_cost = PSY.StorageCost(;
+            charge_variable_cost = LinearFunctionData(0.0),
+            discharge_variable_cost = LinearFunctionData(0.0),
             fixed = 0.0,
             start_up = 0.0,
             shut_down = 0.0,
@@ -3950,7 +3961,7 @@ function build_batt_test_case_e_sys(; kwargs...)
         PrimeMovers.WT,
         (min = -0.800, max = 0.800),
         1.0,
-        TwoPartCost(LinearFunctionData(0.220), 0.0),
+        RenewableGenerationCost(CostCurve(InputOutputCurve(LinearFunctionData(0.220)))),
         100.0,
     )
 
@@ -3970,8 +3981,9 @@ function build_batt_test_case_e_sys(; kwargs...)
         reactive_power_limits = (min = -2.0, max = 2.0),
         base_power = 100.0,
         storage_target = 0.2,
-        operation_cost = PSY.StorageManagementCost(;
-            variable = PSY.LinearFunctionData(0.0),
+        operation_cost = PSY.StorageCost(;
+            charge_variable_cost = LinearFunctionData(0.0),
+            discharge_variable_cost = LinearFunctionData(0.0),
             fixed = 0.0,
             start_up = 0.0,
             shut_down = 0.0,
@@ -4025,7 +4037,7 @@ function build_batt_test_case_f_sys(; kwargs...)
         PrimeMovers.WT,
         (min = -0.800, max = 0.800),
         1.0,
-        TwoPartCost(LinearFunctionData(0.220), 0.0),
+        RenewableGenerationCost(CostCurve(InputOutputCurve(LinearFunctionData(0.220)))),
         100.0,
     )
 
@@ -4045,8 +4057,9 @@ function build_batt_test_case_f_sys(; kwargs...)
         reactive_power_limits = (min = -2.0, max = 2.0),
         base_power = 100.0,
         storage_target = 0.2,
-        operation_cost = PSY.StorageManagementCost(;
-            variable = PSY.LinearFunctionData(0.0),
+        operation_cost = PSY.StorageCost(;
+            charge_variable_cost = LinearFunctionData(0.0),
+            discharge_variable_cost = LinearFunctionData(0.0),
             fixed = 0.0,
             start_up = 0.0,
             shut_down = 0.0,
