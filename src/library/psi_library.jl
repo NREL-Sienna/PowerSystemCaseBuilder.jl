@@ -290,7 +290,7 @@ function build_5_bus_hydro_uc_sys_targets(; kwargs...)
     else
         c_sys5_hy_uc = PSY.System(rawsys; sys_kwargs...)
     end
-    cost = PSY.StorageCost(;
+    cost = PSY.HydroGenerationCost(;
         charge_variable_cost = CostCurve(InputOutputCurve(LinearFunctionData(0.15))),
         discharge_variable_cost = CostCurve(InputOutputCurve(LinearFunctionData(0.15))),
         fixed = 0.0,
@@ -350,15 +350,7 @@ function build_5_bus_hydro_ed_sys_targets(; kwargs...)
         time_series_in_memory = true,
         sys_kwargs...,
     )
-    cost = PSY.StorageCost(;
-        charge_variable_cost = CostCurve(InputOutputCurve(LinearFunctionData(0.15))),
-        discharge_variable_cost = CostCurve(InputOutputCurve(LinearFunctionData(0.15))),
-        fixed = 0.0,
-        start_up = 0.0,
-        shut_down = 0.0,
-        energy_shortage_cost = 50.0,
-        energy_surplus_cost = 0.0,
-    )
+    cost = HydroGenerationCost(CostCurve(InputOutputCurve(LinearFunctionData(0.15))), 0.0)
     for hy in get_components(HydroEnergyReservoir, c_sys5_hy_ed)
         set_operation_cost!(hy, cost)
     end
@@ -412,15 +404,7 @@ function build_5_bus_hydro_wk_sys_targets(; kwargs...)
         time_series_in_memory = true,
         sys_kwargs...,
     )
-    cost = PSY.StorageCost(;
-        charge_variable_cost = CostCurve(InputOutputCurve(LinearFunctionData(0.15))),
-        discharge_variable_cost = CostCurve(InputOutputCurve(LinearFunctionData(0.15))),
-        fixed = 0.0,
-        start_up = 0.0,
-        shut_down = 0.0,
-        energy_shortage_cost = 50.0,
-        energy_surplus_cost = 0.0,
-    )
+    cost = HydroGenerationCost(CostCurve(InputOutputCurve(LinearFunctionData(0.15))), 0.0)
     for hy in get_components(HydroEnergyReservoir, c_sys5_hy_wk)
         set_operation_cost!(hy, cost)
     end
