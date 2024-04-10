@@ -645,14 +645,6 @@ function build_modified_RTS_GMLC_RT_sys_noForecast(; kwargs...)
     return sys
 end
 
-function build_modified_tamu_ercot_da_sys(; kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
-    data_dir = get_raw_data(; kwargs...)
-    system_path = joinpath(data_dir, "DA_sys.json")
-    sys = System(system_path; sys_kwargs...)
-    return sys
-end
-
 function build_two_zone_5_bus(; kwargs...)
     ## System with 10 buses ######################################################
     """

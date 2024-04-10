@@ -68,23 +68,3 @@ function unzip(::Type{Windows}, filename, directory)
     end
     @assert success(`$path_7z x $filename -y -o$directory`) "Unable to extract $filename to $directory"
 end
-
-function download_modified_tamu_ercot_da(; kwargs...)
-    directory = abspath(normpath(joinpath(PACKAGE_DIR, "data")))
-    data = joinpath(directory, "tamu_ercot")
-    # This is temporary place for hosting the dataset.
-    data_urls = Dict(
-        "DA_sys.json" => "https://www.dropbox.com/sh/uzohjqzoyinyyas/AAC40qKEowAbGax-yYiB_4wna/DA_sys.json?dl=1",
-        "DA_sys_validation_descriptors.json" => "https://www.dropbox.com/sh/uzohjqzoyinyyas/AADWU21wuWW62Fl5SP4ubo8Va/DA_sys_validation_descriptors.json?dl=1",
-        "DA_sys_time_series_storage.h5" => "https://www.dropbox.com/sh/uzohjqzoyinyyas/AADURazsNKxO5l4_1wBiW8qsa/DA_sys_time_series_storage.h5?dl=1",
-    )
-    if !isdir(data)
-        @info "Downloading TAMU ERCOT dataset."
-        mkpath(data)
-        for (file, urls) in data_urls
-            tempfilename = Base.download(urls)
-            mv(tempfilename, joinpath(data, file); force = true)
-        end
-    end
-    return data
-end
