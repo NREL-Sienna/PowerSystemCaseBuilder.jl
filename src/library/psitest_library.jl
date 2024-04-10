@@ -2303,9 +2303,17 @@ function build_sos_test_sys(; kwargs...)
             reactive_power_limits = nothing,
             time_limits = nothing,
             ramp_limits = nothing,
-            operation_cost = PSY.ThreePartCost(
-                PiecewiseLinearData(
-                    [(22.0, 1122.43), (33.0, 1617.43), (44.0, 1742.48), (55.0, 2075.88)]),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(
+                    InputOutputCurve(
+                        PiecewiseLinearData(
+                            [
+                            (22.0, 1122.43),
+                            (33.0, 1617.43),
+                            (44.0, 1742.48),
+                            (55.0, 2075.88),
+                        ])),
+                ),
                 0.0,
                 5665.23,
                 0.0,
@@ -2326,14 +2334,16 @@ function build_sos_test_sys(; kwargs...)
             reactive_power_limits = nothing,
             time_limits = nothing,
             ramp_limits = nothing,
-            operation_cost = PSY.ThreePartCost(
-                PiecewiseLinearData(
-                    [
-                    (62.0, 1500.19),
-                    (92.9, 2132.59),
-                    (124.0, 2829.875),
-                    (155.0, 2831.444),
-                ]),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(
+                    InputOutputCurve(
+                        PiecewiseLinearData([
+                            (62.0, 1500.19),
+                            (92.9, 2132.59),
+                            (124.0, 2829.875),
+                            (155.0, 2831.444),
+                        ])),
+                ),
                 0.0,
                 5665.23,
                 0.0,
@@ -2398,13 +2408,16 @@ function build_pwl_test_sys(; kwargs...)
             reactive_power_limits = nothing,
             time_limits = nothing,
             ramp_limits = nothing,
-            operation_cost = PSY.ThreePartCost(
-                PiecewiseLinearData([
-                    (22.0, 589.99),
-                    (33.0, 884.99),
-                    (44.0, 1210.04),
-                    (55.0, 1543.44),
-                ]),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(
+                    InputOutputCurve(
+                        PiecewiseLinearData([
+                            (22.0, 589.99),
+                            (33.0, 884.99),
+                            (44.0, 1210.04),
+                            (55.0, 1543.44),
+                        ])),
+                ),
                 532.44,
                 5665.23,
                 0.0,
@@ -2425,13 +2438,16 @@ function build_pwl_test_sys(; kwargs...)
             reactive_power_limits = nothing,
             time_limits = nothing,
             ramp_limits = nothing,
-            operation_cost = PSY.ThreePartCost(
-                PiecewiseLinearData([
-                    (62.0, 1264.80),
-                    (93.0, 1897.20),
-                    (124.0, 2594.4787),
-                    (155.0, 3433.04),
-                ]),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(
+                    InputOutputCurve(
+                        PiecewiseLinearData([
+                            (62.0, 1264.80),
+                            (93.0, 1897.20),
+                            (124.0, 2594.4787),
+                            (155.0, 3433.04),
+                        ])),
+                ),
                 235.397,
                 5665.23,
                 0.0,
@@ -3588,7 +3604,10 @@ function build_hydro_test_case_e_sys(; kwargs...)
         reactive_power_limits = (min = 0.0, max = 7.0),
         ramp_limits = (up = 7.0, down = 7.0),
         time_limits = nothing,
-        operation_cost = HydroGenerationCost(CostCurve(InputOutputCurve(LinearFunctionData(0.15))), 0.0),
+        operation_cost = HydroGenerationCost(
+            CostCurve(InputOutputCurve(LinearFunctionData(0.15))),
+            0.0,
+        ),
         base_power = 100.0,
         storage_capacity = 50.0,
         inflow = 4.0,
@@ -3643,7 +3662,10 @@ function build_hydro_test_case_f_sys(; kwargs...)
         reactive_power_limits = (min = 0.0, max = 7.0),
         ramp_limits = (up = 7.0, down = 7.0),
         time_limits = nothing,
-        operation_cost = HydroGenerationCost(CostCurve(InputOutputCurve(LinearFunctionData(0.15))), 0.0),
+        operation_cost = HydroGenerationCost(
+            CostCurve(InputOutputCurve(LinearFunctionData(0.15))),
+            0.0,
+        ),
         base_power = 100.0,
         storage_capacity = 50.0,
         inflow = 4.0,
