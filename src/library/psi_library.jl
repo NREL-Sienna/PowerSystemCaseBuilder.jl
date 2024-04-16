@@ -290,15 +290,7 @@ function build_5_bus_hydro_uc_sys_targets(; kwargs...)
     else
         c_sys5_hy_uc = PSY.System(rawsys; sys_kwargs...)
     end
-    cost = PSY.HydroGenerationCost(;
-        charge_variable_cost = CostCurve(InputOutputCurve(LinearFunctionData(0.15))),
-        discharge_variable_cost = CostCurve(InputOutputCurve(LinearFunctionData(0.15))),
-        fixed = 0.0,
-        start_up = 0.0,
-        shut_down = 0.0,
-        energy_shortage_cost = 50.0,
-        energy_surplus_cost = 0.0,
-    )
+    cost = HydroGenerationCost(CostCurve(InputOutputCurve(LinearFunctionData(0.15))), 0.0)
     for hy in get_components(HydroEnergyReservoir, c_sys5_hy_uc)
         set_operation_cost!(hy, cost)
     end
@@ -1439,7 +1431,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         main_sys,
     )
         noise_values = rand(MersenneTwister(COST_PERTURBATION_NOISE_SEED), 1_000_000)
-        old_pwl_array = get_variable(get_operation_cost(g)) |> get_points
+        old_pwl_array = get_points(get_value_curve(get_variable(get_operation_cost(g))))
         new_pwl_array = similar(old_pwl_array)
         for (ix, (x, y)) in enumerate(old_pwl_array)
             if ix ∈ [1, length(old_pwl_array)]
@@ -1467,7 +1459,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
                 end
             end
         end
-        set_variable!(get_operation_cost(g), PiecewiseLinearData(new_pwl_array))
+        set_variable!(get_operation_cost(g), CostCurve(PiecewisePointCurve(new_pwl_array)))
     end
 
     # set service participation
