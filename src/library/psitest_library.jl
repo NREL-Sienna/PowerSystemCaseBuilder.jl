@@ -211,7 +211,8 @@ function build_c_sys5_re(; kwargs...)
             )
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_re))
-            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearData}}()
+            forecast_data =
+                SortedDict{Dates.DateTime, Vector{CostCurve{PiecewisePointCurve}}}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(ORDC_cost_ts[t])[1]
                 forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
@@ -467,7 +468,8 @@ function build_c_sys5_hyd(; kwargs...)
             )
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearData}}()
+            forecast_data =
+                SortedDict{Dates.DateTime, Vector{CostCurve{PiecewisePointCurve}}}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(ORDC_cost_ts[t])[1]
                 forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
@@ -636,7 +638,8 @@ function build_c_sys5_hyd_ems(; kwargs...)
             )
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearData}}()
+            forecast_data =
+                SortedDict{Dates.DateTime, Vector{CostCurve{PiecewisePointCurve}}}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(ORDC_cost_ts[t])[1]
                 forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
@@ -750,7 +753,8 @@ function build_c_sys5_bat(; kwargs...)
             )
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_bat))
-            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearData}}()
+            forecast_data =
+                SortedDict{Dates.DateTime, Vector{CostCurve{PiecewisePointCurve}}}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(ORDC_cost_ts[t])[1]
                 forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
@@ -841,7 +845,8 @@ function build_c_sys5_il(; kwargs...)
             )
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_il))
-            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearData}}()
+            forecast_data =
+                SortedDict{Dates.DateTime, Vector{CostCurve{PiecewisePointCurve}}}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(ORDC_cost_ts[t])[1]
                 forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
@@ -1179,7 +1184,8 @@ function build_c_sys5_uc(; kwargs...)
         end
 
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_uc))
-            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearData}}()
+            forecast_data =
+                SortedDict{Dates.DateTime, Vector{CostCurve{PiecewisePointCurve}}}()
             for t in 1:2
                 ini_time = timestamp(ORDC_cost_ts[t])[1]
                 forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
@@ -1291,7 +1297,8 @@ function build_c_sys5_uc_non_spin(; kwargs...)
         end
 
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_uc))
-            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearData}}()
+            forecast_data =
+                SortedDict{Dates.DateTime, Vector{CostCurve{PiecewisePointCurve}}}()
             for t in 1:2
                 ini_time = timestamp(ORDC_cost_ts[t])[1]
                 forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
@@ -1431,7 +1438,8 @@ function build_c_sys5_uc_re(; kwargs...)
         end
 
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_uc))
-            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearData}}()
+            forecast_data =
+                SortedDict{Dates.DateTime, Vector{CostCurve{PiecewisePointCurve}}}()
             for t in 1:2
                 ini_time = timestamp(ORDC_cost_ts[t])[1]
                 forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
@@ -2901,7 +2909,8 @@ function build_c_sys5_bat_ems(; kwargs...)
             add_time_series!(c_sys5_bat, serv, Deterministic("requirement", forecast_data))
         end
         for (ix, serv) in enumerate(get_components(ReserveDemandCurve, c_sys5_bat))
-            forecast_data = SortedDict{Dates.DateTime, Vector{PiecewiseLinearData}}()
+            forecast_data =
+                SortedDict{Dates.DateTime, Vector{CostCurve{PiecewisePointCurve}}}()
             for t in 1:2
                 ini_time = timestamp(ORDC_cost_ts[t])[1]
                 forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
