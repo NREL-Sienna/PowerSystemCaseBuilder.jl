@@ -290,7 +290,7 @@ function build_5_bus_hydro_uc_sys_targets(; kwargs...)
     else
         c_sys5_hy_uc = PSY.System(rawsys; sys_kwargs...)
     end
-    cost = HydroGenerationCost(CostCurve(InputOutputCurve(LinearFunctionData(0.15))), 0.0)
+    cost = HydroGenerationCost(CostCurve(LinearCurve(0.15)), 0.0)
     for hy in get_components(HydroEnergyReservoir, c_sys5_hy_uc)
         set_operation_cost!(hy, cost)
     end
@@ -342,7 +342,7 @@ function build_5_bus_hydro_ed_sys_targets(; kwargs...)
         time_series_in_memory = true,
         sys_kwargs...,
     )
-    cost = HydroGenerationCost(CostCurve(InputOutputCurve(LinearFunctionData(0.15))), 0.0)
+    cost = HydroGenerationCost(CostCurve(LinearCurve(0.15)), 0.0)
     for hy in get_components(HydroEnergyReservoir, c_sys5_hy_ed)
         set_operation_cost!(hy, cost)
     end
@@ -396,7 +396,7 @@ function build_5_bus_hydro_wk_sys_targets(; kwargs...)
         time_series_in_memory = true,
         sys_kwargs...,
     )
-    cost = HydroGenerationCost(CostCurve(InputOutputCurve(LinearFunctionData(0.15))), 0.0)
+    cost = HydroGenerationCost(CostCurve(LinearCurve(0.15)), 0.0)
     for hy in get_components(HydroEnergyReservoir, c_sys5_hy_wk)
         set_operation_cost!(hy, cost)
     end
@@ -834,7 +834,7 @@ function build_two_zone_5_bus(; kwargs...)
             time_limits = nothing,
             # Arguments
             operation_cost = ThermalGenerationCost(
-                CostCurve(InputOutputCurve(QuadraticFunctionData(0.0, 14.0, 0.0))),
+                CostCurve(QuadraticCurve(0.0, 14.0, 0.0)),
                 0.0,
                 4.0,
                 2.0,
@@ -856,7 +856,7 @@ function build_two_zone_5_bus(; kwargs...)
             ramp_limits = (up = 0.02 * 2.2125, down = 0.02 * 2.2125),
             time_limits = (up = 2.0, down = 1.0),
             operation_cost = ThermalGenerationCost(
-                CostCurve(InputOutputCurve(QuadraticFunctionData(0.0, 15.0, 0.0))),
+                CostCurve(QuadraticCurve(0.0, 15.0, 0.0)),
                 0.0,
                 1.5,
                 0.75,
@@ -878,7 +878,7 @@ function build_two_zone_5_bus(; kwargs...)
             ramp_limits = (up = 0.012 * 5.2, down = 0.012 * 5.2),
             time_limits = (up = 3.0, down = 2.0),
             operation_cost = ThermalGenerationCost(
-                CostCurve(InputOutputCurve(QuadraticFunctionData(0.0, 30.0, 0.0))),
+                CostCurve(QuadraticCurve(0.0, 30.0, 0.0)),
                 0.0,
                 3.0,
                 1.5,
@@ -900,7 +900,7 @@ function build_two_zone_5_bus(; kwargs...)
             ramp_limits = (up = 0.015 * 2.5, down = 0.015 * 2.5),
             time_limits = (up = 2.0, down = 1.0),
             operation_cost = ThermalGenerationCost(
-                CostCurve(InputOutputCurve(QuadraticFunctionData(0.0, 40.0, 0.0))),
+                CostCurve(QuadraticCurve(0.0, 40.0, 0.0)),
                 0.0,
                 4.0,
                 2.0,
@@ -922,7 +922,7 @@ function build_two_zone_5_bus(; kwargs...)
             ramp_limits = (up = 0.015 * 7.5, down = 0.015 * 7.5),
             time_limits = (up = 5.0, down = 3.0),
             operation_cost = ThermalGenerationCost(
-                CostCurve(InputOutputCurve(QuadraticFunctionData(0.0, 10.0, 0.0))),
+                CostCurve(QuadraticCurve(0.0, 10.0, 0.0)),
                 0.0,
                 1.5,
                 0.75,
@@ -944,7 +944,7 @@ function build_two_zone_5_bus(; kwargs...)
             ramp_limits = nothing,
             time_limits = nothing,
             operation_cost = ThermalGenerationCost(
-                CostCurve(InputOutputCurve(QuadraticFunctionData(0.0, 14.0, 0.0))),
+                CostCurve(QuadraticCurve(0.0, 14.0, 0.0)),
                 0.0,
                 4.0,
                 2.0,
@@ -966,7 +966,7 @@ function build_two_zone_5_bus(; kwargs...)
             ramp_limits = (up = 0.02 * 2.2125, down = 0.02 * 2.2125),
             time_limits = (up = 2.0, down = 1.0),
             operation_cost = ThermalGenerationCost(
-                CostCurve(InputOutputCurve(QuadraticFunctionData(0.0, 15.0, 0.0))),
+                CostCurve(QuadraticCurve(0.0, 15.0, 0.0)),
                 0.0,
                 1.5,
                 0.75,
@@ -988,7 +988,7 @@ function build_two_zone_5_bus(; kwargs...)
             ramp_limits = (up = 0.012 * 5.2, down = 0.012 * 5.2),
             time_limits = (up = 3.0, down = 2.0),
             operation_cost = ThermalGenerationCost(
-                CostCurve(InputOutputCurve(QuadraticFunctionData(0.0, 30.0, 0.0))),
+                CostCurve(QuadraticCurve(0.0, 30.0, 0.0)),
                 0.0,
                 3.0,
                 1.5,
@@ -1010,7 +1010,7 @@ function build_two_zone_5_bus(; kwargs...)
             ramp_limits = (up = 0.015 * 2.5, down = 0.015 * 2.5),
             time_limits = (up = 2.0, down = 1.0),
             operation_cost = ThermalGenerationCost(
-                CostCurve(InputOutputCurve(QuadraticFunctionData(0.0, 40.0, 0.0))),
+                CostCurve(QuadraticCurve(0.0, 40.0, 0.0)),
                 0.0,
                 4.0,
                 2.0,
@@ -1032,7 +1032,7 @@ function build_two_zone_5_bus(; kwargs...)
             ramp_limits = (up = 0.015 * 7.5, down = 0.015 * 7.5),
             time_limits = (up = 5.0, down = 3.0),
             operation_cost = ThermalGenerationCost(
-                CostCurve(InputOutputCurve(QuadraticFunctionData(0.0, 10.0, 0.0))),
+                CostCurve(QuadraticCurve(0.0, 10.0, 0.0)),
                 0.0,
                 1.5,
                 0.75,
