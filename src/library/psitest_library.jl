@@ -3256,6 +3256,7 @@ function build_c_sys5_hybrid_ed(; kwargs...)
     nodes = nodes5()
     thermals = thermal_generators5(nodes)
     loads = loads5(nodes)
+    branches = branches5(nodes)
     renewables = renewable_generators5(nodes)
     _battery(nodes, bus, name) = PSY.BatteryEMS(;
         name = name,
@@ -3306,10 +3307,10 @@ function build_c_sys5_hybrid_ed(; kwargs...)
     c_sys5_hybrid = PSY.System(
         100.0,
         nodes,
-        thermal_generators5(nodes),
-        renewable_generators5(nodes),
-        loads5(nodes),
-        branches5(nodes);
+        thermals,
+        renewables,
+        loads,
+        branches;
         time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
