@@ -1,6 +1,7 @@
 const PACKAGE_DIR = joinpath(dirname(dirname(pathof(PowerSystemCaseBuilder))))
-const DATA_DIR =
-    joinpath(LazyArtifacts.artifact"CaseData", "PowerSystemsTestData-3.0-alpha")
+# const DATA_DIR =
+#     joinpath(LazyArtifacts.artifact"CaseData", "PowerSystemsTestData-3.0-alpha")
+const DATA_DIR = get(ENV, "PSB_DATA_DIR", joinpath(dirname(PACKAGE_DIR), "PowerSystemsTestData"))  # TODO remove before merging! Kludge to use custom test data until https://github.com/NREL-Sienna/PowerSystemCaseBuilder.jl/issues/54 gets resolved
 
 const RTS_DIR = joinpath(LazyArtifacts.artifact"rts", "RTS-GMLC-0.2.2")
 

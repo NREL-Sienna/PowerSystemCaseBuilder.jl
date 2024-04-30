@@ -735,14 +735,6 @@ const SYSTEM_CATALOG = [
         build_function = build_HVDC_TWO_RTO_RTS_5Min_sys,
     ),
     SystemDescriptor(;
-        name = "modified_tamu_ercot_da_system",
-        description = "Modified tamu ercot day ahead system",
-        category = PSISystems,
-        raw_data = joinpath(DATA_DIR, "tamu_ercot"),
-        build_function = build_modified_tamu_ercot_da_sys,
-        download_function = download_modified_tamu_ercot_da,
-    ),
-    SystemDescriptor(;
         name = "psse_ACTIVSg2000_sys",
         description = "PSSE ACTIVSg2000 Test system",
         category = PSSEParsingTestSystems,
