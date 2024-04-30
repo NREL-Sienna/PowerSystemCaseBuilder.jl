@@ -13,7 +13,7 @@ function check_serialized_storage()
     return
 end
 
-function clear_serialized_system(name::String)
+function clear_serialized_systems(name::String)
     seralized_file_extension =
         [".json", "_validation_descriptors.json", "_time_series_storage.h5"]
     file_names = [name * ext for ext in SERIALIZE_FILE_EXTENSIONS]
@@ -28,6 +28,20 @@ function clear_serialized_system(name::String)
     return
 end
 
+function clear_serialized_system(
+    name::String,
+    case_args::Dict{Symbol, <:Any} = Dict{Symbol, Any}(),
+)
+    file_path = get_serialized_filepath(name, case_args)
+
+    if isfile(file_path)
+        @debug "Deleting file at " file_path
+        rm(file_path; force = true)
+    end
+
+    return
+end
+
 function clear_all_serialized_system()
     for dir in SEARCH_DIRS
         @debug "Deleting dir" dir
@@ -37,28 +51,23 @@ function clear_all_serialized_system()
     return
 end
 
-function get_serialization_dir(has_forecasts::Bool, has_reserves::Bool)
-    if has_forecasts && has_reserves
-        return SERIALIZE_FORECASTRESERVE_DIR
-    elseif has_forecasts
-        return SERIALIZE_FORECASTONLY_DIR
-    elseif has_reserves
-        return SERIALIZE_RESERVEONLY_DIR
-    else
-        return SERIALIZE_NOARGS_DIR
-    end
+function get_serialization_dir(case_args::Dict{Symbol, <:Any} = Dict{Symbol, Any}())
+    args_string = join(["$key=$value" for (key, value) in case_args], "_")
+    hash_value = hash(args_string)
+    return joinpath(PACKAGE_DIR, "data", "serialized_system", "$hash_value")
 end
 
-get_serialized_filepath(name::String, has_forecasts::Bool, has_reserves::Bool) =
-    joinpath(get_serialization_dir(has_forecasts, has_reserves), "$(name).json")
+function get_serialized_filepath(
+    name::String,
+    case_args::Dict{Symbol, <:Any} = Dict{Symbol, Any}(),
+)
+    dir = get_serialization_dir(case_args)
+    return joinpath(dir, "$(name).json")
+end
 
-function is_serialized(name::String, has_forecasts::Bool, has_reserves::Bool)
-    file_path = get_serialized_filepath(name, has_forecasts, has_reserves)
-    if isfile(file_path)
-        return true
-    else
-        return false
-    end
+function is_serialized(name::String, case_args::Dict{Symbol, <:Any} = Dict{Symbol, Any}())
+    file_path = get_serialized_filepath(name, case_args)
+    return isfile(file_path)
 end
 
 function get_raw_data(; kwargs...)
@@ -77,4 +86,19 @@ end
 function check_kwargs_psid(; kwargs...)
     psid_kwargs = filter(x -> in(first(x), ACCEPTED_PSID_TEST_SYSTEMS_KWARGS), kwargs)
     return psid_kwargs
+end
+
+"""
+Creates a JSON file informing the user about the meaning of the hash value in the file path
+if it doesn't exist already 
+"""
+function serialize_case_parameters(case_args::Dict{Symbol, <:Any})
+    dir_path = get_serialization_dir(case_args)
+    file_path = joinpath(dir_path, "case_parameters.json")
+
+    if !isfile(file_path)
+        open(file_path, "w") do io
+            JSON3.write(io, case_args)
+        end
+    end
 end

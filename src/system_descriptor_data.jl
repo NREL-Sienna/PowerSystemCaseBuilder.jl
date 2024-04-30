@@ -5,6 +5,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_14bus_pu.jl"),
         build_function = build_c_sys14,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys14_dc",
@@ -12,6 +19,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_14bus_pu.jl"),
         build_function = build_c_sys14_dc,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5",
@@ -19,6 +33,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_pjm",
@@ -26,6 +47,13 @@ const SYSTEM_CATALOG = [
         category = PSISystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_pjm,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_pjm_rt",
@@ -33,6 +61,13 @@ const SYSTEM_CATALOG = [
         category = PSISystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_pjm_rt,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_bat",
@@ -40,6 +75,23 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_bat,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_dc",
@@ -47,6 +99,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_dc,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_ed",
@@ -54,6 +113,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_ed,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_hy",
@@ -61,6 +127,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_hy,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_hy_ed",
@@ -68,6 +141,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_hy_ed,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_hy_ems_ed",
@@ -75,6 +155,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_hy_ems_ed,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_phes_ed",
@@ -82,6 +169,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_phes_ed,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_hy_uc",
@@ -89,6 +183,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_hy_uc,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_hy_ems_uc",
@@ -96,6 +197,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_hy_ems_uc,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_hyd",
@@ -103,6 +211,23 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_hyd,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_hyd_ems",
@@ -110,6 +235,23 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_hyd_ems,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_il",
@@ -117,6 +259,18 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_il,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_ml",
@@ -124,6 +278,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_ml,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_re",
@@ -131,6 +292,23 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_re,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_re_only",
@@ -138,6 +316,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_re_only,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_uc",
@@ -145,6 +330,23 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_uc,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_uc_non_spin",
@@ -152,6 +354,23 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_uc_non_spin,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_uc_re",
@@ -159,6 +378,23 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_uc_re,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_pglib",
@@ -166,6 +402,23 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_pglib,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_pwl_uc",
@@ -173,6 +426,23 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_pwl_uc,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_pwl_ed",
@@ -180,6 +450,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_pwl_ed,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_pwl_ed_nonconvex",
@@ -187,6 +464,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_pwl_ed_nonconvex,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_reg",
@@ -194,6 +478,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_reg,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_radial",
@@ -201,6 +492,23 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_radial,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "sys10_pjm_ac_dc",
@@ -245,6 +553,13 @@ const SYSTEM_CATALOG = [
         category = PSISystems,
         raw_data = joinpath(DATA_DIR, "5-Bus"),
         build_function = build_5_bus_hydro_uc_sys,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "5_bus_hydro_ed_sys",
@@ -266,6 +581,13 @@ const SYSTEM_CATALOG = [
         category = PSISystems,
         raw_data = joinpath(DATA_DIR, "5-Bus"),
         build_function = build_5_bus_hydro_uc_sys_targets,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "5_bus_hydro_ed_sys_with_targets",
@@ -294,6 +616,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "RTS_GMLC"),
         build_function = build_test_RTS_GMLC_sys,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "test_RTS_GMLC_sys_with_hybrid",
@@ -301,6 +630,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "RTS_GMLC"),
         build_function = build_test_RTS_GMLC_sys_with_hybrid,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "RTS_GMLC_DA_sys",
@@ -823,6 +1159,23 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_bat_ems,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_pglib_sim",
@@ -830,6 +1183,18 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_pglib_sim,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_hybrid",
@@ -837,6 +1202,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_hybrid,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_hybrid_uc",
@@ -844,6 +1216,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_hybrid_uc,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "c_sys5_hybrid_ed",
@@ -851,6 +1230,13 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_hybrid_ed,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "5_bus_matpower_DA",
@@ -949,6 +1335,13 @@ const SYSTEM_CATALOG = [
         category = PSIDTestSystems,
         raw_data = joinpath(DATA_DIR, "psid_tests", "psse", "AVRs"),
         build_function = build_psid_psse_test_avr,
+        supported_arguments = [
+            SystemArgument(;
+                name = :avr_type,
+                default = "AC1A",
+                allowed_values = Set(AVAILABLE_PSID_PSSE_AVRS_TEST),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "psid_psse_test_tg",
@@ -956,6 +1349,13 @@ const SYSTEM_CATALOG = [
         category = PSIDTestSystems,
         raw_data = joinpath(DATA_DIR, "psid_tests", "psse", "TGs"),
         build_function = build_psid_psse_test_tg,
+        supported_arguments = [
+            SystemArgument(;
+                name = :tg_type,
+                default = "GAST",
+                allowed_values = Set(AVAILABLE_PSID_PSSE_TGS_TEST),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "psid_psse_test_gen",
@@ -963,6 +1363,13 @@ const SYSTEM_CATALOG = [
         category = PSIDTestSystems,
         raw_data = joinpath(DATA_DIR, "psid_tests", "psse", "GENs"),
         build_function = build_psid_psse_test_gen,
+        supported_arguments = [
+            SystemArgument(;
+                name = :gen_type,
+                default = "GENCLS",
+                allowed_values = Set(AVAILABLE_PSID_PSSE_GENS_TEST),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "psid_psse_test_pss",
@@ -970,6 +1377,13 @@ const SYSTEM_CATALOG = [
         category = PSIDTestSystems,
         raw_data = joinpath(DATA_DIR, "psid_tests", "psse", "PSSs"),
         build_function = build_psid_psse_test_pss,
+        supported_arguments = [
+            SystemArgument(;
+                name = :pss_type,
+                default = "STAB1",
+                allowed_values = Set(AVAILABLE_PSID_PSSE_PSS_TEST),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "psid_test_omib",
@@ -1233,5 +1647,12 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_c_sys5_all_components,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
 ]

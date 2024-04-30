@@ -1,5 +1,4 @@
-function build_c_sys5_pjm(; kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
+function build_c_sys5_pjm(; add_forecasts, raw_data, sys_kwargs...)
     nodes = nodes5()
     c_sys5 = PSY.System(
         100.0,
@@ -87,7 +86,7 @@ function build_c_sys5_pjm(; kwargs...)
 
     bus_dist_fact = Dict("Bus2" => 0.33, "Bus3" => 0.33, "Bus4" => 0.34)
     peak_load = maximum(da_load_time_series_val)
-    if get(kwargs, :add_forecasts, true)
+    if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5))
             set_max_active_power!(l, bus_dist_fact[PSY.get_name(l)] * peak_load / 100)
             add_time_series!(
@@ -114,8 +113,7 @@ function build_c_sys5_pjm(; kwargs...)
     return c_sys5
 end
 
-function build_c_sys5_pjm_rt(; kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
+function build_c_sys5_pjm_rt(; add_forecasts, raw_data, sys_kwargs...)
     nodes = nodes5()
     c_sys5 = PSY.System(
         100.0,
@@ -209,7 +207,7 @@ function build_c_sys5_pjm_rt(; kwargs...)
     rt_timearray = collapse(rt_timearray, Minute(5), first, TimeSeries.mean)
     bus_dist_fact = Dict("Bus2" => 0.33, "Bus3" => 0.33, "Bus4" => 0.34)
     peak_load = maximum(rt_load_time_series_val)
-    if get(kwargs, :add_forecasts, true)
+    if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5))
             set_max_active_power!(l, bus_dist_fact[PSY.get_name(l)] * peak_load / 100)
             rt_timearray =
@@ -236,20 +234,18 @@ function build_c_sys5_pjm_rt(; kwargs...)
     return c_sys5
 end
 
-function build_5_bus_hydro_uc_sys(; kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
-    data_dir = get_raw_data(; kwargs...)
+function build_5_bus_hydro_uc_sys(; add_forecasts, raw_data, sys_kwargs...)
     rawsys = PSY.PowerSystemTableData(
-        data_dir,
+        raw_data,
         100.0,
-        joinpath(data_dir, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(data_dir, "generator_mapping.yaml"),
+        joinpath(raw_data, "user_descriptors.yaml");
+        generator_mapping_file = joinpath(raw_data, "generator_mapping.yaml"),
     )
-    if get(kwargs, :add_forecasts, true)
+    if add_forecasts
         c_sys5_hy_uc = PSY.System(
             rawsys;
             timeseries_metadata_file = joinpath(
-                data_dir,
+                raw_data,
                 "5bus_ts",
                 "7day",
                 "timeseries_pointers_da_7day.json",
@@ -265,20 +261,18 @@ function build_5_bus_hydro_uc_sys(; kwargs...)
     return c_sys5_hy_uc
 end
 
-function build_5_bus_hydro_uc_sys_targets(; kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
-    data_dir = get_raw_data(; kwargs...)
+function build_5_bus_hydro_uc_sys_targets(; add_forecasts, raw_data, sys_kwargs...)
     rawsys = PSY.PowerSystemTableData(
-        data_dir,
+        raw_data,
         100.0,
-        joinpath(data_dir, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(data_dir, "generator_mapping.yaml"),
+        joinpath(raw_data, "user_descriptors.yaml");
+        generator_mapping_file = joinpath(raw_data, "generator_mapping.yaml"),
     )
-    if get(kwargs, :add_forecasts, true)
+    if add_forecasts
         c_sys5_hy_uc = PSY.System(
             rawsys;
             timeseries_metadata_file = joinpath(
-                data_dir,
+                raw_data,
                 "5bus_ts",
                 "7day",
                 "timeseries_pointers_da_7day.json",
@@ -297,19 +291,18 @@ function build_5_bus_hydro_uc_sys_targets(; kwargs...)
     return c_sys5_hy_uc
 end
 
-function build_5_bus_hydro_ed_sys(; kwargs...)
+function build_5_bus_hydro_ed_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    data_dir = get_raw_data(; kwargs...)
     rawsys = PSY.PowerSystemTableData(
-        data_dir,
+        raw_data,
         100.0,
-        joinpath(data_dir, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(data_dir, "generator_mapping.yaml"),
+        joinpath(raw_data, "user_descriptors.yaml");
+        generator_mapping_file = joinpath(raw_data, "generator_mapping.yaml"),
     )
     c_sys5_hy_ed = PSY.System(
         rawsys;
         timeseries_metadata_file = joinpath(
-            data_dir,
+            raw_data,
             "5bus_ts",
             "7day",
             "timeseries_pointers_rt_7day.json",
@@ -322,19 +315,18 @@ function build_5_bus_hydro_ed_sys(; kwargs...)
     return c_sys5_hy_ed
 end
 
-function build_5_bus_hydro_ed_sys_targets(; kwargs...)
+function build_5_bus_hydro_ed_sys_targets(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    data_dir = get_raw_data(; kwargs...)
     rawsys = PSY.PowerSystemTableData(
-        data_dir,
+        raw_data,
         100.0,
-        joinpath(data_dir, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(data_dir, "generator_mapping.yaml"),
+        joinpath(raw_data, "user_descriptors.yaml");
+        generator_mapping_file = joinpath(raw_data, "generator_mapping.yaml"),
     )
     c_sys5_hy_ed = PSY.System(
         rawsys;
         timeseries_metadata_file = joinpath(
-            data_dir,
+            raw_data,
             "5bus_ts",
             "7day",
             "timeseries_pointers_rt_7day.json",
@@ -351,19 +343,18 @@ function build_5_bus_hydro_ed_sys_targets(; kwargs...)
     return c_sys5_hy_ed
 end
 
-function build_5_bus_hydro_wk_sys(; kwargs...)
+function build_5_bus_hydro_wk_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    data_dir = get_raw_data(; kwargs...)
     rawsys = PSY.PowerSystemTableData(
-        data_dir,
+        raw_data,
         100.0,
-        joinpath(data_dir, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(data_dir, "generator_mapping.yaml"),
+        joinpath(raw_data, "user_descriptors.yaml");
+        generator_mapping_file = joinpath(raw_data, "generator_mapping.yaml"),
     )
     c_sys5_hy_wk = PSY.System(
         rawsys;
         timeseries_metadata_file = joinpath(
-            data_dir,
+            raw_data,
             "5bus_ts",
             "7day",
             "timeseries_pointers_wk_7day.json",
@@ -376,19 +367,18 @@ function build_5_bus_hydro_wk_sys(; kwargs...)
     return c_sys5_hy_wk
 end
 
-function build_5_bus_hydro_wk_sys_targets(; kwargs...)
+function build_5_bus_hydro_wk_sys_targets(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    data_dir = get_raw_data(; kwargs...)
     rawsys = PSY.PowerSystemTableData(
-        data_dir,
+        raw_data,
         100.0,
-        joinpath(data_dir, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(data_dir, "generator_mapping.yaml"),
+        joinpath(raw_data, "user_descriptors.yaml");
+        generator_mapping_file = joinpath(raw_data, "generator_mapping.yaml"),
     )
     c_sys5_hy_wk = PSY.System(
         rawsys;
         timeseries_metadata_file = joinpath(
-            data_dir,
+            raw_data,
             "5bus_ts",
             "7day",
             "timeseries_pointers_wk_7day.json",
@@ -405,11 +395,10 @@ function build_5_bus_hydro_wk_sys_targets(; kwargs...)
     return c_sys5_hy_wk
 end
 
-function build_RTS_GMLC_DA_sys(; kwargs...)
+function build_RTS_GMLC_DA_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    RTS_GMLC_DIR = get_raw_data(; kwargs...)
-    RTS_SRC_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "SourceData")
-    RTS_SIIP_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "FormattedData", "SIIP")
+    RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
+    RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
@@ -417,19 +406,18 @@ function build_RTS_GMLC_DA_sys(; kwargs...)
         timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
         generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
     )
-    resolution = get(kwargs, :time_series_resolution, Dates.Hour(1))
+    resolution = get(sys_kwargs, :time_series_resolution, Dates.Hour(1))
     sys = PSY.System(rawsys; time_series_resolution = resolution, sys_kwargs...)
-    interval = get(kwargs, :interval, Dates.Hour(24))
-    horizon = get(kwargs, :horizon, 48)
+    interval = get(sys_kwargs, :interval, Dates.Hour(24))
+    horizon = get(sys_kwargs, :horizon, 48)
     PSY.transform_single_time_series!(sys, horizon, interval)
     return sys
 end
 
-function build_RTS_GMLC_RT_sys(; kwargs...)
+function build_RTS_GMLC_RT_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    RTS_GMLC_DIR = get_raw_data(; kwargs...)
-    RTS_SRC_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "SourceData")
-    RTS_SIIP_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "FormattedData", "SIIP")
+    RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
+    RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
@@ -437,19 +425,18 @@ function build_RTS_GMLC_RT_sys(; kwargs...)
         timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
         generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
     )
-    resolution = get(kwargs, :time_series_resolution, Dates.Minute(5))
+    resolution = get(sys_kwargs, :time_series_resolution, Dates.Minute(5))
     sys = PSY.System(rawsys; time_series_resolution = resolution, sys_kwargs...)
-    interval = get(kwargs, :interval, Dates.Minute(5))
-    horizon = get(kwargs, :horizon, 24)
+    interval = get(sys_kwargs, :interval, Dates.Minute(5))
+    horizon = get(sys_kwargs, :horizon, 24)
     PSY.transform_single_time_series!(sys, horizon, interval)
     return sys
 end
 
-function build_RTS_GMLC_DA_sys_noForecast(; kwargs...)
+function build_RTS_GMLC_DA_sys_noForecast(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    RTS_GMLC_DIR = get_raw_data(; kwargs...)
-    RTS_SRC_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "SourceData")
-    RTS_SIIP_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "FormattedData", "SIIP")
+    RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
+    RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
@@ -457,16 +444,15 @@ function build_RTS_GMLC_DA_sys_noForecast(; kwargs...)
         timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
         generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
     )
-    resolution = get(kwargs, :time_series_resolution, Dates.Hour(1))
+    resolution = get(sys_kwargs, :time_series_resolution, Dates.Hour(1))
     sys = PSY.System(rawsys; time_series_resolution = resolution, sys_kwargs...)
     return sys
 end
 
-function build_RTS_GMLC_RT_sys_noForecast(; kwargs...)
+function build_RTS_GMLC_RT_sys_noForecast(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    RTS_GMLC_DIR = get_raw_data(; kwargs...)
-    RTS_SRC_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "SourceData")
-    RTS_SIIP_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "FormattedData", "SIIP")
+    RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
+    RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
@@ -474,16 +460,18 @@ function build_RTS_GMLC_RT_sys_noForecast(; kwargs...)
         timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
         generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
     )
-    resolution = get(kwargs, :time_series_resolution, Dates.Minute(5))
+    resolution = get(sys_kwargs, :time_series_resolution, Dates.Minute(5))
     sys = PSY.System(rawsys; time_series_resolution = resolution, sys_kwargs...)
     return sys
 end
 
-function make_modified_RTS_GMLC_sys(resolution::Dates.TimePeriod = Hour(1); kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
-    RTS_GMLC_DIR = get_raw_data(; kwargs...)
-    RTS_SRC_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "SourceData")
-    RTS_SIIP_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "FormattedData", "SIIP")
+function make_modified_RTS_GMLC_sys(
+    resolution::Dates.TimePeriod = Hour(1);
+    raw_data,
+    sys_kwargs...,
+)
+    RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
+    RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
     DISPATCH_INCREASE = 2.0
     FIX_DECREASE = 0.3
 
@@ -1263,7 +1251,6 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
 
         IS.assign_new_uuid!(twin_sys.data, b)
         PSY.remove_component!(twin_sys, b)
-        b.time_series_container = IS.TimeSeriesContainer()
         # change name
         PSY.set_name!(b, name_ * "_twin")
         # create new component from scratch since copying is not working
