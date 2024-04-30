@@ -1291,7 +1291,6 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
 
         IS.assign_new_uuid!(twin_sys.data, b)
         PSY.remove_component!(twin_sys, b)
-        b.time_series_container = IS.TimeSeriesContainer()
         # change name
         PSY.set_name!(b, name_ * "_twin")
         # create new component from scratch since copying is not working
