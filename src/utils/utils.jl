@@ -104,4 +104,4 @@ function _get_system_directories(path::String)
     )
 end
 
-_is_system_hash_name(name::String) = isempty(filter(!isxdigit, name))
+_is_system_hash_name(name::String) = isempty(filter(!isxdigit, name)) && length(name) == 64
