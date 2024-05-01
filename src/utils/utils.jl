@@ -7,17 +7,12 @@ end
 
 function check_serialized_storage()
     verify_storage_dir(SERIALIZED_DIR)
-    for path in SEARCH_DIRS
-        verify_storage_dir(path)
-    end
     return
 end
 
 function clear_serialized_systems(name::String)
-    seralized_file_extension =
-        [".json", "_validation_descriptors.json", "_time_series_storage.h5"]
     file_names = [name * ext for ext in SERIALIZE_FILE_EXTENSIONS]
-    for dir in SEARCH_DIRS
+    for dir in _get_system_directories(SERIALIZED_DIR)
         for file in file_names
             if isfile(joinpath(dir, file))
                 @debug "Deleting file" file
@@ -33,7 +28,6 @@ function clear_serialized_system(
     case_args::Dict{Symbol, <:Any} = Dict{Symbol, Any}(),
 )
     file_path = get_serialized_filepath(name, case_args)
-
     if isfile(file_path)
         @debug "Deleting file at " file_path
         rm(file_path; force = true)
@@ -42,18 +36,18 @@ function clear_serialized_system(
     return
 end
 
-function clear_all_serialized_system()
-    for dir in SEARCH_DIRS
-        @debug "Deleting dir" dir
-        rm(dir; force = true, recursive = true)
+function clear_all_serialized_systems(path::String)
+    for path in _get_system_directories(path)
+        rm(path; recursive = true)
     end
-    check_serialized_storage()
-    return
 end
+
+clear_all_serialized_systems() = clear_all_serialized_systems(SERIALIZED_DIR)
+clear_all_serialized_system() = clear_all_serialized_systems()
 
 function get_serialization_dir(case_args::Dict{Symbol, <:Any} = Dict{Symbol, Any}())
     args_string = join(["$key=$value" for (key, value) in case_args], "_")
-    hash_value = hash(args_string)
+    hash_value = bytes2hex(SHA.sha256(args_string))
     return joinpath(PACKAGE_DIR, "data", "serialized_system", "$hash_value")
 end
 
@@ -102,3 +96,12 @@ function serialize_case_parameters(case_args::Dict{Symbol, <:Any})
         end
     end
 end
+
+function _get_system_directories(path::String)
+    return (
+        joinpath(path, x) for
+        x in readdir(path) if isdir(joinpath(path, x)) && _is_system_hash_name(x)
+    )
+end
+
+_is_system_hash_name(name::String) = isempty(filter(!isxdigit, name))
