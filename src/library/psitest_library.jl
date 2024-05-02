@@ -2353,12 +2353,12 @@ function build_sos_test_sys(; raw_data, kwargs...)
             operation_cost = ThermalGenerationCost(
                 CostCurve(
                     PiecewisePointCurve(
-                            [
-                            (22.0, 1122.43),
-                            (33.0, 1617.43),
-                            (44.0, 1742.48),
-                            (55.0, 2075.88),
-                        ]),
+                        [
+                        (22.0, 1122.43),
+                        (33.0, 1617.43),
+                        (44.0, 1742.48),
+                        (55.0, 2075.88),
+                    ]),
                 ),
                 0.0,
                 5665.23,
@@ -2383,11 +2383,11 @@ function build_sos_test_sys(; raw_data, kwargs...)
             operation_cost = ThermalGenerationCost(
                 CostCurve(
                     PiecewisePointCurve([
-                            (62.0, 1500.19),
-                            (92.9, 2132.59),
-                            (124.0, 2829.875),
-                            (155.0, 2831.444),
-                        ]),
+                        (62.0, 1500.19),
+                        (92.9, 2132.59),
+                        (124.0, 2829.875),
+                        (155.0, 2831.444),
+                    ]),
                 ),
                 0.0,
                 5665.23,
@@ -2456,11 +2456,11 @@ function build_pwl_test_sys(; raw_data, kwargs...)
             operation_cost = ThermalGenerationCost(
                 CostCurve(
                     PiecewisePointCurve([
-                            (22.0, 589.99),
-                            (33.0, 884.99),
-                            (44.0, 1210.04),
-                            (55.0, 1543.44),
-                        ]),
+                        (22.0, 589.99),
+                        (33.0, 884.99),
+                        (44.0, 1210.04),
+                        (55.0, 1543.44),
+                    ]),
                 ),
                 532.44,
                 5665.23,
@@ -2485,11 +2485,11 @@ function build_pwl_test_sys(; raw_data, kwargs...)
             operation_cost = ThermalGenerationCost(
                 CostCurve(
                     PiecewisePointCurve([
-                            (62.0, 1264.80),
-                            (93.0, 1897.20),
-                            (124.0, 2594.4787),
-                            (155.0, 3433.04),
-                        ]),
+                        (62.0, 1264.80),
+                        (93.0, 1897.20),
+                        (124.0, 2594.4787),
+                        (155.0, 3433.04),
+                    ]),
                 ),
                 235.397,
                 5665.23,
@@ -2661,7 +2661,7 @@ function build_pwl_marketbid_sys(; raw_data, kwargs...)
     market_bid_gen2_data = Dict(
         ini_time => [
             PiecewiseStepData([5.0, 7.33, 9.67, 12.0], [124.51, 125.05, 133.64]),
-            PiecewiseStepData([5.0, 7.33, 9.67, 12.0], [128.80, 128.47, 128.49])
+            PiecewiseStepData([5.0, 7.33, 9.67, 12.0], [128.80, 128.47, 128.49]),
         ],
         ini_time + Hour(1) => [
             PiecewiseStepData([5.0, 7.33, 9.67, 12.0], [124.51, 125.05, 133.64]),
