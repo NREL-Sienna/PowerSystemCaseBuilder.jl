@@ -8,23 +8,9 @@ const RTS_DIR = joinpath(LazyArtifacts.artifact"rts", "RTS-GMLC-0.2.2")
 const SYSTEM_DESCRIPTORS_FILE = joinpath(PACKAGE_DIR, "src", "system_descriptor.jl")
 
 const SERIALIZED_DIR = joinpath(PACKAGE_DIR, "data", "serialized_system")
-const SERIALIZE_NOARGS_DIR = joinpath(PACKAGE_DIR, "data", "serialized_system", "NoArgs")
-const SERIALIZE_FORECASTONLY_DIR =
-    joinpath(PACKAGE_DIR, "data", "serialized_system", "ForecastOnly")
-const SERIALIZE_RESERVEONLY_DIR =
-    joinpath(PACKAGE_DIR, "data", "serialized_system", "ReserveOnly")
-const SERIALIZE_FORECASTRESERVE_DIR =
-    joinpath(PACKAGE_DIR, "data", "serialized_system", "ForecastReserve")
-
-const SEARCH_DIRS = [
-    SERIALIZE_NOARGS_DIR,
-    SERIALIZE_FORECASTONLY_DIR,
-    SERIALIZE_RESERVEONLY_DIR,
-    SERIALIZE_FORECASTRESERVE_DIR,
-]
 
 const SERIALIZE_FILE_EXTENSIONS =
-    [".json", "_validation_descriptors.json", "_time_series_storage.h5"]
+    [".json", "_metadata.json", "_validation_descriptors.json", "_time_series_storage.h5"]
 
 const ACCEPTED_PSID_TEST_SYSTEMS_KWARGS = [:avr_type, :tg_type, :pss_type, :gen_type]
 const AVAILABLE_PSID_PSSE_AVRS_TEST =

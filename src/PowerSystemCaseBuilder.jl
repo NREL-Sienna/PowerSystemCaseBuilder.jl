@@ -41,7 +41,7 @@ import HDF5
 import DataFrames: DataFrame
 import LazyArtifacts
 import JSON3
-import Base.Iterators
+import SHA
 
 const PSY = PowerSystems
 const IS = InfrastructureSystems
