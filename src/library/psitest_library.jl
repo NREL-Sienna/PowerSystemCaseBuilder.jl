@@ -4207,7 +4207,7 @@ function build_quadratic_fuel_test_sys(; kwargs...)
     base_sys = _build_cost_base_test_sys(; kwargs...)
     node = PSY.get_component(ACBus, base_sys, "nodeA")
     test_gen = thermal_generator_quad_fuel(node)
-
+    PSY.add_component!(base_sys, test_gen)
     return base_sys
 end
 
@@ -4256,27 +4256,27 @@ end
 function build_linear_fuel_test_sys_ts(; kwargs...)
     base_sys = _build_cost_base_test_sys(; kwargs...)
     node = PSY.get_component(ACBus, base_sys, "nodeA")
-    test_gen = thermal_generator_linear_fuel_ts(base_sys, node)
+    thermal_generator_linear_fuel_ts(base_sys, node)
     return base_sys
 end
 
 function build_quadratic_fuel_test_sys_ts(; kwargs...)
     base_sys = _build_cost_base_test_sys(; kwargs...)
     node = PSY.get_component(ACBus, base_sys, "nodeA")
-    test_gen = thermal_generator_quad_fuel_ts(base_sys, node)
+    thermal_generator_quad_fuel_ts(base_sys, node)
     return base_sys
 end
 
 function build_pwl_io_fuel_test_sys_ts(; kwargs...)
     base_sys = _build_cost_base_test_sys(; kwargs...)
     node = PSY.get_component(ACBus, base_sys, "nodeA")
-    test_gen = thermal_generator_pwl_io_fuel_ts(base_sys, node)
+    thermal_generator_pwl_io_fuel_ts(base_sys, node)
     return base_sys
 end
 
 function build_pwl_incremental_fuel_test_sys_ts(; kwargs...)
     base_sys = _build_cost_base_test_sys(; kwargs...)
     node = PSY.get_component(ACBus, base_sys, "nodeA")
-    test_gen = thermal_generator_pwl_incremental_fuel_ts(base_sys, node)
+    thermal_generator_pwl_incremental_fuel_ts(base_sys, node)
     return base_sys
 end
