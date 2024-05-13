@@ -2330,192 +2330,6 @@ function build_c_sys5_pglib(;
     return c_sys5_uc
 end
 
-function build_sos_test_sys(; raw_data, kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
-    node =
-        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
-    load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
-    gens_cost_sos = [
-        PSY.ThermalStandard(;
-            name = "Alta",
-            available = true,
-            status = true,
-            bus = node,
-            active_power = 0.52,
-            reactive_power = 0.010,
-            rating = 0.5,
-            prime_mover_type = PSY.PrimeMovers.ST,
-            fuel = PSY.ThermalFuels.COAL,
-            active_power_limits = (min = 0.22, max = 0.55),
-            reactive_power_limits = nothing,
-            time_limits = nothing,
-            ramp_limits = nothing,
-            operation_cost = ThermalGenerationCost(
-                CostCurve(
-                    PiecewisePointCurve(
-                        [
-                        (22.0, 1122.43),
-                        (33.0, 1617.43),
-                        (44.0, 1742.48),
-                        (55.0, 2075.88),
-                    ]),
-                ),
-                0.0,
-                5665.23,
-                0.0,
-            ),
-            base_power = 100.0,
-        ),
-        PSY.ThermalStandard(;
-            name = "Park City",
-            available = true,
-            status = true,
-            bus = node,
-            active_power = 0.62,
-            reactive_power = 0.20,
-            rating = 2.2125,
-            prime_mover_type = PSY.PrimeMovers.ST,
-            fuel = PSY.ThermalFuels.COAL,
-            active_power_limits = (min = 0.62, max = 1.55),
-            reactive_power_limits = nothing,
-            time_limits = nothing,
-            ramp_limits = nothing,
-            operation_cost = ThermalGenerationCost(
-                CostCurve(
-                    PiecewisePointCurve([
-                        (62.0, 1500.19),
-                        (92.9, 2132.59),
-                        (124.0, 2829.875),
-                        (155.0, 2831.444),
-                    ]),
-                ),
-                0.0,
-                5665.23,
-                0.0,
-            ),
-            base_power = 100.0,
-        ),
-    ]
-
-    function slope_convexity_check(slopes::Vector{Float64})
-        flag = true
-        for ix in 1:(length(slopes) - 1)
-            if slopes[ix] > slopes[ix + 1]
-                @debug slopes
-                return flag = false
-            end
-        end
-        return flag
-    end
-
-    pwlparamcheck(cost_) = slope_convexity_check(PSY.get_slopes(cost_))
-
-    #Checks the data remains non-convex
-    for g in gens_cost_sos
-        @assert !is_convex(PSY.get_variable(PSY.get_operation_cost(g)))
-    end
-
-    DA_load_forecast = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-    ini_time = DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S")
-    cost_sos_load = [[1.3, 2.1], [1.3, 2.1]]
-    for (ix, date) in enumerate(range(ini_time; length = 2, step = Hour(1)))
-        DA_load_forecast[date] =
-            TimeSeries.TimeArray([date, date + Hour(1)], cost_sos_load[ix])
-    end
-    load_forecast_cost_sos = PSY.Deterministic("max_active_power", DA_load_forecast)
-    cost_test_sos_sys = PSY.System(100.0; sys_kwargs...)
-    PSY.add_component!(cost_test_sos_sys, node)
-    PSY.add_component!(cost_test_sos_sys, load)
-    PSY.add_component!(cost_test_sos_sys, gens_cost_sos[1])
-    PSY.add_component!(cost_test_sos_sys, gens_cost_sos[2])
-    PSY.add_time_series!(cost_test_sos_sys, load, load_forecast_cost_sos)
-
-    return cost_test_sos_sys
-end
-
-function build_pwl_test_sys(; raw_data, kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
-    node =
-        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
-    load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
-    gens_cost = [
-        PSY.ThermalStandard(;
-            name = "Alta",
-            available = true,
-            status = true,
-            bus = node,
-            active_power = 0.52,
-            reactive_power = 0.010,
-            rating = 0.5,
-            prime_mover_type = PSY.PrimeMovers.ST,
-            fuel = PSY.ThermalFuels.COAL,
-            active_power_limits = (min = 0.22, max = 0.55),
-            reactive_power_limits = nothing,
-            time_limits = nothing,
-            ramp_limits = nothing,
-            operation_cost = ThermalGenerationCost(
-                CostCurve(
-                    PiecewisePointCurve([
-                        (22.0, 589.99),
-                        (33.0, 884.99),
-                        (44.0, 1210.04),
-                        (55.0, 1543.44),
-                    ]),
-                ),
-                532.44,
-                5665.23,
-                0.0,
-            ),
-            base_power = 100.0,
-        ),
-        PSY.ThermalStandard(;
-            name = "Park City",
-            available = true,
-            status = true,
-            bus = node,
-            active_power = 0.62,
-            reactive_power = 0.20,
-            rating = 221.25,
-            prime_mover_type = PSY.PrimeMovers.ST,
-            fuel = PSY.ThermalFuels.COAL,
-            active_power_limits = (min = 0.62, max = 1.55),
-            reactive_power_limits = nothing,
-            time_limits = nothing,
-            ramp_limits = nothing,
-            operation_cost = ThermalGenerationCost(
-                CostCurve(
-                    PiecewisePointCurve([
-                        (62.0, 1264.80),
-                        (93.0, 1897.20),
-                        (124.0, 2594.4787),
-                        (155.0, 3433.04),
-                    ]),
-                ),
-                235.397,
-                5665.23,
-                0.0,
-            ),
-            base_power = 100.0,
-        ),
-    ]
-
-    DA_load_forecast = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-    ini_time = DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S")
-    cost_sos_load = [[1.3, 2.1], [1.3, 2.1]]
-    for (ix, date) in enumerate(range(ini_time; length = 2, step = Hour(1)))
-        DA_load_forecast[date] =
-            TimeSeries.TimeArray([date, date + Hour(1)], cost_sos_load[ix])
-    end
-    load_forecast_cost_sos = PSY.Deterministic("max_active_power", DA_load_forecast)
-    cost_test_sys = PSY.System(100.0; sys_kwargs...)
-    PSY.add_component!(cost_test_sys, node)
-    PSY.add_component!(cost_test_sys, load)
-    PSY.add_component!(cost_test_sys, gens_cost[1])
-    PSY.add_component!(cost_test_sys, gens_cost[2])
-    PSY.add_time_series!(cost_test_sys, load, load_forecast_cost_sos)
-    return cost_test_sys
-end
-
 function build_duration_test_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
@@ -4314,4 +4128,155 @@ function build_c_sys5_radial(; raw_data, kwargs...)
     set_reactive_power!(load_bus3, 0.3287)
     set_max_reactive_power!(load_bus3, 0.3287)
     return new_sys
+end
+
+####### Cost Function Testing Systems ################
+function _build_cost_base_test_sys(; kwargs...)
+    sys_kwargs = filter_kwargs(; kwargs...)
+    node =
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
+    load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
+
+    gen = ThermalStandard(;
+        name = "Cheap Unit",
+        available = true,
+        status = true,
+        bus = node,
+        active_power = 1.70,
+        reactive_power = 0.20,
+        rating = 2.2125,
+        prime_mover_type = PrimeMovers.ST,
+        fuel = ThermalFuels.COAL,
+        active_power_limits = (min = 0.0, max = 1.70),
+        reactive_power_limits = (min = -1.275, max = 1.275),
+        ramp_limits = (up = 0.02 * 2.2125, down = 0.02 * 2.2125),
+        time_limits = (up = 2.0, down = 1.0),
+        operation_cost = ThermalGenerationCost(CostCurve(LinearCurve(0.23)),
+            0.0,
+            1.5,
+            0.75,
+        ),
+        base_power = 100.0,
+    )
+
+    DA_load_forecast = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+    ini_time = DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S")
+    # Load levels to catch each segment in the curves
+    load_forecasts = [[2.1, 3.4, 2.76, 3.0, 1.0], [1.3, 3.0, 2.1, 1.0, 1.0]]
+    for (ix, date) in enumerate(range(ini_time; length = 2, step = Hour(1)))
+        DA_load_forecast[date] =
+            TimeSeries.TimeArray(
+                range(ini_time; length = 5, step = Hour(1)),
+                load_forecasts[ix],
+            )
+    end
+    load_forecast = PSY.Deterministic("max_active_power", DA_load_forecast)
+    cost_test_sys = PSY.System(100.0;)
+    PSY.add_component!(cost_test_sys, node)
+    PSY.add_component!(cost_test_sys, load)
+    PSY.add_component!(cost_test_sys, gen)
+    PSY.add_time_series!(cost_test_sys, load, load_forecast)
+    return cost_test_sys
+end
+
+function build_linear_cost_test_sys(; kwargs...)
+    base_sys = _build_cost_base_test_sys(; kwargs...)
+    node = PSY.get_component(ACBus, base_sys, "nodeA")
+    test_gen = thermal_generator_linear_cost(node)
+    PSY.add_component!(base_sys, test_gen)
+    return base_sys
+end
+
+function build_linear_fuel_test_sys(; kwargs...)
+    base_sys = _build_cost_base_test_sys(; kwargs...)
+    node = PSY.get_component(ACBus, base_sys, "nodeA")
+    test_gen = thermal_generator_linear_fuel(node)
+    PSY.add_component!(base_sys, test_gen)
+    return base_sys
+end
+
+function build_quadratic_cost_test_sys(; kwargs...)
+    base_sys = _build_cost_base_test_sys(; kwargs...)
+    node = PSY.get_component(ACBus, base_sys, "nodeA")
+    test_gen = thermal_generator_quad_cost(node)
+    PSY.add_component!(base_sys, test_gen)
+    return base_sys
+end
+
+function build_quadratic_fuel_test_sys(; kwargs...)
+    base_sys = _build_cost_base_test_sys(; kwargs...)
+    node = PSY.get_component(ACBus, base_sys, "nodeA")
+    test_gen = thermal_generator_quad_fuel(node)
+    PSY.add_component!(base_sys, test_gen)
+    return base_sys
+end
+
+function build_pwl_io_cost_test_sys(; kwargs...)
+    base_sys = _build_cost_base_test_sys(; kwargs...)
+    node = PSY.get_component(ACBus, base_sys, "nodeA")
+    test_gen = thermal_generator_pwl_io_cost(node)
+    PSY.add_component!(base_sys, test_gen)
+    return base_sys
+end
+
+function build_pwl_io_fuel_test_sys(; kwargs...)
+    base_sys = _build_cost_base_test_sys(; kwargs...)
+    node = PSY.get_component(ACBus, base_sys, "nodeA")
+    test_gen = thermal_generator_pwl_io_fuel(node)
+    PSY.add_component!(base_sys, test_gen)
+    return base_sys
+end
+
+function build_pwl_incremental_cost_test_sys(; kwargs...)
+    base_sys = _build_cost_base_test_sys(; kwargs...)
+    node = PSY.get_component(ACBus, base_sys, "nodeA")
+    test_gen = thermal_generator_pwl_incremental_cost(node)
+    PSY.add_component!(base_sys, test_gen)
+    return base_sys
+end
+
+function build_pwl_incremental_fuel_test_sys(; kwargs...)
+    base_sys = _build_cost_base_test_sys(; kwargs...)
+    node = PSY.get_component(ACBus, base_sys, "nodeA")
+    test_gen = thermal_generator_pwl_incremental_fuel(node)
+    PSY.add_component!(base_sys, test_gen)
+    return base_sys
+end
+
+function build_non_convex_io_pwl_cost_test(; kwargs...)
+    base_sys = _build_cost_base_test_sys(; kwargs...)
+    node = PSY.get_component(ACBus, base_sys, "nodeA")
+    test_gen = thermal_generator_pwl_io_cost_nonconvex(node)
+    PSY.add_component!(base_sys, test_gen)
+    return base_sys
+end
+
+### Systems with time series fuel cost
+
+function build_linear_fuel_test_sys_ts(; kwargs...)
+    base_sys = _build_cost_base_test_sys(; kwargs...)
+    node = PSY.get_component(ACBus, base_sys, "nodeA")
+    thermal_generator_linear_fuel_ts(base_sys, node)
+    return base_sys
+end
+
+function build_quadratic_fuel_test_sys_ts(; kwargs...)
+    base_sys = _build_cost_base_test_sys(; kwargs...)
+    node = PSY.get_component(ACBus, base_sys, "nodeA")
+    thermal_generator_quad_fuel_ts(base_sys, node)
+    return base_sys
+end
+
+function build_pwl_io_fuel_test_sys_ts(; kwargs...)
+    base_sys = _build_cost_base_test_sys(; kwargs...)
+    node = PSY.get_component(ACBus, base_sys, "nodeA")
+    thermal_generator_pwl_io_fuel_ts(base_sys, node)
+    return base_sys
+end
+
+function build_pwl_incremental_fuel_test_sys_ts(; kwargs...)
+    base_sys = _build_cost_base_test_sys(; kwargs...)
+    node = PSY.get_component(ACBus, base_sys, "nodeA")
+    thermal_generator_pwl_incremental_fuel_ts(base_sys, node)
+    return base_sys
 end
