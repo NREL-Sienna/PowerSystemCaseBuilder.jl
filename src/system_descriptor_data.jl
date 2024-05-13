@@ -589,6 +589,32 @@ const SYSTEM_CATALOG = [
         build_function = build_non_convex_io_pwl_cost_test,
     ),
     SystemDescriptor(;
+        name = "c_linear_fuel_test_ts",
+        description = "1 Bus linear fuel curve testing",
+        category = PSITestSystems,
+        build_function = build_linear_fuel_test_sys_ts,
+    ),
+    SystemDescriptor(;
+        name = "c_quadratic_fuel_test_ts",
+        description = "1 Bus quadratic fuel curve testing",
+        category = PSITestSystems,
+        build_function = build_quadratic_fuel_test_sys_ts,
+    ),
+    SystemDescriptor(;
+        name = "c_pwl_io_fuel_test_ts",
+        description = "1 Bus PWL I/O fuel curve testing",
+        raw_data = joinpath(DATA_DIR, "psy_data", "generation_cost_function_data.jl"),
+        category = PSITestSystems,
+        build_function = build_pwl_io_fuel_test_sys_ts,
+    ),
+    SystemDescriptor(;
+        name = "c_pwl_incremental_fuel_test_ts",
+        description = "1 Bus PWL incremental (marginal) fuel curve testing",
+        raw_data = joinpath(DATA_DIR, "psy_data", "generation_cost_function_data.jl"),
+        category = PSITestSystems,
+        build_function = build_pwl_incremental_fuel_test_sys_ts,
+    ),
+    SystemDescriptor(;
         name = "c_market_bid_cost",
         description = "1 bus system with MarketBidCost Model",
         category = PSITestSystems,
