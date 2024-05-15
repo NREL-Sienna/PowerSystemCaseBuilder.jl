@@ -175,9 +175,10 @@ function build_dynamic_inverter_sys(; kwargs...)
         ),
     ]
 
-    battery = PSY.GenericBattery(;
+    battery = PSY.EnergyReservoirStorage(;
         name = "Battery",
         prime_mover_type = PSY.PrimeMovers.BA,
+        storage_technology_type = StorageTech.OTHER_CHEM,
         available = true,
         bus = nodes_OMIB[2],
         initial_energy = 5.0,

@@ -1381,7 +1381,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         PSY.add_component!(main_sys, new_ACLine)
     end
 
-    for bat in get_components(GenericBattery, main_sys)
+    for bat in get_components(EnergyReservoirStorage, main_sys)
         set_base_power!(bat, get_base_power(bat) * 10)
     end
 

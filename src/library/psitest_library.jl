@@ -747,18 +747,18 @@ function build_c_sys5_bat(;
         PSY.add_service!(
             c_sys5_bat,
             reserve_bat[1],
-            PSY.get_components(PSY.GenericBattery, c_sys5_bat),
+            PSY.get_components(PSY.EnergyReservoirStorage, c_sys5_bat),
         )
         PSY.add_service!(
             c_sys5_bat,
             reserve_bat[2],
-            PSY.get_components(PSY.GenericBattery, c_sys5_bat),
+            PSY.get_components(PSY.EnergyReservoirStorage, c_sys5_bat),
         )
         # ORDC
         PSY.add_service!(
             c_sys5_bat,
             reserve_bat[3],
-            PSY.get_components(PSY.GenericBattery, c_sys5_bat),
+            PSY.get_components(PSY.EnergyReservoirStorage, c_sys5_bat),
         )
         for (ix, serv) in enumerate(PSY.get_components(PSY.VariableReserve, c_sys5_bat))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
@@ -2496,7 +2496,7 @@ function build_test_RTS_GMLC_sys_with_hybrid(; raw_data, add_forecasts, kwargs..
     thermal_unit = first(get_components(ThermalStandard, sys))
     bus = get_bus(thermal_unit)
     electric_load = first(get_components(PowerLoad, sys))
-    storage = first(get_components(GenericBattery, sys))
+    storage = first(get_components(EnergyReservoirStorage, sys))
     renewable_unit = first(get_components(RenewableDispatch, sys))
 
     name = "Test H"
