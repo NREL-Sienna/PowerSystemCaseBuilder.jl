@@ -615,10 +615,16 @@ const SYSTEM_CATALOG = [
         build_function = build_pwl_incremental_fuel_test_sys_ts,
     ),
     SystemDescriptor(;
+        name = "c_fixed_market_bid_cost",
+        description = "1 bus system with a Fixed MarketBidCost Model",
+        category = PSITestSystems,
+        build_function = build_fixed_market_bid_cost_test_sys,
+    ),
+    SystemDescriptor(;
         name = "c_market_bid_cost",
         description = "1 bus system with MarketBidCost Model",
         category = PSITestSystems,
-        build_function = build_pwl_marketbid_sys,
+        build_function = build_pwl_marketbid_sys_ts,
     ),
     SystemDescriptor(;
         name = "5_bus_hydro_uc_sys",
