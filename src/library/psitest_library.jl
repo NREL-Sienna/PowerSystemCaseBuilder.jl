@@ -2528,7 +2528,7 @@ function build_5_bus_matpower_DA(; raw_data, kwargs...)
     end
 
     add_time_series!(sys, tsp)
-    transform_single_time_series!(sys, 48, Hour(24))
+    transform_single_time_series!(sys, Hour(48), Hour(24))
 
     return sys
 end
@@ -2546,7 +2546,7 @@ function build_5_bus_matpower_RT(; raw_data, kwargs...)
     sys = System(raw_data; sys_kwargs...)
 
     add_time_series!(sys, tsp)
-    transform_single_time_series!(sys, 12, Hour(1))
+    transform_single_time_series!(sys, Hour(12), Hour(1))
 
     return sys
 end
@@ -2579,7 +2579,7 @@ function build_test_RTS_GMLC_sys(; raw_data, add_forecasts, kwargs...)
             generator_mapping_file = joinpath(raw_data, "generator_mapping.yaml"),
         )
         sys = PSY.System(rawsys; time_series_resolution = Dates.Hour(1), sys_kwargs...)
-        PSY.transform_single_time_series!(sys, 24, Dates.Hour(24))
+        PSY.transform_single_time_series!(sys, Hour(24), Dates.Hour(24))
         return sys
     else
         rawsys = PSY.PowerSystemTableData(
@@ -2775,7 +2775,7 @@ function build_c_sys5_pglib_sim(; add_forecasts, add_reserves, raw_data, kwargs.
             add_time_series!(c_sys5_uc, serv, SingleTimeSeries("requirement", data))
         end
     end
-    PSY.transform_single_time_series!(c_sys5_uc, 24, Dates.Hour(14))
+    PSY.transform_single_time_series!(c_sys5_uc, Hour(24), Dates.Hour(14))
     return c_sys5_uc
 end
 

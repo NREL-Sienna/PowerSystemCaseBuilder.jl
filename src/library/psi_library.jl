@@ -253,7 +253,7 @@ function build_5_bus_hydro_uc_sys(; add_forecasts, raw_data, sys_kwargs...)
             time_series_in_memory = true,
             sys_kwargs...,
         )
-        PSY.transform_single_time_series!(c_sys5_hy_uc, 24, Hour(24))
+        PSY.transform_single_time_series!(c_sys5_hy_uc, Hour(24), Hour(24))
     else
         c_sys5_hy_uc = PSY.System(rawsys; sys_kwargs...)
     end
@@ -280,7 +280,7 @@ function build_5_bus_hydro_uc_sys_targets(; add_forecasts, raw_data, sys_kwargs.
             time_series_in_memory = true,
             sys_kwargs...,
         )
-        PSY.transform_single_time_series!(c_sys5_hy_uc, 24, Hour(24))
+        PSY.transform_single_time_series!(c_sys5_hy_uc, Hour(24), Hour(24))
     else
         c_sys5_hy_uc = PSY.System(rawsys; sys_kwargs...)
     end
@@ -310,7 +310,7 @@ function build_5_bus_hydro_ed_sys(; raw_data, kwargs...)
         time_series_in_memory = true,
         sys_kwargs...,
     )
-    PSY.transform_single_time_series!(c_sys5_hy_ed, 12, Hour(1))
+    PSY.transform_single_time_series!(c_sys5_hy_ed, Hour(12), Hour(1))
 
     return c_sys5_hy_ed
 end
@@ -338,7 +338,7 @@ function build_5_bus_hydro_ed_sys_targets(; raw_data, kwargs...)
     for hy in get_components(HydroEnergyReservoir, c_sys5_hy_ed)
         set_operation_cost!(hy, cost)
     end
-    PSY.transform_single_time_series!(c_sys5_hy_ed, 12, Hour(1))
+    PSY.transform_single_time_series!(c_sys5_hy_ed, Hour(12), Hour(1))
 
     return c_sys5_hy_ed
 end
@@ -362,7 +362,7 @@ function build_5_bus_hydro_wk_sys(; raw_data, kwargs...)
         time_series_in_memory = true,
         sys_kwargs...,
     )
-    PSY.transform_single_time_series!(c_sys5_hy_wk, 2, Hour(48))
+    PSY.transform_single_time_series!(c_sys5_hy_wk, Hour(2), Hour(48))
 
     return c_sys5_hy_wk
 end
@@ -390,7 +390,7 @@ function build_5_bus_hydro_wk_sys_targets(; raw_data, kwargs...)
     for hy in get_components(HydroEnergyReservoir, c_sys5_hy_wk)
         set_operation_cost!(hy, cost)
     end
-    PSY.transform_single_time_series!(c_sys5_hy_wk, 2, Hour(48))
+    PSY.transform_single_time_series!(c_sys5_hy_wk, Hour(2), Hour(48))
 
     return c_sys5_hy_wk
 end
@@ -409,7 +409,7 @@ function build_RTS_GMLC_DA_sys(; raw_data, kwargs...)
     resolution = get(sys_kwargs, :time_series_resolution, Dates.Hour(1))
     sys = PSY.System(rawsys; time_series_resolution = resolution, sys_kwargs...)
     interval = get(sys_kwargs, :interval, Dates.Hour(24))
-    horizon = get(sys_kwargs, :horizon, 48)
+    horizon = Hour(get(sys_kwargs, :horizon, 48))
     PSY.transform_single_time_series!(sys, horizon, interval)
     return sys
 end
@@ -428,7 +428,7 @@ function build_RTS_GMLC_RT_sys(; raw_data, kwargs...)
     resolution = get(sys_kwargs, :time_series_resolution, Dates.Minute(5))
     sys = PSY.System(rawsys; time_series_resolution = resolution, sys_kwargs...)
     interval = get(sys_kwargs, :interval, Dates.Minute(5))
-    horizon = get(sys_kwargs, :horizon, 24)
+    horizon = Hour(get(sys_kwargs, :horizon, 24))
     PSY.transform_single_time_series!(sys, horizon, interval)
     return sys
 end
@@ -591,7 +591,7 @@ end
 
 function build_modified_RTS_GMLC_DA_sys(; kwargs...)
     sys = make_modified_RTS_GMLC_sys(; kwargs...)
-    PSY.transform_single_time_series!(sys, 48, Hour(24))
+    PSY.transform_single_time_series!(sys, Hour(48), Hour(24))
     return sys
 end
 
@@ -616,7 +616,7 @@ end
 
 function build_modified_RTS_GMLC_RT_sys(; kwargs...)
     sys = build_modified_RTS_GMLC_realization_sys(; kwargs...)
-    PSY.transform_single_time_series!(sys, 12, Minute(15))
+    PSY.transform_single_time_series!(sys, Hour(12), Minute(15))
     return sys
 end
 
