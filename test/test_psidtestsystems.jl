@@ -17,7 +17,7 @@ const PSID_BUILD_TESTS =
                     )
                     @test isa(sys, System)
                     # build a new system from json
-                    @test PSB.is_serialized("$(name)_$(first(supported_arg)[2])")
+                    @test PSB.is_serialized(name, supported_arg)
                     sys2 = build_system(
                         case_type,
                         name;

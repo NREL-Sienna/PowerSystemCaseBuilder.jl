@@ -11,7 +11,6 @@ const SERIALIZED_DIR = joinpath(PACKAGE_DIR, "data", "serialized_system")
 const SERIALIZE_FILE_EXTENSIONS =
     [".json", "_metadata.json", "_validation_descriptors.json", "_time_series_storage.h5"]
 
-const ACCEPTED_PSID_TEST_SYSTEMS_KWARGS = [:avr_type, :tg_type, :pss_type, :gen_type]
 const AVAILABLE_PSID_PSSE_AVRS_TEST =
     ["AC1A", "AC1A_SAT", "EXAC1", "EXST1", "SEXS", "SEXS_noTE"]
 
