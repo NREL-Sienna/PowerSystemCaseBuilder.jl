@@ -2563,7 +2563,7 @@ function build_c_sys5_bat_ems(;
                 Deterministic("max_active_power", forecast_data),
             )
         end
-        for (ix, r) in enumerate(get_components(PSY.BatteryEMS, c_sys5_bat))
+        for (ix, r) in enumerate(get_components(PSY.EnergyStorageReservoir, c_sys5_bat))
             forecast_data = SortedDict{Dates.DateTime, TimeArray}()
             for t in 1:2
                 ini_time = timestamp(storage_target_DA[t][1])[1]
@@ -2593,7 +2593,7 @@ function build_c_sys5_bat_ems(;
                 ),
             )
         end
-        for (ix, b) in enumerate(PSY.get_components(PSY.BatteryEMS, c_sys5_bat))
+        for (ix, b) in enumerate(PSY.get_components(PSY.EnergyStorageReservoir, c_sys5_bat))
             PSY.add_time_series!(
                 c_sys5_bat,
                 b,
@@ -2606,10 +2606,10 @@ function build_c_sys5_bat_ems(;
     end
     if add_reserves
         reserve_bat = reserve5_re(get_components(RenewableDispatch, c_sys5_bat))
-        add_service!(c_sys5_bat, reserve_bat[1], get_components(PSY.BatteryEMS, c_sys5_bat))
-        add_service!(c_sys5_bat, reserve_bat[2], get_components(PSY.BatteryEMS, c_sys5_bat))
+        add_service!(c_sys5_bat, reserve_bat[1], get_components(PSY.EnergyStorageReservoir, c_sys5_bat))
+        add_service!(c_sys5_bat, reserve_bat[2], get_components(PSY.EnergyStorageReservoir, c_sys5_bat))
         # ORDC
-        add_service!(c_sys5_bat, reserve_bat[3], get_components(PSY.BatteryEMS, c_sys5_bat))
+        add_service!(c_sys5_bat, reserve_bat[3], get_components(PSY.EnergyStorageReservoir, c_sys5_bat))
         for (ix, serv) in enumerate(get_components(VariableReserve, c_sys5_bat))
             forecast_data = SortedDict{Dates.DateTime, TimeArray}()
             for t in 1:2
@@ -2684,7 +2684,7 @@ function build_c_sys5_hybrid(; add_forecasts, raw_data, kwargs...)
     thermals = thermal_generators5(nodes)
     loads = loads5(nodes)
     renewables = renewable_generators5(nodes)
-    _battery(nodes, bus, name) = PSY.BatteryEMS(;
+    _battery(nodes, bus, name) = PSY.EnergyStorageReservoir(;
         name = name,
         prime_mover_type = PrimeMovers.BA,
         available = true,
@@ -2868,7 +2868,7 @@ function build_c_sys5_hybrid_uc(; add_forecasts, raw_data, kwargs...)
     loads = loads5(nodes)
     renewables = renewable_generators5(nodes)
     branches = branches5(nodes)
-    _battery(nodes, bus, name) = PSY.BatteryEMS(;
+    _battery(nodes, bus, name) = PSY.EnergyStorageReservoir(;
         name = name,
         prime_mover_type = PrimeMovers.BA,
         available = true,
@@ -2997,7 +2997,7 @@ function build_c_sys5_hybrid_ed(; add_forecasts, raw_data, kwargs...)
     loads = loads5(nodes)
     branches = branches5(nodes)
     renewables = renewable_generators5(nodes)
-    _battery(nodes, bus, name) = PSY.BatteryEMS(;
+    _battery(nodes, bus, name) = PSY.EnergyStorageReservoir(;
         name = name,
         prime_mover_type = PrimeMovers.BA,
         available = true,
@@ -3445,7 +3445,7 @@ function build_batt_test_case_b_sys(; raw_data, kwargs...)
         100.0,
     )
 
-    batt = PSY.BatteryEMS(;
+    batt = PSY.EnergyStorageReservoir(;
         name = "Bat2",
         prime_mover_type = PrimeMovers.BA,
         available = true,
@@ -3521,7 +3521,7 @@ function build_batt_test_case_c_sys(; raw_data, kwargs...)
         100.0,
     )
 
-    batt = PSY.BatteryEMS(;
+    batt = PSY.EnergyStorageReservoir(;
         name = "Bat2",
         prime_mover_type = PrimeMovers.BA,
         available = true,
@@ -3597,7 +3597,7 @@ function build_batt_test_case_d_sys(; raw_data, kwargs...)
         100.0,
     )
 
-    batt = PSY.BatteryEMS(;
+    batt = PSY.EnergyStorageReservoir(;
         name = "Bat2",
         prime_mover_type = PrimeMovers.BA,
         available = true,
@@ -3673,7 +3673,7 @@ function build_batt_test_case_e_sys(; raw_data, kwargs...)
         100.0,
     )
 
-    batt = PSY.BatteryEMS(;
+    batt = PSY.EnergyStorageReservoir(;
         name = "Bat2",
         prime_mover_type = PrimeMovers.BA,
         available = true,
@@ -3749,7 +3749,7 @@ function build_batt_test_case_f_sys(; raw_data, kwargs...)
         100.0,
     )
 
-    batt = PSY.BatteryEMS(;
+    batt = PSY.EnergyStorageReservoir(;
         name = "Bat2",
         prime_mover_type = PrimeMovers.BA,
         available = true,
