@@ -2403,107 +2403,6 @@ function build_duration_test_sys(; raw_data, kwargs...)
     return duration_test_sys
 end
 
-function build_pwl_marketbid_sys(; raw_data, kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
-    node =
-        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
-    load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
-    gens_cost = [
-        PSY.ThermalStandard(;
-            name = "Alta",
-            available = true,
-            status = true,
-            bus = node,
-            active_power = 0.52,
-            reactive_power = 0.010,
-            rating = 0.5,
-            prime_mover_type = PSY.PrimeMovers.ST,
-            fuel = PSY.ThermalFuels.COAL,
-            active_power_limits = (min = 0.22, max = 0.55),
-            reactive_power_limits = nothing,
-            time_limits = nothing,
-            ramp_limits = nothing,
-            operation_cost = PSY.MarketBidCost(;
-                no_load_cost = 0.0,
-                start_up = (hot = 0.0, warm = 0.0, cold = 0.0),
-                shut_down = 0.0,
-            ),
-            base_power = 100.0,
-        ),
-        PSY.ThermalMultiStart(;
-            name = "115_STEAM_1",
-            available = true,
-            status = true,
-            bus = node,
-            active_power = 0.05,
-            reactive_power = 0.010,
-            rating = 0.12,
-            prime_mover_type = PSY.PrimeMovers.ST,
-            fuel = PSY.ThermalFuels.COAL,
-            active_power_limits = (min = 0.05, max = 0.12),
-            reactive_power_limits = (min = -0.30, max = 0.30),
-            ramp_limits = (up = 0.2 * 0.12, down = 0.2 * 0.12),
-            power_trajectory = (startup = 0.05, shutdown = 0.05),
-            time_limits = (up = 4.0, down = 2.0),
-            start_time_limits = (hot = 2.0, warm = 4.0, cold = 12.0),
-            start_types = 3,
-            operation_cost = PSY.MarketBidCost(;
-                no_load_cost = 0.0,
-                start_up = (hot = 393.28, warm = 455.37, cold = 703.76),
-                shut_down = 0.0,
-            ),
-            base_power = 100.0,
-        ),
-    ]
-    ini_time = DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S")
-    DA_load_forecast = Dict{Dates.DateTime, TimeSeries.TimeArray}()
-    market_bid_gen1_data = Dict(
-        ini_time => [
-            PiecewiseStepData([22.0, 33.0, 44.0, 55.0], [26.82, 29.55, 30.31]),
-            PiecewiseStepData([22.0, 33.0, 44.0, 55.0], [26.82, 29.55, 30.31]),
-        ],
-        ini_time + Hour(1) => [
-            PiecewiseStepData([22.0, 33.0, 44.0, 55.0], [26.82, 29.55, 30.31]),
-            PiecewiseStepData([22.0, 33.0, 44.0, 55.0], [26.82, 29.55, 30.31]),
-        ],
-    )
-    market_bid_gen1 = PSY.Deterministic(;
-        name = "variable_cost",
-        data = market_bid_gen1_data,
-        resolution = Hour(1),
-    )
-    market_bid_gen2_data = Dict(
-        ini_time => [
-            PiecewiseStepData([5.0, 7.33, 9.67, 12.0], [124.51, 125.05, 133.64]),
-            PiecewiseStepData([5.0, 7.33, 9.67, 12.0], [128.80, 128.47, 128.49]),
-        ],
-        ini_time + Hour(1) => [
-            PiecewiseStepData([5.0, 7.33, 9.67, 12.0], [124.51, 125.05, 133.64]),
-            PiecewiseStepData([5.0, 7.33, 9.67, 12.0], [128.80, 128.47, 128.49]),
-        ],
-    )
-    market_bid_gen2 = PSY.Deterministic(;
-        name = "variable_cost",
-        data = market_bid_gen2_data,
-        resolution = Hour(1),
-    )
-    market_bid_load = [[0.5, 0.6], [0.5, 0.6]]
-    for (ix, date) in enumerate(range(ini_time; length = 2, step = Hour(1)))
-        DA_load_forecast[date] =
-            TimeSeries.TimeArray([date, date + Hour(1)], market_bid_load[ix])
-    end
-    load_forecast_cost_market_bid = PSY.Deterministic("max_active_power", DA_load_forecast)
-    cost_test_sys = PSY.System(100.0; sys_kwargs...)
-    PSY.add_component!(cost_test_sys, node)
-    PSY.add_component!(cost_test_sys, load)
-    PSY.add_component!(cost_test_sys, gens_cost[1])
-    PSY.add_component!(cost_test_sys, gens_cost[2])
-    PSY.add_time_series!(cost_test_sys, load, load_forecast_cost_market_bid)
-    PSY.set_variable_cost!(cost_test_sys, gens_cost[1], market_bid_gen1)
-    PSY.set_variable_cost!(cost_test_sys, gens_cost[2], market_bid_gen2)
-    return cost_test_sys
-end
-
 function build_5_bus_matpower_DA(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     data_dir = dirname(dirname(raw_data))
@@ -4278,5 +4177,23 @@ function build_pwl_incremental_fuel_test_sys_ts(; kwargs...)
     base_sys = _build_cost_base_test_sys(; kwargs...)
     node = PSY.get_component(ACBus, base_sys, "nodeA")
     thermal_generator_pwl_incremental_fuel_ts(base_sys, node)
+    return base_sys
+end
+
+### Systems with fixed market bid cost
+
+function build_fixed_market_bid_cost_test_sys(; kwargs...)
+    base_sys = _build_cost_base_test_sys(; kwargs...)
+    node = PSY.get_component(ACBus, base_sys, "nodeA")
+    test_gens = thermal_generators_market_bid(node)
+    PSY.add_component!(base_sys, test_gens[1])
+    PSY.add_component!(base_sys, test_gens[2])
+    return base_sys
+end
+
+function build_pwl_marketbid_sys_ts(; kwargs...)
+    base_sys = _build_cost_base_test_sys(; kwargs...)
+    node = PSY.get_component(ACBus, base_sys, "nodeA")
+    thermal_generators_market_bid_ts(base_sys, node)
     return base_sys
 end
