@@ -2606,10 +2606,22 @@ function build_c_sys5_bat_ems(;
     end
     if add_reserves
         reserve_bat = reserve5_re(get_components(RenewableDispatch, c_sys5_bat))
-        add_service!(c_sys5_bat, reserve_bat[1], get_components(PSY.EnergyReservoirStorage, c_sys5_bat))
-        add_service!(c_sys5_bat, reserve_bat[2], get_components(PSY.EnergyReservoirStorage, c_sys5_bat))
+        add_service!(
+            c_sys5_bat,
+            reserve_bat[1],
+            get_components(PSY.EnergyReservoirStorage, c_sys5_bat),
+        )
+        add_service!(
+            c_sys5_bat,
+            reserve_bat[2],
+            get_components(PSY.EnergyReservoirStorage, c_sys5_bat),
+        )
         # ORDC
-        add_service!(c_sys5_bat, reserve_bat[3], get_components(PSY.EnergyReservoirStorage, c_sys5_bat))
+        add_service!(
+            c_sys5_bat,
+            reserve_bat[3],
+            get_components(PSY.EnergyReservoirStorage, c_sys5_bat),
+        )
         for (ix, serv) in enumerate(get_components(VariableReserve, c_sys5_bat))
             forecast_data = SortedDict{Dates.DateTime, TimeArray}()
             for t in 1:2
