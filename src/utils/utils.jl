@@ -77,11 +77,6 @@ function filter_kwargs(; kwargs...)
     return system_kwargs
 end
 
-function check_kwargs_psid(; kwargs...)
-    psid_kwargs = filter(x -> in(first(x), ACCEPTED_PSID_TEST_SYSTEMS_KWARGS), kwargs)
-    return psid_kwargs
-end
-
 """
 Creates a JSON file informing the user about the meaning of the hash value in the file path
 if it doesn't exist already 

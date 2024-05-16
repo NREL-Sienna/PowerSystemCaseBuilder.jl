@@ -25,47 +25,22 @@ function build_system(
 )
     sys_descriptor = get_system_descriptor(category, system_catalog, name)
     sys_kwargs = filter_kwargs(; kwargs...)
-    sys_keys = keys(sys_kwargs)
-
-    psid_kwargs = check_kwargs_psid(; kwargs...)
-    psid_keys = keys(psid_kwargs)
-
-    case_keys = get_supported_argument_names(sys_descriptor)
-
-    if !(isempty(intersect(sys_keys, psid_keys)))
-        error(
-            "sys_keys and psid_keys have the overlapping key(s): $(intersect(sys_keys, psid_keys))",
-        )
+    case_kwargs = filter_descriptor_kwargs(sys_descriptor; kwargs...)
+    if length(kwargs) > length(sys_kwargs) + length(case_kwargs)
+        unexpected = setdiff(keys(kwargs), union(keys(sys_kwargs), keys(case_kwargs)))
+        error("These keyword arguments are not supported: $unexpected")
     end
 
-    if !(isempty(intersect(sys_keys, case_keys)))
-        error(
-            "sys_keys and case_keys have the overlapping key(s): $(intersect(sys_keys, psid_keys))",
-        )
+    duplicates = intersect(keys(sys_kwargs), keys(case_kwargs))
+    if !isempty(duplicates)
+        error("System kwargs and case kwargs have overlapping keys: $duplicates")
     end
-
-    if !isempty(psid_kwargs)
-        kwarg_type = first(values(psid_kwargs))
-        name = "$(name)_$kwarg_type"
-    end
-
-    non_sys_psid_kwargs = setdiff(kwargs, merge(psid_kwargs, sys_kwargs))
-    non_sys_psid_args = Dict{Symbol, Any}(k => v for (k, v) in non_sys_psid_kwargs)
-    key_diff = setdiff(keys(non_sys_psid_args), case_keys)
-    if !isempty(key_diff)
-        throw(ArgumentError("unsupported kwargs are specified: $key_diff"))
-    end
-
-    case_args = Dict{Symbol, Any}(
-        merge(get_supported_arguments_dict(sys_descriptor), non_sys_psid_args),
-    )
 
     return _build_system(
         name,
         sys_descriptor,
-        case_args,
+        case_kwargs,
         sys_kwargs,
-        psid_kwargs,
         print_stat;
         force_build,
         assign_new_uuids,
@@ -78,7 +53,6 @@ function _build_system(
     sys_descriptor::SystemDescriptor,
     case_args::Dict{Symbol, <:Any},
     sys_args::Dict{Symbol, <:Any},
-    psid_args::Dict{Symbol, <:Any},
     print_stat::Bool = false;
     force_build::Bool = false,
     assign_new_uuids::Bool = false,
@@ -98,14 +72,13 @@ function _build_system(
             raw_data = sys_descriptor.raw_data,
             case_args...,
             sys_args...,
-            psid_args...,
         )
-        construct_time = time() - start
+        #construct_time = time() - start
         serialized_filepath = get_serialized_filepath(name, case_args)
         start = time()
         if !skip_serialization
             PSY.to_json(sys, serialized_filepath; force = true)
-            serialize_time = time() - start
+            #serialize_time = time() - start
             serialize_case_parameters(case_args)
         end
         # set_stats!(sys_descriptor, SystemBuildStats(construct_time, serialize_time))

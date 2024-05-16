@@ -1417,7 +1417,6 @@ const SYSTEM_CATALOG = [
         supported_arguments = [
             SystemArgument(;
                 name = :avr_type,
-                default = "AC1A",
                 allowed_values = Set(AVAILABLE_PSID_PSSE_AVRS_TEST),
             ),
         ],
@@ -1431,7 +1430,6 @@ const SYSTEM_CATALOG = [
         supported_arguments = [
             SystemArgument(;
                 name = :tg_type,
-                default = "GAST",
                 allowed_values = Set(AVAILABLE_PSID_PSSE_TGS_TEST),
             ),
         ],
@@ -1445,7 +1443,6 @@ const SYSTEM_CATALOG = [
         supported_arguments = [
             SystemArgument(;
                 name = :gen_type,
-                default = "GENCLS",
                 allowed_values = Set(AVAILABLE_PSID_PSSE_GENS_TEST),
             ),
         ],
@@ -1459,7 +1456,6 @@ const SYSTEM_CATALOG = [
         supported_arguments = [
             SystemArgument(;
                 name = :pss_type,
-                default = "STAB1",
                 allowed_values = Set(AVAILABLE_PSID_PSSE_PSS_TEST),
             ),
         ],
