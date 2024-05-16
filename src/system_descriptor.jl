@@ -11,7 +11,7 @@ end
 
 function SystemArgument(;
     name,
-    default,
+    default = nothing,
     allowed_values,
 )
     return SystemArgument(
@@ -69,9 +69,14 @@ get_build_function(v::SystemDescriptor) = v.build_function
 get_download_function(v::SystemDescriptor) = v.download_function
 get_stats(v::SystemDescriptor) = v.stats
 get_supported_arguments(v::SystemDescriptor) = v.supported_arguments
-get_supported_arguments_dict(v::SystemDescriptor) =
-    Dict(arg.name => arg.default for arg in v.supported_arguments)
-get_supported_argument_names(v::SystemDescriptor) = [x.name for x in v.supported_arguments]
+get_supported_argument_names(v::SystemDescriptor) =
+    Set([x.name for x in v.supported_arguments])
+
+function get_default_arguments(v::SystemDescriptor)
+    Dict{Symbol, Any}(
+        x.name => x.default for x in v.supported_arguments if !isnothing(x.default)
+    )
+end
 
 function get_supported_args_permutations(v::SystemDescriptor)
     keys_arr = get_supported_argument_names(v)
@@ -110,3 +115,18 @@ set_stats!(v::SystemDescriptor, value::SystemBuildStats) = v.stats = value
 
 update_stats!(v::SystemDescriptor, deserialize_time::Float64) =
     update_stats!(v.stats, deserialize_time)
+
+"""
+Return the keyword arguments passed by the user that apply to the descriptor.
+Add any default values for fields not passed by the user.
+"""
+function filter_descriptor_kwargs(descriptor::SystemDescriptor; kwargs...)
+    case_arg_names = get_supported_argument_names(descriptor)
+    case_kwargs = get_default_arguments(descriptor)
+    for (key, val) in kwargs
+        if key in case_arg_names
+            case_kwargs[key] = val
+        end
+    end
+    return case_kwargs
+end
