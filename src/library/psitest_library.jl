@@ -2872,6 +2872,7 @@ function build_c_sys5_hybrid_uc(; add_forecasts, raw_data, kwargs...)
     _battery(nodes, bus, name) = PSY.EnergyReservoirStorage(;
         name = name,
         prime_mover_type = PrimeMovers.BA,
+        storage_technology_type = StorageTech.OTHER_CHEM,
         available = true,
         bus = nodes[bus],
         initial_energy = 5.0,
@@ -3001,6 +3002,7 @@ function build_c_sys5_hybrid_ed(; add_forecasts, raw_data, kwargs...)
     _battery(nodes, bus, name) = PSY.EnergyReservoirStorage(;
         name = name,
         prime_mover_type = PrimeMovers.BA,
+        storage_technology_type = StorageTech.OTHER_CHEM,
         available = true,
         bus = nodes[bus],
         initial_energy = 5.0,
@@ -3449,6 +3451,7 @@ function build_batt_test_case_b_sys(; raw_data, kwargs...)
     batt = PSY.EnergyReservoirStorage(;
         name = "Bat2",
         prime_mover_type = PrimeMovers.BA,
+        storage_technology_type = StorageTech.OTHER_CHEM,
         available = true,
         bus = node,
         initial_energy = 5.0,
@@ -3525,6 +3528,7 @@ function build_batt_test_case_c_sys(; raw_data, kwargs...)
     batt = PSY.EnergyReservoirStorage(;
         name = "Bat2",
         prime_mover_type = PrimeMovers.BA,
+        storage_technology_type = StorageTech.OTHER_CHEM,
         available = true,
         bus = node,
         initial_energy = 2.0,
@@ -3601,6 +3605,7 @@ function build_batt_test_case_d_sys(; raw_data, kwargs...)
     batt = PSY.EnergyReservoirStorage(;
         name = "Bat2",
         prime_mover_type = PrimeMovers.BA,
+        storage_technology_type = StorageTech.OTHER_CHEM,
         available = true,
         bus = node,
         initial_energy = 2.0,
@@ -3677,6 +3682,7 @@ function build_batt_test_case_e_sys(; raw_data, kwargs...)
     batt = PSY.EnergyReservoirStorage(;
         name = "Bat2",
         prime_mover_type = PrimeMovers.BA,
+        storage_technology_type = StorageTech.OTHER_CHEM,
         available = true,
         bus = node,
         initial_energy = 2.0,
@@ -3753,6 +3759,7 @@ function build_batt_test_case_f_sys(; raw_data, kwargs...)
     batt = PSY.EnergyReservoirStorage(;
         name = "Bat2",
         prime_mover_type = PrimeMovers.BA,
+        storage_technology_type = StorageTech.OTHER_CHEM,
         available = true,
         bus = node,
         initial_energy = 1.0,
