@@ -5,9 +5,10 @@ const PSID_BUILD_TESTS =
     system_catalog = SystemCatalog(SYSTEM_CATALOG)
     for case_type in [PSIDTestSystems, PSIDSystems]
         for (name, descriptor) in system_catalog.data[case_type]
-            supported_args_permutations = PSB.get_supported_args_permutations(descriptor)
-            # build a new system from scratch
             if name in PSID_BUILD_TESTS
+                supported_args_permutations =
+                    PSB.get_supported_args_permutations(descriptor)
+                @test !isempty(supported_args_permutations)
                 for supported_arg in supported_args_permutations
                     sys = build_system(
                         case_type,
