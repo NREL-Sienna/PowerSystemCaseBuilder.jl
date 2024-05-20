@@ -4049,6 +4049,213 @@ function build_c_sys5_radial(; raw_data, kwargs...)
     return new_sys
 end
 
+function build_two_area_pjm_DA(; add_forecasts, raw_data, sys_kwargs...)
+    nodes_area1 = nodes5()
+    for n in nodes_area1
+        PSY.set_name!(n, "Bus_$(PSY.get_name(n))_1")
+        PSY.set_number!(n, 10 + PSY.get_number(n))
+    end
+
+    nodes_area2 = nodes5()
+    for n in nodes_area2
+        PSY.set_name!(n, "Bus_$(PSY.get_name(n))_2")
+        PSY.set_number!(n, 20 + PSY.get_number(n))
+    end
+
+    thermals_1 = thermal_generators5(nodes_area1)
+    for n in thermals_1
+        PSY.set_name!(n, "$(PSY.get_name(n))_1")
+    end
+
+    thermals_2 = thermal_generators5(nodes_area2)
+    for n in thermals_2
+        PSY.set_name!(n, "$(PSY.get_name(n))_2")
+    end
+
+    loads_1 = loads5(nodes_area1)
+    for n in loads_1
+        PSY.set_name!(n, "$(PSY.get_name(n))_1")
+    end
+
+    loads_2 = loads5(nodes_area2)
+    for n in loads_2
+        PSY.set_name!(n, "$(PSY.get_name(n))_2")
+    end
+
+    branches_1 = branches5(nodes_area1)
+    for n in branches_1
+        PSY.set_name!(n, "$(PSY.get_name(n))_1")
+    end
+
+    branches_2 = branches5(nodes_area2)
+    for n in branches_2
+        PSY.set_name!(n, "$(PSY.get_name(n))_2")
+    end
+
+    sys = PSY.System(
+        100.0,
+        [nodes_area1; nodes_area2],
+        [thermals_1; thermals_2],
+        [loads_1; loads_2],
+        [branches_1; branches_2];
+        sys_kwargs...,
+    )
+
+    area1 = Area(nothing)
+    area1.name = "Area1"
+    area2 = Area(nothing)
+    area1.name = "Area2"
+
+    add_component!(sys, area1)
+    add_component!(sys, area2)
+
+    exchange_1_2 = AreaInterchange(;
+        name = "1_2",
+        available = true,
+        active_power_flow = 0.0,
+        from_area = area1,
+        to_area = area2,
+        flow_limits = (from_to = 7.0, to_from = 7.0),
+    )
+
+    PSY.add_component!(sys, exchange_1_2)
+
+    inter_area_line = MonitoredLine(;
+        name = "inter_area_line",
+        available = true,
+        active_power_flow = 0.0,
+        reactive_power_flow = 0.0,
+        rate = 10.0,
+        angle_limits = (-1.571, 1.571),
+        r = 0.003,
+        x = 0.03,
+        b = (from = 0.00337, to = 0.00337),
+        flow_limits = (from_to = 7.0, to_from = 7.0),
+        arc = PSY.Arc(; from = nodes_area1[3], to = nodes_area2[3]),
+    )
+
+    PSY.add_component!(sys, inter_area_line)
+
+    for n in nodes_area1
+        set_area!(n, area1)
+    end
+
+    for n in nodes_area2
+        set_area!(n, area2)
+    end
+
+    pv_device = PSY.RenewableDispatch(
+        "PVBus5",
+        true,
+        nodes_area1[3],
+        0.0,
+        0.0,
+        3.84,
+        PrimeMovers.PVe,
+        (min = 0.0, max = 0.0),
+        1.0,
+        RenewableGenerationCost(nothing),
+        100.0,
+    )
+    wind_device = PSY.RenewableDispatch(
+        "WindBus1",
+        true,
+        nodes_area2[1],
+        0.0,
+        0.0,
+        4.51,
+        PrimeMovers.WT,
+        (min = 0.0, max = 0.0),
+        1.0,
+        RenewableGenerationCost(nothing),
+        100.0,
+    )
+    PSY.add_component!(sys, pv_device)
+    PSY.add_component!(sys, wind_device)
+    timeseries_dataset =
+        HDF5.h5read(joinpath(DATA_DIR, "5-Bus", "PJM_5_BUS_7_DAYS.h5"), "Time Series Data")
+    refdate = first(DayAhead)
+    da_load_time_series = DateTime[]
+    da_load_time_series_val = Float64[]
+
+    for i in 1:7
+        for v in timeseries_dataset["DA Load Data"]["DA_LOAD_DAY_$(i)"]
+            h = refdate + Hour(v.HOUR + (i - 1) * 24)
+            push!(da_load_time_series, h)
+            push!(da_load_time_series_val, v.LOAD)
+        end
+    end
+
+    re_timeseries = Dict(
+        "PVBus5" => CSV.read(
+            joinpath(
+                DATA_DIR,
+                "5-Bus",
+                "5bus_ts",
+                "gen",
+                "Renewable",
+                "PV",
+                "da_solar.csv",
+            ),
+            DataFrame,
+        )[
+            :,
+            :SolarBusC,
+        ],
+        "WindBus1" => CSV.read(
+            joinpath(
+                DATA_DIR,
+                "5-Bus",
+                "5bus_ts",
+                "gen",
+                "Renewable",
+                "WIND",
+                "da_wind.csv",
+            ),
+            DataFrame,
+        )[
+            :,
+            :WindBusA,
+        ],
+    )
+    re_timeseries["WindBus1"] = re_timeseries["WindBus1"] ./ 451
+
+    bus_dist_fact = Dict(
+        "Bus2_1" => 0.33,
+        "Bus3_1" => 0.33,
+        "Bus4_1" => 0.34,
+        "Bus2_2" => 0.33,
+        "Bus3_2" => 0.33,
+        "Bus4_2" => 0.34,
+    )
+    peak_load = maximum(da_load_time_series_val)
+    if add_forecasts
+        for (ix, l) in enumerate(PSY.get_components(PowerLoad, sys))
+            set_max_active_power!(l, bus_dist_fact[PSY.get_name(l)] * peak_load / 100)
+            add_time_series!(
+                sys,
+                l,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    TimeArray(da_load_time_series, da_load_time_series_val ./ peak_load),
+                ),
+            )
+        end
+        for (ix, g) in enumerate(PSY.get_components(RenewableDispatch, sys))
+            add_time_series!(
+                sys,
+                g,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    TimeArray(da_load_time_series, re_timeseries[PSY.get_name(g)]),
+                ),
+            )
+        end
+    end
+
+    return sys
+end
+
 ####### Cost Function Testing Systems ################
 function _build_cost_base_test_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
