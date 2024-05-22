@@ -4115,7 +4115,7 @@ function build_two_area_pjm_DA(; add_forecasts, raw_data, sys_kwargs...)
         active_power_flow = 0.0,
         from_area = area1,
         to_area = area2,
-        flow_limits = (from_to = 7.0, to_from = 7.0),
+        flow_limits = (from_to = 1.5, to_from = 1.5),
     )
 
     PSY.add_component!(sys, exchange_1_2)
