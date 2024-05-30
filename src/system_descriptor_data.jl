@@ -56,6 +56,20 @@ const SYSTEM_CATALOG = [
         ],
     ),
     SystemDescriptor(;
+        name = "two_area_pjm_DA",
+        description = "2 Area 5-Bus system",
+        category = PSISystems,
+        raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
+        build_function = build_two_area_pjm_DA,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
+    ),
+    SystemDescriptor(;
         name = "c_sys5_pjm_rt",
         description = "5-Bus system",
         category = PSISystems,
