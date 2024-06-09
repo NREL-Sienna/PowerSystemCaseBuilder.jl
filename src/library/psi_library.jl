@@ -579,7 +579,7 @@ function make_modified_RTS_GMLC_sys(
 
     for g in PSY.get_components(
         x -> PSY.get_prime_mover_type(x) == PSY.PrimeMovers.PVe,
-        PSY.RenewableFix,
+        PSY.RenewableNonDispatch,
         sys,
     )
         rat_ = PSY.get_rating(g)
@@ -1371,7 +1371,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
             r = 0.042,
             x = 0.161,
             b = (from = 0.022, to = 0.022),
-            rate = 1.75,
+            rating = 1.75,
             # For now, not binding
             flow_limits = (from_to = 2.0, to_from = 2.0),
             angle_limits = (min = -1.57079, max = 1.57079),
@@ -1394,7 +1394,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         remove_component!(main_sys, r)
     end
 
-    for dev in get_components(RenewableFix, main_sys)
+    for dev in get_components(RenewableNonDispatch, main_sys)
         clear_services!(dev)
     end
 
