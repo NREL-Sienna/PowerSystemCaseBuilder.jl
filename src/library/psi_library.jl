@@ -399,12 +399,13 @@ function build_RTS_GMLC_DA_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
     RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
+    MAP_DIR = joinpath(DATA_DIR, "RTS_GMLC")
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
         joinpath(RTS_SIIP_DIR, "user_descriptors.yaml");
         timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
-        generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
+        generator_mapping_file = joinpath(MAP_DIR, "generator_mapping.yaml"),
     )
     resolution = get(sys_kwargs, :time_series_resolution, Dates.Hour(1))
     sys = PSY.System(rawsys; time_series_resolution = resolution, sys_kwargs...)
@@ -418,12 +419,13 @@ function build_RTS_GMLC_RT_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
     RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
+    MAP_DIR = joinpath(DATA_DIR, "RTS_GMLC")
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
         joinpath(RTS_SIIP_DIR, "user_descriptors.yaml");
         timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
-        generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
+        generator_mapping_file = joinpath(MAP_DIR, "generator_mapping.yaml"),
     )
     resolution = get(sys_kwargs, :time_series_resolution, Dates.Minute(5))
     sys = PSY.System(rawsys; time_series_resolution = resolution, sys_kwargs...)
@@ -437,12 +439,13 @@ function build_RTS_GMLC_DA_sys_noForecast(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
     RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
+    MAP_DIR = joinpath(DATA_DIR, "RTS_GMLC")
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
         joinpath(RTS_SIIP_DIR, "user_descriptors.yaml");
         timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
-        generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
+        generator_mapping_file = joinpath(MAP_DIR, "generator_mapping.yaml"),
     )
     resolution = get(sys_kwargs, :time_series_resolution, Dates.Hour(1))
     sys = PSY.System(rawsys; time_series_resolution = resolution, sys_kwargs...)
@@ -453,12 +456,13 @@ function build_RTS_GMLC_RT_sys_noForecast(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
     RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
+    MAP_DIR = joinpath(DATA_DIR, "RTS_GMLC")
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
         joinpath(RTS_SIIP_DIR, "user_descriptors.yaml");
         timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
-        generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
+        generator_mapping_file = joinpath(MAP_DIR, "generator_mapping.yaml"),
     )
     resolution = get(sys_kwargs, :time_series_resolution, Dates.Minute(5))
     sys = PSY.System(rawsys; time_series_resolution = resolution, sys_kwargs...)
@@ -472,6 +476,7 @@ function make_modified_RTS_GMLC_sys(
 )
     RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
     RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
+    MAP_DIR = joinpath(DATA_DIR, "RTS_GMLC")
     DISPATCH_INCREASE = 2.0
     FIX_DECREASE = 0.3
 
@@ -480,7 +485,7 @@ function make_modified_RTS_GMLC_sys(
         100.0,
         joinpath(RTS_SIIP_DIR, "user_descriptors.yaml");
         timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
-        generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
+        generator_mapping_file = joinpath(MAP_DIR, "generator_mapping.yaml"),
     )
 
     sys = PSY.System(rawsys; time_series_resolution = resolution, sys_kwargs...)
