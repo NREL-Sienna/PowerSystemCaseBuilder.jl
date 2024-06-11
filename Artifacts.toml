@@ -1,10 +1,10 @@
 [CaseData]
-git-tree-sha1 = "c4fd91fb97f0a3b80df0855c5045667f3618239d"
+git-tree-sha1 = "2a7b074edd75ec58ec941100625dde6a6a651d60"
 lazy = true
 
     [[CaseData.download]]
-    url = "https://github.com/NREL-Sienna/PowerSystemsTestData/archive/refs/tags/3.0-alpha2.tar.gz"
-    sha256 = "b5b54aecc775212b32b05f8a746a25a065b417f35752d7eafad3e04edb8b55f8"
+    url = "https://github.com/NREL-Sienna/PowerSystemsTestData/archive/refs/tags/3.0-alpha3.tar.gz"
+    sha256 = "9b496b928a3a675f12f68344c9b10ed86d45ff339cfee6013f6d7e3e58e22d27"
 
 [rts]
 git-tree-sha1 = "5098f357bad765bfefcff58f080818863ca776bd"

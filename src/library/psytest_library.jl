@@ -181,8 +181,9 @@ function build_dynamic_inverter_sys(; kwargs...)
         storage_technology_type = StorageTech.OTHER_CHEM,
         available = true,
         bus = nodes_OMIB[2],
-        initial_energy = 5.0,
-        state_of_charge_limits = (min = 5.0, max = 100.0),
+        storage_capacity = 100.0,
+        storage_level_limits = (min = 5.0 / 100.0, max = 100.0 / 100.0),
+        initial_storage_capacity_level = 5.0 / 100.0,
         rating = 0.0275, #Value in per_unit of the system
         active_power = 0.01375,
         input_active_power_limits = (min = 0.0, max = 50.0),
@@ -207,7 +208,7 @@ function build_dynamic_inverter_sys(; kwargs...)
             0.01, #resistance in pu
             0.05, #reactance in pu
             (from = 0.0, to = 0.0), #susceptance in pu
-            18.046, #rate in MW
+            18.046, #rating in MW
             1.04,
         ),
     ]  #angle limits (-min and max)
