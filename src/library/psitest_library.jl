@@ -216,19 +216,10 @@ function build_c_sys5_re(;
             )
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_re))
-            forecast_data =
-                SortedDict{Dates.DateTime, Vector{PiecewiseStepData}}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(ORDC_cost_ts[t])[1]
-                forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
-            end
-            resolution =
-                TimeSeries.timestamp(ORDC_cost_ts[1])[2] -
-                TimeSeries.timestamp(ORDC_cost_ts[1])[1]
             PSY.set_variable_cost!(
                 c_sys5_re,
                 serv,
-                PSY.Deterministic("variable_cost", forecast_data, resolution),
+                ORDC_cost,
             )
         end
     end
@@ -478,19 +469,10 @@ function build_c_sys5_hyd(;
             )
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_hyd))
-            forecast_data =
-                SortedDict{Dates.DateTime, Vector{PiecewiseStepData}}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(ORDC_cost_ts[t])[1]
-                forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
-            end
-            resolution =
-                TimeSeries.timestamp(ORDC_cost_ts[1])[2] -
-                TimeSeries.timestamp(ORDC_cost_ts[1])[1]
             PSY.set_variable_cost!(
                 c_sys5_hyd,
                 serv,
-                PSY.Deterministic("variable_cost", forecast_data, resolution),
+                ORDC_cost,
             )
         end
     end
@@ -653,19 +635,10 @@ function build_c_sys5_hyd_ems(;
             )
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_hyd))
-            forecast_data =
-                SortedDict{Dates.DateTime, Vector{PiecewiseStepData}}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(ORDC_cost_ts[t])[1]
-                forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
-            end
-            resolution =
-                TimeSeries.timestamp(ORDC_cost_ts[1])[2] -
-                TimeSeries.timestamp(ORDC_cost_ts[1])[1]
             PSY.set_variable_cost!(
                 c_sys5_hyd,
                 serv,
-                PSY.Deterministic("variable_cost", forecast_data, resolution),
+                ORDC_cost,
             )
         end
     end
@@ -773,19 +746,10 @@ function build_c_sys5_bat(;
             )
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_bat))
-            forecast_data =
-                SortedDict{Dates.DateTime, Vector{PiecewiseStepData}}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(ORDC_cost_ts[t])[1]
-                forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
-            end
-            resolution =
-                TimeSeries.timestamp(ORDC_cost_ts[1])[2] -
-                TimeSeries.timestamp(ORDC_cost_ts[1])[1]
             PSY.set_variable_cost!(
                 c_sys5_bat,
                 serv,
-                PSY.Deterministic("variable_cost", forecast_data, resolution),
+                ORDC_cost,
             )
         end
     end
@@ -865,19 +829,10 @@ function build_c_sys5_il(; add_forecasts, add_reserves, raw_data, kwargs...)
             )
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_il))
-            forecast_data =
-                SortedDict{Dates.DateTime, Vector{PiecewiseStepData}}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(ORDC_cost_ts[t])[1]
-                forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
-            end
-            resolution =
-                TimeSeries.timestamp(ORDC_cost_ts[1])[2] -
-                TimeSeries.timestamp(ORDC_cost_ts[1])[1]
             PSY.set_variable_cost!(
                 c_sys5_il,
                 serv,
-                PSY.Deterministic("variable_cost", forecast_data, resolution),
+                ORDC_cost,
             )
         end
     end
@@ -1210,17 +1165,10 @@ function build_c_sys5_uc(;
         end
 
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_uc))
-            forecast_data =
-                SortedDict{Dates.DateTime, Vector{PiecewiseStepData}}()
-            for t in 1:2
-                ini_time = timestamp(ORDC_cost_ts[t])[1]
-                forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
-            end
-            resolution = timestamp(ORDC_cost_ts[1])[2] - timestamp(ORDC_cost_ts[1])[1]
             PSY.set_variable_cost!(
                 c_sys5_uc,
                 serv,
-                PSY.Deterministic("variable_cost", forecast_data, resolution),
+                ORDC_cost,
             )
         end
     end
@@ -1328,17 +1276,10 @@ function build_c_sys5_uc_non_spin(;
         end
 
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_uc))
-            forecast_data =
-                SortedDict{Dates.DateTime, Vector{PiecewiseStepData}}()
-            for t in 1:2
-                ini_time = timestamp(ORDC_cost_ts[t])[1]
-                forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
-            end
-            resolution = timestamp(ORDC_cost_ts[1])[2] - timestamp(ORDC_cost_ts[1])[1]
             PSY.set_variable_cost!(
                 c_sys5_uc,
                 serv,
-                PSY.Deterministic("variable_cost", forecast_data, resolution),
+                ORDC_cost,
             )
         end
     end
@@ -1474,17 +1415,10 @@ function build_c_sys5_uc_re(;
         end
 
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_uc))
-            forecast_data =
-                SortedDict{Dates.DateTime, Vector{PiecewiseStepData}}()
-            for t in 1:2
-                ini_time = timestamp(ORDC_cost_ts[t])[1]
-                forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
-            end
-            resolution = timestamp(ORDC_cost_ts[1])[2] - timestamp(ORDC_cost_ts[1])[1]
             PSY.set_variable_cost!(
                 c_sys5_uc,
                 serv,
-                PSY.Deterministic("variable_cost", forecast_data, resolution),
+                ORDC_cost,
             )
         end
     end
@@ -2631,17 +2565,10 @@ function build_c_sys5_bat_ems(;
             add_time_series!(c_sys5_bat, serv, Deterministic("requirement", forecast_data))
         end
         for (ix, serv) in enumerate(get_components(ReserveDemandCurve, c_sys5_bat))
-            forecast_data =
-                SortedDict{Dates.DateTime, Vector{PiecewiseStepData}}()
-            for t in 1:2
-                ini_time = timestamp(ORDC_cost_ts[t])[1]
-                forecast_data[ini_time] = TimeSeries.values(ORDC_cost_ts[t])
-            end
-            resolution = timestamp(ORDC_cost_ts[1])[2] - timestamp(ORDC_cost_ts[1])[1]
             set_variable_cost!(
                 c_sys5_bat,
                 serv,
-                Deterministic("variable_cost", forecast_data, resolution),
+                ORDC_cost,
             )
         end
     end
