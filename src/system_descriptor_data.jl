@@ -486,6 +486,7 @@ const SYSTEM_CATALOG = [
             ),
         ],
     ),
+    #=
     SystemDescriptor(;
         name = "c_sys5_reg",
         description = "5-Bus with regulation devices and AGC",
@@ -500,6 +501,7 @@ const SYSTEM_CATALOG = [
             ),
         ],
     ),
+    =#
     SystemDescriptor(;
         name = "c_sys5_radial",
         description = "5-Bus with a radial branches",

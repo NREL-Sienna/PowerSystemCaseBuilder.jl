@@ -883,7 +883,7 @@ function build_c_sys5_dc(; add_forecasts, raw_data, kwargs...)
 
     return c_sys5_dc
 end
-
+#=
 function build_c_sys5_reg(; add_forecasts, raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
@@ -954,6 +954,7 @@ function build_c_sys5_reg(; add_forecasts, raw_data, kwargs...)
     PSY.add_service!(c_sys5_reg, AGC_service, contributing_devices)
     return c_sys5_reg
 end
+=#
 
 function build_sys_ramp_testing(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
