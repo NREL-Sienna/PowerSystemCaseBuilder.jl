@@ -1,30 +1,28 @@
 @testset "Test Serialization/De-Serialization PSI Tests" begin
     system_catalog = SystemCatalog(SYSTEM_CATALOG)
     for (name, descriptor) in system_catalog.data[PSISystems]
-        # build a new system from scratch
-        for forecasts in [true, false], reserves in [true, false]
+        supported_args_permutations = PSB.get_supported_args_permutations(descriptor)
+        for supported_args in supported_args_permutations
             sys = build_system(
                 PSISystems,
                 name;
-                add_forecasts = forecasts,
-                add_reserves = reserves,
                 force_build = true,
+                supported_args...,
             )
 
             @test isa(sys, System)
             # build a new system from json
-            @test PSB.is_serialized(name, forecasts, reserves)
+            @test PSB.is_serialized(name, supported_args)
             sys2 = build_system(
                 PSISystems,
                 name;
-                add_forecasts = forecasts,
-                add_reserves = reserves,
                 force_build = true,
+                supported_args...,
             )
             @test isa(sys2, System)
 
-            PSB.clear_serialized_system(name)
-            @test !PSB.is_serialized(name, forecasts, reserves)
+            PSB.clear_serialized_system(name, supported_args)
+            @test !PSB.is_serialized(name, supported_args)
         end
     end
 end
@@ -34,7 +32,7 @@ end
     sys_twin_rts_HA = build_system(PSISystems, "AC_TWO_RTO_RTS_5min_sys")
     for g in get_components(ThermalStandard, sys_twin_rts_DA)
         component_RT = get_component(ThermalStandard, sys_twin_rts_HA, get_name(g))
-        @test get_variable(get_operation_cost(g)).cost ==
-              get_variable(get_operation_cost(component_RT)).cost
+        @test get_variable(get_operation_cost(g)) ==
+              get_variable(get_operation_cost(component_RT))
     end
 end

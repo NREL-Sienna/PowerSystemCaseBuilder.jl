@@ -7,17 +7,12 @@ end
 
 function check_serialized_storage()
     verify_storage_dir(SERIALIZED_DIR)
-    for path in SEARCH_DIRS
-        verify_storage_dir(path)
-    end
     return
 end
 
-function clear_serialized_system(name::String)
-    seralized_file_extension =
-        [".json", "_validation_descriptors.json", "_time_series_storage.h5"]
+function clear_serialized_systems(name::String)
     file_names = [name * ext for ext in SERIALIZE_FILE_EXTENSIONS]
-    for dir in SEARCH_DIRS
+    for dir in _get_system_directories(SERIALIZED_DIR)
         for file in file_names
             if isfile(joinpath(dir, file))
                 @debug "Deleting file" file
@@ -28,37 +23,45 @@ function clear_serialized_system(name::String)
     return
 end
 
-function clear_all_serialized_system()
-    for dir in SEARCH_DIRS
-        @debug "Deleting dir" dir
-        rm(dir; force = true, recursive = true)
+function clear_serialized_system(
+    name::String,
+    case_args::Dict{Symbol, <:Any} = Dict{Symbol, Any}(),
+)
+    file_path = get_serialized_filepath(name, case_args)
+    if isfile(file_path)
+        @debug "Deleting file at " file_path
+        rm(file_path; force = true)
     end
-    check_serialized_storage()
+
     return
 end
 
-function get_serialization_dir(has_forecasts::Bool, has_reserves::Bool)
-    if has_forecasts && has_reserves
-        return SERIALIZE_FORECASTRESERVE_DIR
-    elseif has_forecasts
-        return SERIALIZE_FORECASTONLY_DIR
-    elseif has_reserves
-        return SERIALIZE_RESERVEONLY_DIR
-    else
-        return SERIALIZE_NOARGS_DIR
+function clear_all_serialized_systems(path::String)
+    for path in _get_system_directories(path)
+        rm(path; recursive = true)
     end
 end
 
-get_serialized_filepath(name::String, has_forecasts::Bool, has_reserves::Bool) =
-    joinpath(get_serialization_dir(has_forecasts, has_reserves), "$(name).json")
+clear_all_serialized_systems() = clear_all_serialized_systems(SERIALIZED_DIR)
+clear_all_serialized_system() = clear_all_serialized_systems()
 
-function is_serialized(name::String, has_forecasts::Bool, has_reserves::Bool)
-    file_path = get_serialized_filepath(name, has_forecasts, has_reserves)
-    if isfile(file_path)
-        return true
-    else
-        return false
-    end
+function get_serialization_dir(case_args::Dict{Symbol, <:Any} = Dict{Symbol, Any}())
+    args_string = join(["$key=$value" for (key, value) in case_args], "_")
+    hash_value = bytes2hex(SHA.sha256(args_string))
+    return joinpath(PACKAGE_DIR, "data", "serialized_system", "$hash_value")
+end
+
+function get_serialized_filepath(
+    name::String,
+    case_args::Dict{Symbol, <:Any} = Dict{Symbol, Any}(),
+)
+    dir = get_serialization_dir(case_args)
+    return joinpath(dir, "$(name).json")
+end
+
+function is_serialized(name::String, case_args::Dict{Symbol, <:Any} = Dict{Symbol, Any}())
+    file_path = get_serialized_filepath(name, case_args)
+    return isfile(file_path)
 end
 
 function get_raw_data(; kwargs...)
@@ -74,7 +77,26 @@ function filter_kwargs(; kwargs...)
     return system_kwargs
 end
 
-function check_kwargs_psid(; kwargs...)
-    psid_kwargs = filter(x -> in(first(x), ACCEPTED_PSID_TEST_SYSTEMS_KWARGS), kwargs)
-    return psid_kwargs
+"""
+Creates a JSON file informing the user about the meaning of the hash value in the file path
+if it doesn't exist already 
+"""
+function serialize_case_parameters(case_args::Dict{Symbol, <:Any})
+    dir_path = get_serialization_dir(case_args)
+    file_path = joinpath(dir_path, "case_parameters.json")
+
+    if !isfile(file_path)
+        open(file_path, "w") do io
+            JSON3.write(io, case_args)
+        end
+    end
 end
+
+function _get_system_directories(path::String)
+    return (
+        joinpath(path, x) for
+        x in readdir(path) if isdir(joinpath(path, x)) && _is_system_hash_name(x)
+    )
+end
+
+_is_system_hash_name(name::String) = isempty(filter(!isxdigit, name)) && length(name) == 64

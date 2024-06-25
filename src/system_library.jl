@@ -1,3 +1,4 @@
+include(joinpath(DATA_DIR, "psy_data", "generation_cost_function_data.jl"))
 include(joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"))
 include(joinpath(DATA_DIR, "psy_data", "data_10bus_ac_dc_pu.jl"))
 include(joinpath(DATA_DIR, "psy_data", "data_14bus_pu.jl"))

@@ -1,5 +1,4 @@
-function build_c_sys5_pjm(; kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
+function build_c_sys5_pjm(; add_forecasts, raw_data, sys_kwargs...)
     nodes = nodes5()
     c_sys5 = PSY.System(
         100.0,
@@ -19,7 +18,7 @@ function build_c_sys5_pjm(; kwargs...)
         PrimeMovers.PVe,
         (min = 0.0, max = 0.0),
         1.0,
-        TwoPartCost(0.0, 0.0),
+        RenewableGenerationCost(nothing),
         100.0,
     )
     wind_device = PSY.RenewableDispatch(
@@ -32,7 +31,7 @@ function build_c_sys5_pjm(; kwargs...)
         PrimeMovers.WT,
         (min = 0.0, max = 0.0),
         1.0,
-        TwoPartCost(0.0, 0.0),
+        RenewableGenerationCost(nothing),
         100.0,
     )
     PSY.add_component!(c_sys5, pv_device)
@@ -87,7 +86,7 @@ function build_c_sys5_pjm(; kwargs...)
 
     bus_dist_fact = Dict("Bus2" => 0.33, "Bus3" => 0.33, "Bus4" => 0.34)
     peak_load = maximum(da_load_time_series_val)
-    if get(kwargs, :add_forecasts, true)
+    if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5))
             set_max_active_power!(l, bus_dist_fact[PSY.get_name(l)] * peak_load / 100)
             add_time_series!(
@@ -114,8 +113,7 @@ function build_c_sys5_pjm(; kwargs...)
     return c_sys5
 end
 
-function build_c_sys5_pjm_rt(; kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
+function build_c_sys5_pjm_rt(; add_forecasts, raw_data, sys_kwargs...)
     nodes = nodes5()
     c_sys5 = PSY.System(
         100.0,
@@ -135,7 +133,7 @@ function build_c_sys5_pjm_rt(; kwargs...)
         PrimeMovers.PVe,
         (min = 0.0, max = 0.0),
         1.0,
-        TwoPartCost(0.0, 0.0),
+        RenewableGenerationCost(nothing),
         100.0,
     )
     wind_device = PSY.RenewableDispatch(
@@ -148,7 +146,7 @@ function build_c_sys5_pjm_rt(; kwargs...)
         PrimeMovers.WT,
         (min = 0.0, max = 0.0),
         1.0,
-        TwoPartCost(0.0, 0.0),
+        RenewableGenerationCost(nothing),
         100.0,
     )
     PSY.add_component!(c_sys5, pv_device)
@@ -209,7 +207,7 @@ function build_c_sys5_pjm_rt(; kwargs...)
     rt_timearray = collapse(rt_timearray, Minute(5), first, TimeSeries.mean)
     bus_dist_fact = Dict("Bus2" => 0.33, "Bus3" => 0.33, "Bus4" => 0.34)
     peak_load = maximum(rt_load_time_series_val)
-    if get(kwargs, :add_forecasts, true)
+    if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5))
             set_max_active_power!(l, bus_dist_fact[PSY.get_name(l)] * peak_load / 100)
             rt_timearray =
@@ -236,20 +234,18 @@ function build_c_sys5_pjm_rt(; kwargs...)
     return c_sys5
 end
 
-function build_5_bus_hydro_uc_sys(; kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
-    data_dir = get_raw_data(; kwargs...)
+function build_5_bus_hydro_uc_sys(; add_forecasts, raw_data, sys_kwargs...)
     rawsys = PSY.PowerSystemTableData(
-        data_dir,
+        raw_data,
         100.0,
-        joinpath(data_dir, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(data_dir, "generator_mapping.yaml"),
+        joinpath(raw_data, "user_descriptors.yaml");
+        generator_mapping_file = joinpath(raw_data, "generator_mapping.yaml"),
     )
-    if get(kwargs, :add_forecasts, true)
+    if add_forecasts
         c_sys5_hy_uc = PSY.System(
             rawsys;
             timeseries_metadata_file = joinpath(
-                data_dir,
+                raw_data,
                 "5bus_ts",
                 "7day",
                 "timeseries_pointers_da_7day.json",
@@ -257,7 +253,7 @@ function build_5_bus_hydro_uc_sys(; kwargs...)
             time_series_in_memory = true,
             sys_kwargs...,
         )
-        PSY.transform_single_time_series!(c_sys5_hy_uc, 24, Hour(24))
+        PSY.transform_single_time_series!(c_sys5_hy_uc, Hour(24), Hour(24))
     else
         c_sys5_hy_uc = PSY.System(rawsys; sys_kwargs...)
     end
@@ -265,20 +261,18 @@ function build_5_bus_hydro_uc_sys(; kwargs...)
     return c_sys5_hy_uc
 end
 
-function build_5_bus_hydro_uc_sys_targets(; kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
-    data_dir = get_raw_data(; kwargs...)
+function build_5_bus_hydro_uc_sys_targets(; add_forecasts, raw_data, sys_kwargs...)
     rawsys = PSY.PowerSystemTableData(
-        data_dir,
+        raw_data,
         100.0,
-        joinpath(data_dir, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(data_dir, "generator_mapping.yaml"),
+        joinpath(raw_data, "user_descriptors.yaml");
+        generator_mapping_file = joinpath(raw_data, "generator_mapping.yaml"),
     )
-    if get(kwargs, :add_forecasts, true)
+    if add_forecasts
         c_sys5_hy_uc = PSY.System(
             rawsys;
             timeseries_metadata_file = joinpath(
-                data_dir,
+                raw_data,
                 "5bus_ts",
                 "7day",
                 "timeseries_pointers_da_7day.json",
@@ -286,37 +280,29 @@ function build_5_bus_hydro_uc_sys_targets(; kwargs...)
             time_series_in_memory = true,
             sys_kwargs...,
         )
-        PSY.transform_single_time_series!(c_sys5_hy_uc, 24, Hour(24))
+        PSY.transform_single_time_series!(c_sys5_hy_uc, Hour(24), Hour(24))
     else
         c_sys5_hy_uc = PSY.System(rawsys; sys_kwargs...)
     end
-    cost = PSY.StorageManagementCost(;
-        variable = VariableCost(0.15),
-        fixed = 0.0,
-        start_up = 0.0,
-        shut_down = 0.0,
-        energy_shortage_cost = 50.0,
-        energy_surplus_cost = 0.0,
-    )
+    cost = HydroGenerationCost(CostCurve(LinearCurve(0.15)), 0.0)
     for hy in get_components(HydroEnergyReservoir, c_sys5_hy_uc)
         set_operation_cost!(hy, cost)
     end
     return c_sys5_hy_uc
 end
 
-function build_5_bus_hydro_ed_sys(; kwargs...)
+function build_5_bus_hydro_ed_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    data_dir = get_raw_data(; kwargs...)
     rawsys = PSY.PowerSystemTableData(
-        data_dir,
+        raw_data,
         100.0,
-        joinpath(data_dir, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(data_dir, "generator_mapping.yaml"),
+        joinpath(raw_data, "user_descriptors.yaml");
+        generator_mapping_file = joinpath(raw_data, "generator_mapping.yaml"),
     )
     c_sys5_hy_ed = PSY.System(
         rawsys;
         timeseries_metadata_file = joinpath(
-            data_dir,
+            raw_data,
             "5bus_ts",
             "7day",
             "timeseries_pointers_rt_7day.json",
@@ -324,24 +310,23 @@ function build_5_bus_hydro_ed_sys(; kwargs...)
         time_series_in_memory = true,
         sys_kwargs...,
     )
-    PSY.transform_single_time_series!(c_sys5_hy_ed, 12, Hour(1))
+    PSY.transform_single_time_series!(c_sys5_hy_ed, Hour(12), Hour(1))
 
     return c_sys5_hy_ed
 end
 
-function build_5_bus_hydro_ed_sys_targets(; kwargs...)
+function build_5_bus_hydro_ed_sys_targets(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    data_dir = get_raw_data(; kwargs...)
     rawsys = PSY.PowerSystemTableData(
-        data_dir,
+        raw_data,
         100.0,
-        joinpath(data_dir, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(data_dir, "generator_mapping.yaml"),
+        joinpath(raw_data, "user_descriptors.yaml");
+        generator_mapping_file = joinpath(raw_data, "generator_mapping.yaml"),
     )
     c_sys5_hy_ed = PSY.System(
         rawsys;
         timeseries_metadata_file = joinpath(
-            data_dir,
+            raw_data,
             "5bus_ts",
             "7day",
             "timeseries_pointers_rt_7day.json",
@@ -349,35 +334,27 @@ function build_5_bus_hydro_ed_sys_targets(; kwargs...)
         time_series_in_memory = true,
         sys_kwargs...,
     )
-    cost = PSY.StorageManagementCost(;
-        variable = VariableCost(0.15),
-        fixed = 0.0,
-        start_up = 0.0,
-        shut_down = 0.0,
-        energy_shortage_cost = 50.0,
-        energy_surplus_cost = 0.0,
-    )
+    cost = HydroGenerationCost(CostCurve(LinearCurve(0.15)), 0.0)
     for hy in get_components(HydroEnergyReservoir, c_sys5_hy_ed)
         set_operation_cost!(hy, cost)
     end
-    PSY.transform_single_time_series!(c_sys5_hy_ed, 12, Hour(1))
+    PSY.transform_single_time_series!(c_sys5_hy_ed, Hour(12), Hour(1))
 
     return c_sys5_hy_ed
 end
 
-function build_5_bus_hydro_wk_sys(; kwargs...)
+function build_5_bus_hydro_wk_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    data_dir = get_raw_data(; kwargs...)
     rawsys = PSY.PowerSystemTableData(
-        data_dir,
+        raw_data,
         100.0,
-        joinpath(data_dir, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(data_dir, "generator_mapping.yaml"),
+        joinpath(raw_data, "user_descriptors.yaml");
+        generator_mapping_file = joinpath(raw_data, "generator_mapping.yaml"),
     )
     c_sys5_hy_wk = PSY.System(
         rawsys;
         timeseries_metadata_file = joinpath(
-            data_dir,
+            raw_data,
             "5bus_ts",
             "7day",
             "timeseries_pointers_wk_7day.json",
@@ -385,24 +362,23 @@ function build_5_bus_hydro_wk_sys(; kwargs...)
         time_series_in_memory = true,
         sys_kwargs...,
     )
-    PSY.transform_single_time_series!(c_sys5_hy_wk, 2, Hour(48))
+    PSY.transform_single_time_series!(c_sys5_hy_wk, Hour(2), Hour(48))
 
     return c_sys5_hy_wk
 end
 
-function build_5_bus_hydro_wk_sys_targets(; kwargs...)
+function build_5_bus_hydro_wk_sys_targets(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    data_dir = get_raw_data(; kwargs...)
     rawsys = PSY.PowerSystemTableData(
-        data_dir,
+        raw_data,
         100.0,
-        joinpath(data_dir, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(data_dir, "generator_mapping.yaml"),
+        joinpath(raw_data, "user_descriptors.yaml");
+        generator_mapping_file = joinpath(raw_data, "generator_mapping.yaml"),
     )
     c_sys5_hy_wk = PSY.System(
         rawsys;
         timeseries_metadata_file = joinpath(
-            data_dir,
+            raw_data,
             "5bus_ts",
             "7day",
             "timeseries_pointers_wk_7day.json",
@@ -410,101 +386,97 @@ function build_5_bus_hydro_wk_sys_targets(; kwargs...)
         time_series_in_memory = true,
         sys_kwargs...,
     )
-    cost = PSY.StorageManagementCost(;
-        variable = VariableCost(0.15),
-        fixed = 0.0,
-        start_up = 0.0,
-        shut_down = 0.0,
-        energy_shortage_cost = 50.0,
-        energy_surplus_cost = 0.0,
-    )
+    cost = HydroGenerationCost(CostCurve(LinearCurve(0.15)), 0.0)
     for hy in get_components(HydroEnergyReservoir, c_sys5_hy_wk)
         set_operation_cost!(hy, cost)
     end
-    PSY.transform_single_time_series!(c_sys5_hy_wk, 2, Hour(48))
+    PSY.transform_single_time_series!(c_sys5_hy_wk, Hour(2), Hour(48))
 
     return c_sys5_hy_wk
 end
 
-function build_RTS_GMLC_DA_sys(; kwargs...)
+function build_RTS_GMLC_DA_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    RTS_GMLC_DIR = get_raw_data(; kwargs...)
-    RTS_SRC_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "SourceData")
-    RTS_SIIP_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "FormattedData", "SIIP")
+    RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
+    RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
+    MAP_DIR = joinpath(DATA_DIR, "RTS_GMLC")
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
         joinpath(RTS_SIIP_DIR, "user_descriptors.yaml");
         timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
-        generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
+        generator_mapping_file = joinpath(MAP_DIR, "generator_mapping.yaml"),
     )
-    resolution = get(kwargs, :time_series_resolution, Dates.Hour(1))
+    resolution = get(sys_kwargs, :time_series_resolution, Dates.Hour(1))
     sys = PSY.System(rawsys; time_series_resolution = resolution, sys_kwargs...)
-    interval = get(kwargs, :interval, Dates.Hour(24))
-    horizon = get(kwargs, :horizon, 48)
+    interval = get(sys_kwargs, :interval, Dates.Hour(24))
+    horizon = Hour(get(sys_kwargs, :horizon, 48))
     PSY.transform_single_time_series!(sys, horizon, interval)
     return sys
 end
 
-function build_RTS_GMLC_RT_sys(; kwargs...)
+function build_RTS_GMLC_RT_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    RTS_GMLC_DIR = get_raw_data(; kwargs...)
-    RTS_SRC_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "SourceData")
-    RTS_SIIP_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "FormattedData", "SIIP")
+    RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
+    RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
+    MAP_DIR = joinpath(DATA_DIR, "RTS_GMLC")
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
         joinpath(RTS_SIIP_DIR, "user_descriptors.yaml");
         timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
-        generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
+        generator_mapping_file = joinpath(MAP_DIR, "generator_mapping.yaml"),
     )
-    resolution = get(kwargs, :time_series_resolution, Dates.Minute(5))
+    resolution = get(sys_kwargs, :time_series_resolution, Dates.Minute(5))
     sys = PSY.System(rawsys; time_series_resolution = resolution, sys_kwargs...)
-    interval = get(kwargs, :interval, Dates.Minute(5))
-    horizon = get(kwargs, :horizon, 24)
+    interval = get(sys_kwargs, :interval, Dates.Minute(5))
+    horizon = Hour(get(sys_kwargs, :horizon, 24))
     PSY.transform_single_time_series!(sys, horizon, interval)
     return sys
 end
 
-function build_RTS_GMLC_DA_sys_noForecast(; kwargs...)
+function build_RTS_GMLC_DA_sys_noForecast(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    RTS_GMLC_DIR = get_raw_data(; kwargs...)
-    RTS_SRC_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "SourceData")
-    RTS_SIIP_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "FormattedData", "SIIP")
+    RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
+    RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
+    MAP_DIR = joinpath(DATA_DIR, "RTS_GMLC")
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
         joinpath(RTS_SIIP_DIR, "user_descriptors.yaml");
         timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
-        generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
+        generator_mapping_file = joinpath(MAP_DIR, "generator_mapping.yaml"),
     )
-    resolution = get(kwargs, :time_series_resolution, Dates.Hour(1))
+    resolution = get(sys_kwargs, :time_series_resolution, Dates.Hour(1))
     sys = PSY.System(rawsys; time_series_resolution = resolution, sys_kwargs...)
     return sys
 end
 
-function build_RTS_GMLC_RT_sys_noForecast(; kwargs...)
+function build_RTS_GMLC_RT_sys_noForecast(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    RTS_GMLC_DIR = get_raw_data(; kwargs...)
-    RTS_SRC_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "SourceData")
-    RTS_SIIP_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "FormattedData", "SIIP")
+    RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
+    RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
+    MAP_DIR = joinpath(DATA_DIR, "RTS_GMLC")
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
         joinpath(RTS_SIIP_DIR, "user_descriptors.yaml");
         timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
-        generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
+        generator_mapping_file = joinpath(MAP_DIR, "generator_mapping.yaml"),
     )
-    resolution = get(kwargs, :time_series_resolution, Dates.Minute(5))
+    resolution = get(sys_kwargs, :time_series_resolution, Dates.Minute(5))
     sys = PSY.System(rawsys; time_series_resolution = resolution, sys_kwargs...)
     return sys
 end
 
-function make_modified_RTS_GMLC_sys(resolution::Dates.TimePeriod = Hour(1); kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
-    RTS_GMLC_DIR = get_raw_data(; kwargs...)
-    RTS_SRC_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "SourceData")
-    RTS_SIIP_DIR = joinpath(RTS_GMLC_DIR, "RTS_Data", "FormattedData", "SIIP")
+function make_modified_RTS_GMLC_sys(
+    resolution::Dates.TimePeriod = Hour(1);
+    raw_data,
+    sys_kwargs...,
+)
+    RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
+    RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
+    MAP_DIR = joinpath(DATA_DIR, "RTS_GMLC")
     DISPATCH_INCREASE = 2.0
     FIX_DECREASE = 0.3
 
@@ -513,7 +485,7 @@ function make_modified_RTS_GMLC_sys(resolution::Dates.TimePeriod = Hour(1); kwar
         100.0,
         joinpath(RTS_SIIP_DIR, "user_descriptors.yaml");
         timeseries_metadata_file = joinpath(RTS_SIIP_DIR, "timeseries_pointers.json"),
-        generator_mapping_file = joinpath(RTS_SIIP_DIR, "generator_mapping.yaml"),
+        generator_mapping_file = joinpath(MAP_DIR, "generator_mapping.yaml"),
     )
 
     sys = PSY.System(rawsys; time_series_resolution = resolution, sys_kwargs...)
@@ -612,7 +584,7 @@ function make_modified_RTS_GMLC_sys(resolution::Dates.TimePeriod = Hour(1); kwar
 
     for g in PSY.get_components(
         x -> PSY.get_prime_mover_type(x) == PSY.PrimeMovers.PVe,
-        PSY.RenewableFix,
+        PSY.RenewableNonDispatch,
         sys,
     )
         rat_ = PSY.get_rating(g)
@@ -624,7 +596,7 @@ end
 
 function build_modified_RTS_GMLC_DA_sys(; kwargs...)
     sys = make_modified_RTS_GMLC_sys(; kwargs...)
-    PSY.transform_single_time_series!(sys, 48, Hour(24))
+    PSY.transform_single_time_series!(sys, Hour(48), Hour(24))
     return sys
 end
 
@@ -649,20 +621,12 @@ end
 
 function build_modified_RTS_GMLC_RT_sys(; kwargs...)
     sys = build_modified_RTS_GMLC_realization_sys(; kwargs...)
-    PSY.transform_single_time_series!(sys, 12, Minute(15))
+    PSY.transform_single_time_series!(sys, Hour(12), Minute(15))
     return sys
 end
 
 function build_modified_RTS_GMLC_RT_sys_noForecast(; kwargs...)
     sys = build_modified_RTS_GMLC_realization_sys(; kwargs...)
-    return sys
-end
-
-function build_modified_tamu_ercot_da_sys(; kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
-    data_dir = get_raw_data(; kwargs...)
-    system_path = joinpath(data_dir, "DA_sys.json")
-    sys = System(system_path; sys_kwargs...)
     return sys
 end
 
@@ -861,7 +825,13 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -0.30, max = 0.30),
             ramp_limits = nothing,
             time_limits = nothing,
-            operation_cost = ThreePartCost((0.0, 14.0), 0.0, 4.0, 2.0),
+            # Arguments
+            operation_cost = ThermalGenerationCost(
+                CostCurve(QuadraticCurve(0.0, 14.0, 0.0)),
+                0.0,
+                4.0,
+                2.0,
+            ),
             base_power = 100.0,
         ),
         ThermalStandard(;
@@ -878,7 +848,12 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -1.275, max = 1.275),
             ramp_limits = (up = 0.02 * 2.2125, down = 0.02 * 2.2125),
             time_limits = (up = 2.0, down = 1.0),
-            operation_cost = ThreePartCost((0.0, 15.0), 0.0, 1.5, 0.75),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(QuadraticCurve(0.0, 15.0, 0.0)),
+                0.0,
+                1.5,
+                0.75,
+            ),
             base_power = 100.0,
         ),
         ThermalStandard(;
@@ -895,7 +870,12 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -3.90, max = 3.90),
             ramp_limits = (up = 0.012 * 5.2, down = 0.012 * 5.2),
             time_limits = (up = 3.0, down = 2.0),
-            operation_cost = ThreePartCost((0.0, 30.0), 0.0, 3.0, 1.5),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(QuadraticCurve(0.0, 30.0, 0.0)),
+                0.0,
+                3.0,
+                1.5,
+            ),
             base_power = 100.0,
         ),
         ThermalStandard(;
@@ -912,7 +892,12 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -1.5, max = 1.5),
             ramp_limits = (up = 0.015 * 2.5, down = 0.015 * 2.5),
             time_limits = (up = 2.0, down = 1.0),
-            operation_cost = ThreePartCost((0.0, 40.0), 0.0, 4.0, 2.0),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(QuadraticCurve(0.0, 40.0, 0.0)),
+                0.0,
+                4.0,
+                2.0,
+            ),
             base_power = 100.0,
         ),
         ThermalStandard(;
@@ -929,7 +914,12 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -4.50, max = 4.50),
             ramp_limits = (up = 0.015 * 7.5, down = 0.015 * 7.5),
             time_limits = (up = 5.0, down = 3.0),
-            operation_cost = ThreePartCost((0.0, 10.0), 0.0, 1.5, 0.75),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(QuadraticCurve(0.0, 10.0, 0.0)),
+                0.0,
+                1.5,
+                0.75,
+            ),
             base_power = 100.0,
         ),
         ThermalStandard(;
@@ -946,7 +936,12 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -0.30, max = 0.30),
             ramp_limits = nothing,
             time_limits = nothing,
-            operation_cost = ThreePartCost((0.0, 14.0), 0.0, 4.0, 2.0),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(QuadraticCurve(0.0, 14.0, 0.0)),
+                0.0,
+                4.0,
+                2.0,
+            ),
             base_power = 100.0,
         ),
         ThermalStandard(;
@@ -963,7 +958,12 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -1.275, max = 1.275),
             ramp_limits = (up = 0.02 * 2.2125, down = 0.02 * 2.2125),
             time_limits = (up = 2.0, down = 1.0),
-            operation_cost = ThreePartCost((0.0, 15.0), 0.0, 1.5, 0.75),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(QuadraticCurve(0.0, 15.0, 0.0)),
+                0.0,
+                1.5,
+                0.75,
+            ),
             base_power = 100.0,
         ),
         ThermalStandard(;
@@ -980,7 +980,12 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -3.90, max = 3.90),
             ramp_limits = (up = 0.012 * 5.2, down = 0.012 * 5.2),
             time_limits = (up = 3.0, down = 2.0),
-            operation_cost = ThreePartCost((0.0, 30.0), 0.0, 3.0, 1.5),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(QuadraticCurve(0.0, 30.0, 0.0)),
+                0.0,
+                3.0,
+                1.5,
+            ),
             base_power = 100.0,
         ),
         ThermalStandard(;
@@ -997,7 +1002,12 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -1.5, max = 1.5),
             ramp_limits = (up = 0.015 * 2.5, down = 0.015 * 2.5),
             time_limits = (up = 2.0, down = 1.0),
-            operation_cost = ThreePartCost((0.0, 40.0), 0.0, 4.0, 2.0),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(QuadraticCurve(0.0, 40.0, 0.0)),
+                0.0,
+                4.0,
+                2.0,
+            ),
             base_power = 100.0,
         ),
         ThermalStandard(;
@@ -1014,7 +1024,12 @@ function build_two_zone_5_bus(; kwargs...)
             reactive_power_limits = (min = -4.50, max = 4.50),
             ramp_limits = (up = 0.015 * 7.5, down = 0.015 * 7.5),
             time_limits = (up = 5.0, down = 3.0),
-            operation_cost = ThreePartCost((0.0, 10.0), 0.0, 1.5, 0.75),
+            operation_cost = ThermalGenerationCost(
+                CostCurve(QuadraticCurve(0.0, 10.0, 0.0)),
+                0.0,
+                1.5,
+                0.75,
+            ),
             base_power = 100.0,
         ),
     ]
@@ -1195,11 +1210,11 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
             name_ = PSY.get_name(b)
             main_comp = PSY.get_component(component_type, main_sys, name_)
 
+            IS.assign_new_uuid!(twin_sys.data, b)
             PSY.remove_component!(twin_sys, b)
             # change name
             PSY.set_name!(b, name_ * "_twin")
             # define time series container
-            IS.assign_new_uuid!(b)
             # add component to the new sys (main)
             PSY.add_component!(main_sys, b)
             # check if it has timeseries
@@ -1214,6 +1229,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         name_ = PSY.get_name(b)
         main_comp = PSY.get_component(PSY.ACBus, main_sys, name_)
 
+        IS.assign_new_uuid!(twin_sys.data, b)
         PSY.remove_component!(twin_sys, b)
         # change name
         PSY.set_name!(b, name_ * "_twin")
@@ -1229,18 +1245,17 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         # change number
         PSY.set_number!(b, PSY.get_number(b) + 10000)
         # add component to the new sys (main)
-        IS.assign_new_uuid!(b)
         PSY.add_component!(main_sys, b)
     end
 
-    # now add the Lines
+    # now add the ACBranches
     from_to_list = []
-    for b in PSY.get_components(PSY.Line, twin_sys)
+    for b in PSY.get_components(PSY.ACBranch, twin_sys)
         name_ = PSY.get_name(b)
-        main_comp = PSY.get_component(PSY.Line, main_sys, name_)
+        main_comp = PSY.get_component(typeof(b), main_sys, name_)
 
+        IS.assign_new_uuid!(twin_sys.data, b)
         PSY.remove_component!(twin_sys, b)
-        b.time_series_container = IS.TimeSeriesContainer()
         # change name
         PSY.set_name!(b, name_ * "_twin")
         # create new component from scratch since copying is not working
@@ -1264,7 +1279,6 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         end
         PSY.set_arc!(b, new_arc)
         # add component to the new sys (main)
-        IS.assign_new_uuid!(b)
         PSY.add_component!(main_sys, b)
     end
 
@@ -1273,11 +1287,11 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         name_ = PSY.get_name(srvc)
         main_comp = PSY.get_component(PSY.Service, main_sys, name_)
 
+        IS.assign_new_uuid!(twin_sys.data, srvc)
         PSY.remove_component!(twin_sys, srvc)
         # change name
         PSY.set_name!(srvc, name_ * "_twin")
         # define time series container
-        IS.assign_new_uuid!(srvc)
         # add component to the new sys (main)
         PSY.add_component!(main_sys, srvc)
         # check if it has timeseries
@@ -1286,28 +1300,21 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         end
     end
 
-    # finally add the remaining devices (lines are not present since removed before)
+    # finally add the remaining devices (ACBranches are not present since removed before)
     for b in PSY.get_components(Device, twin_sys)
         name_ = PSY.get_name(b)
         main_comp = PSY.get_component(typeof(b), main_sys, name_)
         PSY.clear_services!(b)
+        IS.assign_new_uuid!(twin_sys.data, b)
         PSY.remove_component!(twin_sys, b)
         # change name
         PSY.set_name!(b, name_ * "_twin")
         # change bus (already changed)
         # check if it has services
         @assert !PSY.has_service(b, PSY.VariableReserve)
-        #check if component has time_series
-        if !PSY.has_time_series(b)
-            # define time series container
-            IS.assign_new_uuid!(b)
-            # add component to the new sys (main)
-            PSY.add_component!(main_sys, b)
-            PSY.copy_time_series!(b, main_comp)
-        else
-            IS.assign_new_uuid!(b)
-            PSY.add_component!(main_sys, b)
-        end
+        PSY.add_component!(main_sys, b)
+        !PSY.has_time_series(b) && PSY.copy_time_series!(b, main_comp)
+
         # add service to the device to be added to main_sys
         if length(PSY.get_services(main_comp)) > 0
             PSY.get_name(b)
@@ -1369,7 +1376,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
             r = 0.042,
             x = 0.161,
             b = (from = 0.022, to = 0.022),
-            rate = 1.75,
+            rating = 1.75,
             # For now, not binding
             flow_limits = (from_to = 2.0, to_from = 2.0),
             angle_limits = (min = -1.57079, max = 1.57079),
@@ -1379,7 +1386,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         PSY.add_component!(main_sys, new_ACLine)
     end
 
-    for bat in get_components(GenericBattery, main_sys)
+    for bat in get_components(EnergyReservoirStorage, main_sys)
         set_base_power!(bat, get_base_power(bat) * 10)
     end
 
@@ -1392,7 +1399,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         remove_component!(main_sys, r)
     end
 
-    for dev in get_components(RenewableFix, main_sys)
+    for dev in get_components(RenewableNonDispatch, main_sys)
         clear_services!(dev)
     end
 
@@ -1416,13 +1423,13 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         main_sys,
     )
         noise_values = rand(MersenneTwister(COST_PERTURBATION_NOISE_SEED), 1_000_000)
-        old_pwl_array = get_variable(get_operation_cost(g)) |> get_cost
+        old_pwl_array = get_points(get_value_curve(get_variable(get_operation_cost(g))))
         new_pwl_array = similar(old_pwl_array)
-        for (ix, (y, x)) in enumerate(old_pwl_array)
+        for (ix, (x, y)) in enumerate(old_pwl_array)
             if ix ∈ [1, length(old_pwl_array)]
                 noise_val, rand_ix = iterate(noise_values, rand_ix)
                 cost_noise = 50.0 * noise_val
-                new_pwl_array[ix] = ((y + cost_noise), x)
+                new_pwl_array[ix] = (x = x, y = (y + cost_noise))
             else
                 try_again = true
                 while try_again
@@ -1431,12 +1438,12 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
                     noise_val, rand_ix = iterate(noise_values, rand_ix)
                     power_noise = 0.01 * noise_val
                     slope_previous =
-                        ((y + cost_noise) - old_pwl_array[ix - 1][1]) /
-                        ((x - power_noise) - old_pwl_array[ix - 1][2])
+                        ((y + cost_noise) - old_pwl_array[ix - 1].y) /
+                        ((x - power_noise) - old_pwl_array[ix - 1].x)
                     slope_next =
-                        (-(y + cost_noise) + old_pwl_array[ix + 1][1]) /
-                        (-(x - power_noise) + old_pwl_array[ix + 1][2])
-                    new_pwl_array[ix] = ((y + cost_noise), (x - power_noise))
+                        (-(y + cost_noise) + old_pwl_array[ix + 1].y) /
+                        (-(x - power_noise) + old_pwl_array[ix + 1].x)
+                    new_pwl_array[ix] = (x = (x - power_noise), y = (y + cost_noise))
                     try_again = slope_previous > slope_next
                     if rand_ix == length(noise_values)
                         break
@@ -1444,7 +1451,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
                 end
             end
         end
-        get_variable(get_operation_cost(g)).cost = new_pwl_array
+        set_variable!(get_operation_cost(g), CostCurve(PiecewisePointCurve(new_pwl_array)))
     end
 
     # set service participation
