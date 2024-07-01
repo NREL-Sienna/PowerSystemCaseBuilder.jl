@@ -2,6 +2,25 @@
     system_catalog = SystemCatalog(SYSTEM_CATALOG)
     for (name, descriptor) in system_catalog.data[PSISystems]
         supported_args_permutations = PSB.get_supported_args_permutations(descriptor)
+        if isempty(supported_args_permutations)
+            sys = build_system(
+                PSISystems,
+                name;
+                force_build = true,
+            )
+            @test isa(sys, System)
+
+            # build a new system from json
+            @test PSB.is_serialized(name)
+            sys2 = build_system(
+                PSISystems,
+                name,
+            )
+            @test isa(sys2, System)
+
+            PSB.clear_serialized_system(name)
+            @test !PSB.is_serialized(name)
+        end
         for supported_args in supported_args_permutations
             sys = build_system(
                 PSISystems,
@@ -9,14 +28,13 @@
                 force_build = true,
                 supported_args...,
             )
-
             @test isa(sys, System)
+
             # build a new system from json
             @test PSB.is_serialized(name, supported_args)
             sys2 = build_system(
                 PSISystems,
                 name;
-                force_build = true,
                 supported_args...,
             )
             @test isa(sys2, System)
