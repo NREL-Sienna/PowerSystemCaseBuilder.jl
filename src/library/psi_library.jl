@@ -1422,7 +1422,11 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         ThermalStandard,
         main_sys,
     )
-        PSY.get_name(g)
+        # This makes the twin system cheaper for the first tranche
+        # Creates an imbalance in which side is more expensive for testing
+        # purposes
+        direction = occursin("twin", PSY.get_name(g)) ? -1 : 1
+        @show PSY.get_name(g), direction
         noise_values = rand(MersenneTwister(COST_PERTURBATION_NOISE_SEED), 10_000_000)
         old_value_curve = get_value_curve(get_variable(get_operation_cost(g)))
         old_slopes = get_slopes(old_value_curve)
@@ -1434,8 +1438,9 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
             get_initial_input(old_value_curve) /
             (get_active_power_limits(g).min * get_base_power(g))
         new_first_input =
-            (old_y - cost_noise) * get_active_power_limits(g).min * get_base_power(g)
-        new_slopes[1] = old_slopes[1] - cost_noise
+            (old_y + direction * cost_noise) * get_active_power_limits(g).min *
+            get_base_power(g)
+        new_slopes[1] = old_slopes[1] + direction * cost_noise
         @assert new_slopes[1] > 0.0
         for ix in 2:length(old_slopes)
             while new_slopes[ix - 1] > new_slopes[ix]
@@ -1445,7 +1450,6 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
             end
         end
         @assert old_slopes != new_slopes
-
         set_variable!(
             get_operation_cost(g),
             CostCurve(
