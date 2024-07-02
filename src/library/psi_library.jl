@@ -1422,36 +1422,33 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         ThermalStandard,
         main_sys,
     )
-        noise_values = rand(MersenneTwister(COST_PERTURBATION_NOISE_SEED), 1_000_000)
-        old_pwl_array = get_points(get_value_curve(get_variable(get_operation_cost(g))))
-        new_pwl_array = similar(old_pwl_array)
-        for (ix, (x, y)) in enumerate(old_pwl_array)
-            if ix ∈ [1, length(old_pwl_array)]
+        noise_values = rand(MersenneTwister(COST_PERTURBATION_NOISE_SEED), 10_000_000)
+        old_value_curve = get_value_curve(get_variable(get_operation_cost(g)))
+        old_slopes = get_slopes(old_value_curve)
+        new_slopes = zeros(size(old_slopes))
+        noise_val, rand_ix = iterate(noise_values, rand_ix)
+        cost_noise = round(100.0 * noise_val, digits=2)
+        new_slopes[1] = old_slopes[1] - cost_noise
+        @assert new_slopes[1] > 0.0
+        for ix ∈ 2:length(old_slopes)
+            while new_slopes[ix - 1] > new_slopes[ix]
                 noise_val, rand_ix = iterate(noise_values, rand_ix)
-                cost_noise = 50.0 * noise_val
-                new_pwl_array[ix] = (x = x, y = (y + cost_noise))
-            else
-                try_again = true
-                while try_again
-                    noise_val, rand_ix = iterate(noise_values, rand_ix)
-                    cost_noise = 50.0 * noise_val
-                    noise_val, rand_ix = iterate(noise_values, rand_ix)
-                    power_noise = 0.01 * noise_val
-                    slope_previous =
-                        ((y + cost_noise) - old_pwl_array[ix - 1].y) /
-                        ((x - power_noise) - old_pwl_array[ix - 1].x)
-                    slope_next =
-                        (-(y + cost_noise) + old_pwl_array[ix + 1].y) /
-                        (-(x - power_noise) + old_pwl_array[ix + 1].x)
-                    new_pwl_array[ix] = (x = (x - power_noise), y = (y + cost_noise))
-                    try_again = slope_previous > slope_next
-                    if rand_ix == length(noise_values)
-                        break
-                    end
-                end
+                cost_noise = round(100.0 * noise_val, digits=2)
+                new_slopes[ix] = old_slopes[ix] + cost_noise
             end
         end
-        set_variable!(get_operation_cost(g), CostCurve(PiecewisePointCurve(new_pwl_array)))
+        @assert old_slopes != new_slopes
+        set_variable!(
+            get_operation_cost(g),
+            CostCurve(
+                PiecewiseIncrementalCurve(
+                get_input_at_zero(old_value_curve),
+                get_initial_input(old_value_curve),
+                get_x_coords(old_value_curve),
+                new_slopes
+                )))
+        @show old_slopes
+        @show new_slopes
     end
 
     # set service participation
