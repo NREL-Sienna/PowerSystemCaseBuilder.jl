@@ -362,7 +362,7 @@ function build_5_bus_hydro_wk_sys(; raw_data, kwargs...)
         time_series_in_memory = true,
         sys_kwargs...,
     )
-    PSY.transform_single_time_series!(c_sys5_hy_wk, Hour(2), Hour(48))
+    PSY.transform_single_time_series!(c_sys5_hy_wk, Hour(48), Hour(48))
 
     return c_sys5_hy_wk
 end
@@ -390,7 +390,7 @@ function build_5_bus_hydro_wk_sys_targets(; raw_data, kwargs...)
     for hy in get_components(HydroEnergyReservoir, c_sys5_hy_wk)
         set_operation_cost!(hy, cost)
     end
-    PSY.transform_single_time_series!(c_sys5_hy_wk, Hour(2), Hour(48))
+    PSY.transform_single_time_series!(c_sys5_hy_wk, Hour(48), Hour(48))
 
     return c_sys5_hy_wk
 end
