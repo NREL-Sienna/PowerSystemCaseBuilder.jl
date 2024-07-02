@@ -1418,37 +1418,43 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
     # cost perturbation must be the same for each sub-system
     rand_ix = 1
     for g in get_components(
-        x -> x.prime_mover_type in [PrimeMovers.CT, PrimeMovers.CC],
+        x -> get_fuel(x) in [ThermalFuels.NATURAL_GAS, ThermalFuels.COAL],
         ThermalStandard,
         main_sys,
     )
+        PSY.get_name(g)
         noise_values = rand(MersenneTwister(COST_PERTURBATION_NOISE_SEED), 10_000_000)
         old_value_curve = get_value_curve(get_variable(get_operation_cost(g)))
         old_slopes = get_slopes(old_value_curve)
         new_slopes = zeros(size(old_slopes))
         noise_val, rand_ix = iterate(noise_values, rand_ix)
-        cost_noise = round(100.0 * noise_val, digits=2)
+        cost_noise = round(100.0 * noise_val; digits = 2)
+        get_initial_input(old_value_curve)
+        old_y =
+            get_initial_input(old_value_curve) /
+            (get_active_power_limits(g).min * get_base_power(g))
+        new_first_input =
+            (old_y - cost_noise) * get_active_power_limits(g).min * get_base_power(g)
         new_slopes[1] = old_slopes[1] - cost_noise
         @assert new_slopes[1] > 0.0
-        for ix ∈ 2:length(old_slopes)
+        for ix in 2:length(old_slopes)
             while new_slopes[ix - 1] > new_slopes[ix]
                 noise_val, rand_ix = iterate(noise_values, rand_ix)
-                cost_noise = round(100.0 * noise_val, digits=2)
+                cost_noise = round(100.0 * noise_val; digits = 2)
                 new_slopes[ix] = old_slopes[ix] + cost_noise
             end
         end
         @assert old_slopes != new_slopes
+
         set_variable!(
             get_operation_cost(g),
             CostCurve(
                 PiecewiseIncrementalCurve(
-                get_input_at_zero(old_value_curve),
-                get_initial_input(old_value_curve),
-                get_x_coords(old_value_curve),
-                new_slopes
+                    nothing,
+                    new_first_input,
+                    get_x_coords(old_value_curve),
+                    new_slopes,
                 )))
-        @show old_slopes
-        @show new_slopes
     end
 
     # set service participation
