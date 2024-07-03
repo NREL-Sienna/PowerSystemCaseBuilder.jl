@@ -310,7 +310,7 @@ function build_5_bus_hydro_ed_sys(; raw_data, kwargs...)
         time_series_in_memory = true,
         sys_kwargs...,
     )
-    PSY.transform_single_time_series!(c_sys5_hy_ed, Hour(12), Hour(1))
+    PSY.transform_single_time_series!(c_sys5_hy_ed, Hour(2), Hour(1))
 
     return c_sys5_hy_ed
 end
@@ -338,7 +338,7 @@ function build_5_bus_hydro_ed_sys_targets(; raw_data, kwargs...)
     for hy in get_components(HydroEnergyReservoir, c_sys5_hy_ed)
         set_operation_cost!(hy, cost)
     end
-    PSY.transform_single_time_series!(c_sys5_hy_ed, Hour(12), Hour(1))
+    PSY.transform_single_time_series!(c_sys5_hy_ed, Hour(2), Hour(1))
 
     return c_sys5_hy_ed
 end
@@ -621,7 +621,7 @@ end
 
 function build_modified_RTS_GMLC_RT_sys(; kwargs...)
     sys = build_modified_RTS_GMLC_realization_sys(; kwargs...)
-    PSY.transform_single_time_series!(sys, Hour(12), Minute(15))
+    PSY.transform_single_time_series!(sys, Hour(1), Minute(15))
     return sys
 end
 
