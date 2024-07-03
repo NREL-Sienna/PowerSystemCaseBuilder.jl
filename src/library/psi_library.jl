@@ -430,7 +430,7 @@ function build_RTS_GMLC_RT_sys(; raw_data, kwargs...)
     resolution = get(sys_kwargs, :time_series_resolution, Dates.Minute(5))
     sys = PSY.System(rawsys; time_series_resolution = resolution, sys_kwargs...)
     interval = get(sys_kwargs, :interval, Dates.Minute(5))
-    horizon = Hour(get(sys_kwargs, :horizon, 24))
+    horizon = Hour(get(sys_kwargs, :horizon, 2))
     PSY.transform_single_time_series!(sys, horizon, interval)
     return sys
 end
