@@ -1545,3 +1545,255 @@ function build_HVDC_TWO_RTO_RTS_5Min_sys(; kwargs...)
     new_sys = _duplicate_system(main_sys_RT, deepcopy(main_sys_RT), true)
     return new_sys
 end
+
+function build_MTHVDC_two_RTS_DA_sys_noForecast(; kwargs...)
+    sys_rts = build_RTS_GMLC_DA_sys_noForecast(; kwargs...)
+    sys = _duplicate_system(sys_rts, deepcopy(sys_rts), false)
+    # Remove AC connection
+    ac_interconnection = first(PSY.get_components(PSY.MonitoredLine, sys))
+    PSY.remove_component!(sys, ac_interconnection)
+
+    ### Add DC Buses ###
+    # 7T DC Buses
+    T7_numbers_150kV = [701, 702, 703]
+    T7_numbers_300kV = [704, 705, 706, 707]
+    for number in T7_numbers_150kV
+        dcbus = PSY.DCBus(;
+            number = number,
+            name = string(number),
+            magnitude = 1.0,
+            voltage_limits = (min = 0.9, max = 1.1),
+            base_voltage = 150.0,
+        )
+        PSY.add_component!(sys, dcbus)
+    end
+    for number in T7_numbers_300kV
+        dcbus = PSY.DCBus(;
+            number = number,
+            name = string(number),
+            magnitude = 1.0,
+            voltage_limits = (min = 0.9, max = 1.1),
+            base_voltage = 300.0,
+        )
+        PSY.add_component!(sys, dcbus)
+    end
+
+    T9_numbers_300kV = 901:1:909
+    for number in T9_numbers_300kV
+        dcbus = PSY.DCBus(;
+            number = number,
+            name = string(number),
+            magnitude = 1.0,
+            voltage_limits = (min = 0.9, max = 1.1),
+            base_voltage = 300.0,
+        )
+        PSY.add_component!(sys, dcbus)
+    end
+
+    ### Add DC Lines ###
+    #7T Lines
+    T7_bus_arcs = [
+        ("701", "703"),
+        ("702", "703"),
+        ("704", "705"),
+        ("704", "706"),
+        ("704", "707"),
+        ("705", "707"),
+        ("706", "707"),
+    ]
+    T7_r = [0.0352, 0.0352, 0.1242, 0.1242, 0.1242, 0.1242, 0.0248]
+    limit = 1.0 # All lines have a maximum flow of 100 MW
+
+    for (ix, bus_tuple) in enumerate(T7_bus_arcs)
+        bus_from = bus_tuple[1]
+        bus_to = bus_tuple[2]
+        dcline = PSY.TModelHVDCLine(;
+            name = "$(bus_from)_$(bus_to)",
+            available = true,
+            active_power_flow = 0.0,
+            arc = PSY.Arc(
+                PSY.get_component(PSY.DCBus, sys, bus_from),
+                PSY.get_component(PSY.DCBus, sys, bus_to),
+            ),
+            r = T7_r[ix],
+            l = 0.0,
+            c = 0.0,
+            active_power_limits_from = (min = 0.0, max = limit),
+            active_power_limits_to = (min = 0.0, max = limit),
+        )
+        PSY.add_component!(sys, dcline)
+    end
+
+    #9T Lines
+    T9_bus_arcs = [
+        ("901", "903"),
+        ("901", "904"),
+        ("902", "903"),
+        ("902", "906"),
+        ("902", "909"),
+        ("903", "905"),
+        ("904", "905"),
+        ("904", "907"),
+        ("905", "907"),
+        ("906", "907"),
+        ("906", "908"),
+        ("908", "909"),
+    ]
+
+    T9_r = [
+        0.0352,
+        0.0828,
+        0.0352,
+        0.0828,
+        0.0828,
+        0.1656,
+        0.1242,
+        0.1242,
+        0.1242,
+        0.0248,
+        0.0828,
+        0.0828,
+    ]
+
+    for (ix, bus_tuple) in enumerate(T9_bus_arcs)
+        bus_from = bus_tuple[1]
+        bus_to = bus_tuple[2]
+        dcline = PSY.TModelHVDCLine(;
+            name = "$(bus_from)_$(bus_to)",
+            available = true,
+            active_power_flow = 0.0,
+            arc = PSY.Arc(
+                PSY.get_component(PSY.DCBus, sys, bus_from),
+                PSY.get_component(PSY.DCBus, sys, bus_to),
+            ),
+            r = T9_r[ix],
+            l = 0.0,
+            c = 0.0,
+            active_power_limits_from = (min = 0.0, max = limit),
+            active_power_limits_to = (min = 0.0, max = limit),
+        )
+        PSY.add_component!(sys, dcline)
+    end
+
+    ### Add IPCs ###
+
+    # Base Data #
+    S_base = 100 # MVA
+    V_base = [150, 150, 150, 300, 300, 300, 300] # kV
+    Z_base = V_base .^ 2 / S_base
+
+    # Converter Loss Data
+    a_pu = [1.103, 1.103, 2.206, 1.103, 2.206, 1.103, 2.206] / S_base
+    b_pu = [0.887, 0.887, 0.887, 1.8, 1.8, 1.8, 1.8] ./ V_base
+    c_pu =
+        0.5 * [
+            2.885 + 4.371,
+            2.885 + 4.371,
+            1.442 + 2.185,
+            5.94 + 9.0,
+            11.88 + 18.0,
+            5.94 + 9.0,
+            11.88 + 18.0,
+        ] ./ Z_base
+
+    # P Limit in pu
+    P_limit_7T = [1.0, 1.0, 2.0, 2.0, 1.0, 2.0, 1.0]
+
+    # Same data for all converters in 9T: Equal to the DC6 converter
+    a_pu_9T = a_pu[6]
+    b_pu_9T = b_pu[6]
+    c_pu_9T = c_pu[6]
+    P_limit_9T = 2.0
+
+    # There are 16 IPCs to connect
+    # For 7T we will use:
+    # 701 with 107
+    # 702 with 10204 (Twin)
+    # 703 with 10301 (Twin)
+    # 704 with 113
+    # 705 with 123
+    # 706 with 10215 (Twin)
+    # 707 with 10217 (Twin)
+
+    # For 9T we will use:
+    # 901 with 107
+    # 902 with 10204 (Twin)
+    # 903 with 10301 (Twin)
+    # 904 with 104
+    # 905 with 118
+    # 906 with 10215 (Twin)
+    # 907 with 10217 (Twin)
+    # 908 with 10219 (Twin)
+    # 909 with 10206 (Twin)
+
+    function get_bus_by_number(sys, number)
+        return first(PSY.get_components(x -> x.number == number, PSY.Bus, sys))
+    end
+
+    # For 7T system
+    bus_arcs_7T = [
+        (701, 107),
+        (702, 10204),
+        (703, 10301),
+        (704, 113),
+        (705, 123),
+        (706, 10215),
+        (707, 10217),
+    ]
+
+    bus_arcs_9T = [
+        (901, 107),
+        (902, 10204),
+        (903, 10301),
+        (904, 104),
+        (905, 118),
+        (906, 10215),
+        (907, 10217),
+        (908, 10219),
+        (909, 10206),
+    ]
+
+    for (ix, bus_tuple) in enumerate(bus_arcs_7T)
+        dcbus = get_bus_by_number(sys, bus_tuple[1])
+        acbus = get_bus_by_number(sys, bus_tuple[2])
+        ipc = PSY.InterconnectingConverter(;
+            name = "$(bus_tuple[2])_$(bus_tuple[1])",
+            available = true,
+            bus = acbus,
+            dc_bus = dcbus,
+            active_power = 0.0,
+            rating = 1.0,
+            active_power_limits = (min = 0.0, max = 1.0),
+            base_power = P_limit_7T[ix],
+            loss_function = PSY.QuadraticCurve(
+                c_pu[ix],
+                b_pu[ix],
+                a_pu[ix],
+            ),
+        )
+        PSY.add_component!(sys, ipc)
+    end
+
+    for bus_tuple in bus_arcs_9T
+        dcbus = get_bus_by_number(sys, bus_tuple[1])
+        acbus = get_bus_by_number(sys, bus_tuple[2])
+        ipc = PSY.InterconnectingConverter(;
+            name = "$(bus_tuple[2])_$(bus_tuple[1])",
+            available = true,
+            bus = acbus,
+            dc_bus = dcbus,
+            active_power = 0.0,
+            rating = 1.0,
+            active_power_limits = (min = 0.0, max = 1.0),
+            base_power = P_limit_9T,
+            loss_function = PSY.QuadraticCurve(
+                c_pu_9T,
+                b_pu_9T,
+                a_pu_9T,
+            ),
+        )
+        PSY.add_component!(sys, ipc)
+    end
+
+    return sys
+end
