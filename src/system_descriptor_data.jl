@@ -830,6 +830,13 @@ const SYSTEM_CATALOG = [
         build_function = build_HVDC_TWO_RTO_RTS_5Min_sys,
     ),
     SystemDescriptor(;
+        name = "MTHVDC_two_RTS_DA_sys_noForecast",
+        description = "Two RTS systems connected by two multi-terminal HVDC systems",
+        category = PSISystems,
+        raw_data = RTS_DIR,
+        build_function = build_MTHVDC_two_RTS_DA_sys_noForecast,
+    ),
+    SystemDescriptor(;
         name = "psse_ACTIVSg2000_sys",
         description = "PSSE ACTIVSg2000 Test system",
         category = PSSEParsingTestSystems,

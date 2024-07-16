@@ -1545,3 +1545,75 @@ function build_HVDC_TWO_RTO_RTS_5Min_sys(; kwargs...)
     new_sys = _duplicate_system(main_sys_RT, deepcopy(main_sys_RT), true)
     return new_sys
 end
+
+function build_MTHVDC_two_RTS_DA_sys_noForecast(; kwargs...)
+    sys_rts = build_RTS_GMLC_DA_sys_noForecast(; kwargs...)
+    sys = _duplicate_system(sys_rts, deepcopy(sys_rts), false)
+    include(joinpath(
+        DATA_DIR,
+        "psy_data",
+        "data_mthvdc_twin_rts.jl",
+    ))
+    # Remove AC connection
+    ac_interconnection = first(PSY.get_components(PSY.MonitoredLine, sys))
+    PSY.remove_component!(sys, ac_interconnection)
+
+    ### Add DC Buses ###
+    for dcbus in dcbuses
+        PSY.add_component!(sys, dcbus)
+    end
+
+    ### Add DC Lines ###
+    for dcline in dclines
+        PSY.add_component!(sys, dcline)
+    end
+
+    ### Add IPCs ###
+    function get_bus_by_number(sys, number)
+        return first(get_components(x -> x.number == number, Bus, sys))
+    end
+
+    for (ix, bus_tuple) in enumerate(bus_arcs_7T)
+        dcbus = get_bus_by_number(sys, bus_tuple[1])
+        acbus = get_bus_by_number(sys, bus_tuple[2])
+        ipc = PSY.InterconnectingConverter(;
+            name = "$(bus_tuple[2])_$(bus_tuple[1])",
+            available = true,
+            bus = acbus,
+            dc_bus = dcbus,
+            active_power = 0.0,
+            rating = 1.0,
+            active_power_limits = (min = 0.0, max = 1.0),
+            base_power = P_limit_7T[ix],
+            loss_function = PSY.QuadraticCurve(
+                c_pu[ix],
+                b_pu[ix],
+                a_pu[ix],
+            ),
+        )
+        PSY.add_component!(sys, ipc)
+    end
+
+    for bus_tuple in bus_arcs_9T
+        dcbus = get_bus_by_number(sys, bus_tuple[1])
+        acbus = get_bus_by_number(sys, bus_tuple[2])
+        ipc = PSY.InterconnectingConverter(;
+            name = "$(bus_tuple[2])_$(bus_tuple[1])",
+            available = true,
+            bus = acbus,
+            dc_bus = dcbus,
+            active_power = 0.0,
+            rating = 1.0,
+            active_power_limits = (min = 0.0, max = 1.0),
+            base_power = P_limit_9T,
+            loss_function = PSY.QuadraticCurve(
+                c_pu_9T,
+                b_pu_9T,
+                a_pu_9T,
+            ),
+        )
+        PSY.add_component!(sys, ipc)
+    end
+
+    return sys
+end
