@@ -1426,7 +1426,6 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         # Creates an imbalance in which side is more expensive for testing
         # purposes
         direction = occursin("twin", PSY.get_name(g)) ? -1 : 1
-        @show PSY.get_name(g), direction
         noise_values = rand(MersenneTwister(COST_PERTURBATION_NOISE_SEED), 10_000_000)
         old_value_curve = get_value_curve(get_variable(get_operation_cost(g)))
         old_slopes = get_slopes(old_value_curve)
