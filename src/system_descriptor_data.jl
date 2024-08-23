@@ -1719,6 +1719,13 @@ const SYSTEM_CATALOG = [
         build_function = build_3bus_inverter,
     ),
     SystemDescriptor(;
+        name = "WECC 9 Bus",
+        description = "WECC 9 Bus System with dynamic gens from Sauer and Pai",
+        category = PSIDSystems,
+        raw_data = joinpath(DATA_DIR, "psid_tests", "data_tests", "WSCC 9 bus.raw"),
+        build_function = build_psid_wecc_9_dynamic,
+    ),
+    SystemDescriptor(;
         name = "2 Bus Load Tutorial",
         description = "2 Bus Base System for load tutorials",
         category = PSIDSystems,
