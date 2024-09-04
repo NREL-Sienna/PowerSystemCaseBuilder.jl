@@ -1436,7 +1436,7 @@ function build_c_sys5_pwl_uc(; raw_data, kwargs...)
     return c_sys5_uc
 end
 
-function build_c_sys5_ed(; add_forecasts, kwargs...)
+function build_c_sys5_ed(; add_forecasts, add_reserves, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_ed = PSY.System(
@@ -1497,6 +1497,43 @@ function build_c_sys5_ed(; add_forecasts, kwargs...)
             PSY.add_time_series!(
                 c_sys5_ed,
                 l,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
+        end
+    end
+    if add_reserves
+        reserve_ed = reserve5(PSY.get_components(PSY.ThermalStandard, c_sys5_ed))
+        PSY.add_service!(
+            c_sys5_ed,
+            reserve_ed[1],
+            PSY.get_components(PSY.ThermalStandard, c_sys5_ed),
+        )
+        PSY.add_service!(
+            c_sys5_ed,
+            reserve_ed[2],
+            [collect(PSY.get_components(PSY.ThermalStandard, c_sys5_ed))[end]],
+        )
+        PSY.add_service!(
+            c_sys5_ed,
+            reserve_ed[3],
+            PSY.get_components(PSY.ThermalStandard, c_sys5_ed),
+        )
+        for serv in PSY.get_components(PSY.VariableReserve, c_sys5_ed)
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2 # loop over days
+                ta_DA = Reserve_ts[t]
+                data_5min = repeat(values(ta_DA); inner = 12)
+                reserve_timeseries_RT = TimeSeries.TimeArray(RealTime, data_5min)
+                # loop over hours
+                for ini_time in timestamp(ta_DA) #get the initial hour
+                    # Construct TimeSeries
+                    data = when(reserve_timeseries_RT, hour, hour(ini_time)) # get the subset ts for that hour
+                    forecast_data[ini_time] = data
+                end
+            end
+            PSY.add_time_series!(
+                c_sys5_ed,
+                serv,
                 PSY.Deterministic("max_active_power", forecast_data),
             )
         end
