@@ -1523,7 +1523,8 @@ function build_c_sys5_ed(; add_forecasts, add_reserves, kwargs...)
             for t in 1:2 # loop over days
                 ta_DA = Reserve_ts[t]
                 data_5min = repeat(values(ta_DA); inner = 12)
-                reserve_timeseries_RT = TimeSeries.TimeArray(RealTime, data_5min)
+                reserve_timeseries_RT =
+                    TimeSeries.TimeArray(RealTime + Day(t - 1), data_5min)
                 # loop over hours
                 for ini_time in timestamp(ta_DA) #get the initial hour
                     # Construct TimeSeries
