@@ -1535,7 +1535,7 @@ function build_c_sys5_ed(; add_forecasts, add_reserves, kwargs...)
             PSY.add_time_series!(
                 c_sys5_ed,
                 serv,
-                PSY.Deterministic("max_active_power", forecast_data),
+                PSY.Deterministic("requirement", forecast_data),
             )
         end
     end
