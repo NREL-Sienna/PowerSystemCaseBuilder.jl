@@ -1535,15 +1535,15 @@ function build_c_sys5_ed(; add_forecasts, add_reserves, kwargs...)
             PSY.add_time_series!(
                 c_sys5_ed,
                 serv,
-                PSY.Deterministic("max_active_power", forecast_data),
+                PSY.Deterministic("requirement", forecast_data),
             )
         end
     end
     return c_sys5_ed
 end
 
-function build_c_sys5_pwl_ed(; add_forecasts, raw_data, kwargs...)
-    c_sys5_ed = build_c_sys5_ed(; add_forecasts, raw_data, kwargs...)
+function build_c_sys5_pwl_ed(; add_forecasts, add_reserves, raw_data, kwargs...)
+    c_sys5_ed = build_c_sys5_ed(; add_forecasts, add_reserves, raw_data, kwargs...)
     thermal = thermal_generators5_pwl(collect(PSY.get_components(PSY.ACBus, c_sys5_ed)))
     for d in thermal
         PSY.add_component!(c_sys5_ed, d)
