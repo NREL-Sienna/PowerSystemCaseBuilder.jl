@@ -2834,6 +2834,7 @@ function build_c_sys5_hybrid(; add_forecasts, raw_data, kwargs...)
                 c_sys5_hybrid,
                 h,
                 PSY.Deterministic("variable_cost", forecast_data),
+                PSY.UnitSystem.NATURAL_UNITS,
             )
         end
     end
@@ -2965,6 +2966,7 @@ function build_c_sys5_hybrid_uc(; add_forecasts, raw_data, kwargs...)
                 c_sys5_hybrid,
                 h,
                 PSY.Deterministic("variable_cost", forecast_data),
+                PSY.UnitSystem.NATURAL_UNITS,
             )
         end
     end
@@ -3113,6 +3115,7 @@ function build_c_sys5_hybrid_ed(; add_forecasts, raw_data, kwargs...)
                 c_sys5_hybrid,
                 h,
                 PSY.Deterministic("variable_cost", forecast_data),
+                PSY.UnitSystem.NATURAL_UNITS,
             )
         end
     end
