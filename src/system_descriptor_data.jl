@@ -330,6 +330,30 @@ const SYSTEM_CATALOG = [
         ],
     ),
     SystemDescriptor(;
+        name = "c_sys5_re_fuel_cost",
+        description = "5-Bus system with Renewable Energy and Fuel Cost TimeSeries",
+        category = PSITestSystems,
+        raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
+        build_function = build_c_sys5_re_fuel_cost,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+        ],
+    ),
+    SystemDescriptor(;
         name = "c_sys5_re_only",
         description = "5-Bus system with only Renewable Energy",
         category = PSITestSystems,
