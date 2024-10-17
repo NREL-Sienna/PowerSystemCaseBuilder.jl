@@ -227,6 +227,152 @@ function build_c_sys5_re(;
     return c_sys5_re
 end
 
+function build_c_sys5_re_fuel_cost(;
+    add_forecasts,
+    add_single_time_series,
+    add_reserves,
+    raw_data,
+    sys_kwargs...,
+)
+    nodes = nodes5()
+    c_sys5_re = PSY.System(
+        100.0,
+        nodes,
+        thermal_generators5(nodes),
+        renewable_generators5(nodes),
+        loads5(nodes),
+        branches5(nodes);
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
+        sys_kwargs...,
+    )
+
+    if add_forecasts
+        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_re))
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
+                forecast_data[ini_time] = load_timeseries_DA[t][ix]
+            end
+            PSY.add_time_series!(
+                c_sys5_re,
+                l,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
+        end
+        for (ix, r) in enumerate(PSY.get_components(RenewableGen, c_sys5_re))
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ini_time = TimeSeries.timestamp(ren_timeseries_DA[t][ix])[1]
+                forecast_data[ini_time] = ren_timeseries_DA[t][ix]
+            end
+            PSY.add_time_series!(
+                c_sys5_re,
+                r,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
+        end
+    end
+    if add_single_time_series
+        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_re))
+            PSY.add_time_series!(
+                c_sys5_re,
+                l,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    vcat(load_timeseries_DA[1][ix], load_timeseries_DA[2][ix]),
+                ),
+            )
+        end
+        for (ix, r) in enumerate(PSY.get_components(RenewableGen, c_sys5_re))
+            PSY.add_time_series!(
+                c_sys5_re,
+                r,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    vcat(ren_timeseries_DA[1][ix], ren_timeseries_DA[2][ix]),
+                ),
+            )
+        end
+    end
+    if add_reserves
+        reserve_re = reserve5_re(PSY.get_components(PSY.RenewableDispatch, c_sys5_re))
+        PSY.add_service!(
+            c_sys5_re,
+            reserve_re[1],
+            PSY.get_components(PSY.RenewableDispatch, c_sys5_re),
+        )
+        PSY.add_service!(
+            c_sys5_re,
+            reserve_re[2],
+            [collect(PSY.get_components(PSY.RenewableDispatch, c_sys5_re))[end]],
+        )
+        # ORDC
+        PSY.add_service!(
+            c_sys5_re,
+            reserve_re[3],
+            PSY.get_components(PSY.RenewableDispatch, c_sys5_re),
+        )
+        for (ix, serv) in enumerate(PSY.get_components(PSY.VariableReserve, c_sys5_re))
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ini_time = TimeSeries.timestamp(Reserve_ts[t])[1]
+                forecast_data[ini_time] = Reserve_ts[t]
+            end
+            PSY.add_time_series!(
+                c_sys5_re,
+                serv,
+                PSY.Deterministic("requirement", forecast_data),
+            )
+        end
+        for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_re))
+            PSY.set_variable_cost!(
+                c_sys5_re,
+                serv,
+                ORDC_cost,
+            )
+        end
+    end
+    ### Update FuelCost ###
+    th_solitude = get_component(ThermalStandard, c_sys5_re, "Solitude")
+    th_brighton = get_component(ThermalStandard, c_sys5_re, "Brighton")
+
+    ### Update Brighton Cost ###
+    DayAhead = collect(
+        DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
+            "1/1/2024  23:00:00",
+            "d/m/y  H:M:S",
+        ),
+    )
+    DayAhead2 = DayAhead + Day(1)
+
+    fuel_cost_day1 = Float64.(collect(101:124)) # Expensive Day 1
+    fuel_cost_day2 = ones(24) # Cheap Day 2
+
+    forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+    forecast_data[DayAhead[1]] = TimeArray(DayAhead, fuel_cost_day1)
+    forecast_data[DayAhead2[1]] = TimeArray(DayAhead2, fuel_cost_day2)
+
+    operation_cost_brighton = th_brighton.operation_cost
+    io_curve =
+        PiecewisePointCurve([(0.0, 0.0), (200.0, 2000.0), (400.0, 4800.0), (600.0, 8400.0)])
+    operation_cost_brighton.variable = FuelCurve(io_curve, 1.0) # Use PWL for Brighton
+    set_fuel_cost!(c_sys5_re, th_brighton, Deterministic("fuel_cost", forecast_data))
+
+    ### Update Solitude Cost ###
+    fuel_cost_day1 = ones(24) # Cheap Day 1
+    fuel_cost_day2 = Float64.(collect(101:124)) # Expensive Day 2
+
+    forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+    forecast_data[DayAhead[1]] = TimeArray(DayAhead, fuel_cost_day1)
+    forecast_data[DayAhead2[1]] = TimeArray(DayAhead2, fuel_cost_day2)
+
+    operation_cost_solitude = th_solitude.operation_cost
+    operation_cost_solitude.variable = FuelCurve(LinearCurve(1.0), 1.0) # Use Linear for Solitude
+    set_fuel_cost!(c_sys5_re, th_solitude, Deterministic("fuel_cost", forecast_data))
+
+    return c_sys5_re
+end
+
 function build_c_sys5_re_only(; add_forecasts, raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
