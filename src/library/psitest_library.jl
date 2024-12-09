@@ -7,12 +7,12 @@ function build_c_sys14(; add_forecasts, raw_data, kwargs...)
         thermal_generators14(nodes),
         loads14(nodes),
         branches14(nodes);
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
 
     if add_forecasts
-        forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
         for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys14))
             ini_time = TimeSeries.timestamp(timeseries_DA14[ix])[1]
             forecast_data[ini_time] = timeseries_DA14[ix]
@@ -36,12 +36,12 @@ function build_c_sys14_dc(; add_forecasts, raw_data, kwargs...)
         thermal_generators14(nodes),
         loads14(nodes),
         branches14_dc(nodes);
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
 
     if add_forecasts
-        forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys14_dc))
             ini_time = TimeSeries.timestamp(timeseries_DA14[ix])[1]
             forecast_data[ini_time] = timeseries_DA14[ix]
@@ -70,7 +70,7 @@ function build_c_sys5(; add_forecasts, raw_data, kwargs...)
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
@@ -95,13 +95,13 @@ function build_c_sys5_ml(; add_forecasts, raw_data, kwargs...)
         thermal_generators5(nodes),
         loads5(nodes),
         branches5(nodes);
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5_ml))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
@@ -133,13 +133,13 @@ function build_c_sys5_re(;
         renewable_generators5(nodes),
         loads5(nodes),
         branches5(nodes);
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_re))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
@@ -151,7 +151,7 @@ function build_c_sys5_re(;
             )
         end
         for (ix, r) in enumerate(PSY.get_components(RenewableGen, c_sys5_re))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(ren_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = ren_timeseries_DA[t][ix]
@@ -204,7 +204,7 @@ function build_c_sys5_re(;
             PSY.get_components(PSY.RenewableDispatch, c_sys5_re),
         )
         for (ix, serv) in enumerate(PSY.get_components(PSY.VariableReserve, c_sys5_re))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
@@ -382,13 +382,13 @@ function build_c_sys5_re_only(; add_forecasts, raw_data, kwargs...)
         renewable_generators5(nodes),
         loads5(nodes),
         branches5(nodes);
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_re_only))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
@@ -400,7 +400,7 @@ function build_c_sys5_re_only(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, r) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_re_only))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(ren_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = ren_timeseries_DA[t][ix]
@@ -426,13 +426,13 @@ function build_c_sys5_hy(; add_forecasts, raw_data, kwargs...)
         [hydro_generators5(nodes)[1]],
         loads5(nodes),
         branches5(nodes);
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
@@ -444,7 +444,7 @@ function build_c_sys5_hy(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, r) in enumerate(PSY.get_components(PSY.HydroGen, c_sys5_hy))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
@@ -475,13 +475,13 @@ function build_c_sys5_hyd(;
         [hydro_generators5(nodes)[2]],
         loads5(nodes),
         branches5(nodes);
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
@@ -493,7 +493,7 @@ function build_c_sys5_hyd(;
             )
         end
         for (ix, h) in enumerate(PSY.get_components(HydroGen, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
@@ -505,7 +505,7 @@ function build_c_sys5_hyd(;
             )
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(hydro_budget_DA[t][ix])[1]
                 forecast_data[ini_time] = hydro_budget_DA[t][ix]
@@ -517,8 +517,8 @@ function build_c_sys5_hyd(;
             )
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd))
-            forecast_data_inflow = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
-            forecast_data_target = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data_inflow = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            forecast_data_target = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][ix])[1]
                 forecast_data_inflow[ini_time] = hydro_timeseries_DA[t][ix]
@@ -603,7 +603,7 @@ function build_c_sys5_hyd(;
             PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd),
         )
         for (ix, serv) in enumerate(PSY.get_components(PSY.VariableReserve, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
@@ -641,13 +641,13 @@ function build_c_sys5_hyd_ems(;
         [hydro_generators5_ems(nodes)[2]],
         loads5(nodes),
         branches5(nodes);
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
@@ -659,7 +659,7 @@ function build_c_sys5_hyd_ems(;
             )
         end
         for (ix, h) in enumerate(PSY.get_components(HydroGen, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
@@ -671,7 +671,7 @@ function build_c_sys5_hyd_ems(;
             )
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(hydro_budget_DA[t][ix])[1]
                 forecast_data[ini_time] = hydro_budget_DA[t][ix]
@@ -683,8 +683,8 @@ function build_c_sys5_hyd_ems(;
             )
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd))
-            forecast_data_inflow = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
-            forecast_data_target = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data_inflow = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            forecast_data_target = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][ix])[1]
                 forecast_data_inflow[ini_time] = hydro_timeseries_DA[t][ix]
@@ -769,7 +769,7 @@ function build_c_sys5_hyd_ems(;
             PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd),
         )
         for (ix, serv) in enumerate(PSY.get_components(PSY.VariableReserve, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
@@ -809,13 +809,13 @@ function build_c_sys5_bat(;
         loads5(nodes),
         branches5(nodes),
         battery5(nodes);
-        time_series_in_memory=time_series_in_memory,
+        time_series_in_memory = time_series_in_memory,
         sys_kwargs...,
     )
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_bat))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
@@ -827,7 +827,7 @@ function build_c_sys5_bat(;
             )
         end
         for (ix, r) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_bat))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(ren_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = ren_timeseries_DA[t][ix]
@@ -880,7 +880,7 @@ function build_c_sys5_bat(;
             PSY.get_components(PSY.EnergyReservoirStorage, c_sys5_bat),
         )
         for (ix, serv) in enumerate(PSY.get_components(PSY.VariableReserve, c_sys5_bat))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
@@ -913,13 +913,13 @@ function build_c_sys5_il(; add_forecasts, add_reserves, raw_data, kwargs...)
         loads5(nodes),
         interruptible(nodes),
         branches5(nodes);
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_il))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
@@ -931,7 +931,7 @@ function build_c_sys5_il(; add_forecasts, add_reserves, raw_data, kwargs...)
             )
         end
         for (ix, i) in enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_il))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(Iload_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = Iload_timeseries_DA[t][ix]
@@ -963,7 +963,7 @@ function build_c_sys5_il(; add_forecasts, add_reserves, raw_data, kwargs...)
             PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_il),
         )
         for (ix, serv) in enumerate(PSY.get_components(PSY.VariableReserve, c_sys5_il))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
@@ -996,13 +996,13 @@ function build_c_sys5_dc(; add_forecasts, raw_data, kwargs...)
         renewable_generators5(nodes),
         loads5(nodes),
         branches5_dc(nodes);
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_dc))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
@@ -1014,7 +1014,7 @@ function build_c_sys5_dc(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, r) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_dc))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(ren_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = ren_timeseries_DA[t][ix]
@@ -1105,52 +1105,52 @@ end
 function build_sys_ramp_testing(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min=0.9, max=1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     gen_ramp = [
         PSY.ThermalStandard(;
-            name="Alta",
-            available=true,
-            status=true,
-            bus=node,
-            active_power=0.20, # Active power
-            reactive_power=0.010,
-            rating=0.5,
-            prime_mover_type=PSY.PrimeMovers.ST,
-            fuel=PSY.ThermalFuels.COAL,
-            active_power_limits=(min=0.0, max=0.40),
-            reactive_power_limits=nothing,
-            ramp_limits=nothing,
-            time_limits=nothing,
-            operation_cost=ThermalGenerationCost(
+            name = "Alta",
+            available = true,
+            status = true,
+            bus = node,
+            active_power = 0.20, # Active power
+            reactive_power = 0.010,
+            rating = 0.5,
+            prime_mover_type = PSY.PrimeMovers.ST,
+            fuel = PSY.ThermalFuels.COAL,
+            active_power_limits = (min = 0.0, max = 0.40),
+            reactive_power_limits = nothing,
+            ramp_limits = nothing,
+            time_limits = nothing,
+            operation_cost = ThermalGenerationCost(
                 CostCurve(QuadraticCurve(0.0, 14.0, 0.0)),
                 0.0,
                 4.0,
                 2.0,
             ),
-            base_power=100.0,
+            base_power = 100.0,
         ),
         PSY.ThermalStandard(;
-            name="Park City",
-            available=true,
-            status=true,
-            bus=node,
-            active_power=0.70, # Active Power
-            reactive_power=0.20,
-            rating=2.0,
-            prime_mover_type=PSY.PrimeMovers.ST,
-            fuel=PSY.ThermalFuels.COAL,
-            active_power_limits=(min=0.7, max=2.20),
-            reactive_power_limits=nothing,
-            ramp_limits=(up=0.010625 * 2.0, down=0.010625 * 2.0),
-            time_limits=nothing,
-            operation_cost=ThermalGenerationCost(
+            name = "Park City",
+            available = true,
+            status = true,
+            bus = node,
+            active_power = 0.70, # Active Power
+            reactive_power = 0.20,
+            rating = 2.0,
+            prime_mover_type = PSY.PrimeMovers.ST,
+            fuel = PSY.ThermalFuels.COAL,
+            active_power_limits = (min = 0.7, max = 2.20),
+            reactive_power_limits = nothing,
+            ramp_limits = (up = 0.010625 * 2.0, down = 0.010625 * 2.0),
+            time_limits = nothing,
+            operation_cost = ThermalGenerationCost(
                 CostCurve(QuadraticCurve(0.0, 15.0, 0.0)),
                 0.0,
                 1.5,
                 0.75,
             ),
-            base_power=100.0,
+            base_power = 100.0,
         ),
     ]
     DA_ramp = collect(
@@ -1245,13 +1245,13 @@ function build_c_sys5_uc(;
         thermal_generators5_uc_testing(nodes),
         loads5(nodes),
         branches5(nodes);
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_uc))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
@@ -1299,7 +1299,7 @@ function build_c_sys5_uc(;
             PSY.get_components(PSY.ThermalStandard, c_sys5_uc),
         )
         for serv in PSY.get_components(PSY.VariableReserve, c_sys5_uc)
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
@@ -1336,13 +1336,13 @@ function build_c_sys5_uc_non_spin(;
         vcat(thermal_pglib_generators5(nodes), thermal_generators5_uc_testing(nodes)),
         loads5(nodes),
         branches5(nodes);
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_uc))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
@@ -1397,7 +1397,7 @@ function build_c_sys5_uc_non_spin(;
         )
 
         for serv in PSY.get_components(PSY.VariableReserve, c_sys5_uc)
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
@@ -1410,7 +1410,7 @@ function build_c_sys5_uc_non_spin(;
         end
 
         for serv in PSY.get_components(PSY.VariableReserveNonSpinning, c_sys5_uc)
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
@@ -1449,13 +1449,13 @@ function build_c_sys5_uc_re(;
         loads5(nodes),
         interruptible(nodes),
         branches5(nodes);
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_uc))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
@@ -1467,7 +1467,7 @@ function build_c_sys5_uc_re(;
             )
         end
         for (ix, r) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_uc))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(ren_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = ren_timeseries_DA[t][ix]
@@ -1479,7 +1479,7 @@ function build_c_sys5_uc_re(;
             )
         end
         for (ix, i) in enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_uc))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(Iload_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = Iload_timeseries_DA[t][ix]
@@ -1549,7 +1549,7 @@ function build_c_sys5_uc_re(;
             PSY.get_components(PSY.ThermalStandard, c_sys5_uc),
         )
         for serv in PSY.get_components(PSY.VariableReserve, c_sys5_uc)
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
@@ -1593,13 +1593,13 @@ function build_c_sys5_ed(; add_forecasts, add_reserves, kwargs...)
         loads5(nodes),
         interruptible(nodes),
         branches5(nodes);
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2 # loop over days
                 ta = load_timeseries_DA[t][ix]
                 for i in 1:length(ta) # loop over hours
@@ -1615,7 +1615,7 @@ function build_c_sys5_ed(; add_forecasts, add_reserves, kwargs...)
             )
         end
         for (ix, l) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2 # loop over days
                 ta = ren_timeseries_DA[t][ix]
                 for i in 1:length(ta) # loop over hours
@@ -1631,7 +1631,7 @@ function build_c_sys5_ed(; add_forecasts, add_reserves, kwargs...)
             )
         end
         for (ix, l) in enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2 # loop over days
                 ta = Iload_timeseries_DA[t][ix]
                 for i in 1:length(ta) # loop over hours
@@ -1665,10 +1665,10 @@ function build_c_sys5_ed(; add_forecasts, add_reserves, kwargs...)
             PSY.get_components(PSY.ThermalStandard, c_sys5_ed),
         )
         for serv in PSY.get_components(PSY.VariableReserve, c_sys5_ed)
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2 # loop over days
                 ta_DA = Reserve_ts[t]
-                data_5min = repeat(values(ta_DA); inner=12)
+                data_5min = repeat(values(ta_DA); inner = 12)
                 reserve_timeseries_RT =
                     TimeSeries.TimeArray(RealTime + Day(t - 1), data_5min)
                 # loop over hours
@@ -1719,13 +1719,13 @@ function build_c_sys5_hy_uc(; add_forecasts, kwargs...)
         renewable_generators5(nodes),
         loads5(nodes),
         branches5(nodes);
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
@@ -1737,7 +1737,7 @@ function build_c_sys5_hy_uc(; add_forecasts, kwargs...)
             )
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
@@ -1749,7 +1749,7 @@ function build_c_sys5_hy_uc(; add_forecasts, kwargs...)
             )
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(storage_target_DA[t][ix])[1]
                 forecast_data[ini_time] = storage_target_DA[t][ix]
@@ -1761,7 +1761,7 @@ function build_c_sys5_hy_uc(; add_forecasts, kwargs...)
             )
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = hydro_timeseries_DA[t][ix] .* 0.8
@@ -1773,7 +1773,7 @@ function build_c_sys5_hy_uc(; add_forecasts, kwargs...)
             )
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(hydro_budget_DA[t][ix])[1]
                 forecast_data[ini_time] = hydro_budget_DA[t][ix]
@@ -1785,7 +1785,7 @@ function build_c_sys5_hy_uc(; add_forecasts, kwargs...)
             )
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HydroDispatch, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
@@ -1797,7 +1797,7 @@ function build_c_sys5_hy_uc(; add_forecasts, kwargs...)
             )
         end
         for (ix, r) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(ren_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = ren_timeseries_DA[t][ix]
@@ -1810,7 +1810,7 @@ function build_c_sys5_hy_uc(; add_forecasts, kwargs...)
         end
         for (ix, i) in
             enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(Iload_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = Iload_timeseries_DA[t][ix]
@@ -1837,13 +1837,13 @@ function build_c_sys5_hy_ems_uc(; add_forecasts, raw_data, kwargs...)
         renewable_generators5(nodes),
         loads5(nodes),
         branches5(nodes);
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
@@ -1855,7 +1855,7 @@ function build_c_sys5_hy_ems_uc(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
@@ -1867,7 +1867,7 @@ function build_c_sys5_hy_ems_uc(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(storage_target_DA[t][ix])[1]
                 forecast_data[ini_time] = storage_target_DA[t][ix]
@@ -1879,7 +1879,7 @@ function build_c_sys5_hy_ems_uc(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = hydro_timeseries_DA[t][ix] .* 0.8
@@ -1891,7 +1891,7 @@ function build_c_sys5_hy_ems_uc(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(hydro_budget_DA[t][ix])[1]
                 forecast_data[ini_time] = hydro_budget_DA[t][ix]
@@ -1903,7 +1903,7 @@ function build_c_sys5_hy_ems_uc(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HydroDispatch, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
@@ -1915,7 +1915,7 @@ function build_c_sys5_hy_ems_uc(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, r) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(ren_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = ren_timeseries_DA[t][ix]
@@ -1928,7 +1928,7 @@ function build_c_sys5_hy_ems_uc(; add_forecasts, raw_data, kwargs...)
         end
         for (ix, i) in
             enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(Iload_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = Iload_timeseries_DA[t][ix]
@@ -1956,13 +1956,13 @@ function build_c_sys5_hy_ed(; add_forecasts, raw_data, kwargs...)
         loads5(nodes),
         interruptible(nodes),
         branches5(nodes);
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2 # loop over days
                 ta = load_timeseries_DA[t][ix]
                 for i in 1:length(ta) # loop over hours
@@ -1978,7 +1978,7 @@ function build_c_sys5_hy_ed(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, l) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = hydro_timeseries_DA[t][ix]
                 for i in 1:length(ta)
@@ -1994,7 +1994,7 @@ function build_c_sys5_hy_ed(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, l) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = ren_timeseries_DA[t][ix]
                 for i in 1:length(ta)
@@ -2010,7 +2010,7 @@ function build_c_sys5_hy_ed(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, l) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = storage_target_DA[t][ix]
                 for i in 1:length(ta)
@@ -2026,7 +2026,7 @@ function build_c_sys5_hy_ed(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, l) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = hydro_timeseries_DA[t][ix]
                 for i in 1:length(ta)
@@ -2042,7 +2042,7 @@ function build_c_sys5_hy_ed(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = hydro_budget_DA[t][ix]
                 for i in 1:length(ta)
@@ -2059,7 +2059,7 @@ function build_c_sys5_hy_ed(; add_forecasts, raw_data, kwargs...)
         end
         for (ix, l) in
             enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = Iload_timeseries_DA[t][ix]
                 for i in 1:length(ta)
@@ -2075,7 +2075,7 @@ function build_c_sys5_hy_ed(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, l) in enumerate(PSY.get_components(PSY.HydroDispatch, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = hydro_timeseries_DA[t][ix]
                 for i in 1:length(ta)
@@ -2107,13 +2107,13 @@ function build_c_sys5_hy_ems_ed(; add_forecasts, raw_data, kwargs...)
         loads5(nodes),
         interruptible(nodes),
         branches5(nodes);
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2 # loop over days
                 ta = load_timeseries_DA[t][ix]
                 for i in 1:length(ta) # loop over hours
@@ -2129,7 +2129,7 @@ function build_c_sys5_hy_ems_ed(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, l) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = hydro_timeseries_DA[t][ix]
                 for i in 1:length(ta)
@@ -2145,7 +2145,7 @@ function build_c_sys5_hy_ems_ed(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, l) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = ren_timeseries_DA[t][ix]
                 for i in 1:length(ta)
@@ -2161,7 +2161,7 @@ function build_c_sys5_hy_ems_ed(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, l) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = storage_target_DA[t][ix]
                 for i in 1:length(ta)
@@ -2177,7 +2177,7 @@ function build_c_sys5_hy_ems_ed(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, l) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = hydro_timeseries_DA[t][ix]
                 for i in 1:length(ta)
@@ -2193,7 +2193,7 @@ function build_c_sys5_hy_ems_ed(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = hydro_budget_DA[t][ix]
                 for i in 1:length(ta)
@@ -2210,7 +2210,7 @@ function build_c_sys5_hy_ems_ed(; add_forecasts, raw_data, kwargs...)
         end
         for (ix, l) in
             enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = Iload_timeseries_DA[t][ix]
                 for i in 1:length(ta)
@@ -2226,7 +2226,7 @@ function build_c_sys5_hy_ems_ed(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, l) in enumerate(PSY.get_components(PSY.HydroDispatch, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = hydro_timeseries_DA[t][ix]
                 for i in 1:length(ta)
@@ -2258,13 +2258,13 @@ function build_c_sys5_phes_ed(; add_forecasts, add_reserves, raw_data, kwargs...
         loads5(nodes),
         interruptible(nodes),
         branches5(nodes);
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_phes_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2 # loop over days
                 ta = load_timeseries_DA[t][ix]
                 for i in 1:length(ta) # loop over hours
@@ -2280,7 +2280,7 @@ function build_c_sys5_phes_ed(; add_forecasts, add_reserves, raw_data, kwargs...
             )
         end
         for (ix, l) in enumerate(PSY.get_components(PSY.HydroGen, c_sys5_phes_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = hydro_timeseries_DA[t][ix]
                 for i in 1:length(ta)
@@ -2296,7 +2296,7 @@ function build_c_sys5_phes_ed(; add_forecasts, add_reserves, raw_data, kwargs...
             )
         end
         for (ix, l) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_phes_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = ren_timeseries_DA[t][ix]
                 for i in 1:length(ta)
@@ -2312,7 +2312,7 @@ function build_c_sys5_phes_ed(; add_forecasts, add_reserves, raw_data, kwargs...
             )
         end
         for (ix, l) in enumerate(PSY.get_components(PSY.HydroPumpedStorage, c_sys5_phes_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = hydro_timeseries_DA[t][ix]
                 for i in 1:length(ta)
@@ -2328,7 +2328,7 @@ function build_c_sys5_phes_ed(; add_forecasts, add_reserves, raw_data, kwargs...
             )
         end
         for (ix, l) in enumerate(PSY.get_components(PSY.HydroPumpedStorage, c_sys5_phes_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = hydro_timeseries_DA[t][ix]
                 for i in 1:length(ta)
@@ -2350,7 +2350,7 @@ function build_c_sys5_phes_ed(; add_forecasts, add_reserves, raw_data, kwargs...
         end
         for (ix, l) in
             enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_phes_ed))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = Iload_timeseries_DA[t][ix]
                 for i in 1:length(ta)
@@ -2367,7 +2367,8 @@ function build_c_sys5_phes_ed(; add_forecasts, add_reserves, raw_data, kwargs...
         end
     end
     if add_reserves
-        reserve_uc = reserve5_phes(PSY.get_components(PSY.HydroPumpedStorage, c_sys5_phes_ed))
+        reserve_uc =
+            reserve5_phes(PSY.get_components(PSY.HydroPumpedStorage, c_sys5_phes_ed))
         PSY.add_service!(
             c_sys5_phes_ed,
             reserve_uc[1],
@@ -2380,10 +2381,10 @@ function build_c_sys5_phes_ed(; add_forecasts, add_reserves, raw_data, kwargs...
         )
 
         for serv in PSY.get_components(PSY.VariableReserve, c_sys5_phes_ed)
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2 # loop over days
                 ta_DA = Reserve_ts[t]
-                data_5min = repeat(values(ta_DA); inner=12)
+                data_5min = repeat(values(ta_DA); inner = 12)
                 reserve_timeseries_RT =
                     TimeSeries.TimeArray(RealTime + Day(t - 1), data_5min)
                 # loop over hours
@@ -2400,7 +2401,6 @@ function build_c_sys5_phes_ed(; add_forecasts, add_reserves, raw_data, kwargs...
             )
         end
     end
-
 
     return c_sys5_phes_ed
 end
@@ -2420,12 +2420,12 @@ function build_c_sys5_pglib(;
         thermal_pglib_generators5(nodes),
         loads5(nodes),
         branches5(nodes);
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
 
     if add_forecasts
-        forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_uc))
             for t in 1:2
                 ini_time = timestamp(load_timeseries_DA[t][ix])[1]
@@ -2468,7 +2468,7 @@ function build_c_sys5_pglib(;
             PSY.get_components(PSY.ThermalMultiStart, c_sys5_uc),
         )
         for (ix, serv) in enumerate(PSY.get_components(PSY.VariableReserve, c_sys5_uc))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
@@ -2487,7 +2487,7 @@ end
 function build_duration_test_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min=0.9, max=1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     DA_dur = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -2497,50 +2497,50 @@ function build_duration_test_sys(; raw_data, kwargs...)
     )
     gens_dur = [
         PSY.ThermalStandard(;
-            name="Alta",
-            available=true,
-            status=true,
-            bus=node,
-            active_power=0.40,
-            reactive_power=0.010,
-            rating=0.5,
-            prime_mover_type=PSY.PrimeMovers.ST,
-            fuel=PSY.ThermalFuels.COAL,
-            active_power_limits=(min=0.3, max=0.9),
-            reactive_power_limits=nothing,
-            ramp_limits=nothing,
-            time_limits=(up=4, down=2),
-            operation_cost=ThermalGenerationCost(
+            name = "Alta",
+            available = true,
+            status = true,
+            bus = node,
+            active_power = 0.40,
+            reactive_power = 0.010,
+            rating = 0.5,
+            prime_mover_type = PSY.PrimeMovers.ST,
+            fuel = PSY.ThermalFuels.COAL,
+            active_power_limits = (min = 0.3, max = 0.9),
+            reactive_power_limits = nothing,
+            ramp_limits = nothing,
+            time_limits = (up = 4, down = 2),
+            operation_cost = ThermalGenerationCost(
                 CostCurve(QuadraticCurve(0.0, 14.0, 0.0)),
                 0.0,
                 4.0,
                 2.0,
             ),
-            base_power=100.0,
-            time_at_status=2.0,
+            base_power = 100.0,
+            time_at_status = 2.0,
         ),
         PSY.ThermalStandard(;
-            name="Park City",
-            available=true,
-            status=false,
-            bus=node,
-            active_power=1.70,
-            reactive_power=0.20,
-            rating=2.2125,
-            prime_mover_type=PSY.PrimeMovers.ST,
-            fuel=PSY.ThermalFuels.COAL,
-            active_power_limits=(min=0.7, max=2.2),
-            reactive_power_limits=nothing,
-            ramp_limits=nothing,
-            time_limits=(up=6, down=4),
-            operation_cost=ThermalGenerationCost(
+            name = "Park City",
+            available = true,
+            status = false,
+            bus = node,
+            active_power = 1.70,
+            reactive_power = 0.20,
+            rating = 2.2125,
+            prime_mover_type = PSY.PrimeMovers.ST,
+            fuel = PSY.ThermalFuels.COAL,
+            active_power_limits = (min = 0.7, max = 2.2),
+            reactive_power_limits = nothing,
+            ramp_limits = nothing,
+            time_limits = (up = 6, down = 4),
+            operation_cost = ThermalGenerationCost(
                 CostCurve(QuadraticCurve(0.0, 15.0, 0.0)),
                 0.0,
                 1.5,
                 0.75,
             ),
-            base_power=100.0,
-            time_at_status=3.0,
+            base_power = 100.0,
+            time_at_status = 3.0,
         ),
     ]
 
@@ -2628,10 +2628,10 @@ function build_test_RTS_GMLC_sys(; raw_data, add_forecasts, kwargs...)
             raw_data,
             100.0,
             joinpath(raw_data, "user_descriptors.yaml");
-            timeseries_metadata_file=joinpath(raw_data, "timeseries_pointers.json"),
-            generator_mapping_file=joinpath(raw_data, "generator_mapping.yaml"),
+            timeseries_metadata_file = joinpath(raw_data, "timeseries_pointers.json"),
+            generator_mapping_file = joinpath(raw_data, "generator_mapping.yaml"),
         )
-        sys = PSY.System(rawsys; time_series_resolution=Dates.Hour(1), sys_kwargs...)
+        sys = PSY.System(rawsys; time_series_resolution = Dates.Hour(1), sys_kwargs...)
         PSY.transform_single_time_series!(sys, Hour(24), Dates.Hour(24))
         return sys
     else
@@ -2640,7 +2640,7 @@ function build_test_RTS_GMLC_sys(; raw_data, add_forecasts, kwargs...)
             100.0,
             joinpath(raw_data, "user_descriptors.yaml"),
         )
-        sys = PSY.System(rawsys; time_series_resolution=Dates.Hour(1), sys_kwargs...)
+        sys = PSY.System(rawsys; time_series_resolution = Dates.Hour(1), sys_kwargs...)
         return sys
     end
 end
@@ -2655,18 +2655,18 @@ function build_test_RTS_GMLC_sys_with_hybrid(; raw_data, add_forecasts, kwargs..
 
     name = "Test H"
     h_sys = HybridSystem(;
-        name=name,
-        available=true,
-        status=true,
-        bus=bus,
-        active_power=1.0,
-        reactive_power=1.0,
-        thermal_unit=thermal_unit,
-        electric_load=electric_load,
-        storage=storage,
-        renewable_unit=renewable_unit,
-        base_power=100.0,
-        operation_cost=MarketBidCost(nothing),
+        name = name,
+        available = true,
+        status = true,
+        bus = bus,
+        active_power = 1.0,
+        reactive_power = 1.0,
+        thermal_unit = thermal_unit,
+        electric_load = electric_load,
+        storage = storage,
+        renewable_unit = renewable_unit,
+        base_power = 100.0,
+        operation_cost = MarketBidCost(nothing),
     )
     add_component!(sys, h_sys)
     return sys
@@ -2689,12 +2689,12 @@ function build_c_sys5_bat_ems(;
         loads5(nodes),
         branches5(nodes),
         batteryems5(nodes);
-        time_series_in_memory=time_series_in_memory,
+        time_series_in_memory = time_series_in_memory,
     )
 
     if add_forecasts
         for (ix, l) in enumerate(get_components(PowerLoad, c_sys5_bat))
-            forecast_data = SortedDict{Dates.DateTime,TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeArray}()
             for t in 1:2
                 ini_time = timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
@@ -2706,7 +2706,7 @@ function build_c_sys5_bat_ems(;
             )
         end
         for (ix, r) in enumerate(get_components(RenewableGen, c_sys5_bat))
-            forecast_data = SortedDict{Dates.DateTime,TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeArray}()
             for t in 1:2
                 ini_time = timestamp(ren_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = ren_timeseries_DA[t][ix]
@@ -2718,7 +2718,7 @@ function build_c_sys5_bat_ems(;
             )
         end
         for (ix, r) in enumerate(get_components(PSY.EnergyReservoirStorage, c_sys5_bat))
-            forecast_data = SortedDict{Dates.DateTime,TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeArray}()
             for t in 1:2
                 ini_time = timestamp(storage_target_DA[t][1])[1]
                 forecast_data[ini_time] = storage_target_DA[t][1]
@@ -2777,7 +2777,7 @@ function build_c_sys5_bat_ems(;
             get_components(PSY.EnergyReservoirStorage, c_sys5_bat),
         )
         for (ix, serv) in enumerate(get_components(VariableReserve, c_sys5_bat))
-            forecast_data = SortedDict{Dates.DateTime,TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeArray}()
             for t in 1:2
                 ini_time = timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
@@ -2806,7 +2806,7 @@ function build_c_sys5_pglib_sim(; add_forecasts, add_reserves, raw_data, kwargs.
         renewable_generators5(nodes),
         loads5(nodes),
         branches5(nodes);
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
     )
 
     if add_forecasts
@@ -2844,104 +2844,104 @@ function build_c_sys5_hybrid(; add_forecasts, raw_data, kwargs...)
     loads = loads5(nodes)
     renewables = renewable_generators5(nodes)
     _battery(nodes, bus, name) = PSY.EnergyReservoirStorage(;
-        name=name,
-        prime_mover_type=PrimeMovers.BA,
-        storage_technology_type=StorageTech.OTHER_CHEM,
-        available=true,
-        bus=nodes[bus],
-        storage_capacity=7.0,
-        storage_level_limits=(min=0.10 / 7.0, max=7.0 / 7.0),
-        initial_storage_capacity_level=5.0 / 7.0,
-        rating=7.0,
-        active_power=2.0,
-        input_active_power_limits=(min=0.0, max=2.0),
-        output_active_power_limits=(min=0.0, max=2.0),
-        efficiency=(in=0.80, out=0.90),
-        reactive_power=0.0,
-        reactive_power_limits=(min=-2.0, max=2.0),
-        base_power=100.0,
-        storage_target=0.2,
-        operation_cost=PSY.StorageCost(;
-            charge_variable_cost=zero(CostCurve),
-            discharge_variable_cost=zero(CostCurve),
-            fixed=0.0,
-            start_up=0.0,
-            shut_down=0.0,
-            energy_shortage_cost=50.0,
-            energy_surplus_cost=40.0,
+        name = name,
+        prime_mover_type = PrimeMovers.BA,
+        storage_technology_type = StorageTech.OTHER_CHEM,
+        available = true,
+        bus = nodes[bus],
+        storage_capacity = 7.0,
+        storage_level_limits = (min = 0.10 / 7.0, max = 7.0 / 7.0),
+        initial_storage_capacity_level = 5.0 / 7.0,
+        rating = 7.0,
+        active_power = 2.0,
+        input_active_power_limits = (min = 0.0, max = 2.0),
+        output_active_power_limits = (min = 0.0, max = 2.0),
+        efficiency = (in = 0.80, out = 0.90),
+        reactive_power = 0.0,
+        reactive_power_limits = (min = -2.0, max = 2.0),
+        base_power = 100.0,
+        storage_target = 0.2,
+        operation_cost = PSY.StorageCost(;
+            charge_variable_cost = zero(CostCurve),
+            discharge_variable_cost = zero(CostCurve),
+            fixed = 0.0,
+            start_up = 0.0,
+            shut_down = 0.0,
+            energy_shortage_cost = 50.0,
+            energy_surplus_cost = 40.0,
         ),
     )
     hyd = [
         HybridSystem(;
-            name="RE+battery",
-            available=true,
-            status=true,
-            bus=nodes[1],
-            active_power=6.0,
-            reactive_power=1.0,
-            thermal_unit=nothing,
-            electric_load=nothing,
-            storage=_battery(nodes, 1, "batt_hybrid_1"),
-            renewable_unit=renewables[1],
-            base_power=100.0,
-            interconnection_rating=5.0,
-            interconnection_impedance=Complex(0.1),
-            input_active_power_limits=(min=0.0, max=5.0),
-            output_active_power_limits=(min=0.0, max=5.0),
-            reactive_power_limits=(min=0.0, max=1.0),
+            name = "RE+battery",
+            available = true,
+            status = true,
+            bus = nodes[1],
+            active_power = 6.0,
+            reactive_power = 1.0,
+            thermal_unit = nothing,
+            electric_load = nothing,
+            storage = _battery(nodes, 1, "batt_hybrid_1"),
+            renewable_unit = renewables[1],
+            base_power = 100.0,
+            interconnection_rating = 5.0,
+            interconnection_impedance = Complex(0.1),
+            input_active_power_limits = (min = 0.0, max = 5.0),
+            output_active_power_limits = (min = 0.0, max = 5.0),
+            reactive_power_limits = (min = 0.0, max = 1.0),
         ),
         HybridSystem(;
-            name="thermal+battery",
-            available=true,
-            status=true,
-            bus=nodes[3],
-            active_power=9.0,
-            reactive_power=1.0,
-            thermal_unit=thermals[3],
-            electric_load=nothing,
-            storage=_battery(nodes, 3, "batt_hybrid_2"),
-            renewable_unit=nothing,
-            base_power=100.0,
-            interconnection_rating=10.0,
-            interconnection_impedance=Complex(0.1),
-            input_active_power_limits=(min=0.0, max=10.0),
-            output_active_power_limits=(min=0.0, max=10.0),
-            reactive_power_limits=(min=0.0, max=1.0),
+            name = "thermal+battery",
+            available = true,
+            status = true,
+            bus = nodes[3],
+            active_power = 9.0,
+            reactive_power = 1.0,
+            thermal_unit = thermals[3],
+            electric_load = nothing,
+            storage = _battery(nodes, 3, "batt_hybrid_2"),
+            renewable_unit = nothing,
+            base_power = 100.0,
+            interconnection_rating = 10.0,
+            interconnection_impedance = Complex(0.1),
+            input_active_power_limits = (min = 0.0, max = 10.0),
+            output_active_power_limits = (min = 0.0, max = 10.0),
+            reactive_power_limits = (min = 0.0, max = 1.0),
         ),
         HybridSystem(;
-            name="load+battery",
-            available=true,
-            status=true,
-            bus=nodes[3],
-            active_power=9.0,
-            reactive_power=1.0,
-            electric_load=loads[2],
-            storage=_battery(nodes, 3, "batt_hybrid_3"),
-            renewable_unit=nothing,
-            base_power=100.0,
-            interconnection_rating=10.0,
-            interconnection_impedance=Complex(0.1),
-            input_active_power_limits=(min=0.0, max=10.0),
-            output_active_power_limits=(min=0.0, max=10.0),
-            reactive_power_limits=(min=0.0, max=1.0),
+            name = "load+battery",
+            available = true,
+            status = true,
+            bus = nodes[3],
+            active_power = 9.0,
+            reactive_power = 1.0,
+            electric_load = loads[2],
+            storage = _battery(nodes, 3, "batt_hybrid_3"),
+            renewable_unit = nothing,
+            base_power = 100.0,
+            interconnection_rating = 10.0,
+            interconnection_impedance = Complex(0.1),
+            input_active_power_limits = (min = 0.0, max = 10.0),
+            output_active_power_limits = (min = 0.0, max = 10.0),
+            reactive_power_limits = (min = 0.0, max = 1.0),
         ),
         HybridSystem(;
-            name="all_hybrid",
-            available=true,
-            status=true,
-            bus=nodes[4],
-            active_power=9.0,
-            reactive_power=1.0,
-            electric_load=loads[3],
-            thermal_unit=thermals[4],
-            storage=_battery(nodes, 4, "batt_hybrid_4"),
-            renewable_unit=renewables[2],
-            base_power=100.0,
-            interconnection_rating=15.0,
-            interconnection_impedance=Complex(0.1),
-            input_active_power_limits=(min=0.0, max=15.0),
-            output_active_power_limits=(min=0.0, max=15.0),
-            reactive_power_limits=(min=0.0, max=1.0),
+            name = "all_hybrid",
+            available = true,
+            status = true,
+            bus = nodes[4],
+            active_power = 9.0,
+            reactive_power = 1.0,
+            electric_load = loads[3],
+            thermal_unit = thermals[4],
+            storage = _battery(nodes, 4, "batt_hybrid_4"),
+            renewable_unit = renewables[2],
+            base_power = 100.0,
+            interconnection_rating = 15.0,
+            interconnection_impedance = Complex(0.1),
+            input_active_power_limits = (min = 0.0, max = 15.0),
+            output_active_power_limits = (min = 0.0, max = 15.0),
+            reactive_power_limits = (min = 0.0, max = 1.0),
         ),
     ]
     c_sys5_hybrid = PSY.System(
@@ -2949,7 +2949,7 @@ function build_c_sys5_hybrid(; add_forecasts, raw_data, kwargs...)
         nodes,
         loads[1:1],
         branches5(nodes);
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
 
@@ -2960,7 +2960,7 @@ function build_c_sys5_hybrid(; add_forecasts, raw_data, kwargs...)
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hybrid))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
@@ -2976,7 +2976,7 @@ function build_c_sys5_hybrid(; add_forecasts, raw_data, kwargs...)
             collect(PSY.get_components(PSY.HybridSystem, c_sys5_hybrid)),
         )
         for (ix, hy) in enumerate(_load_devices)
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
@@ -2993,7 +2993,7 @@ function build_c_sys5_hybrid(; add_forecasts, raw_data, kwargs...)
             collect(PSY.get_components(PSY.HybridSystem, c_sys5_hybrid)),
         )
         for (ix, hy) in enumerate(_re_devices)
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(ren_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = ren_timeseries_DA[t][ix]
@@ -3006,7 +3006,7 @@ function build_c_sys5_hybrid(; add_forecasts, raw_data, kwargs...)
             PSY.copy_subcomponent_time_series!(hy, PSY.get_renewable_unit(hy))
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HybridSystem, c_sys5_hybrid))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(hybrid_cost_ts[t])[1]
                 forecast_data[ini_time] = hybrid_cost_ts[t]
@@ -3030,51 +3030,51 @@ function build_c_sys5_hybrid_uc(; add_forecasts, raw_data, kwargs...)
     renewables = renewable_generators5(nodes)
     branches = branches5(nodes)
     _battery(nodes, bus, name) = PSY.EnergyReservoirStorage(;
-        name=name,
-        prime_mover_type=PrimeMovers.BA,
-        storage_technology_type=StorageTech.OTHER_CHEM,
-        available=true,
-        bus=nodes[bus],
-        storage_capacity=7.0,
-        storage_level_limits=(min=0.10 / 7.0, max=7.0 / 7.0),
-        initial_storage_capacity_level=5.0 / 7.0,
-        rating=7.0,
-        active_power=2.0,
-        input_active_power_limits=(min=0.0, max=2.0),
-        output_active_power_limits=(min=0.0, max=2.0),
-        efficiency=(in=0.80, out=0.90),
-        reactive_power=0.0,
-        reactive_power_limits=(min=-2.0, max=2.0),
-        base_power=100.0,
-        storage_target=0.2,
-        operation_cost=PSY.StorageCost(;
-            charge_variable_cost=zero(CostCurve),
-            discharge_variable_cost=zero(CostCurve),
-            fixed=0.0,
-            start_up=0.0,
-            shut_down=0.0,
-            energy_shortage_cost=50.0,
-            energy_surplus_cost=40.0,
+        name = name,
+        prime_mover_type = PrimeMovers.BA,
+        storage_technology_type = StorageTech.OTHER_CHEM,
+        available = true,
+        bus = nodes[bus],
+        storage_capacity = 7.0,
+        storage_level_limits = (min = 0.10 / 7.0, max = 7.0 / 7.0),
+        initial_storage_capacity_level = 5.0 / 7.0,
+        rating = 7.0,
+        active_power = 2.0,
+        input_active_power_limits = (min = 0.0, max = 2.0),
+        output_active_power_limits = (min = 0.0, max = 2.0),
+        efficiency = (in = 0.80, out = 0.90),
+        reactive_power = 0.0,
+        reactive_power_limits = (min = -2.0, max = 2.0),
+        base_power = 100.0,
+        storage_target = 0.2,
+        operation_cost = PSY.StorageCost(;
+            charge_variable_cost = zero(CostCurve),
+            discharge_variable_cost = zero(CostCurve),
+            fixed = 0.0,
+            start_up = 0.0,
+            shut_down = 0.0,
+            energy_shortage_cost = 50.0,
+            energy_surplus_cost = 40.0,
         ),
     )
     hyd = [
         HybridSystem(;
-            name="RE+battery",
-            available=true,
-            status=true,
-            bus=nodes[1],
-            active_power=6.0,
-            reactive_power=1.0,
-            thermal_unit=nothing,
-            electric_load=nothing,
-            storage=_battery(nodes, 1, "batt_hybrid_1"),
-            renewable_unit=renewables[1],
-            base_power=100.0,
-            interconnection_rating=5.0,
-            interconnection_impedance=Complex(0.1),
-            input_active_power_limits=(min=0.0, max=5.0),
-            output_active_power_limits=(min=0.0, max=5.0),
-            reactive_power_limits=(min=0.0, max=1.0),
+            name = "RE+battery",
+            available = true,
+            status = true,
+            bus = nodes[1],
+            active_power = 6.0,
+            reactive_power = 1.0,
+            thermal_unit = nothing,
+            electric_load = nothing,
+            storage = _battery(nodes, 1, "batt_hybrid_1"),
+            renewable_unit = renewables[1],
+            base_power = 100.0,
+            interconnection_rating = 5.0,
+            interconnection_impedance = Complex(0.1),
+            input_active_power_limits = (min = 0.0, max = 5.0),
+            output_active_power_limits = (min = 0.0, max = 5.0),
+            reactive_power_limits = (min = 0.0, max = 1.0),
         ),
     ]
 
@@ -3085,7 +3085,7 @@ function build_c_sys5_hybrid_uc(; add_forecasts, raw_data, kwargs...)
         renewables,
         loads,
         branches;
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
 
@@ -3096,7 +3096,7 @@ function build_c_sys5_hybrid_uc(; add_forecasts, raw_data, kwargs...)
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hybrid))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
@@ -3108,7 +3108,7 @@ function build_c_sys5_hybrid_uc(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, re) in enumerate(PSY.get_components(PSY.RenewableDispatch, c_sys5_hybrid))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(ren_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = ren_timeseries_DA[t][ix]
@@ -3124,7 +3124,7 @@ function build_c_sys5_hybrid_uc(; add_forecasts, raw_data, kwargs...)
             collect(PSY.get_components(PSY.HybridSystem, c_sys5_hybrid)),
         )
         for (ix, hy) in enumerate(_re_devices)
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(ren_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = ren_timeseries_DA[t][ix]
@@ -3137,7 +3137,7 @@ function build_c_sys5_hybrid_uc(; add_forecasts, raw_data, kwargs...)
             #PSY.copy_subcomponent_time_series!(hy, PSY.get_renewable_unit(hy))
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HybridSystem, c_sys5_hybrid))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(hybrid_cost_ts[t])[1]
                 forecast_data[ini_time] = hybrid_cost_ts[t]
@@ -3161,51 +3161,51 @@ function build_c_sys5_hybrid_ed(; add_forecasts, raw_data, kwargs...)
     branches = branches5(nodes)
     renewables = renewable_generators5(nodes)
     _battery(nodes, bus, name) = PSY.EnergyReservoirStorage(;
-        name=name,
-        prime_mover_type=PrimeMovers.BA,
-        storage_technology_type=StorageTech.OTHER_CHEM,
-        available=true,
-        bus=nodes[bus],
-        storage_capacity=7.0,
-        storage_level_limits=(min=0.10 / 7.0, max=7.0 / 7.0),
-        initial_storage_capacity_level=5.0 / 7.0,
-        rating=7.0,
-        active_power=2.0,
-        input_active_power_limits=(min=0.0, max=2.0),
-        output_active_power_limits=(min=0.0, max=2.0),
-        efficiency=(in=0.80, out=0.90),
-        reactive_power=0.0,
-        reactive_power_limits=(min=-2.0, max=2.0),
-        base_power=100.0,
-        storage_target=0.2,
-        operation_cost=PSY.StorageCost(;
-            charge_variable_cost=zero(CostCurve),
-            discharge_variable_cost=zero(CostCurve),
-            fixed=0.0,
-            start_up=0.0,
-            shut_down=0.0,
-            energy_shortage_cost=50.0,
-            energy_surplus_cost=40.0,
+        name = name,
+        prime_mover_type = PrimeMovers.BA,
+        storage_technology_type = StorageTech.OTHER_CHEM,
+        available = true,
+        bus = nodes[bus],
+        storage_capacity = 7.0,
+        storage_level_limits = (min = 0.10 / 7.0, max = 7.0 / 7.0),
+        initial_storage_capacity_level = 5.0 / 7.0,
+        rating = 7.0,
+        active_power = 2.0,
+        input_active_power_limits = (min = 0.0, max = 2.0),
+        output_active_power_limits = (min = 0.0, max = 2.0),
+        efficiency = (in = 0.80, out = 0.90),
+        reactive_power = 0.0,
+        reactive_power_limits = (min = -2.0, max = 2.0),
+        base_power = 100.0,
+        storage_target = 0.2,
+        operation_cost = PSY.StorageCost(;
+            charge_variable_cost = zero(CostCurve),
+            discharge_variable_cost = zero(CostCurve),
+            fixed = 0.0,
+            start_up = 0.0,
+            shut_down = 0.0,
+            energy_shortage_cost = 50.0,
+            energy_surplus_cost = 40.0,
         ),
     )
     hyd = [
         HybridSystem(;
-            name="RE+battery",
-            available=true,
-            status=true,
-            bus=nodes[1],
-            active_power=6.0,
-            reactive_power=1.0,
-            thermal_unit=nothing,
-            electric_load=nothing,
-            storage=_battery(nodes, 1, "batt_hybrid_1"),
-            renewable_unit=renewables[1],
-            base_power=100.0,
-            interconnection_rating=5.0,
-            interconnection_impedance=Complex(0.1),
-            input_active_power_limits=(min=0.0, max=5.0),
-            output_active_power_limits=(min=0.0, max=5.0),
-            reactive_power_limits=(min=0.0, max=1.0),
+            name = "RE+battery",
+            available = true,
+            status = true,
+            bus = nodes[1],
+            active_power = 6.0,
+            reactive_power = 1.0,
+            thermal_unit = nothing,
+            electric_load = nothing,
+            storage = _battery(nodes, 1, "batt_hybrid_1"),
+            renewable_unit = renewables[1],
+            base_power = 100.0,
+            interconnection_rating = 5.0,
+            interconnection_impedance = Complex(0.1),
+            input_active_power_limits = (min = 0.0, max = 5.0),
+            output_active_power_limits = (min = 0.0, max = 5.0),
+            reactive_power_limits = (min = 0.0, max = 1.0),
         ),
     ]
 
@@ -3216,7 +3216,7 @@ function build_c_sys5_hybrid_ed(; add_forecasts, raw_data, kwargs...)
         renewables,
         loads,
         branches;
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
 
@@ -3227,7 +3227,7 @@ function build_c_sys5_hybrid_ed(; add_forecasts, raw_data, kwargs...)
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hybrid))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2 # loop over days
                 ta = load_timeseries_DA[t][ix]
                 for i in 1:length(ta) # loop over hours
@@ -3243,7 +3243,7 @@ function build_c_sys5_hybrid_ed(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, l) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_hybrid))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = ren_timeseries_DA[t][ix]
                 for i in 1:length(ta)
@@ -3263,7 +3263,7 @@ function build_c_sys5_hybrid_ed(; add_forecasts, raw_data, kwargs...)
             collect(PSY.get_components(PSY.HybridSystem, c_sys5_hybrid)),
         )
         for (ix, hy) in enumerate(_re_devices)
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = ren_timeseries_DA[t][ix]
                 for i in 1:length(ta)
@@ -3281,7 +3281,7 @@ function build_c_sys5_hybrid_ed(; add_forecasts, raw_data, kwargs...)
             #PSY.copy_subcomponent_time_series!(hy, PSY.get_renewable_unit(hy))
         end
         for (ix, h) in enumerate(PSY.get_components(PSY.HybridSystem, c_sys5_hybrid))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = hybrid_cost_ts[t]
                 for i in 1:length(ta)
@@ -3304,7 +3304,7 @@ end
 function build_hydro_test_case_b_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min=0.9, max=1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3313,24 +3313,24 @@ function build_hydro_test_case_b_sys(; raw_data, kwargs...)
         ),
     )
     hydro = HydroEnergyReservoir(;
-        name="HydroEnergyReservoir",
-        available=true,
-        bus=node,
-        active_power=0.0,
-        reactive_power=0.0,
-        rating=7.0,
-        prime_mover_type=PrimeMovers.HY,
-        active_power_limits=(min=0.0, max=7.0),
-        reactive_power_limits=(min=0.0, max=7.0),
-        ramp_limits=(up=7.0, down=7.0),
-        time_limits=nothing,
-        operation_cost=HydroGenerationCost(
+        name = "HydroEnergyReservoir",
+        available = true,
+        bus = node,
+        active_power = 0.0,
+        reactive_power = 0.0,
+        rating = 7.0,
+        prime_mover_type = PrimeMovers.HY,
+        active_power_limits = (min = 0.0, max = 7.0),
+        reactive_power_limits = (min = 0.0, max = 7.0),
+        ramp_limits = (up = 7.0, down = 7.0),
+        time_limits = nothing,
+        operation_cost = HydroGenerationCost(
             CostCurve(LinearCurve(0.15)), 0.0),
-        base_power=100.0,
-        storage_capacity=50.0,
-        inflow=4.0,
-        conversion_factor=1.0,
-        initial_storage=0.5,
+        base_power = 100.0,
+        storage_capacity = 50.0,
+        inflow = 4.0,
+        conversion_factor = 1.0,
+        initial_storage = 0.5,
     )
     duration_load = [0.3, 0.6, 0.5]
     load_data =
@@ -3360,7 +3360,7 @@ end
 function build_hydro_test_case_c_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min=0.9, max=1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3369,24 +3369,24 @@ function build_hydro_test_case_c_sys(; raw_data, kwargs...)
         ),
     )
     hydro = HydroEnergyReservoir(;
-        name="HydroEnergyReservoir",
-        available=true,
-        bus=node,
-        active_power=0.0,
-        reactive_power=0.0,
-        rating=7.0,
-        prime_mover_type=PrimeMovers.HY,
-        active_power_limits=(min=0.0, max=7.0),
-        reactive_power_limits=(min=0.0, max=7.0),
-        ramp_limits=(up=7.0, down=7.0),
-        time_limits=nothing,
-        operation_cost=HydroGenerationCost(
+        name = "HydroEnergyReservoir",
+        available = true,
+        bus = node,
+        active_power = 0.0,
+        reactive_power = 0.0,
+        rating = 7.0,
+        prime_mover_type = PrimeMovers.HY,
+        active_power_limits = (min = 0.0, max = 7.0),
+        reactive_power_limits = (min = 0.0, max = 7.0),
+        ramp_limits = (up = 7.0, down = 7.0),
+        time_limits = nothing,
+        operation_cost = HydroGenerationCost(
             CostCurve(LinearCurve(0.15)), 0.0),
-        base_power=100.0,
-        storage_capacity=50.0,
-        inflow=4.0,
-        conversion_factor=1.0,
-        initial_storage=0.5,
+        base_power = 100.0,
+        storage_capacity = 50.0,
+        inflow = 4.0,
+        conversion_factor = 1.0,
+        initial_storage = 0.5,
     )
     duration_load = [0.3, 0.6, 0.5]
     load_data =
@@ -3416,7 +3416,7 @@ end
 function build_hydro_test_case_d_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min=0.9, max=1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3425,24 +3425,24 @@ function build_hydro_test_case_d_sys(; raw_data, kwargs...)
         ),
     )
     hydro = HydroEnergyReservoir(;
-        name="HydroEnergyReservoir",
-        available=true,
-        bus=node,
-        active_power=0.0,
-        reactive_power=0.0,
-        rating=7.0,
-        prime_mover_type=PrimeMovers.HY,
-        active_power_limits=(min=0.0, max=7.0),
-        reactive_power_limits=(min=0.0, max=7.0),
-        ramp_limits=(up=7.0, down=7.0),
-        time_limits=nothing,
-        operation_cost=HydroGenerationCost(
+        name = "HydroEnergyReservoir",
+        available = true,
+        bus = node,
+        active_power = 0.0,
+        reactive_power = 0.0,
+        rating = 7.0,
+        prime_mover_type = PrimeMovers.HY,
+        active_power_limits = (min = 0.0, max = 7.0),
+        reactive_power_limits = (min = 0.0, max = 7.0),
+        ramp_limits = (up = 7.0, down = 7.0),
+        time_limits = nothing,
+        operation_cost = HydroGenerationCost(
             CostCurve(LinearCurve(0.15)), 0.0),
-        base_power=100.0,
-        storage_capacity=50.0,
-        inflow=4.0,
-        conversion_factor=1.0,
-        initial_storage=0.5,
+        base_power = 100.0,
+        storage_capacity = 50.0,
+        inflow = 4.0,
+        conversion_factor = 1.0,
+        initial_storage = 0.5,
     )
     duration_load = [0.3, 0.6, 0.5]
     load_data =
@@ -3472,7 +3472,7 @@ end
 function build_hydro_test_case_e_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min=0.9, max=1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3481,26 +3481,26 @@ function build_hydro_test_case_e_sys(; raw_data, kwargs...)
         ),
     )
     hydro = HydroEnergyReservoir(;
-        name="HydroEnergyReservoir",
-        available=true,
-        bus=node,
-        active_power=0.0,
-        reactive_power=0.0,
-        rating=7.0,
-        prime_mover_type=PrimeMovers.HY,
-        active_power_limits=(min=0.0, max=7.0),
-        reactive_power_limits=(min=0.0, max=7.0),
-        ramp_limits=(up=7.0, down=7.0),
-        time_limits=nothing,
-        operation_cost=HydroGenerationCost(
+        name = "HydroEnergyReservoir",
+        available = true,
+        bus = node,
+        active_power = 0.0,
+        reactive_power = 0.0,
+        rating = 7.0,
+        prime_mover_type = PrimeMovers.HY,
+        active_power_limits = (min = 0.0, max = 7.0),
+        reactive_power_limits = (min = 0.0, max = 7.0),
+        ramp_limits = (up = 7.0, down = 7.0),
+        time_limits = nothing,
+        operation_cost = HydroGenerationCost(
             CostCurve(LinearCurve(0.15)),
             0.0,
         ),
-        base_power=100.0,
-        storage_capacity=50.0,
-        inflow=4.0,
-        conversion_factor=1.0,
-        initial_storage=20.0,
+        base_power = 100.0,
+        storage_capacity = 50.0,
+        inflow = 4.0,
+        conversion_factor = 1.0,
+        initial_storage = 20.0,
     )
     duration_load = [0.3, 0.6, 0.5]
     load_data =
@@ -3530,7 +3530,7 @@ end
 function build_hydro_test_case_f_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min=0.9, max=1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3539,26 +3539,26 @@ function build_hydro_test_case_f_sys(; raw_data, kwargs...)
         ),
     )
     hydro = HydroEnergyReservoir(;
-        name="HydroEnergyReservoir",
-        available=true,
-        bus=node,
-        active_power=0.0,
-        reactive_power=0.0,
-        rating=7.0,
-        prime_mover_type=PrimeMovers.HY,
-        active_power_limits=(min=0.0, max=7.0),
-        reactive_power_limits=(min=0.0, max=7.0),
-        ramp_limits=(up=7.0, down=7.0),
-        time_limits=nothing,
-        operation_cost=HydroGenerationCost(
+        name = "HydroEnergyReservoir",
+        available = true,
+        bus = node,
+        active_power = 0.0,
+        reactive_power = 0.0,
+        rating = 7.0,
+        prime_mover_type = PrimeMovers.HY,
+        active_power_limits = (min = 0.0, max = 7.0),
+        reactive_power_limits = (min = 0.0, max = 7.0),
+        ramp_limits = (up = 7.0, down = 7.0),
+        time_limits = nothing,
+        operation_cost = HydroGenerationCost(
             CostCurve(LinearCurve(0.15)),
             0.0,
         ),
-        base_power=100.0,
-        storage_capacity=50.0,
-        inflow=4.0,
-        conversion_factor=1.0,
-        initial_storage=10.0,
+        base_power = 100.0,
+        storage_capacity = 50.0,
+        inflow = 4.0,
+        conversion_factor = 1.0,
+        initial_storage = 10.0,
     )
     duration_load = [0.3, 0.6, 0.5]
     load_data =
@@ -3588,7 +3588,7 @@ end
 function build_batt_test_case_b_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min=0.9, max=1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3604,38 +3604,38 @@ function build_batt_test_case_b_sys(; raw_data, kwargs...)
         0.0,
         1.20,
         PrimeMovers.WT,
-        (min=-0.800, max=0.800),
+        (min = -0.800, max = 0.800),
         1.0,
         RenewableGenerationCost(CostCurve(LinearCurve(0.220))),
         100.0,
     )
 
     batt = PSY.EnergyReservoirStorage(;
-        name="Bat2",
-        prime_mover_type=PrimeMovers.BA,
-        storage_technology_type=StorageTech.OTHER_CHEM,
-        available=true,
-        bus=node,
-        storage_capacity=7.0,
-        storage_level_limits=(min=0.10 / 7.0, max=7.0 / 7.0),
-        initial_storage_capacity_level=5.0 / 7.0,
-        rating=7.0,
-        active_power=2.0,
-        input_active_power_limits=(min=0.0, max=2.0),
-        output_active_power_limits=(min=0.0, max=2.0),
-        efficiency=(in=0.80, out=0.90),
-        reactive_power=0.0,
-        reactive_power_limits=(min=-2.0, max=2.0),
-        base_power=100.0,
-        storage_target=0.2,
-        operation_cost=PSY.StorageCost(;
-            charge_variable_cost=zero(CostCurve),
-            discharge_variable_cost=zero(CostCurve),
-            fixed=0.0,
-            start_up=0.0,
-            shut_down=0.0,
-            energy_shortage_cost=0.001,
-            energy_surplus_cost=10.0,
+        name = "Bat2",
+        prime_mover_type = PrimeMovers.BA,
+        storage_technology_type = StorageTech.OTHER_CHEM,
+        available = true,
+        bus = node,
+        storage_capacity = 7.0,
+        storage_level_limits = (min = 0.10 / 7.0, max = 7.0 / 7.0),
+        initial_storage_capacity_level = 5.0 / 7.0,
+        rating = 7.0,
+        active_power = 2.0,
+        input_active_power_limits = (min = 0.0, max = 2.0),
+        output_active_power_limits = (min = 0.0, max = 2.0),
+        efficiency = (in = 0.80, out = 0.90),
+        reactive_power = 0.0,
+        reactive_power_limits = (min = -2.0, max = 2.0),
+        base_power = 100.0,
+        storage_target = 0.2,
+        operation_cost = PSY.StorageCost(;
+            charge_variable_cost = zero(CostCurve),
+            discharge_variable_cost = zero(CostCurve),
+            fixed = 0.0,
+            start_up = 0.0,
+            shut_down = 0.0,
+            energy_shortage_cost = 0.001,
+            energy_surplus_cost = 10.0,
         ),
     )
     load_ts = [0.3, 0.6, 0.5]
@@ -3666,7 +3666,7 @@ end
 function build_batt_test_case_c_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min=0.9, max=1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3682,38 +3682,38 @@ function build_batt_test_case_c_sys(; raw_data, kwargs...)
         0.0,
         1.20,
         PrimeMovers.WT,
-        (min=-0.800, max=0.800),
+        (min = -0.800, max = 0.800),
         1.0,
         RenewableGenerationCost(CostCurve(LinearCurve(0.220))),
         100.0,
     )
 
     batt = PSY.EnergyReservoirStorage(;
-        name="Bat2",
-        prime_mover_type=PrimeMovers.BA,
-        storage_technology_type=StorageTech.OTHER_CHEM,
-        available=true,
-        bus=node,
-        storage_capacity=7.0,
-        storage_level_limits=(min=0.10 / 7.0, max=7.0 / 7.0),
-        initial_storage_capacity_level=2.0 / 7.0,
-        rating=7.0,
-        active_power=2.0,
-        input_active_power_limits=(min=0.0, max=2.0),
-        output_active_power_limits=(min=0.0, max=2.0),
-        efficiency=(in=0.80, out=0.90),
-        reactive_power=0.0,
-        reactive_power_limits=(min=-2.0, max=2.0),
-        base_power=100.0,
-        storage_target=0.2,
-        operation_cost=PSY.StorageCost(;
-            charge_variable_cost=zero(CostCurve),
-            discharge_variable_cost=zero(CostCurve),
-            fixed=0.0,
-            start_up=0.0,
-            shut_down=0.0,
-            energy_shortage_cost=50.0,
-            energy_surplus_cost=0.0,
+        name = "Bat2",
+        prime_mover_type = PrimeMovers.BA,
+        storage_technology_type = StorageTech.OTHER_CHEM,
+        available = true,
+        bus = node,
+        storage_capacity = 7.0,
+        storage_level_limits = (min = 0.10 / 7.0, max = 7.0 / 7.0),
+        initial_storage_capacity_level = 2.0 / 7.0,
+        rating = 7.0,
+        active_power = 2.0,
+        input_active_power_limits = (min = 0.0, max = 2.0),
+        output_active_power_limits = (min = 0.0, max = 2.0),
+        efficiency = (in = 0.80, out = 0.90),
+        reactive_power = 0.0,
+        reactive_power_limits = (min = -2.0, max = 2.0),
+        base_power = 100.0,
+        storage_target = 0.2,
+        operation_cost = PSY.StorageCost(;
+            charge_variable_cost = zero(CostCurve),
+            discharge_variable_cost = zero(CostCurve),
+            fixed = 0.0,
+            start_up = 0.0,
+            shut_down = 0.0,
+            energy_shortage_cost = 50.0,
+            energy_surplus_cost = 0.0,
         ),
     )
     load_ts = [0.3, 0.6, 0.5]
@@ -3744,7 +3744,7 @@ end
 function build_batt_test_case_d_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min=0.9, max=1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3760,38 +3760,38 @@ function build_batt_test_case_d_sys(; raw_data, kwargs...)
         0.0,
         1.20,
         PrimeMovers.WT,
-        (min=-0.800, max=0.800),
+        (min = -0.800, max = 0.800),
         1.0,
         RenewableGenerationCost(CostCurve(LinearCurve(0.220))),
         100.0,
     )
 
     batt = PSY.EnergyReservoirStorage(;
-        name="Bat2",
-        prime_mover_type=PrimeMovers.BA,
-        storage_technology_type=StorageTech.OTHER_CHEM,
-        available=true,
-        bus=node,
-        storage_capacity=7.0,
-        storage_level_limits=(min=0.10 / 7.0, max=7.0 / 7.0),
-        initial_storage_capacity_level=2.0 / 7.0,
-        rating=7.0,
-        active_power=2.0,
-        input_active_power_limits=(min=0.0, max=2.0),
-        output_active_power_limits=(min=0.0, max=2.0),
-        efficiency=(in=0.80, out=0.90),
-        reactive_power=0.0,
-        reactive_power_limits=(min=-2.0, max=2.0),
-        base_power=100.0,
-        storage_target=0.2,
-        operation_cost=PSY.StorageCost(;
-            charge_variable_cost=zero(CostCurve),
-            discharge_variable_cost=zero(CostCurve),
-            fixed=0.0,
-            start_up=0.0,
-            shut_down=0.0,
-            energy_shortage_cost=0.0,
-            energy_surplus_cost=-10.0,
+        name = "Bat2",
+        prime_mover_type = PrimeMovers.BA,
+        storage_technology_type = StorageTech.OTHER_CHEM,
+        available = true,
+        bus = node,
+        storage_capacity = 7.0,
+        storage_level_limits = (min = 0.10 / 7.0, max = 7.0 / 7.0),
+        initial_storage_capacity_level = 2.0 / 7.0,
+        rating = 7.0,
+        active_power = 2.0,
+        input_active_power_limits = (min = 0.0, max = 2.0),
+        output_active_power_limits = (min = 0.0, max = 2.0),
+        efficiency = (in = 0.80, out = 0.90),
+        reactive_power = 0.0,
+        reactive_power_limits = (min = -2.0, max = 2.0),
+        base_power = 100.0,
+        storage_target = 0.2,
+        operation_cost = PSY.StorageCost(;
+            charge_variable_cost = zero(CostCurve),
+            discharge_variable_cost = zero(CostCurve),
+            fixed = 0.0,
+            start_up = 0.0,
+            shut_down = 0.0,
+            energy_shortage_cost = 0.0,
+            energy_surplus_cost = -10.0,
         ),
     )
     load_ts = [0.3, 0.6, 0.5, 0.8]
@@ -3822,7 +3822,7 @@ end
 function build_batt_test_case_e_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min=0.9, max=1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3838,38 +3838,38 @@ function build_batt_test_case_e_sys(; raw_data, kwargs...)
         0.0,
         1.20,
         PrimeMovers.WT,
-        (min=-0.800, max=0.800),
+        (min = -0.800, max = 0.800),
         1.0,
         RenewableGenerationCost(CostCurve(LinearCurve(0.220))),
         100.0,
     )
 
     batt = PSY.EnergyReservoirStorage(;
-        name="Bat2",
-        prime_mover_type=PrimeMovers.BA,
-        storage_technology_type=StorageTech.OTHER_CHEM,
-        available=true,
-        bus=node,
-        storage_capacity=7.0,
-        storage_level_limits=(min=0.10 / 7.0, max=7.0 / 7.0),
-        initial_storage_capacity_level=2.0 / 7.0,
-        rating=7.0,
-        active_power=2.0,
-        input_active_power_limits=(min=0.0, max=2.0),
-        output_active_power_limits=(min=0.0, max=2.0),
-        efficiency=(in=0.80, out=0.90),
-        reactive_power=0.0,
-        reactive_power_limits=(min=-2.0, max=2.0),
-        base_power=100.0,
-        storage_target=0.2,
-        operation_cost=PSY.StorageCost(;
-            charge_variable_cost=zero(CostCurve),
-            discharge_variable_cost=zero(CostCurve),
-            fixed=0.0,
-            start_up=0.0,
-            shut_down=0.0,
-            energy_shortage_cost=50.0,
-            energy_surplus_cost=50.0,
+        name = "Bat2",
+        prime_mover_type = PrimeMovers.BA,
+        storage_technology_type = StorageTech.OTHER_CHEM,
+        available = true,
+        bus = node,
+        storage_capacity = 7.0,
+        storage_level_limits = (min = 0.10 / 7.0, max = 7.0 / 7.0),
+        initial_storage_capacity_level = 2.0 / 7.0,
+        rating = 7.0,
+        active_power = 2.0,
+        input_active_power_limits = (min = 0.0, max = 2.0),
+        output_active_power_limits = (min = 0.0, max = 2.0),
+        efficiency = (in = 0.80, out = 0.90),
+        reactive_power = 0.0,
+        reactive_power_limits = (min = -2.0, max = 2.0),
+        base_power = 100.0,
+        storage_target = 0.2,
+        operation_cost = PSY.StorageCost(;
+            charge_variable_cost = zero(CostCurve),
+            discharge_variable_cost = zero(CostCurve),
+            fixed = 0.0,
+            start_up = 0.0,
+            shut_down = 0.0,
+            energy_shortage_cost = 50.0,
+            energy_surplus_cost = 50.0,
         ),
     )
     load_ts = [0.3, 0.6, 0.5]
@@ -3900,7 +3900,7 @@ end
 function build_batt_test_case_f_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min=0.9, max=1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.2, 0.9861, 100.0, 1.0, 2.0)
     time_periods = collect(
         DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S"):Hour(1):DateTime(
@@ -3916,38 +3916,38 @@ function build_batt_test_case_f_sys(; raw_data, kwargs...)
         0.0,
         1.20,
         PrimeMovers.WT,
-        (min=-0.800, max=0.800),
+        (min = -0.800, max = 0.800),
         1.0,
         RenewableGenerationCost(CostCurve(LinearCurve(0.220))),
         100.0,
     )
 
     batt = PSY.EnergyReservoirStorage(;
-        name="Bat2",
-        prime_mover_type=PrimeMovers.BA,
-        storage_technology_type=StorageTech.OTHER_CHEM,
-        available=true,
-        bus=node,
-        storage_capacity=7.0,
-        storage_level_limits=(min=0.10 / 7.0, max=7.0 / 7.0),
-        initial_storage_capacity_level=2.0 / 7.0,
-        rating=7.0,
-        active_power=2.0,
-        input_active_power_limits=(min=0.0, max=2.0),
-        output_active_power_limits=(min=0.0, max=2.0),
-        efficiency=(in=0.80, out=0.90),
-        reactive_power=0.0,
-        reactive_power_limits=(min=-2.0, max=2.0),
-        base_power=100.0,
-        storage_target=0.2,
-        operation_cost=PSY.StorageCost(;
-            charge_variable_cost=zero(CostCurve),
-            discharge_variable_cost=zero(CostCurve),
-            fixed=0.0,
-            start_up=0.0,
-            shut_down=0.0,
-            energy_shortage_cost=50.0,
-            energy_surplus_cost=-5.0,
+        name = "Bat2",
+        prime_mover_type = PrimeMovers.BA,
+        storage_technology_type = StorageTech.OTHER_CHEM,
+        available = true,
+        bus = node,
+        storage_capacity = 7.0,
+        storage_level_limits = (min = 0.10 / 7.0, max = 7.0 / 7.0),
+        initial_storage_capacity_level = 2.0 / 7.0,
+        rating = 7.0,
+        active_power = 2.0,
+        input_active_power_limits = (min = 0.0, max = 2.0),
+        output_active_power_limits = (min = 0.0, max = 2.0),
+        efficiency = (in = 0.80, out = 0.90),
+        reactive_power = 0.0,
+        reactive_power_limits = (min = -2.0, max = 2.0),
+        base_power = 100.0,
+        storage_target = 0.2,
+        operation_cost = PSY.StorageCost(;
+            charge_variable_cost = zero(CostCurve),
+            discharge_variable_cost = zero(CostCurve),
+            fixed = 0.0,
+            start_up = 0.0,
+            shut_down = 0.0,
+            energy_shortage_cost = 50.0,
+            energy_surplus_cost = -5.0,
         ),
     )
     load_ts = [0.3, 0.6, 0.5]
@@ -3987,7 +3987,7 @@ function build_c_sys5_all_components(; add_forecasts, raw_data, kwargs...)
         loads5(nodes),
         hydro_generators5(nodes),
         branches5(nodes);
-        time_series_in_memory=get(sys_kwargs, :time_series_in_memory, true),
+        time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
 
@@ -3996,7 +3996,7 @@ function build_c_sys5_all_components(; add_forecasts, raw_data, kwargs...)
     # For now, copied from build_c_sys5_hy_uc excluding the InterruptiblePowerLoad block
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_all_components))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(load_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = load_timeseries_DA[t][ix]
@@ -4009,7 +4009,7 @@ function build_c_sys5_all_components(; add_forecasts, raw_data, kwargs...)
         end
         for (ix, h) in
             enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_all_components))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
@@ -4022,7 +4022,7 @@ function build_c_sys5_all_components(; add_forecasts, raw_data, kwargs...)
         end
         for (ix, h) in
             enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_all_components))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(storage_target_DA[t][ix])[1]
                 forecast_data[ini_time] = storage_target_DA[t][ix]
@@ -4035,7 +4035,7 @@ function build_c_sys5_all_components(; add_forecasts, raw_data, kwargs...)
         end
         for (ix, h) in
             enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_all_components))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = hydro_timeseries_DA[t][ix] .* 0.8
@@ -4048,7 +4048,7 @@ function build_c_sys5_all_components(; add_forecasts, raw_data, kwargs...)
         end
         for (ix, h) in
             enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_all_components))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(hydro_budget_DA[t][ix])[1]
                 forecast_data[ini_time] = hydro_budget_DA[t][ix]
@@ -4061,7 +4061,7 @@ function build_c_sys5_all_components(; add_forecasts, raw_data, kwargs...)
         end
         for (ix, h) in
             enumerate(PSY.get_components(PSY.HydroDispatch, c_sys5_all_components))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
@@ -4074,7 +4074,7 @@ function build_c_sys5_all_components(; add_forecasts, raw_data, kwargs...)
         end
         for (ix, r) in
             enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_all_components))
-            forecast_data = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(ren_timeseries_DA[t][ix])[1]
                 forecast_data[ini_time] = ren_timeseries_DA[t][ix]
@@ -4105,27 +4105,27 @@ function build_c_sys5_radial(; raw_data, kwargs...)
     busC = get_component(ACBus, new_sys, "nodeC")
 
     busC_ext1 = ACBus(;
-        number=301,
-        name="nodeC_ext1",
-        bustype=ACBusTypes.PQ,
-        angle=0.0,
-        magnitude=1.0,
-        voltage_limits=(min=0.9, max=1.05),
-        base_voltage=230.0,
-        area=nothing,
-        load_zone=nothing,
+        number = 301,
+        name = "nodeC_ext1",
+        bustype = ACBusTypes.PQ,
+        angle = 0.0,
+        magnitude = 1.0,
+        voltage_limits = (min = 0.9, max = 1.05),
+        base_voltage = 230.0,
+        area = nothing,
+        load_zone = nothing,
     )
 
     busC_ext2 = ACBus(;
-        number=302,
-        name="nodeC_ext2",
-        bustype=ACBusTypes.PQ,
-        angle=0.0,
-        magnitude=1.0,
-        voltage_limits=(min=0.9, max=1.05),
-        base_voltage=230.0,
-        area=nothing,
-        load_zone=nothing,
+        number = 302,
+        name = "nodeC_ext2",
+        bustype = ACBusTypes.PQ,
+        angle = 0.0,
+        magnitude = 1.0,
+        voltage_limits = (min = 0.9, max = 1.05),
+        base_voltage = 230.0,
+        area = nothing,
+        load_zone = nothing,
     )
 
     add_components!(new_sys, [busC_ext1, busC_ext2])
@@ -4135,31 +4135,31 @@ function build_c_sys5_radial(; raw_data, kwargs...)
     ################################
 
     line_C_to_ext1 = Line(;
-        name="C_to_ext1",
-        available=true,
-        active_power_flow=0.0,
-        reactive_power_flow=0.0,
-        arc=Arc(; from=busC, to=busC_ext1),
+        name = "C_to_ext1",
+        available = true,
+        active_power_flow = 0.0,
+        reactive_power_flow = 0.0,
+        arc = Arc(; from = busC, to = busC_ext1),
         #r = 0.00281,
-        r=0.0,
-        x=0.0281,
-        b=(from=0.00356, to=0.00356),
-        rating=2.0,
-        angle_limits=(min=-0.7, max=0.7),
+        r = 0.0,
+        x = 0.0281,
+        b = (from = 0.00356, to = 0.00356),
+        rating = 2.0,
+        angle_limits = (min = -0.7, max = 0.7),
     )
 
     line_ext1_to_ext2 = Line(;
-        name="ext1_to_ext2",
-        available=true,
-        active_power_flow=0.0,
-        reactive_power_flow=0.0,
-        arc=Arc(; from=busC_ext1, to=busC_ext2),
+        name = "ext1_to_ext2",
+        available = true,
+        active_power_flow = 0.0,
+        reactive_power_flow = 0.0,
+        arc = Arc(; from = busC_ext1, to = busC_ext2),
         #r = 0.00281,
-        r=0.0,
-        x=0.0281,
-        b=(from=0.00356, to=0.00356),
-        rating=2.0,
-        angle_limits=(min=-0.7, max=0.7),
+        r = 0.0,
+        x = 0.0281,
+        b = (from = 0.00356, to = 0.00356),
+        rating = 2.0,
+        angle_limits = (min = -0.7, max = 0.7),
     )
 
     add_components!(new_sys, [line_C_to_ext1, line_ext1_to_ext2])
@@ -4171,25 +4171,25 @@ function build_c_sys5_radial(; raw_data, kwargs...)
     load_bus3 = get_component(PowerLoad, new_sys, "Bus3")
 
     load_ext1 = PowerLoad(;
-        name="Bus_ext1",
-        available=true,
-        bus=busC_ext1,
-        active_power=1.0,
-        reactive_power=0.9861 / 3,
-        base_power=100.0,
-        max_active_power=1.0,
-        max_reactive_power=0.9861 / 3,
+        name = "Bus_ext1",
+        available = true,
+        bus = busC_ext1,
+        active_power = 1.0,
+        reactive_power = 0.9861 / 3,
+        base_power = 100.0,
+        max_active_power = 1.0,
+        max_reactive_power = 0.9861 / 3,
     )
 
     load_ext2 = PowerLoad(;
-        name="Bus_ext2",
-        available=true,
-        bus=busC_ext2,
-        active_power=1.0,
-        reactive_power=0.9861 / 3,
-        base_power=100.0,
-        max_active_power=1.0,
-        max_reactive_power=0.9861 / 3,
+        name = "Bus_ext2",
+        available = true,
+        bus = busC_ext2,
+        active_power = 1.0,
+        reactive_power = 0.9861 / 3,
+        base_power = 100.0,
+        max_active_power = 1.0,
+        max_reactive_power = 0.9861 / 3,
     )
 
     add_components!(new_sys, [load_ext1, load_ext2])
@@ -4265,28 +4265,28 @@ function build_two_area_pjm_DA(; add_forecasts, raw_data, sys_kwargs...)
     add_component!(sys, area2)
 
     exchange_1_2 = AreaInterchange(;
-        name="1_2",
-        available=true,
-        active_power_flow=0.0,
-        from_area=area1,
-        to_area=area2,
-        flow_limits=(from_to=1.5, to_from=1.5),
+        name = "1_2",
+        available = true,
+        active_power_flow = 0.0,
+        from_area = area1,
+        to_area = area2,
+        flow_limits = (from_to = 1.5, to_from = 1.5),
     )
 
     PSY.add_component!(sys, exchange_1_2)
 
     inter_area_line = MonitoredLine(;
-        name="inter_area_line",
-        available=true,
-        active_power_flow=0.0,
-        reactive_power_flow=0.0,
-        rating=10.0,
-        angle_limits=(-1.571, 1.571),
-        r=0.003,
-        x=0.03,
-        b=(from=0.00337, to=0.00337),
-        flow_limits=(from_to=7.0, to_from=7.0),
-        arc=PSY.Arc(; from=nodes_area1[3], to=nodes_area2[3]),
+        name = "inter_area_line",
+        available = true,
+        active_power_flow = 0.0,
+        reactive_power_flow = 0.0,
+        rating = 10.0,
+        angle_limits = (-1.571, 1.571),
+        r = 0.003,
+        x = 0.03,
+        b = (from = 0.00337, to = 0.00337),
+        flow_limits = (from_to = 7.0, to_from = 7.0),
+        arc = PSY.Arc(; from = nodes_area1[3], to = nodes_area2[3]),
     )
 
     PSY.add_component!(sys, inter_area_line)
@@ -4307,7 +4307,7 @@ function build_two_area_pjm_DA(; add_forecasts, raw_data, sys_kwargs...)
         0.0,
         3.84,
         PrimeMovers.PVe,
-        (min=0.0, max=0.0),
+        (min = 0.0, max = 0.0),
         1.0,
         RenewableGenerationCost(nothing),
         100.0,
@@ -4320,7 +4320,7 @@ function build_two_area_pjm_DA(; add_forecasts, raw_data, sys_kwargs...)
         0.0,
         4.51,
         PrimeMovers.WT,
-        (min=0.0, max=0.0),
+        (min = 0.0, max = 0.0),
         1.0,
         RenewableGenerationCost(nothing),
         100.0,
@@ -4415,39 +4415,39 @@ end
 function _build_cost_base_test_sys(; kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     node =
-        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min=0.9, max=1.05), 230, nothing, nothing)
+        PSY.ACBus(1, "nodeA", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing)
     load = PSY.PowerLoad("Bus1", true, node, 0.4, 0.9861, 100.0, 1.0, 2.0)
 
     gen = ThermalStandard(;
-        name="Cheap Unit",
-        available=true,
-        status=true,
-        bus=node,
-        active_power=1.70,
-        reactive_power=0.20,
-        rating=2.2125,
-        prime_mover_type=PrimeMovers.ST,
-        fuel=ThermalFuels.COAL,
-        active_power_limits=(min=0.0, max=1.70),
-        reactive_power_limits=(min=-1.275, max=1.275),
-        ramp_limits=(up=0.02 * 2.2125, down=0.02 * 2.2125),
-        time_limits=(up=2.0, down=1.0),
-        operation_cost=ThermalGenerationCost(CostCurve(LinearCurve(0.23)),
+        name = "Cheap Unit",
+        available = true,
+        status = true,
+        bus = node,
+        active_power = 1.70,
+        reactive_power = 0.20,
+        rating = 2.2125,
+        prime_mover_type = PrimeMovers.ST,
+        fuel = ThermalFuels.COAL,
+        active_power_limits = (min = 0.0, max = 1.70),
+        reactive_power_limits = (min = -1.275, max = 1.275),
+        ramp_limits = (up = 0.02 * 2.2125, down = 0.02 * 2.2125),
+        time_limits = (up = 2.0, down = 1.0),
+        operation_cost = ThermalGenerationCost(CostCurve(LinearCurve(0.23)),
             0.0,
             1.5,
             0.75,
         ),
-        base_power=100.0,
+        base_power = 100.0,
     )
 
-    DA_load_forecast = SortedDict{Dates.DateTime,TimeSeries.TimeArray}()
+    DA_load_forecast = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
     ini_time = DateTime("1/1/2024  0:00:00", "d/m/y  H:M:S")
     # Load levels to catch each segment in the curves
     load_forecasts = [[2.1, 3.4, 2.76, 3.0, 1.0], [1.3, 3.0, 2.1, 1.0, 1.0]]
-    for (ix, date) in enumerate(range(ini_time; length=2, step=Hour(1)))
+    for (ix, date) in enumerate(range(ini_time; length = 2, step = Hour(1)))
         DA_load_forecast[date] =
             TimeSeries.TimeArray(
-                range(ini_time; length=5, step=Hour(1)),
+                range(ini_time; length = 5, step = Hour(1)),
                 load_forecasts[ix],
             )
     end
