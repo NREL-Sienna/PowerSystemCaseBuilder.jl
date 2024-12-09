@@ -2246,7 +2246,7 @@ function build_c_sys5_hy_ems_ed(; add_forecasts, raw_data, kwargs...)
     return c_sys5_hy_ed
 end
 
-function build_c_sys5_phes_ed(; add_forecasts, raw_data, kwargs...)
+function build_c_sys5_phes_ed(; add_forecasts, add_reserves, raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_phes_ed = PSY.System(
@@ -2363,6 +2363,41 @@ function build_c_sys5_phes_ed(; add_forecasts, raw_data, kwargs...)
                 c_sys5_phes_ed,
                 l,
                 PSY.Deterministic("max_active_power", forecast_data),
+            )
+        end
+    end
+    if add_reserves
+        reserve_uc =
+            reserve5_phes(PSY.get_components(PSY.HydroPumpedStorage, c_sys5_phes_ed))
+        PSY.add_service!(
+            c_sys5_phes_ed,
+            reserve_uc[1],
+            PSY.get_components(PSY.HydroPumpedStorage, c_sys5_phes_ed),
+        )
+        PSY.add_service!(
+            c_sys5_phes_ed,
+            reserve_uc[2],
+            [collect(PSY.get_components(PSY.HydroPumpedStorage, c_sys5_phes_ed))[end]],
+        )
+
+        for serv in PSY.get_components(PSY.VariableReserve, c_sys5_phes_ed)
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2 # loop over days
+                ta_DA = Reserve_ts[t]
+                data_5min = repeat(values(ta_DA); inner = 12)
+                reserve_timeseries_RT =
+                    TimeSeries.TimeArray(RealTime + Day(t - 1), data_5min)
+                # loop over hours
+                for ini_time in timestamp(ta_DA) #get the initial hour
+                    # Construct TimeSeries
+                    data = when(reserve_timeseries_RT, hour, hour(ini_time)) # get the subset ts for that hour
+                    forecast_data[ini_time] = data
+                end
+            end
+            PSY.add_time_series!(
+                c_sys5_phes_ed,
+                serv,
+                PSY.Deterministic("requirement", forecast_data),
             )
         end
     end
