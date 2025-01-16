@@ -58,7 +58,10 @@ function _build_system(
     assign_new_uuids::Bool = false,
     skip_serialization::Bool = false,
 )
-    if !is_serialized(name, case_args) || force_build
+    # We skip serialization/de-serialization if sys_args are passed because we currently
+    # cannot encode information about some of them into file paths
+    # (such as lambda functions).
+    if !isempty(sys_args) || !is_serialized(name, case_args) || force_build
         check_serialized_storage()
         download_function = get_download_function(sys_descriptor)
         if !isnothing(download_function)
@@ -76,7 +79,7 @@ function _build_system(
         #construct_time = time() - start
         serialized_filepath = get_serialized_filepath(name, case_args)
         start = time()
-        if !skip_serialization
+        if !skip_serialization && isempty(sys_args)
             PSY.to_json(sys, serialized_filepath; force = true)
             #serialize_time = time() - start
             serialize_case_parameters(case_args)
