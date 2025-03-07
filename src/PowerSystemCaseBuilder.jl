@@ -51,36 +51,55 @@ abstract type PowerSystemCaseBuilderType <: IS.InfrastructureSystemsType end
 abstract type SystemCategory <: PowerSystemCaseBuilderType end
 
 """
-Category for PowerSystems.jl testing. Not all cases are funcional
+Category of [`PowerSystems.System`](@extref)s for
+[`PowerSystems.jl`](https://nrel-sienna.github.io/PowerSystems.jl/stable/) package testing.
+    
+Not all `System`s are functional.
 """
 struct PSYTestSystems <: SystemCategory end
 
 """
-Category to test parsing of files in PSSe raw format. Only include data for the power flow case.
+Category of [`PowerSystems.System`](@extref)s to test parsing PSSe .raw files. 
+
+`System`s only include data for the power flow case.
 """
 struct PSSEParsingTestSystems <: SystemCategory end
 
 """
-Category to test parsing of files in matpower format. Only include data for the power flow case.
+Category of [`PowerSystems.System`](@extref)s to test parsing Matpower files.
+
+`System`s only include data for the power flow case.
 """
 struct MatpowerTestSystems <: SystemCategory end
 
 """
-Category for PowerSimulations.jl testing. Not all cases are funcional
+Category of [`PowerSystems.System`](@extref)s for
+[`PowerSimulations.jl`](https://nrel-sienna.github.io/PowerSimulations.jl/stable/) package testing.
+    
+Not all `System`s are functional
 """
 struct PSITestSystems <: SystemCategory end
 
 """
-Category for PowerSimulationsDynamics.jl testing. Not all cases are funcional
+Category of [`PowerSystems.System`](@extref)s for
+[`PowerSimulationsDynamics.jl`](https://nrel-sienna.github.io/PowerSimulationsDynamics.jl/stable/)
+package testing.
+
+Not all `System`s are functional
 """
 struct PSIDTestSystems <: SystemCategory end
 
 """
-Category for PowerSimulations.jl examples.
+Category of example [`PowerSystems.System`](@extref)s for running
+    [`PowerSimulations.jl`](https://nrel-sienna.github.io/PowerSimulations.jl/stable/)
+    operations problems and simulations.
 """
 struct PSISystems <: SystemCategory end
+
 """
-Category for PowerSimulationsDynamics.jl examples.
+Category of example [`PowerSystems.System`](@extref)s for running
+    [`PowerSimulationsDynamics.jl`](https://nrel-sienna.github.io/PowerSimulationsDynamics.jl/stable/)
+    simulations.
 """
 struct PSIDSystems <: SystemCategory end
 

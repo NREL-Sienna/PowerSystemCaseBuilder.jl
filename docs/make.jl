@@ -1,6 +1,11 @@
 using Documenter, PowerSystemCaseBuilder
 import DataStructures: OrderedDict
 # using Literate
+using DocumenterInterLinks
+
+links = InterLinks(
+    "PowerSystems" => "https://nrel-sienna.github.io/PowerSystems.jl/stable/",
+)
 
 if isfile("docs/src/howto/.DS_Store.md")
     rm("docs/src/howto/.DS_Store.md")
@@ -28,6 +33,7 @@ makedocs(;
     modules = [PowerSystemCaseBuilder],
     authors = "Sourabh Dalvi, Kate Doubleday",
     pages = Any[p for p in pages],
+    plugins = [links],
 )
 
 deploydocs(;
