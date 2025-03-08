@@ -31,13 +31,26 @@ function list_systems(sys::SystemCatalog, category::Type{<:SystemCategory}; kwar
     PrettyTables.pretty_table(stdout, data; header = header, alignment = :l, kwargs...)
 end
 
+"""
+Prints a list of the categories available in the catalog
+"""
 show_categories() = println(join(string.(list_categories()), "\n"))
 
+"""
+Prints the name and description of all [`PowerSystems.System`](@extref)s in the catalog,
+grouped by [`SystemCategory`](@ref)
+
+See also: [`show_systems` for a selected category](@ref show_systems(category::Type{<:SystemCategory}; kwargs...))
+"""
 function show_systems(; kwargs...)
     catalog = SystemCatalog()
     show_systems(catalog; kwargs...)
 end
 
+"""
+Prints the name and description of all [`PowerSystems.System`](@extref)s in a selected
+[`SystemCategory`](@ref)
+"""
 function show_systems(category::Type{<:SystemCategory}; kwargs...)
     catalog = SystemCatalog()
     show_systems(catalog, category; kwargs...)
