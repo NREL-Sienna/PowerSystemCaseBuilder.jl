@@ -11,6 +11,7 @@ and available to load as [`PowerSystems.System`](@extref) objects.
 
 View the available categories of power systems in the catalog using
 [`show_categories`](@ref):
+
 ```@example pscb
 show_categories()
 ```
@@ -20,6 +21,7 @@ to learn about each category.
 
 Use [`show_systems`](@ref) to see the name and description of the available
 [`PowerSystems.System`](@extref)s in the selected category, e.g, [`PSISystems`](@ref):
+
 ```@example pscb
 show_systems(PSISystems)
 ```
@@ -27,6 +29,7 @@ show_systems(PSISystems)
 ## Build
 
 Finally, use [`build_system`](@ref) to load your selected system:
+
 ```@example pscb
 sys = build_system(PSISystems, "5_bus_hydro_ed_sys")
 ```

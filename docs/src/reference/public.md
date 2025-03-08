@@ -14,6 +14,7 @@ Private = false
 ```@docs
 SystemCategory
 ```
+
 ```@autodocs
 Modules = [PowerSystemCaseBuilder]
 Pages   = ["PowerSystemCaseBuilder.jl"]
