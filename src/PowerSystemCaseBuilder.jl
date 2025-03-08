@@ -55,7 +55,6 @@ const IS = InfrastructureSystems
 
 abstract type PowerSystemCaseBuilderType <: IS.InfrastructureSystemsType end
 
-
 """
 Supertype of categories that group test [`PowerSystems.System`](@extref)s for similar use
     cases

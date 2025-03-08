@@ -15,8 +15,8 @@ modeling.
 
 The main features include:
 
-- Comprehensive and extensible library of power systems for modeling.
-- Automated serialization/de-serialization of cataloged Systems.
+  - Comprehensive and extensible library of power systems for modeling.
+  - Automated serialization/de-serialization of cataloged Systems.
 
 `PowerSystemCaseBuilder.jl` is an active project under development, and we welcome your feedback,
 suggestions, and bug reports.
