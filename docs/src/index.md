@@ -13,7 +13,7 @@ of power systems test cases using the
 
 `PowerSystemCaseBuilder.jl` is a simple tool to build power systems ranging from
 5-Bus systems to entire grid systems for the purpose of testing or prototyping power system
-models. This package facilitates open sharing of large number of data sets for power systems
+models. This package facilitates the open sharing of data sets for power systems
 modeling.
 
 The main features include:
