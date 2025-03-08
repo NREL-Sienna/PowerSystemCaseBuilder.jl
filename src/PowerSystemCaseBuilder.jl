@@ -43,6 +43,13 @@ import LazyArtifacts
 import JSON3
 import SHA
 
+using DocStringExtensions
+
+@template (FUNCTIONS, METHODS) = """
+                                 $(TYPEDSIGNATURES)
+                                 $(DOCSTRING)
+                                 """
+
 const PSY = PowerSystems
 const IS = InfrastructureSystems
 
