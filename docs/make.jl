@@ -13,12 +13,13 @@ end
 
 pages = OrderedDict(
     "Welcome" => "index.md",
-    ## TODO remove stubs as new material is added
+    ## TODO follow this diataxis structure as new material is added
     # "Tutorials" => Any["stub" => "tutorials/stub.md"],
-    # "How to..." => Any["stub" => "how_to_guides/stub.md"],
+    "How to..." => Any["Select and Load a Power System" => "how_to_guides/explore_load.md"],
     # "Explanation" => Any["stub" => "explanation/stub.md"],
     "Reference" => Any[
         "Public API" => "reference/public.md",
+        "Full Catalog" => "reference/catalog.md",
         "Developers" => ["Developer Guidelines" => "reference/developer_guidelines.md",
         "Internals" => "reference/internal.md"],
     ],
