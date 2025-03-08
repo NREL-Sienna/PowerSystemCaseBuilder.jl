@@ -55,6 +55,22 @@ const IS = InfrastructureSystems
 
 abstract type PowerSystemCaseBuilderType <: IS.InfrastructureSystemsType end
 
+
+"""
+Supertype of categories that group test [`PowerSystems.System`](@extref)s for similar use
+    cases
+
+Current subtypes with example `System`s for running test simulations include:
+- [`PSISystems`](@ref)
+- [`PSIDSystems`](@ref)
+
+Subtypes for testing other packages include:
+- [`PSYTestSystems`](@ref)
+- [`PSSEParsingTestSystems`](@ref)
+- [`MatpowerTestSystems`](@ref)
+- [`PSITestSystems`](@ref)
+- [`PSIDTestSystems`](@ref)
+"""
 abstract type SystemCategory <: PowerSystemCaseBuilderType end
 
 """
