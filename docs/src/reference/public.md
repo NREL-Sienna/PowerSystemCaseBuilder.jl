@@ -1,5 +1,14 @@
 # Public API Reference
 
+## System Catalog
+
+```@autodocs
+Modules = [PowerSystemCaseBuilder]
+Pages   = ["system_catalog.jl"]
+Public = true
+Private = false
+```
+
 ## Reading the Catalog
 
 ```@autodocs
