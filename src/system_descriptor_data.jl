@@ -1804,4 +1804,18 @@ const SYSTEM_CATALOG = [
             ),
         ],
     ),
+    SystemDescriptor(;
+        name = "RTS_GMLC with Static Outage Data",
+        description = "RTS_GMLC System with Static GeometricDistributionForcedOutage SupplementalAttribute",
+        category = SPISystems,
+        raw_data = RTS_DIR,
+        build_function = build_rts_gmlc_with_static_outage_data,
+    ),
+    SystemDescriptor(;
+        name = "RTS_GMLC with TimeSeries Outage Data",
+        description = "RTS_GMLC System with GeometricDistributionForcedOutage SupplementalAttribute and TimeSeries",
+        category = SPISystems,
+        raw_data = RTS_DIR,
+        build_function = build_rts_gmlc_with_timeseries_outage_data,
+    ),
 ]

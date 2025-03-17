@@ -31,6 +31,7 @@ import PowerSystems
 import DataStructures: SortedDict
 import DataFrames
 import PrettyTables
+import SiennaPRASInterface
 
 #TimeStamp Management Imports
 import TimeSeries
@@ -45,6 +46,7 @@ import SHA
 
 const PSY = PowerSystems
 const IS = InfrastructureSystems
+const SPI = SiennaPRASInterface
 
 abstract type PowerSystemCaseBuilderType <: IS.InfrastructureSystemsType end
 
@@ -83,6 +85,11 @@ struct PSISystems <: SystemCategory end
 Category for PowerSimulationsDynamics.jl examples.
 """
 struct PSIDSystems <: SystemCategory end
+
+"""
+Category for SiennaPRASInterface.jl examples.
+"""
+struct SPISystems <: SystemCategory end
 
 # includes
 
