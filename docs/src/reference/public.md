@@ -40,3 +40,13 @@ Pages   = ["build_system.jl"]
 Public = true
 Private = false
 ```
+
+## Utilities
+
+```@autodocs
+Modules = [PowerSystemCaseBuilder]
+Pages   = ["system_descriptor.jl",
+            "system_build_stats.jl"]
+Public = true
+Private = false
+```

@@ -7,6 +7,9 @@ mutable struct SystemBuildStats <: PowerSystemCaseBuilderType
     total_deserialize_time::Float64
 end
 
+"""
+Returns a container for the summary statistics on the build process for a [`PowerSystems.System`](@extref)
+"""
 function SystemBuildStats(;
     count,
     initial_construct_time,
