@@ -15,6 +15,7 @@ export MatpowerTestSystems
 
 export PSISystems
 export PSIDSystems
+export SPISystems
 
 export build_system
 export list_categories
@@ -36,7 +37,7 @@ import SiennaPRASInterface
 #TimeStamp Management Imports
 import TimeSeries
 import Dates
-import Dates: DateTime, Hour, Minute
+import Dates: DateTime, Hour, Minute, daysinmonth
 import CSV
 import HDF5
 import DataFrames: DataFrame
