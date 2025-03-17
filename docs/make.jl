@@ -5,6 +5,7 @@ using DocumenterInterLinks
 
 links = InterLinks(
     "PowerSystems" => "https://nrel-sienna.github.io/PowerSystems.jl/stable/",
+    "Pkg" => "https://pkgdocs.julialang.org/v1/",
 )
 
 if isfile("docs/src/howto/.DS_Store.md")
@@ -15,7 +16,8 @@ pages = OrderedDict(
     "Welcome" => "index.md",
     ## TODO follow this diataxis structure as new material is added
     # "Tutorials" => Any["stub" => "tutorials/stub.md"],
-    "How to..." => Any["Select and Load a Power System" => "how_to_guides/explore_load.md"],
+    "How to..." => Any["Select and Load a Power System" => "how_to_guides/explore_load.md",
+        "Add a `System` to the Catalog" => "how_to_guides/add_a_system.md",],
     # "Explanation" => Any["stub" => "explanation/stub.md"],
     "Reference" => Any[
         "Public API" => "reference/public.md",
