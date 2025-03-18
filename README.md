@@ -11,10 +11,9 @@ The `PowerSystemCaseBuilder.jl` package provides a library
 of over 200 power systems test cases using the
 [`PowerSystems.jl`](https://nrel-sienna.github.io/PowerSystems.jl/stable/) data model.
 
-Power system test cases suitable for simulating and prototyping with the
+Power system test cases are suitable for simulating and prototyping with
 [`PowerSimulations.jl`](https://github.com/NREL-Sienna/PowerSimulations.jl) and
-[`PowerSimulationsDynamics.jl`](https://github.com/NREL-Sienna/PowerSimulationsDynamics.jl) packages
-are available.
+[`PowerSimulationsDynamics.jl`](https://github.com/NREL-Sienna/PowerSimulationsDynamics.jl).
 
 For information on using the package, see the [stable documentation](https://nrel-sienna.github.io/PowerSystemCaseBuilder.jl/stable/). Use the [in-development documentation](https://nrel-sienna.github.io/PowerSystemCaseBuilder.jl/dev/) for the version of the documentation which contains the unreleased features.
 
