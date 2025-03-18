@@ -1,4 +1,4 @@
-# Catalog
+# Full Catalog of `System`s
 
 ```@repl cat
 using PowerSystemCaseBuilder # hide
