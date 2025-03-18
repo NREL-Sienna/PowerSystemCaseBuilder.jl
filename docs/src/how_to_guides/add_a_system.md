@@ -37,7 +37,7 @@ Before opening pull requests for both `PowerSystemCaseBuilder.jl` and `PowerSyst
 ensure that your new `System` builds correctly by testing it locally:
 
  1. Change the `DATA_DIR` definition in `PowerSystemCaseBuilder.jl`'s
-    [`src/definitions.jl`](https://github.com/NREL-Sienna/PowerSystemCaseBuilder.jl/blob/main/src/definitions.jl)
+    [`src/definitions.jl`](https://github.com/NREL-Sienna/PowerSystemCaseBuilder.jl/blob/main/src/definitions.jl#L2)
     to point to your local fork/clone of `PowerSystemsTestData`
  2. In a new Julia REPL, [`Pkg.develop`](@extref) `PowerSystemCaseBuilder.jl`, pointing to
     your local fork/clone
