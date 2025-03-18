@@ -31,7 +31,7 @@ The steps to complete these changes are:
         [`PowerSystemsTestData`](https://github.com/NREL-Sienna/PowerSystemsTestData), or a
         `.jl`, `.raw`, or `.m` file within it. See the existing systems for examples.
 
-# Testing the New `System` Locally
+## Testing the New `System` Locally
 
 Before opening pull requests for both `PowerSystemCaseBuilder.jl` and `PowerSystemsTestData`,
 ensure that your new `System` builds correctly by testing it locally:
