@@ -17,11 +17,12 @@ The steps to complete these changes are:
     [`PowerSystemsTestData`](https://github.com/NREL-Sienna/PowerSystemsTestData)
     repository and add the `System`'s input data files, such as `.csv`, `.raw`, `.dyr`,
     `.m`, and/or `.jl` files
+
  2. Define a custom `build_*` function that loads or compiles your `System` in the appropriate file
     in `PowerSystemCaseBuilder.jl`'s
     [`src/library/`](https://github.com/NREL-Sienna/PowerSystemCaseBuilder.jl/tree/main/src/library)
     directory. The files are organized according to [`SystemCategory`](@ref).
-    See the 
+    See the
     [existing files in `src/library/`](https://github.com/NREL-Sienna/PowerSystemCaseBuilder.jl/tree/main/src/library)
     for examples.
  3. Define a new [`SystemDescriptor`](@ref) in
