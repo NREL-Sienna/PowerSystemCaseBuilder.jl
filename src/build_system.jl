@@ -1,17 +1,18 @@
 """
-build_system(
-    category::Type{<:SystemCategory},
-    name::String,
-    print_stat::Bool = false;
-    kwargs...,
-)
+Builds a [`PowerSystems.System`](@extref) from one of the predefined categories of test
+systems
 
-Accepted Key Words:
+# Arguments
+- `category::Type{<:SystemCategory}`: A subtype of [`SystemCategory`](@ref)
+- `name::String`: Name of the `System` to build
+
+# Accepted Key Words
+- `print_stat::Bool = false`: Print statistics about the system build process
 - `force_build::Bool`: `true` runs entire build process, `false` (Default) uses deserializiation if possible
-- `skip_serialization::Bool`: Default is `false`
-- `system_catalog::SystemCatalog`
 - `assign_new_uuids::Bool`: Assign new UUIDs to the system and all components if
    deserialization is used. Default is `true`.
+- `skip_serialization::Bool`: Default is `false`
+- `system_catalog::SystemCatalog`: Defaults to the `PowerSystemCaseBuilder.jl` catalog of `System`s
 """
 function build_system(
     category::Type{<:SystemCategory},

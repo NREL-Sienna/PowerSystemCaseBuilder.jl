@@ -23,6 +23,12 @@ function clear_serialized_systems(name::String)
     return
 end
 
+"""
+Delete all files and references associated with a [`PowerSystems.System`](@extref) that has been serialized
+
+Useful while debugging adding a new `System` to `PowerSystemCaseBuilder.jl`
+to ensure all data and references are removed and that the new build is clean
+"""
 function clear_serialized_system(
     name::String,
     case_args::Dict{Symbol, <:Any} = Dict{Symbol, Any}(),
@@ -36,6 +42,9 @@ function clear_serialized_system(
     return
 end
 
+"""
+Delete all data and files for [`PowerSystems.System`](@extref)s that have been serialized
+"""
 function clear_all_serialized_systems(path::String)
     for path in _get_system_directories(path)
         rm(path; recursive = true)
