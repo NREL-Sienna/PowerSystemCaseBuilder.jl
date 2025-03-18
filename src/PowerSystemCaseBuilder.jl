@@ -75,8 +75,9 @@ abstract type SystemCategory <: PowerSystemCaseBuilderType end
 """
 Category of [`PowerSystems.System`](@extref)s for
 [`PowerSystems.jl`](https://nrel-sienna.github.io/PowerSystems.jl/stable/) package testing.
-    
-Not all `System`s are functional.
+
+!!! warning
+    Not all `System`s are functional.
 """
 struct PSYTestSystems <: SystemCategory end
 
@@ -98,7 +99,8 @@ struct MatpowerTestSystems <: SystemCategory end
 Category of [`PowerSystems.System`](@extref)s for
 [`PowerSimulations.jl`](https://nrel-sienna.github.io/PowerSimulations.jl/stable/) package testing.
     
-Not all `System`s are functional
+!!! warning
+    Not all `System`s are functional.
 """
 struct PSITestSystems <: SystemCategory end
 
@@ -107,7 +109,8 @@ Category of [`PowerSystems.System`](@extref)s for
 [`PowerSimulationsDynamics.jl`](https://nrel-sienna.github.io/PowerSimulationsDynamics.jl/stable/)
 package testing.
 
-Not all `System`s are functional
+!!! warning
+    Not all `System`s are functional.
 """
 struct PSIDTestSystems <: SystemCategory end
 
