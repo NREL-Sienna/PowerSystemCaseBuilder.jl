@@ -21,7 +21,9 @@ The steps to complete these changes are:
     in `PowerSystemCaseBuilder.jl`'s
     [`src/library/`](https://github.com/NREL-Sienna/PowerSystemCaseBuilder.jl/tree/main/src/library)
     directory. The files are organized according to [`SystemCategory`](@ref).
-    See the existing files for examples.
+    See the 
+    [existing files in `src/library/`](https://github.com/NREL-Sienna/PowerSystemCaseBuilder.jl/tree/main/src/library)
+    for examples.
  3. Define a new [`SystemDescriptor`](@ref) in
     [`src/system_descriptor_data.jl`](https://github.com/NREL-Sienna/PowerSystemCaseBuilder.jl/blob/main/src/system_descriptor_data.jl),
     with:
