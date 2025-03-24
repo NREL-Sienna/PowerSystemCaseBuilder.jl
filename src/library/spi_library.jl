@@ -1,10 +1,10 @@
-function add_static_outage_data!(sys::PSY.System, gen_for_data::DataFrame)
-    for row in DataFrames.eachrow(gen_for_data)
-        λ, μ = SPI.rate_to_probability(row.FOR, row["MTTR Hr"])
+function add_static_outage_data!(sys::PSY.System, gen_outage_data::DataFrame)
+    for row in DataFrames.eachrow(gen_outage_data)
         transition_data = PSY.GeometricDistributionForcedOutage(;
-            mean_time_to_recovery = row["MTTR Hr"],
-            outage_transition_probability = λ,
+            mean_time_to_recovery = row["MTTR(Hour)"],
+            outage_transition_probability = row["lambda"],
         )
+
         comp = PSY.get_component(PSY.Generator, sys, row["GEN UID"])
 
         if !isnothing(comp)
@@ -16,61 +16,39 @@ function add_static_outage_data!(sys::PSY.System, gen_for_data::DataFrame)
     end
 end
 
-function add_timeseries_outage_data!(sys::PSY.System, rts_outage_ts_data::DataFrame)
+function add_timeseries_outage_data!(sys::PSY.System, outage_data_file::HDF5.File)
     # Time series timestamps
-    static_ts_summary = PSY.get_static_time_series_summary_table(sys)
-    s2p_meta = SPI.S2P_metadata(static_ts_summary)
-    step = s2p_meta.pras_resolution(s2p_meta.pras_timestep)
-    finish_datetime =
-        s2p_meta.first_timestamp + s2p_meta.pras_resolution((s2p_meta.N - 1) * step)
-    ts_timestamps = collect(StepRange(s2p_meta.first_timestamp, step, finish_datetime))
+    timestamps = Dates.DateTime.(read(outage_data_file["timestamps"])["timestamps"])
 
     # Add λ and μ time series 
-    for row in DataFrames.eachrow(rts_outage_ts_data)
-        comp = PSY.get_component(PSY.Generator, sys, row.Unit)
-        λ_vals = Float64[]
-        μ_vals = Float64[]
-        for i in range(0; length = 12)
-            next_timestamp = s2p_meta.first_timestamp + Dates.Month(i)
-            λ, μ = SPI.rate_to_probability(row[3 + i], 48) # Assuming MTTR is 48
-            # We have monthly outage rates, so we need to fill in time series based on the 
-            # resolution of the SingleTimeSeries
-            append!(
-                λ_vals,
-                fill(λ, (daysinmonth(next_timestamp) * 24 * Int(Dates.Hour(1) / step))),
-            )
-            append!(
-                μ_vals,
-                fill(μ, (daysinmonth(next_timestamp) * 24 * Int(Dates.Hour(1) / step))),
-            )
-        end
+    for gen_name in filter(x -> x !== "timestamps", keys(outage_data_file))
+        comp = PSY.get_component(PSY.Generator, sys, gen_name)
+        comp_supp_attr = first(
+            PSY.get_supplemental_attributes(
+                PSY.GeometricDistributionForcedOutage,
+                comp,
+            ),
+        )
         PSY.add_time_series!(
             sys,
-            first(
-                PSY.get_supplemental_attributes(
-                    PSY.GeometricDistributionForcedOutage,
-                    comp,
-                ),
-            ),
+            comp_supp_attr,
             PSY.SingleTimeSeries(
                 "outage_probability",
-                TimeSeries.TimeArray(ts_timestamps, λ_vals),
+                TimeSeries.TimeArray(
+                    timestamps,
+                    read(outage_data_file[gen_name])["lambda"],
+                ),
             ),
         )
         PSY.add_time_series!(
             sys,
-            first(
-                PSY.get_supplemental_attributes(
-                    PSY.GeometricDistributionForcedOutage,
-                    comp,
-                ),
-            ),
+            comp_supp_attr,
             PSY.SingleTimeSeries(
                 "recovery_probability",
-                TimeSeries.TimeArray(ts_timestamps, μ_vals),
+                TimeSeries.TimeArray(timestamps, read(outage_data_file[gen_name])["mu"]),
             ),
         )
-        @debug "Added outage probability and recovery probability time series to supplemental attribute of $(row["Unit"]) generator"
+        @debug "Added outage probability and recovery probability time series to supplemental attribute of $(gen_name) generator"
     end
 end
 
@@ -78,8 +56,11 @@ function build_rts_gmlc_da_with_static_outage_data(; raw_data, kwargs...)
     sys = build_RTS_GMLC_DA_sys(; raw_data, kwargs...)
     RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
 
-    gen_for_data = CSV.read(joinpath(RTS_SRC_DIR, "gen.csv"), DataFrame)
-    add_static_outage_data!(sys, gen_for_data)
+    gen_outage_data = CSV.read(
+        joinpath(DATA_DIR, "spi_data", "RTS_GMLC", "Static_Outage_Data.csv"),
+        DataFrame,
+    )
+    add_static_outage_data!(sys, gen_outage_data)
 
     return sys
 end
@@ -87,11 +68,10 @@ end
 function build_rts_gmlc_da_with_timeseries_outage_data(; raw_data, kwargs...)
     sys = build_rts_gmlc_da_with_static_outage_data(; raw_data, kwargs...)
 
-    rts_outage_ts_data = CSV.read(
-        joinpath(DATA_DIR, "spi_data", "RTS_GMLC", "RTS_Test_Outage_Time_Series_Data.csv"),
-        DataFrame,
+    outage_data_file = HDF5.h5open(
+        joinpath(DATA_DIR, "spi_data", "RTS_GMLC", "DA_Outage_TimeSeries_LambdaMu.h5"),
     )
-    add_timeseries_outage_data!(sys, rts_outage_ts_data)
+    add_timeseries_outage_data!(sys, outage_data_file)
 
     return sys
 end
@@ -100,8 +80,11 @@ function build_rts_gmlc_rt_with_static_outage_data(; raw_data, kwargs...)
     sys = build_RTS_GMLC_RT_sys(; raw_data, kwargs...)
     RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
 
-    gen_for_data = CSV.read(joinpath(RTS_SRC_DIR, "gen.csv"), DataFrame)
-    add_static_outage_data!(sys, gen_for_data)
+    gen_outage_data = CSV.read(
+        joinpath(DATA_DIR, "spi_data", "RTS_GMLC", "Static_Outage_Data.csv"),
+        DataFrame,
+    )
+    add_static_outage_data!(sys, gen_outage_data)
 
     return sys
 end
@@ -109,11 +92,10 @@ end
 function build_rts_gmlc_rt_with_timeseries_outage_data(; raw_data, kwargs...)
     sys = build_rts_gmlc_rt_with_static_outage_data(; raw_data, kwargs...)
 
-    rts_outage_ts_data = CSV.read(
-        joinpath(DATA_DIR, "spi_data", "RTS_GMLC", "RTS_Test_Outage_Time_Series_Data.csv"),
-        DataFrame,
+    outage_data_file = HDF5.h5open(
+        joinpath(DATA_DIR, "spi_data", "RTS_GMLC", "RT_Outage_TimeSeries_LambdaMu.h5"),
     )
-    add_timeseries_outage_data!(sys, rts_outage_ts_data)
+    add_timeseries_outage_data!(sys, outage_data_file)
 
     return sys
 end

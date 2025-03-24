@@ -32,12 +32,11 @@ import PowerSystems
 import DataStructures: SortedDict
 import DataFrames
 import PrettyTables
-import SiennaPRASInterface
 
 #TimeStamp Management Imports
 import TimeSeries
 import Dates
-import Dates: DateTime, Hour, Minute, daysinmonth
+import Dates: DateTime, Hour, Minute
 import CSV
 import HDF5
 import DataFrames: DataFrame
@@ -47,7 +46,6 @@ import SHA
 
 const PSY = PowerSystems
 const IS = InfrastructureSystems
-const SPI = SiennaPRASInterface
 
 abstract type PowerSystemCaseBuilderType <: IS.InfrastructureSystemsType end
 
