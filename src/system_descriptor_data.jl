@@ -1132,20 +1132,6 @@ const SYSTEM_CATALOG = [
         raw_data = joinpath(DATA_DIR, "psse_raw", "parser_test_a.raw"),
         build_function = build_pti,
     ),
-    SystemDescriptor(;
-        name = "pti_case6_2w_sys",
-        description = "6-Bus system Test System with 2W Transformers",
-        category = PSSEParsingTestSystems,
-        raw_data = joinpath(DATA_DIR, "psse_raw", "case6_2w.raw"),
-        build_function = build_pti,
-    ),
-    SystemDescriptor(;
-        name = "pti_case6_3w_sys",
-        description = "6-Bus system Test System with a 3W Transformer",
-        category = PSSEParsingTestSystems,
-        raw_data = joinpath(DATA_DIR, "psse_raw", "case6_3w.raw"),
-        build_function = build_pti,
-    ),
     # SystemDescriptor(
     #     name =  "pti_parser_test_b_sys",
     #     description =  "PSSE Test system",
