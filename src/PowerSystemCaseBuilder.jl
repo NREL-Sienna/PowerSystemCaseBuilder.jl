@@ -15,6 +15,7 @@ export MatpowerTestSystems
 
 export PSISystems
 export PSIDSystems
+export SPISystems
 
 export build_system
 export list_categories
@@ -83,6 +84,11 @@ struct PSISystems <: SystemCategory end
 Category for PowerSimulationsDynamics.jl examples.
 """
 struct PSIDSystems <: SystemCategory end
+
+"""
+Category for SiennaPRASInterface.jl examples.
+"""
+struct SPISystems <: SystemCategory end
 
 # includes
 
