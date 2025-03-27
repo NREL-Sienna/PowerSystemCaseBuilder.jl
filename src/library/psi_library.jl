@@ -661,7 +661,7 @@ function build_two_zone_5_bus(; kwargs...)
             0.00281,
             0.0281,
             (from = 0.00356, to = 0.00356),
-            2.0,
+            3.29, # min for 230kV
             (min = -0.7, max = 0.7),
         ),
         Line(
@@ -673,7 +673,7 @@ function build_two_zone_5_bus(; kwargs...)
             0.00304,
             0.0304,
             (from = 0.00329, to = 0.00329),
-            2.0,
+            3.29, # min for 230kV
             (min = -0.7, max = 0.7),
         ),
         Line(
@@ -685,7 +685,7 @@ function build_two_zone_5_bus(; kwargs...)
             0.00064,
             0.0064,
             (from = 0.01563, to = 0.01563),
-            18.8120,
+            7.96, # max for 230kV
             (min = -0.7, max = 0.7),
         ),
         Line(
@@ -697,7 +697,7 @@ function build_two_zone_5_bus(; kwargs...)
             0.00108,
             0.0108,
             (from = 0.00926, to = 0.00926),
-            11.1480,
+            7.96, # max for 230kV
             (min = -0.7, max = 0.7),
         ),
         Line(
@@ -709,7 +709,7 @@ function build_two_zone_5_bus(; kwargs...)
             0.00297,
             0.0297,
             (from = 0.00337, to = 0.00337),
-            40.530,
+            7.96, # max for 230kV
             (min = -0.7, max = 0.7),
         ),
         Line(
@@ -721,7 +721,7 @@ function build_two_zone_5_bus(; kwargs...)
             0.00297,
             0.0297,
             (from = 0.00337, to = 0.00337),
-            2.00,
+            3.29, # min for 230kV
             (min = -0.7, max = 0.7),
         ),
         Line(
@@ -733,7 +733,7 @@ function build_two_zone_5_bus(; kwargs...)
             0.00281,
             0.0281,
             (from = 0.00356, to = 0.00356),
-            2.0,
+            3.29, # min for 230kV
             (min = -0.7, max = 0.7),
         ),
         Line(
@@ -745,7 +745,7 @@ function build_two_zone_5_bus(; kwargs...)
             0.00304,
             0.0304,
             (from = 0.00329, to = 0.00329),
-            2.0,
+            3.29, # min for 230kV
             (min = -0.7, max = 0.7),
         ),
         Line(
@@ -757,7 +757,7 @@ function build_two_zone_5_bus(; kwargs...)
             0.00064,
             0.0064,
             (from = 0.01563, to = 0.01563),
-            18.8120,
+            7.96, # max for 230kV
             (min = -0.7, max = 0.7),
         ),
         Line(
@@ -769,7 +769,7 @@ function build_two_zone_5_bus(; kwargs...)
             0.00108,
             0.0108,
             (from = 0.00926, to = 0.00926),
-            11.1480,
+            7.96, # max for 230kV
             (min = -0.7, max = 0.7),
         ),
         Line(
@@ -781,7 +781,7 @@ function build_two_zone_5_bus(; kwargs...)
             0.00297,
             0.0297,
             (from = 0.00337, to = 0.00337),
-            40.530,
+            7.96, # max for 230kV
             (min = -0.7, max = 0.7),
         ),
         Line(
@@ -793,7 +793,7 @@ function build_two_zone_5_bus(; kwargs...)
             0.00297,
             0.0297,
             (from = 0.00337, to = 0.00337),
-            2.00,
+            3.29, # min for 230kV
             (min = -0.7, max = 0.7),
         ),
         TwoTerminalHVDCLine(
