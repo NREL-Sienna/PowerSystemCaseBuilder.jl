@@ -40,7 +40,7 @@ end
 function list_systems(catalog::SystemCatalog, category::Type{<:SystemCategory})
     data = catalog.data
     if haskey(data, category)
-        return sort(collect(keys(data[category])); by = x -> string(x))
+        return sort!(collect(keys(data[category])); by = x -> string(x))
     else
         error("Category $(category) not found in SystemCatalog")
         return [] # for type stability reasons
