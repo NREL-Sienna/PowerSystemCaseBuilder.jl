@@ -1804,7 +1804,7 @@ const SYSTEM_CATALOG = [
             ),
         ],
     ),
-# uncomment once PR #65 in PowerSystemsTestData is merged
+    # uncomment once PR #65 in PowerSystemsTestData is merged
     #=SystemDescriptor(;
     name = "118_bus_DA",
     description = "118_bus_DA",

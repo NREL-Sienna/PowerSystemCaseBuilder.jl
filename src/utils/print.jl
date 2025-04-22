@@ -33,7 +33,8 @@ end
 
 show_categories() = println(join(string.(list_categories()), "\n"))
 
-show_categories(catalog::SystemCatalog) = println(join(string.(list_categories(catalog)), "\n"))
+show_categories(catalog::SystemCatalog) =
+    println(join(string.(list_categories(catalog)), "\n"))
 
 function show_systems(; kwargs...)
     catalog = SystemCatalog()
