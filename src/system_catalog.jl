@@ -32,6 +32,21 @@ end
 
 list_categories(c::SystemCatalog) = sort!([x for x in (keys(c.data))]; by = x -> string(x))
 
+function list_systems(category::Type{<:SystemCategory})
+    catalog = SystemCatalog()
+    return list_systems(catalog, category)
+end
+
+function list_systems(catalog::SystemCatalog, category::Type{<:SystemCategory})
+    data = catalog.data
+    if haskey(data, category)
+        return sort(collect(keys(data[category])); by = x -> string(x))
+    else
+        error("Category $(category) not found in SystemCatalog")
+        return [] # for type stability reasons
+    end
+end
+
 function SystemCatalog(system_catalogue::Array{SystemDescriptor} = SYSTEM_CATALOG)
     data = Dict{DataType, Dict{String, SystemDescriptor}}()
     unique_names = Set{String}()

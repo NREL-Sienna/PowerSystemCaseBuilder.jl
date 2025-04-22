@@ -18,7 +18,7 @@ function Base.show(io::IO, sys::SystemCatalog)
     show(df; allrows = true)
 end
 
-function list_systems(sys::SystemCatalog, category::Type{<:SystemCategory}; kwargs...)
+function show_systems(sys::SystemCatalog, category::Type{<:SystemCategory}; kwargs...)
     descriptors = get_system_descriptors(category, sys)
     sort!(descriptors; by = x -> x.name)
     header = ["Name", "Descriptor"]
@@ -33,6 +33,8 @@ end
 
 show_categories() = println(join(string.(list_categories()), "\n"))
 
+show_categories(catalog::SystemCatalog) = println(join(string.(list_categories(catalog)), "\n"))
+
 function show_systems(; kwargs...)
     catalog = SystemCatalog()
     show_systems(catalog; kwargs...)
@@ -46,12 +48,9 @@ end
 function show_systems(catalog::SystemCatalog; kwargs...)
     for category in list_categories(catalog)
         println("\nCategory: $category\n")
-        list_systems(catalog, category)
+        show_systems(catalog, category)
     end
 end
-
-show_systems(s::SystemCatalog, c::Type{<:SystemCategory}; kwargs...) =
-    list_systems(s, c; kwargs...)
 
 function print_stats(data::SystemDescriptor)
     df = DataFrames.DataFrame(; Name = [], Value = [])
