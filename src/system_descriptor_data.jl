@@ -1077,6 +1077,13 @@ const SYSTEM_CATALOG = [
         build_function = build_pti,
     ),
     SystemDescriptor(;
+        name = "pti_modified_case14_sys",
+        description = "PSSE Modified 14-bus Test system",
+        category = PSSEParsingTestSystems,
+        raw_data = joinpath(DATA_DIR, "psse_raw", "modified_case14.raw"),
+        build_function = build_pti,
+    ),
+    SystemDescriptor(;
         name = "pti_case24_sys",
         description = "PSSE 24-bus Test system",
         category = PSSEParsingTestSystems,
