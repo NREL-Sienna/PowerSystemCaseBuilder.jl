@@ -37,7 +37,10 @@ function build_c_sys5_pjm(; add_forecasts, raw_data, sys_kwargs...)
     PSY.add_component!(c_sys5, pv_device)
     PSY.add_component!(c_sys5, wind_device)
     timeseries_dataset =
-        HDF5.h5read(joinpath(get_pstd_data_dir(), "5-Bus", "PJM_5_BUS_7_DAYS.h5"), "Time Series Data")
+        HDF5.h5read(
+            joinpath(get_pstd_data_dir(), "5-Bus", "PJM_5_BUS_7_DAYS.h5"),
+            "Time Series Data",
+        )
     refdate = first(DayAhead)
     da_load_time_series = DateTime[]
     da_load_time_series_val = Float64[]
@@ -152,7 +155,10 @@ function build_c_sys5_pjm_rt(; add_forecasts, raw_data, sys_kwargs...)
     PSY.add_component!(c_sys5, pv_device)
     PSY.add_component!(c_sys5, wind_device)
     timeseries_dataset =
-        HDF5.h5read(joinpath(get_pstd_data_dir(), "5-Bus", "PJM_5_BUS_7_DAYS.h5"), "Time Series Data")
+        HDF5.h5read(
+            joinpath(get_pstd_data_dir(), "5-Bus", "PJM_5_BUS_7_DAYS.h5"),
+            "Time Series Data",
+        )
     refdate = first(DayAhead)
     rt_load_time_series = DateTime[]
     rt_load_time_series_val = Float64[]

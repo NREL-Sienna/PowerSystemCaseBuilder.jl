@@ -4328,7 +4328,10 @@ function build_two_area_pjm_DA(; add_forecasts, raw_data, sys_kwargs...)
     PSY.add_component!(sys, pv_device)
     PSY.add_component!(sys, wind_device)
     timeseries_dataset =
-        HDF5.h5read(joinpath(get_pstd_data_dir(), "5-Bus", "PJM_5_BUS_7_DAYS.h5"), "Time Series Data")
+        HDF5.h5read(
+            joinpath(get_pstd_data_dir(), "5-Bus", "PJM_5_BUS_7_DAYS.h5"),
+            "Time Series Data",
+        )
     refdate = first(DayAhead)
     da_load_time_series = DateTime[]
     da_load_time_series_val = Float64[]

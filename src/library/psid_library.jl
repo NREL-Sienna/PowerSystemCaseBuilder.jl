@@ -31,14 +31,16 @@ end
 
 function build_psid_3bus(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    sys_file = joinpath(get_pstd_data_dir(), "psid_tests", "data_examples", "threebus_sys.json")
+    sys_file =
+        joinpath(get_pstd_data_dir(), "psid_tests", "data_examples", "threebus_sys.json")
     sys = System(sys_file; sys_kwargs...)
     return sys
 end
 
 function build_wecc_240_dynamic(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    sys_file = joinpath(get_pstd_data_dir(), "psid_tests", "data_tests", "WECC_240_dynamic.json")
+    sys_file =
+        joinpath(get_pstd_data_dir(), "psid_tests", "data_tests", "WECC_240_dynamic.json")
     sys = System(sys_file; sys_kwargs...)
     return sys
 end

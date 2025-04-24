@@ -616,35 +616,55 @@ const SYSTEM_CATALOG = [
     SystemDescriptor(;
         name = "c_pwl_io_cost_test",
         description = "1 Bus PWL I/O cost curve testing",
-        raw_data = joinpath(get_pstd_data_dir(), "psy_data", "generation_cost_function_data.jl"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psy_data",
+            "generation_cost_function_data.jl",
+        ),
         category = PSITestSystems,
         build_function = build_pwl_io_cost_test_sys,
     ),
     SystemDescriptor(;
         name = "c_pwl_io_fuel_test",
         description = "1 Bus PWL I/O fuel curve testing",
-        raw_data = joinpath(get_pstd_data_dir(), "psy_data", "generation_cost_function_data.jl"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psy_data",
+            "generation_cost_function_data.jl",
+        ),
         category = PSITestSystems,
         build_function = build_pwl_io_fuel_test_sys,
     ),
     SystemDescriptor(;
         name = "c_pwl_incremental_cost_test",
         description = "1 Bus PWL incremental cost curve testing",
-        raw_data = joinpath(get_pstd_data_dir(), "psy_data", "generation_cost_function_data.jl"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psy_data",
+            "generation_cost_function_data.jl",
+        ),
         category = PSITestSystems,
         build_function = build_pwl_incremental_cost_test_sys,
     ),
     SystemDescriptor(;
         name = "c_pwl_incremental_fuel_test",
         description = "1 Bus PWL incremental (marginal) fuel curve testing",
-        raw_data = joinpath(get_pstd_data_dir(), "psy_data", "generation_cost_function_data.jl"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psy_data",
+            "generation_cost_function_data.jl",
+        ),
         category = PSITestSystems,
         build_function = build_pwl_incremental_fuel_test_sys,
     ),
     SystemDescriptor(;
         name = "c_non_convex_io_pwl_cost_test",
         description = "1 Bus PWL sos testing",
-        raw_data = joinpath(get_pstd_data_dir(), "psy_data", "generation_cost_function_data.jl"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psy_data",
+            "generation_cost_function_data.jl",
+        ),
         category = PSITestSystems,
         build_function = build_non_convex_io_pwl_cost_test,
     ),
@@ -663,14 +683,22 @@ const SYSTEM_CATALOG = [
     SystemDescriptor(;
         name = "c_pwl_io_fuel_test_ts",
         description = "1 Bus PWL I/O fuel curve testing",
-        raw_data = joinpath(get_pstd_data_dir(), "psy_data", "generation_cost_function_data.jl"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psy_data",
+            "generation_cost_function_data.jl",
+        ),
         category = PSITestSystems,
         build_function = build_pwl_io_fuel_test_sys_ts,
     ),
     SystemDescriptor(;
         name = "c_pwl_incremental_fuel_test_ts",
         description = "1 Bus PWL incremental (marginal) fuel curve testing",
-        raw_data = joinpath(get_pstd_data_dir(), "psy_data", "generation_cost_function_data.jl"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psy_data",
+            "generation_cost_function_data.jl",
+        ),
         category = PSITestSystems,
         build_function = build_pwl_incremental_fuel_test_sys_ts,
     ),
@@ -1538,84 +1566,144 @@ const SYSTEM_CATALOG = [
         name = "psid_test_threebus_oneDoneQ",
         description = "PSID Three Bus One-d-One-q Test Case", # Old Test 02
         category = PSIDTestSystems,
-        raw_data = joinpath(get_pstd_data_dir(), "psid_tests", "data_tests", "ThreeBusNetwork.raw"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psid_tests",
+            "data_tests",
+            "ThreeBusNetwork.raw",
+        ),
         build_function = build_psid_test_threebus_oneDoneQ,
     ),
     SystemDescriptor(;
         name = "psid_test_threebus_simple_marconato",
         description = "PSID Three Bus Simple Marconato Test Case", # Old Test 03
         category = PSIDTestSystems,
-        raw_data = joinpath(get_pstd_data_dir(), "psid_tests", "data_tests", "ThreeBusNetwork.raw"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psid_tests",
+            "data_tests",
+            "ThreeBusNetwork.raw",
+        ),
         build_function = build_psid_test_threebus_simple_marconato,
     ),
     SystemDescriptor(;
         name = "psid_test_threebus_marconato",
         description = "PSID Three Bus Simple Marconato Test Case", # Old Test 04
         category = PSIDTestSystems,
-        raw_data = joinpath(get_pstd_data_dir(), "psid_tests", "data_tests", "ThreeBusNetwork.raw"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psid_tests",
+            "data_tests",
+            "ThreeBusNetwork.raw",
+        ),
         build_function = build_psid_test_threebus_marconato,
     ),
     SystemDescriptor(;
         name = "psid_test_threebus_simple_anderson",
         description = "PSID Three Bus Simple Anderson-Fouad Test Case", # Old Test 05
         category = PSIDTestSystems,
-        raw_data = joinpath(get_pstd_data_dir(), "psid_tests", "data_tests", "ThreeBusNetwork.raw"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psid_tests",
+            "data_tests",
+            "ThreeBusNetwork.raw",
+        ),
         build_function = build_psid_test_threebus_simple_anderson,
     ),
     SystemDescriptor(;
         name = "psid_test_threebus_anderson",
         description = "PSID Three Bus Anderson-Fouad Test Case", # Old Test 06
         category = PSIDTestSystems,
-        raw_data = joinpath(get_pstd_data_dir(), "psid_tests", "data_tests", "ThreeBusNetwork.raw"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psid_tests",
+            "data_tests",
+            "ThreeBusNetwork.raw",
+        ),
         build_function = build_psid_test_threebus_anderson,
     ),
     SystemDescriptor(;
         name = "psid_test_threebus_5shaft",
         description = "PSID Three Bus 5-shaft Test Case", # Old Test 07
         category = PSIDTestSystems,
-        raw_data = joinpath(get_pstd_data_dir(), "psid_tests", "data_tests", "ThreeBusNetwork.raw"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psid_tests",
+            "data_tests",
+            "ThreeBusNetwork.raw",
+        ),
         build_function = build_psid_test_threebus_5shaft,
     ),
     SystemDescriptor(;
         name = "psid_test_vsm_inverter",
         description = "PSID Two Bus D'Arco VSM Inverter Test Case", # Old Test 08
         category = PSIDTestSystems,
-        raw_data = joinpath(get_pstd_data_dir(), "psid_tests", "data_tests", "OMIB_DARCO_PSR.raw"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psid_tests",
+            "data_tests",
+            "OMIB_DARCO_PSR.raw",
+        ),
         build_function = build_psid_test_vsm_inverter,
     ),
     SystemDescriptor(;
         name = "psid_test_threebus_machine_vsm",
         description = "PSID Three Bus One-d-One-q Machine against VSM Inverter Test Case", # Old Test 09 and 10
         category = PSIDTestSystems,
-        raw_data = joinpath(get_pstd_data_dir(), "psid_tests", "data_tests", "ThreeBusNetwork.raw"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psid_tests",
+            "data_tests",
+            "ThreeBusNetwork.raw",
+        ),
         build_function = build_psid_test_threebus_machine_vsm,
     ),
     SystemDescriptor(;
         name = "psid_test_threebus_machine_vsm_dynlines",
         description = "PSID Three Bus One-d-One-q Machine against VSM Inverter Test Case with Dynamic Lines", # Old Test 11
         category = PSIDTestSystems,
-        raw_data = joinpath(get_pstd_data_dir(), "psid_tests", "data_tests", "ThreeBusNetwork.raw"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psid_tests",
+            "data_tests",
+            "ThreeBusNetwork.raw",
+        ),
         build_function = build_psid_test_threebus_machine_vsm_dynlines,
     ),
     SystemDescriptor(;
         name = "psid_test_threebus_multimachine",
         description = "PSID Three Bus Multi-Machine Test Case", # Old Test 12
         category = PSIDTestSystems,
-        raw_data = joinpath(get_pstd_data_dir(), "psid_tests", "data_tests", "ThreeBusMulti.raw"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psid_tests",
+            "data_tests",
+            "ThreeBusMulti.raw",
+        ),
         build_function = build_psid_test_threebus_multimachine,
     ),
     SystemDescriptor(;
         name = "psid_test_threebus_psat_avrs",
         description = "PSID Three Bus TG Type I and AVR Type II Test Case", # Old Test 13
         category = PSIDTestSystems,
-        raw_data = joinpath(get_pstd_data_dir(), "psid_tests", "data_tests", "ThreeBusNetwork.raw"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psid_tests",
+            "data_tests",
+            "ThreeBusNetwork.raw",
+        ),
         build_function = build_psid_test_threebus_psat_avrs,
     ),
     SystemDescriptor(;
         name = "psid_test_threebus_vsm_reference",
         description = "PSID Three Bus Inverter Reference Test Case", # Old Test 14
         category = PSIDTestSystems,
-        raw_data = joinpath(get_pstd_data_dir(), "psid_tests", "data_tests", "ThreeBusMulti.raw"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psid_tests",
+            "data_tests",
+            "ThreeBusMulti.raw",
+        ),
         build_function = build_psid_test_threebus_vsm_reference,
     ),
     SystemDescriptor(;
@@ -1636,21 +1724,36 @@ const SYSTEM_CATALOG = [
         name = "psid_test_droop_inverter",
         description = "PSID Two Bus Droop GFM Inverter Test Case", # Old Test 23
         category = PSIDTestSystems,
-        raw_data = joinpath(get_pstd_data_dir(), "psid_tests", "data_tests", "OMIB_DARCO_PSR.raw"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psid_tests",
+            "data_tests",
+            "OMIB_DARCO_PSR.raw",
+        ),
         build_function = build_psid_test_droop_inverter,
     ),
     SystemDescriptor(;
         name = "psid_test_gfoll_inverter",
         description = "PSID Two Bus Grid Following Inverter Test Case", # Old Test 24
         category = PSIDTestSystems,
-        raw_data = joinpath(get_pstd_data_dir(), "psid_tests", "data_tests", "OMIB_DARCO_PSR.raw"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psid_tests",
+            "data_tests",
+            "OMIB_DARCO_PSR.raw",
+        ),
         build_function = build_psid_test_gfoll_inverter,
     ),
     SystemDescriptor(;
         name = "psid_test_threebus_multimachine_dynlines",
         description = "PSID Three Bus Multi-Machine with Dynamic Lines Test Case", # Old Test 25
         category = PSIDTestSystems,
-        raw_data = joinpath(get_pstd_data_dir(), "psid_tests", "data_tests", "ThreeBusMultiLoad.raw"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psid_tests",
+            "data_tests",
+            "ThreeBusMultiLoad.raw",
+        ),
         build_function = build_psid_test_threebus_multimachine_dynlines,
     ),
     SystemDescriptor(;
@@ -1664,7 +1767,12 @@ const SYSTEM_CATALOG = [
         name = "psid_test_ieee_9bus",
         description = "PSID IEEE 9-bus system with Anderson-Fouad Machine Test Case", # Old Test 32
         category = PSIDTestSystems,
-        raw_data = joinpath(get_pstd_data_dir(), "psid_tests", "data_tests", "9BusSystem.json"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psid_tests",
+            "data_tests",
+            "9BusSystem.json",
+        ),
         build_function = build_psid_test_ieee_9bus,
     ),
     SystemDescriptor(;
@@ -1766,28 +1874,48 @@ const SYSTEM_CATALOG = [
         name = "WECC 9 Bus",
         description = "WECC 9 Bus System with dynamic gens from Sauer and Pai",
         category = PSIDSystems,
-        raw_data = joinpath(get_pstd_data_dir(), "psid_tests", "data_tests", "WSCC 9 bus.raw"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psid_tests",
+            "data_tests",
+            "WSCC 9 bus.raw",
+        ),
         build_function = build_psid_wecc_9_dynamic,
     ),
     SystemDescriptor(;
         name = "2 Bus Load Tutorial",
         description = "2 Bus Base System for load tutorials",
         category = PSIDSystems,
-        raw_data = joinpath(get_pstd_data_dir(), "psid_tests", "data_examples", "Omib_Load.raw"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psid_tests",
+            "data_examples",
+            "Omib_Load.raw",
+        ),
         build_function = build_psid_load_tutorial_omib,
     ),
     SystemDescriptor(;
         name = "2 Bus Load Tutorial GENROU",
         description = "2 Bus Base System for load tutorials with GENROU",
         category = PSIDSystems,
-        raw_data = joinpath(get_pstd_data_dir(), "psid_tests", "data_examples", "Omib_Load.raw"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psid_tests",
+            "data_examples",
+            "Omib_Load.raw",
+        ),
         build_function = build_psid_load_tutorial_genrou,
     ),
     SystemDescriptor(;
         name = "2 Bus Load Tutorial Droop",
         description = "2 Bus Base System for load tutorials with Droop Inverter",
         category = PSIDSystems,
-        raw_data = joinpath(get_pstd_data_dir(), "psid_tests", "data_examples", "Omib_Load.raw"),
+        raw_data = joinpath(
+            get_pstd_data_dir(),
+            "psid_tests",
+            "data_examples",
+            "Omib_Load.raw",
+        ),
         build_function = build_psid_load_tutorial_droop,
     ),
     SystemDescriptor(;

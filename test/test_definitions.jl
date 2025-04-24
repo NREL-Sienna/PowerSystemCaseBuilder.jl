@@ -1,7 +1,7 @@
 @testset "Test data directory configuration" begin
     @test PSB.get_pstd_data_dir() == PSB.PSTD_ARTIFACT_PATH
     @test PSB.get_rts_data_dir() == PSB.RTS_ARTIFACT_PATH
-    
+
     @test isdir(PSB.get_pstd_data_dir())
     @test isdir(PSB.get_rts_data_dir())
 

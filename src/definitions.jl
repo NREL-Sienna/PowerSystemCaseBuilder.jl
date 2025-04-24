@@ -1,7 +1,8 @@
 const PACKAGE_DIR = joinpath(dirname(dirname(pathof(PowerSystemCaseBuilder))))
 
 const PSTD_DIR_KEY = "PSTD_DIR"  # Environment variable to check for PowerSystemsTestData directory
-const PSTD_ARTIFACT_PATH = joinpath(LazyArtifacts.artifact"CaseData", "PowerSystemsTestData-3.2")
+const PSTD_ARTIFACT_PATH =
+    joinpath(LazyArtifacts.artifact"CaseData", "PowerSystemsTestData-3.2")
 
 const RTS_DIR_KEY = "RTS_DIR"  # Environment variable to check for RTS directory
 const RTS_ARTIFACT_PATH = joinpath(LazyArtifacts.artifact"rts", "RTS-GMLC-0.2.2")
@@ -31,7 +32,6 @@ const AVAILABLE_PSID_PSSE_GENS_TEST = [
 ]
 
 const AVAILABLE_PSID_PSSE_PSS_TEST = ["STAB1", "IEEEST", "IEEEST_FILTER"]
-
 
 function get_data_dir(data_dir_key, artifact_path)
     if haskey(ENV, data_dir_key)

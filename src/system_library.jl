@@ -3,7 +3,14 @@ include(joinpath(get_pstd_data_dir(), "psy_data", "data_5bus_pu.jl"))
 include(joinpath(get_pstd_data_dir(), "psy_data", "data_10bus_ac_dc_pu.jl"))
 include(joinpath(get_pstd_data_dir(), "psy_data", "data_14bus_pu.jl"))
 include(joinpath(get_pstd_data_dir(), "psid_tests", "data_tests", "dynamic_test_data.jl"))
-include(joinpath(get_pstd_data_dir(), "psid_tests", "data_examples", "load_tutorial_functions.jl"))
+include(
+    joinpath(
+        get_pstd_data_dir(),
+        "psid_tests",
+        "data_examples",
+        "load_tutorial_functions.jl",
+    ),
+)
 # uncomment once PR #65 in PowerSystemsTestData is merged
 # include(joinpath(get_pstd_data_dir(), "118-Bus", "data_118bus.jl"))
 
