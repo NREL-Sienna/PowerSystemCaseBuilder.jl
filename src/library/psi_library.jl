@@ -37,7 +37,7 @@ function build_c_sys5_pjm(; add_forecasts, raw_data, sys_kwargs...)
     PSY.add_component!(c_sys5, pv_device)
     PSY.add_component!(c_sys5, wind_device)
     timeseries_dataset =
-        HDF5.h5read(joinpath(DATA_DIR, "5-Bus", "PJM_5_BUS_7_DAYS.h5"), "Time Series Data")
+        HDF5.h5read(joinpath(get_pstd_data_dir(), "5-Bus", "PJM_5_BUS_7_DAYS.h5"), "Time Series Data")
     refdate = first(DayAhead)
     da_load_time_series = DateTime[]
     da_load_time_series_val = Float64[]
@@ -53,7 +53,7 @@ function build_c_sys5_pjm(; add_forecasts, raw_data, sys_kwargs...)
     re_timeseries = Dict(
         "PVBus5" => CSV.read(
             joinpath(
-                DATA_DIR,
+                get_pstd_data_dir(),
                 "5-Bus",
                 "5bus_ts",
                 "gen",
@@ -68,7 +68,7 @@ function build_c_sys5_pjm(; add_forecasts, raw_data, sys_kwargs...)
         ],
         "WindBus1" => CSV.read(
             joinpath(
-                DATA_DIR,
+                get_pstd_data_dir(),
                 "5-Bus",
                 "5bus_ts",
                 "gen",
@@ -152,7 +152,7 @@ function build_c_sys5_pjm_rt(; add_forecasts, raw_data, sys_kwargs...)
     PSY.add_component!(c_sys5, pv_device)
     PSY.add_component!(c_sys5, wind_device)
     timeseries_dataset =
-        HDF5.h5read(joinpath(DATA_DIR, "5-Bus", "PJM_5_BUS_7_DAYS.h5"), "Time Series Data")
+        HDF5.h5read(joinpath(get_pstd_data_dir(), "5-Bus", "PJM_5_BUS_7_DAYS.h5"), "Time Series Data")
     refdate = first(DayAhead)
     rt_load_time_series = DateTime[]
     rt_load_time_series_val = Float64[]
@@ -167,7 +167,7 @@ function build_c_sys5_pjm_rt(; add_forecasts, raw_data, sys_kwargs...)
     re_timeseries = Dict(
         "PVBus5" => CSV.read(
             joinpath(
-                DATA_DIR,
+                get_pstd_data_dir(),
                 "5-Bus",
                 "5bus_ts",
                 "gen",
@@ -182,7 +182,7 @@ function build_c_sys5_pjm_rt(; add_forecasts, raw_data, sys_kwargs...)
         ],
         "WindBus1" => CSV.read(
             joinpath(
-                DATA_DIR,
+                get_pstd_data_dir(),
                 "5-Bus",
                 "5bus_ts",
                 "gen",
@@ -399,7 +399,7 @@ function build_RTS_GMLC_DA_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
     RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
-    MAP_DIR = joinpath(DATA_DIR, "RTS_GMLC")
+    MAP_DIR = joinpath(get_pstd_data_dir(), "RTS_GMLC")
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
@@ -419,7 +419,7 @@ function build_RTS_GMLC_RT_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
     RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
-    MAP_DIR = joinpath(DATA_DIR, "RTS_GMLC")
+    MAP_DIR = joinpath(get_pstd_data_dir(), "RTS_GMLC")
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
@@ -439,7 +439,7 @@ function build_RTS_GMLC_DA_sys_noForecast(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
     RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
-    MAP_DIR = joinpath(DATA_DIR, "RTS_GMLC")
+    MAP_DIR = joinpath(get_pstd_data_dir(), "RTS_GMLC")
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
@@ -456,7 +456,7 @@ function build_RTS_GMLC_RT_sys_noForecast(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
     RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
-    MAP_DIR = joinpath(DATA_DIR, "RTS_GMLC")
+    MAP_DIR = joinpath(get_pstd_data_dir(), "RTS_GMLC")
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
@@ -476,7 +476,7 @@ function make_modified_RTS_GMLC_sys(
 )
     RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
     RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
-    MAP_DIR = joinpath(DATA_DIR, "RTS_GMLC")
+    MAP_DIR = joinpath(get_pstd_data_dir(), "RTS_GMLC")
     DISPATCH_INCREASE = 2.0
     FIX_DECREASE = 0.3
 
@@ -1549,7 +1549,7 @@ function build_MTHVDC_two_RTS_DA_sys_noForecast(; kwargs...)
     sys_rts = build_RTS_GMLC_DA_sys_noForecast(; kwargs...)
     sys = _duplicate_system(sys_rts, deepcopy(sys_rts), false)
     include(joinpath(
-        DATA_DIR,
+        get_pstd_data_dir(),
         "psy_data",
         "data_mthvdc_twin_rts.jl",
     ))
@@ -1632,10 +1632,10 @@ function build_118_bus_DA(; kwargs...)
         hydro_generators,
     )
     solar_DA_TS = []
-    gendata_path = joinpath(DATA_DIR, "118-Bus", "Generators.csv")
+    gendata_path = joinpath(get_pstd_data_dir(), "118-Bus", "Generators.csv")
     gendata = CSV.read(gendata_path, DataFrame)
     for i in 1:75
-        solardf_path = joinpath(DATA_DIR, "118-Bus/Solar/DA", "Solar$(i)DA.csv")
+        solardf_path = joinpath(get_pstd_data_dir(), "118-Bus/Solar/DA", "Solar$(i)DA.csv")
         solardf = CSV.read(solardf_path, DataFrame)
         local max = maximum(solar_gens[i, "Max Capacity (MW)"])
         solar_array = TimeArray(timestamps, (solardf[:, 2] ./ max) / 100)
@@ -1648,7 +1648,7 @@ function build_118_bus_DA(; kwargs...)
     end
     wind_DA_TS = []
     for i in 1:17
-        winddf_path = joinpath(DATA_DIR, "118-Bus/Wind/DA", "Wind$(i)DA.csv")
+        winddf_path = joinpath(get_pstd_data_dir(), "118-Bus/Wind/DA", "Wind$(i)DA.csv")
         winddf = CSV.read(winddf_path, DataFrame)
         local max = maximum(wind_gens[i, "Max Capacity (MW)"])
         local wind_array = TimeArray(timestamps, (winddf[:, 2] ./ max) / 100)
@@ -1661,7 +1661,7 @@ function build_118_bus_DA(; kwargs...)
     end
     load_TS = []
     for i in 1:3
-        loaddf_path = joinpath(DATA_DIR, "118-Bus/Load/DA", "LoadR$(i)DA.csv")
+        loaddf_path = joinpath(get_pstd_data_dir(), "118-Bus/Load/DA", "LoadR$(i)DA.csv")
         loaddf = CSV.read(loaddf_path, DataFrame)
         local load_array = TimeArray(timestamps, (loaddf[:, 2] ./ maximum(loaddf[:, 2])))
         local load_time_series = SingleTimeSeries(;
@@ -1741,10 +1741,10 @@ function build_118_bus_RT(; kwargs...)
     )
 
     solar_RT_TS = []
-    gendata_path = joinpath(DATA_DIR, "118-Bus", "Generators.csv")
+    gendata_path = joinpath(get_pstd_data_dir(), "118-Bus", "Generators.csv")
     gendata = CSV.read(gendata_path, DataFrame)
     for i in 1:75
-        solardf_path = joinpath(DATA_DIR, "118-Bus/Solar/RT", "Solar$(i)RT.csv")
+        solardf_path = joinpath(get_pstd_data_dir(), "118-Bus/Solar/RT", "Solar$(i)RT.csv")
         solardf = CSV.read(solardf_path, DataFrame)
         local max = maximum(solar_gens[i, "Max Capacity (MW)"])
         solar_array = TimeArray(timestamps, (solardf[:, 2] ./ max) / 100)
@@ -1757,7 +1757,7 @@ function build_118_bus_RT(; kwargs...)
     end
     wind_RT_TS = []
     for i in 1:17
-        winddf_path = joinpath(DATA_DIR, "118-Bus/Wind/RT", "Wind$(i)RT.csv")
+        winddf_path = joinpath(get_pstd_data_dir(), "118-Bus/Wind/RT", "Wind$(i)RT.csv")
         winddf = CSV.read(winddf_path, DataFrame)
         local max = maximum(wind_gens[i, "Max Capacity (MW)"])
         local wind_array = TimeArray(timestamps, (winddf[:, 2] ./ max) / 100)
@@ -1770,7 +1770,7 @@ function build_118_bus_RT(; kwargs...)
     end
     load_TS = []
     for i in 1:3
-        loaddf_path = joinpath(DATA_DIR, "118-Bus/Load/RT", "LoadR$(i)RT.csv")
+        loaddf_path = joinpath(get_pstd_data_dir(), "118-Bus/Load/RT", "LoadR$(i)RT.csv")
         loaddf = CSV.read(loaddf_path, DataFrame)
         local load_array = TimeArray(timestamps, (loaddf[:, 2] ./ maximum(loaddf[:, 2])))
         local load_time_series = SingleTimeSeries(;
