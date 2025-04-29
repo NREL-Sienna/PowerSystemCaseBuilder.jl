@@ -1,5 +1,11 @@
 """
 A container for a catalog of [`PowerSystems.System`](@extref) data sets
+
+# Example
+```julia
+SystemCatalog()
+```
+Returns in the `PowerSystemCaseBuilder.jl` default catalog
 """
 mutable struct SystemCatalog
     data::Dict{DataType, Dict{String, SystemDescriptor}}
@@ -29,7 +35,8 @@ function get_system_descriptors(category::Type{<:SystemCategory}, catalog::Syste
 end
 
 """
-Returns a vector of [`SystemCategory`](@ref)s available in the `PowerSystemCaseBuilder.jl` default [`SystemCatalog`](@ref)
+Returns a vector of [`SystemCategory`](@ref)s available in the `PowerSystemCaseBuilder.jl`
+default [`SystemCatalog`](@ref)
 """
 function list_categories()
     catalog = SystemCatalog()
@@ -40,6 +47,37 @@ end
 Returns a vector of [`SystemCategory`](@ref)s available in a [`SystemCatalog`](@ref)
 """
 list_categories(c::SystemCatalog) = sort!([x for x in (keys(c.data))]; by = x -> string(x))
+
+"""
+Returns a vector of the systems available in one [`SystemCategory`](@ref) in the
+`PowerSystemCaseBuilder.jl` default [`SystemCatalog`](@ref)
+"""
+function list_systems(category::Type{<:SystemCategory})
+    catalog = SystemCatalog()
+    return list_systems(catalog, category)
+end
+
+"""
+Returns a vector of the systems available in one [`SystemCategory`](@ref) in a
+[`SystemCatalog`](@ref)
+
+# Example
+```julia
+list_systems(SystemCatalog(), PSISystems)
+```
+
+See also: [`list_systems`](@ref) is the preferred usage for the default
+    `PowerSystemCaseBuilder.jl` catalog
+"""
+function list_systems(catalog::SystemCatalog, category::Type{<:SystemCategory})
+    data = catalog.data
+    if haskey(data, category)
+        return sort!(collect(keys(data[category])); by = x -> string(x))
+    else
+        error("Category $(category) not found in SystemCatalog")
+        return [] # for type stability reasons
+    end
+end
 
 function SystemCatalog(system_catalogue::Array{SystemDescriptor} = SYSTEM_CATALOG)
     data = Dict{DataType, Dict{String, SystemDescriptor}}()

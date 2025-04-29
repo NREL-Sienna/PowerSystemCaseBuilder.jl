@@ -19,16 +19,18 @@ function Base.show(io::IO, sys::SystemCatalog)
 end
 
 """
-Prints a list of the systems available in one [`SystemCategory`](@ref) in a [`SystemCatalog`](@ref)
+Prints the name and description of all systems in a selected [`SystemCategory`](@ref) in a
+[`SystemCatalog`](@ref)
 
 # Example
 ```julia
-list_systems(SystemCatalog(), PSISystems)
+show_systems(SystemCatalog(), PSISystems)
 ```
 
-See also: [`show_systems`](@ref) is the preferred usage for the default `PowerSystemCaseBuilder.jl` catalog
+See also: [`show_systems`](@ref show_systems(category::Type{<:SystemCategory}; kwargs...))
+for the default `PowerSystemCaseBuilder.jl` catalog
 """
-function list_systems(sys::SystemCatalog, category::Type{<:SystemCategory}; kwargs...)
+function show_systems(sys::SystemCatalog, category::Type{<:SystemCategory}; kwargs...)
     descriptors = get_system_descriptors(category, sys)
     sort!(descriptors; by = x -> x.name)
     header = ["Name", "Descriptor"]
@@ -47,10 +49,17 @@ Prints a list of the categories available in the `PowerSystemCaseBuilder.jl` cat
 show_categories() = println(join(string.(list_categories()), "\n"))
 
 """
-Prints the name and description of all [`PowerSystems.System`](@extref)s in the `PowerSystemCaseBuilder.jl` catalog,
-grouped by [`SystemCategory`](@ref)
+Prints a list of the categories available in a [`SystemCatalog`](@ref)
+"""
+show_categories(catalog::SystemCatalog) =
+    println(join(string.(list_categories(catalog)), "\n"))
 
-See also: [`show_systems` for a selected category](@ref show_systems(category::Type{<:SystemCategory}; kwargs...))
+"""
+Prints the name and description of all [`PowerSystems.System`](@extref)s in the
+`PowerSystemCaseBuilder.jl` catalog, grouped by [`SystemCategory`](@ref)
+
+See also:
+[`show_systems` for a selected category](@ref show_systems(category::Type{<:SystemCategory}; kwargs...))
 """
 function show_systems(; kwargs...)
     catalog = SystemCatalog()
@@ -69,12 +78,9 @@ end
 function show_systems(catalog::SystemCatalog; kwargs...)
     for category in list_categories(catalog)
         println("\nCategory: $category\n")
-        list_systems(catalog, category)
+        show_systems(catalog, category)
     end
 end
-
-show_systems(s::SystemCatalog, c::Type{<:SystemCategory}; kwargs...) =
-    list_systems(s, c; kwargs...)
 
 function print_stats(data::SystemDescriptor)
     df = DataFrames.DataFrame(; Name = [], Value = [])
