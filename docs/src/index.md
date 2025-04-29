@@ -42,7 +42,9 @@ power system modeling, simulation, and optimization. The Sienna ecosystem can be
 Each application uses multiple packages in the [`Julia`](http://www.julialang.org)
 programming language.
 
-## Installation
+## Installation and Quick Links
 
-See the [Sienna installation page](https://nrel-sienna.github.io/Sienna/SiennaDocs/docs/build/how-to/install/)
-to install `PowerSystemCaseBuilder.jl` and other Sienna\Data packages.
+  - [Sienna installation page](https://nrel-sienna.github.io/Sienna/SiennaDocs/docs/build/how-to/install/):
+    Instructions to install `PowerSystemCaseBuilder.jl` and other Sienna\Data packages
+  - [Sienna Documentation Hub](https://nrel-sienna.github.io/Sienna/SiennaDocs/docs/build/index.html):
+    Links to other Sienna packages' documentation
