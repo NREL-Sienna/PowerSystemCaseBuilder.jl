@@ -32,7 +32,7 @@ mutable struct SystemDescriptor <: PowerSystemCaseBuilderType
     name::AbstractString
     description::AbstractString
     category::Type{<:SystemCategory}
-    raw_data::AbstractString
+    raw_data::Union{AbstractString, Tuple{Base.RefValue{Union{Nothing, String}}, String}}  # TODO
     build_function::Function
     download_function::Union{Nothing, Function}
     stats::Union{Nothing, SystemBuildStats}
@@ -61,10 +61,19 @@ function SystemDescriptor(;
     )
 end
 
+_process_raw_data(raw_data::AbstractString) = raw_data
+
+function _process_raw_data(raw_data::Tuple{Ref, AbstractString})
+    root_ref, subpath = raw_data
+    @show root_ref
+    @show root_ref[]
+    return joinpath(root_ref[], subpath)
+end
+
 get_name(v::SystemDescriptor) = v.name
 get_description(v::SystemDescriptor) = v.description
 get_category(v::SystemDescriptor) = v.category
-get_raw_data(v::SystemDescriptor) = v.raw_data
+get_raw_data(v::SystemDescriptor) = _process_raw_data(v.raw_data)
 get_build_function(v::SystemDescriptor) = v.build_function
 get_download_function(v::SystemDescriptor) = v.download_function
 get_stats(v::SystemDescriptor) = v.stats

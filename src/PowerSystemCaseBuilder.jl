@@ -22,7 +22,7 @@ export show_categories
 export list_systems
 export show_systems
 
-export SYSTEM_CATALOG
+# export SYSTEM_CATALOG  # TODO
 
 # imports
 import InfrastructureSystems
@@ -87,7 +87,7 @@ struct PSIDSystems <: SystemCategory end
 # includes
 
 include("definitions.jl")
-include("system_library.jl")
+# include("system_library.jl")
 
 include("system_build_stats.jl")
 include("system_descriptor.jl")
@@ -98,6 +98,6 @@ include("utils/print.jl")
 include("utils/utils.jl")
 
 include("build_system.jl")
-include("system_descriptor_data.jl")
+SYSTEM_CATALOG = nothing
 
 end # module
