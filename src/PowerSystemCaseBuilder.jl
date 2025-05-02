@@ -15,6 +15,7 @@ export MatpowerTestSystems
 
 export PSISystems
 export PSIDSystems
+export SPISystems
 
 export build_system
 export list_categories
@@ -128,6 +129,11 @@ Category of example [`PowerSystems.System`](@extref)s for running
 """
 struct PSIDSystems <: SystemCategory end
 
+"""
+Category for SiennaPRASInterface.jl examples.
+"""
+struct SPISystems <: SystemCategory end
+
 # includes
 
 include("definitions.jl")
@@ -140,6 +146,7 @@ include("system_catalog.jl")
 include("utils/download.jl")
 include("utils/print.jl")
 include("utils/utils.jl")
+include("utils/spi_library_utils.jl")
 
 include("build_system.jl")
 include("system_descriptor_data.jl")

@@ -17,3 +17,4 @@ include("library/psidtest_library.jl")
 # These library cases are used for examples
 include("library/psi_library.jl")
 include("library/psid_library.jl")
+include("library/spi_library.jl")

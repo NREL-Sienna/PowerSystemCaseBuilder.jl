@@ -1804,6 +1804,34 @@ const SYSTEM_CATALOG = [
             ),
         ],
     ),
+    SystemDescriptor(;
+        name = "RTS_GMLC_Hourly with Static Outage Data",
+        description = "Hourly RTS_GMLC System with Static GeometricDistributionForcedOutage SupplementalAttribute",
+        category = SPISystems,
+        raw_data = RTS_DIR,
+        build_function = build_rts_gmlc_da_with_static_outage_data,
+    ),
+    SystemDescriptor(;
+        name = "RTS_GMLC_Hourly with TimeSeries Outage Data",
+        description = "Hourly RTS_GMLC System with GeometricDistributionForcedOutage SupplementalAttribute and Outage Probability TimeSeries",
+        category = SPISystems,
+        raw_data = RTS_DIR,
+        build_function = build_rts_gmlc_da_with_timeseries_outage_data,
+    ),
+    SystemDescriptor(;
+        name = "RTS_GMLC_5min with Static Outage Data",
+        description = "5 minute RTS_GMLC System with Static GeometricDistributionForcedOutage SupplementalAttribute",
+        category = SPISystems,
+        raw_data = RTS_DIR,
+        build_function = build_rts_gmlc_rt_with_static_outage_data,
+    ),
+    SystemDescriptor(;
+        name = "RTS_GMLC_5min with TimeSeries Outage Data",
+        description = "5 minute RTS_GMLC System with GeometricDistributionForcedOutage SupplementalAttribute and Outage Probability TimeSeries",
+        category = SPISystems,
+        raw_data = RTS_DIR,
+        build_function = build_rts_gmlc_rt_with_timeseries_outage_data,
+    ),
     # uncomment once PR #65 in PowerSystemsTestData is merged
     #=SystemDescriptor(;
     name = "118_bus_DA",
