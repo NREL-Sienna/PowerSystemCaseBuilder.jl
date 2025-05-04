@@ -24,3 +24,18 @@ end
     @test isdir(bystander_dir)
     @test isfile(bystander_file)
 end
+
+@testset "test show" begin
+    # no actual @test here--just making sure they run without error.
+    redirect_stdout(devnull) do
+        show_systems(MatpowerTestSystems)
+        show_systems()
+        c = SystemCatalog()
+        category = collect(list_categories(c))[2]
+        show_systems(c, category)
+        show_systems(c)
+
+        show_categories()
+        show_categories(c)
+    end
+end

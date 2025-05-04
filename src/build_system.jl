@@ -20,9 +20,11 @@ function build_system(
     force_build::Bool = false,
     assign_new_uuids::Bool = false,
     skip_serialization::Bool = false,
-    system_catalog::SystemCatalog = SystemCatalog(SYSTEM_CATALOG),
+    system_catalog::Union{SystemCatalog, Nothing} = nothing,
     kwargs...,
 )
+    reload_catalog()
+    isnothing(system_catalog) && (system_catalog = SystemCatalog(SYSTEM_CATALOG_REF[]))
     sys_descriptor = get_system_descriptor(category, system_catalog, name)
     sys_kwargs = filter_kwargs(; kwargs...)
     case_kwargs = filter_descriptor_kwargs(sys_descriptor; kwargs...)
@@ -68,11 +70,11 @@ function _build_system(
             filepath = download_function()
             set_raw_data!(sys_descriptor, filepath)
         end
-        @info "Building new system $(sys_descriptor.name) from raw data" sys_descriptor.raw_data
+        @info "Building new system $(sys_descriptor.name) from raw data" get_raw_data(sys_descriptor)
         build_func = get_build_function(sys_descriptor)
         start = time()
         sys = build_func(;
-            raw_data = sys_descriptor.raw_data,
+            raw_data = get_raw_data(sys_descriptor),
             case_args...,
             sys_args...,
         )

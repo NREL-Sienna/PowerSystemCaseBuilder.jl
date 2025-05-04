@@ -37,7 +37,10 @@ function build_c_sys5_pjm(; add_forecasts, raw_data, sys_kwargs...)
     PSY.add_component!(c_sys5, pv_device)
     PSY.add_component!(c_sys5, wind_device)
     timeseries_dataset =
-        HDF5.h5read(joinpath(DATA_DIR, "5-Bus", "PJM_5_BUS_7_DAYS.h5"), "Time Series Data")
+        HDF5.h5read(
+            joinpath(get_pstd_data_dir(), "5-Bus", "PJM_5_BUS_7_DAYS.h5"),
+            "Time Series Data",
+        )
     refdate = first(DayAhead)
     da_load_time_series = DateTime[]
     da_load_time_series_val = Float64[]
@@ -53,7 +56,7 @@ function build_c_sys5_pjm(; add_forecasts, raw_data, sys_kwargs...)
     re_timeseries = Dict(
         "PVBus5" => CSV.read(
             joinpath(
-                DATA_DIR,
+                get_pstd_data_dir(),
                 "5-Bus",
                 "5bus_ts",
                 "gen",
@@ -68,7 +71,7 @@ function build_c_sys5_pjm(; add_forecasts, raw_data, sys_kwargs...)
         ],
         "WindBus1" => CSV.read(
             joinpath(
-                DATA_DIR,
+                get_pstd_data_dir(),
                 "5-Bus",
                 "5bus_ts",
                 "gen",
@@ -152,7 +155,10 @@ function build_c_sys5_pjm_rt(; add_forecasts, raw_data, sys_kwargs...)
     PSY.add_component!(c_sys5, pv_device)
     PSY.add_component!(c_sys5, wind_device)
     timeseries_dataset =
-        HDF5.h5read(joinpath(DATA_DIR, "5-Bus", "PJM_5_BUS_7_DAYS.h5"), "Time Series Data")
+        HDF5.h5read(
+            joinpath(get_pstd_data_dir(), "5-Bus", "PJM_5_BUS_7_DAYS.h5"),
+            "Time Series Data",
+        )
     refdate = first(DayAhead)
     rt_load_time_series = DateTime[]
     rt_load_time_series_val = Float64[]
@@ -167,7 +173,7 @@ function build_c_sys5_pjm_rt(; add_forecasts, raw_data, sys_kwargs...)
     re_timeseries = Dict(
         "PVBus5" => CSV.read(
             joinpath(
-                DATA_DIR,
+                get_pstd_data_dir(),
                 "5-Bus",
                 "5bus_ts",
                 "gen",
@@ -182,7 +188,7 @@ function build_c_sys5_pjm_rt(; add_forecasts, raw_data, sys_kwargs...)
         ],
         "WindBus1" => CSV.read(
             joinpath(
-                DATA_DIR,
+                get_pstd_data_dir(),
                 "5-Bus",
                 "5bus_ts",
                 "gen",
@@ -399,7 +405,7 @@ function build_RTS_GMLC_DA_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
     RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
-    MAP_DIR = joinpath(DATA_DIR, "RTS_GMLC")
+    MAP_DIR = joinpath(get_pstd_data_dir(), "RTS_GMLC")
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
@@ -419,7 +425,7 @@ function build_RTS_GMLC_RT_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
     RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
-    MAP_DIR = joinpath(DATA_DIR, "RTS_GMLC")
+    MAP_DIR = joinpath(get_pstd_data_dir(), "RTS_GMLC")
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
@@ -439,7 +445,7 @@ function build_RTS_GMLC_DA_sys_noForecast(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
     RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
-    MAP_DIR = joinpath(DATA_DIR, "RTS_GMLC")
+    MAP_DIR = joinpath(get_pstd_data_dir(), "RTS_GMLC")
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
@@ -456,7 +462,7 @@ function build_RTS_GMLC_RT_sys_noForecast(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
     RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
-    MAP_DIR = joinpath(DATA_DIR, "RTS_GMLC")
+    MAP_DIR = joinpath(get_pstd_data_dir(), "RTS_GMLC")
     rawsys = PSY.PowerSystemTableData(
         RTS_SRC_DIR,
         100.0,
@@ -476,7 +482,7 @@ function make_modified_RTS_GMLC_sys(
 )
     RTS_SRC_DIR = joinpath(raw_data, "RTS_Data", "SourceData")
     RTS_SIIP_DIR = joinpath(raw_data, "RTS_Data", "FormattedData", "SIIP")
-    MAP_DIR = joinpath(DATA_DIR, "RTS_GMLC")
+    MAP_DIR = joinpath(get_pstd_data_dir(), "RTS_GMLC")
     DISPATCH_INCREASE = 2.0
     FIX_DECREASE = 0.3
 
@@ -1549,7 +1555,7 @@ function build_MTHVDC_two_RTS_DA_sys_noForecast(; kwargs...)
     sys_rts = build_RTS_GMLC_DA_sys_noForecast(; kwargs...)
     sys = _duplicate_system(sys_rts, deepcopy(sys_rts), false)
     include(joinpath(
-        DATA_DIR,
+        get_pstd_data_dir(),
         "psy_data",
         "data_mthvdc_twin_rts.jl",
     ))
@@ -1614,5 +1620,223 @@ function build_MTHVDC_two_RTS_DA_sys_noForecast(; kwargs...)
         PSY.add_component!(sys, ipc)
     end
 
+    return sys
+end
+
+function build_118_bus_DA(; kwargs...)
+    nodes = nodes118()
+    thermal = thermal_generators118(nodes)
+    loads = power_load118(nodes)
+    hydro_generators = hydro_generators118(nodes)
+    sys = PSY.System(
+        100.0,
+        nodes,
+        thermal,
+        loads,
+        branches(nodes),
+        renewable_generators118(nodes),
+        hydro_generators,
+    )
+    solar_DA_TS = []
+    gendata_path = joinpath(get_pstd_data_dir(), "118-Bus", "Generators.csv")
+    gendata = CSV.read(gendata_path, DataFrame)
+    for i in 1:75
+        solardf_path = joinpath(get_pstd_data_dir(), "118-Bus/Solar/DA", "Solar$(i)DA.csv")
+        solardf = CSV.read(solardf_path, DataFrame)
+        local max = maximum(solar_gens[i, "Max Capacity (MW)"])
+        solar_array = TimeArray(timestamps, (solardf[:, 2] ./ max) / 100)
+        local solar_TS = SingleTimeSeries(;
+            name = "max_active_power",
+            data = solar_array,
+            scaling_factor_multiplier = get_max_active_power, #assumption?
+        )
+        push!(solar_DA_TS, solar_TS)
+    end
+    wind_DA_TS = []
+    for i in 1:17
+        winddf_path = joinpath(get_pstd_data_dir(), "118-Bus/Wind/DA", "Wind$(i)DA.csv")
+        winddf = CSV.read(winddf_path, DataFrame)
+        local max = maximum(wind_gens[i, "Max Capacity (MW)"])
+        local wind_array = TimeArray(timestamps, (winddf[:, 2] ./ max) / 100)
+        local wind_TS = SingleTimeSeries(;
+            name = "max_active_power",
+            data = wind_array,
+            scaling_factor_multiplier = get_max_active_power, #assumption?
+        )
+        push!(wind_DA_TS, wind_TS)
+    end
+    load_TS = []
+    for i in 1:3
+        loaddf_path = joinpath(get_pstd_data_dir(), "118-Bus/Load/DA", "LoadR$(i)DA.csv")
+        loaddf = CSV.read(loaddf_path, DataFrame)
+        local load_array = TimeArray(timestamps, (loaddf[:, 2] ./ maximum(loaddf[:, 2])))
+        local load_time_series = SingleTimeSeries(;
+            name = "max_active_power",
+            data = load_array,
+            scaling_factor_multiplier = get_max_active_power, #assumption?
+        )
+        push!(load_TS, load_time_series)
+    end
+
+    areas = []
+    for i in 1:3
+        area_name = Area("R$i")
+        push!(areas, area_name)
+        add_component!(sys, area_name)
+    end
+    buses = PSY.collect(get_components(ACBus, sys))
+    for i in 1:118
+        if bus_params[i, "Area"] == "R1"
+            area = areas[1]
+        elseif bus_params[i, "Area"] == "R2"
+            area = areas[2]
+        else
+            bus_params[i, "Area"] == "R3"
+            area = areas[3]
+        end
+        set_area!(buses[i], area)
+    end
+    for i in 1:length(hydro_generators)
+        add_time_series!(sys, hydro_generators[i], hydro_DA_RT_TS[i])
+    end
+    wind_generators = PSY.collect(
+        get_components(
+            gen -> gen.prime_mover_type == PrimeMovers.WT,
+            RenewableDispatch,
+            sys,
+        ),
+    )
+    for i in 1:length(wind_generators)
+        add_time_series!(sys, wind_generators[i], wind_DA_TS[i])
+    end
+    solar_generators = PSY.collect(
+        get_components(
+            gen -> gen.prime_mover_type == PrimeMovers.PVe,
+            RenewableDispatch,
+            sys,
+        ),
+    )
+    for i in 1:length(solar_generators)
+        add_time_series!(sys, solar_generators[i], solar_DA_TS[i])
+    end
+    loads = power_load118(nodes118())
+    for i in 1:3
+        region = get_component(Area, sys, "R$i")
+        begin_time_series_update(sys) do
+            for component in get_components_in_aggregation_topology(PowerLoad, sys, region)
+                add_time_series!(sys, component, load_TS[i])
+            end
+        end
+    end
+    return sys
+end
+
+function build_118_bus_RT(; kwargs...)
+    nodes = nodes118()
+    thermal = thermal_generators118(nodes)
+    loads = power_load118(nodes)
+    hydro_generators = hydro_generators118(nodes)
+    sys = PSY.System(
+        100.0,
+        nodes,
+        thermal,
+        loads,
+        branches(nodes),
+        renewable_generators118(nodes),
+        hydro_generators,
+    )
+
+    solar_RT_TS = []
+    gendata_path = joinpath(get_pstd_data_dir(), "118-Bus", "Generators.csv")
+    gendata = CSV.read(gendata_path, DataFrame)
+    for i in 1:75
+        solardf_path = joinpath(get_pstd_data_dir(), "118-Bus/Solar/RT", "Solar$(i)RT.csv")
+        solardf = CSV.read(solardf_path, DataFrame)
+        local max = maximum(solar_gens[i, "Max Capacity (MW)"])
+        solar_array = TimeArray(timestamps, (solardf[:, 2] ./ max) / 100)
+        local solar_TS = SingleTimeSeries(;
+            name = "max_active_power",
+            data = solar_array,
+            scaling_factor_multiplier = get_max_active_power, #assumption?
+        )
+        push!(solar_RT_TS, solar_TS)
+    end
+    wind_RT_TS = []
+    for i in 1:17
+        winddf_path = joinpath(get_pstd_data_dir(), "118-Bus/Wind/RT", "Wind$(i)RT.csv")
+        winddf = CSV.read(winddf_path, DataFrame)
+        local max = maximum(wind_gens[i, "Max Capacity (MW)"])
+        local wind_array = TimeArray(timestamps, (winddf[:, 2] ./ max) / 100)
+        local wind_TS = SingleTimeSeries(;
+            name = "max_active_power",
+            data = wind_array,
+            scaling_factor_multiplier = get_max_active_power, #assumption?
+        )
+        push!(wind_RT_TS, wind_TS)
+    end
+    load_TS = []
+    for i in 1:3
+        loaddf_path = joinpath(get_pstd_data_dir(), "118-Bus/Load/RT", "LoadR$(i)RT.csv")
+        loaddf = CSV.read(loaddf_path, DataFrame)
+        local load_array = TimeArray(timestamps, (loaddf[:, 2] ./ maximum(loaddf[:, 2])))
+        local load_time_series = SingleTimeSeries(;
+            name = "max_active_power",
+            data = load_array,
+            scaling_factor_multiplier = get_max_active_power, #assumption?
+        )
+        push!(load_TS, load_time_series)
+    end
+
+    areas = []
+    for i in 1:3
+        area_name = Area("R$i")
+        push!(areas, area_name)
+        add_component!(sys, area_name)
+    end
+
+    buses = PSY.collect(get_components(ACBus, sys))
+    for i in 1:118
+        if bus_params[i, "Area"] == "R1"
+            area = areas[1]
+        elseif bus_params[i, "Area"] == "R2"
+            area = areas[2]
+        else
+            bus_params[i, "Area"] == "R3"
+            area = areas[3]
+        end
+        set_area!(buses[i], area)
+    end
+    for i in 1:length(hydro_generators)
+        add_time_series!(sys, hydro_generators[i], hydro_DA_RT_TS[i])
+    end
+    wind_generators = PSY.collect(
+        get_components(
+            gen -> gen.prime_mover_type == PrimeMovers.WT,
+            RenewableDispatch,
+            sys,
+        ),
+    )
+    for i in 1:length(wind_generators)
+        add_time_series!(sys, wind_generators[i], wind_RT_TS[i])
+    end
+    solar_generators = PSY.collect(
+        get_components(
+            gen -> gen.prime_mover_type == PrimeMovers.PVe,
+            RenewableDispatch,
+            sys,
+        ),
+    )
+    for i in 1:length(solar_generators)
+        add_time_series!(sys, solar_generators[i], solar_RT_TS[i])
+    end
+    loads = power_load118(nodes118())
+    for i in 1:3
+        region = get_component(Area, sys, "R$i")
+        begin_time_series_update(sys) do
+            for component in get_components_in_aggregation_topology(PowerLoad, sys, region)
+                add_time_series!(sys, component, load_TS[i])
+            end
+        end
+    end
     return sys
 end
