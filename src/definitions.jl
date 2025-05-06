@@ -1,6 +1,6 @@
 const PACKAGE_DIR = joinpath(dirname(dirname(pathof(PowerSystemCaseBuilder))))
 const DATA_DIR =
-    joinpath(LazyArtifacts.artifact"CaseData", "PowerSystemsTestData-3.2")
+    joinpath(LazyArtifacts.artifact"CaseData", "PowerSystemsTestData-3.3")
 
 const RTS_DIR = joinpath(LazyArtifacts.artifact"rts", "RTS-GMLC-0.2.2")
 
