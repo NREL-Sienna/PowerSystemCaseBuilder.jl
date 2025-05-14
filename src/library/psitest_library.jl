@@ -2311,7 +2311,7 @@ function build_c_sys5_phes_ed(; add_forecasts, add_reserves, raw_data, kwargs...
                 PSY.Deterministic("max_active_power", forecast_data),
             )
         end
-        for (ix, l) in enumerate(PSY.get_components(PSY.HydroPumpedStorage, c_sys5_phes_ed))
+        for (ix, l) in enumerate(PSY.get_components(PSY.HydroPumpTurbine, c_sys5_phes_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = hydro_timeseries_DA[t][ix]
@@ -2321,13 +2321,20 @@ function build_c_sys5_phes_ed(; add_forecasts, add_reserves, raw_data, kwargs...
                     forecast_data[ini_time[1]] = data
                 end
             end
+            head_reservoir = PSY.get_head_reservoir(l)
+            tail_reservoir = PSY.get_tail_reservoir(l)
             PSY.add_time_series!(
                 c_sys5_phes_ed,
-                l,
-                PSY.Deterministic("storage_capacity", forecast_data),
+                head_reservoir,
+                PSY.Deterministic("initial_level", forecast_data),
+            )
+            PSY.add_time_series!(
+                c_sys5_phes_ed,
+                tail_reservoir,
+                PSY.Deterministic("initial_level", forecast_data),
             )
         end
-        for (ix, l) in enumerate(PSY.get_components(PSY.HydroPumpedStorage, c_sys5_phes_ed))
+        for (ix, l) in enumerate(PSY.get_components(PSY.HydroPumpTurbine, c_sys5_phes_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = hydro_timeseries_DA[t][ix]
@@ -2337,14 +2344,16 @@ function build_c_sys5_phes_ed(; add_forecasts, add_reserves, raw_data, kwargs...
                     forecast_data[ini_time[1]] = data
                 end
             end
+            head_reservoir = PSY.get_head_reservoir(l)
+            tail_reservoir = PSY.get_tail_reservoir(l)
             PSY.add_time_series!(
                 c_sys5_phes_ed,
-                l,
+                head_reservoir,
                 PSY.Deterministic("inflow", forecast_data),
             )
             PSY.add_time_series!(
                 c_sys5_phes_ed,
-                l,
+                tail_reservoir,
                 PSY.Deterministic("outflow", forecast_data),
             )
         end
@@ -2368,16 +2377,16 @@ function build_c_sys5_phes_ed(; add_forecasts, add_reserves, raw_data, kwargs...
     end
     if add_reserves
         reserve_uc =
-            reserve5_phes(PSY.get_components(PSY.HydroPumpedStorage, c_sys5_phes_ed))
+            reserve5_phes(PSY.get_components(PSY.HydroPumpTurbine, c_sys5_phes_ed))
         PSY.add_service!(
             c_sys5_phes_ed,
             reserve_uc[1],
-            PSY.get_components(PSY.HydroPumpedStorage, c_sys5_phes_ed),
+            PSY.get_components(PSY.HydroPumpTurbine, c_sys5_phes_ed),
         )
         PSY.add_service!(
             c_sys5_phes_ed,
             reserve_uc[2],
-            [collect(PSY.get_components(PSY.HydroPumpedStorage, c_sys5_phes_ed))[end]],
+            [collect(PSY.get_components(PSY.HydroPumpTurbine, c_sys5_phes_ed))[end]],
         )
 
         for serv in PSY.get_components(PSY.VariableReserve, c_sys5_phes_ed)
