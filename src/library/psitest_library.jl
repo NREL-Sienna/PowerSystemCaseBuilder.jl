@@ -2568,10 +2568,10 @@ end
 
 function build_5_bus_matpower_DA(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    data_dir = dirname(dirname(raw_data))
+    get_pstd_data_dir() = dirname(dirname(raw_data))
     pm_data = PowerSystems.PowerModelsData(raw_data)
 
-    FORECASTS_DIR = joinpath(data_dir, "5-Bus", "5bus_ts", "7day")
+    FORECASTS_DIR = joinpath(get_pstd_data_dir(), "5-Bus", "5bus_ts", "7day")
 
     tsp = IS.read_time_series_file_metadata(
         joinpath(FORECASTS_DIR, "timeseries_pointers_da_7day.json"),
@@ -2597,9 +2597,9 @@ end
 
 function build_5_bus_matpower_RT(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    data_dir = dirname(dirname(raw_data))
+    get_pstd_data_dir() = dirname(dirname(raw_data))
 
-    FORECASTS_DIR = joinpath(data_dir, "5-Bus", "5bus_ts", "7day")
+    FORECASTS_DIR = joinpath(get_pstd_data_dir(), "5-Bus", "5bus_ts", "7day")
 
     tsp = IS.read_time_series_file_metadata(
         joinpath(FORECASTS_DIR, "timeseries_pointers_rt_7day.json"),
@@ -2615,10 +2615,10 @@ end
 
 function build_5_bus_matpower_AGC(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
-    data_dir = dirname(dirname(raw_data))
+    get_pstd_data_dir() = dirname(dirname(raw_data))
     pm_data = PowerSystems.PowerModelsData(raw_data)
 
-    FORECASTS_DIR = joinpath(data_dir, "5-Bus", "5bus_ts", "7day")
+    FORECASTS_DIR = joinpath(get_pstd_data_dir(), "5-Bus", "5bus_ts", "7day")
 
     tsp = IS.read_time_series_file_metadata(
         joinpath(FORECASTS_DIR, "timeseries_pointers_agc_7day.json"),
@@ -4337,7 +4337,10 @@ function build_two_area_pjm_DA(; add_forecasts, raw_data, sys_kwargs...)
     PSY.add_component!(sys, pv_device)
     PSY.add_component!(sys, wind_device)
     timeseries_dataset =
-        HDF5.h5read(joinpath(DATA_DIR, "5-Bus", "PJM_5_BUS_7_DAYS.h5"), "Time Series Data")
+        HDF5.h5read(
+            joinpath(get_pstd_data_dir(), "5-Bus", "PJM_5_BUS_7_DAYS.h5"),
+            "Time Series Data",
+        )
     refdate = first(DayAhead)
     da_load_time_series = DateTime[]
     da_load_time_series_val = Float64[]
@@ -4353,7 +4356,7 @@ function build_two_area_pjm_DA(; add_forecasts, raw_data, sys_kwargs...)
     re_timeseries = Dict(
         "PVBus5" => CSV.read(
             joinpath(
-                DATA_DIR,
+                get_pstd_data_dir(),
                 "5-Bus",
                 "5bus_ts",
                 "gen",
@@ -4368,7 +4371,7 @@ function build_two_area_pjm_DA(; add_forecasts, raw_data, sys_kwargs...)
         ],
         "WindBus1" => CSV.read(
             joinpath(
-                DATA_DIR,
+                get_pstd_data_dir(),
                 "5-Bus",
                 "5bus_ts",
                 "gen",
