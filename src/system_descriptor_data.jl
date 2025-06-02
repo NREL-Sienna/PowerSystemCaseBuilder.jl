@@ -1,4 +1,61 @@
 const SYSTEM_CATALOG = [
+
+    ## mm/edit-PSILibrary
+    SystemDescriptor(;
+        name = "csys5_custom",
+        description = "5-Bus system with kwargs to build",
+        category = PSISystems,
+        raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
+        build_function = build_custom_csys5,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :decision_model_type,
+                default = "ed",
+                allowed_values = Set(["uc", "ed"]),
+            ),
+            SystemArgument(;
+                name = :withStandardLoad,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :withThermalStandard,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :withRenewableDispatch,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :withRenewableNonDispatch,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :withEnergyReservoirStorage,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :withInterruptiblePowerLoad,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :withHydroReservoir,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
+    ),
+    ##
     SystemDescriptor(;
         name = "c_sys14",
         description = "14-bus system",

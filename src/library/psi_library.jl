@@ -1,3 +1,5 @@
+include(joinpath("psi_library_scripts","build_sys5_functions.jl"))
+
 function build_c_sys5_pjm(; add_forecasts, raw_data, sys_kwargs...)
     nodes = nodes5()
     c_sys5 = PSY.System(

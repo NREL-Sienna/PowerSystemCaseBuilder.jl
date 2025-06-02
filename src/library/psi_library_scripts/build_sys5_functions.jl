@@ -55,25 +55,26 @@ function add_HydroReservoir!(sys)
     add_components!(sys,phes5(buses))
 end
 
-```build the pjm 5bus system and select the desired component types to be added in. \\
+"""build the pjm 5bus system and select the desired component types to be added in. \\
 inputs: \\
 - raw_data: directory where PowerSystemsTestData is kept \\
 - add_forecasts: true/false \\
 - decision_model_type: "uc" or "ed", or nothing, determines resolution of timeseries data \\
 - with<Device>: true/false, whether to include given <Device> type in system.
 - 
-```
-function build_custom_csys5(;raw_data,add_forecasts,decision_model_type,
-    
+"""
+function build_custom_csys5(;raw_data,add_forecasts=true, 
+    decision_model_type="ed",
     withStandardLoad=true,
     withThermalStandard=true,
     withRenewableDispatch=false,
     withRenewableNonDispatch=false,
     withEnergyReservoirStorage=false,
     withInterruptiblePowerLoad=false,
-    withHydroReservoir=false
+    withHydroReservoir=false,
+    sys_kwargs...,
     )
-    sys = build_sys5_nodes(; add_forecasts, raw_data, sys_kwargs...)
+    sys = build_sys5_nodes(; add_forecasts, raw_data, sys_kwargs...,)
 
     if withStandardLoad
         add_StandardLoad!(sys)
@@ -115,9 +116,10 @@ function build_custom_csys5(;raw_data,add_forecasts,decision_model_type,
                 "7day",
                 "timeseries_pointers_rt_7day.json",
             )
-            PSY.transform_single_time_series!(c_sys5_hy_ed, Hour(2), Hour(1))
+            PSY.transform_single_time_series!(sys, Hour(2), Hour(1))
         end
     end
+    return sys
 end
 
 
