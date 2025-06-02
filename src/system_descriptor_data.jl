@@ -5,7 +5,7 @@ const SYSTEM_CATALOG = [
         name = "csys5_custom",
         description = "5-Bus system with kwargs to build",
         category = PSISystems,
-        raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
+        raw_data = joinpath(DATA_DIR),
         build_function = build_custom_csys5,
         supported_arguments = [
             SystemArgument(;

@@ -104,18 +104,23 @@ function build_custom_csys5(;raw_data,add_forecasts=true,
         if decision_model_type == "uc"
             timeseries_metadata_file = joinpath(
                 raw_data,
+                "5-Bus",
                 "5bus_ts",
                 "7day",
                 "timeseries_pointers_da_7day.json",
             )
+            add_time_series!(sys,timeseries_metadata_file;resolution=3600)
             PSY.transform_single_time_series!(sys, Hour(24), Hour(24))
         elseif decision_model_type == "ed"
             timeseries_metadata_file = joinpath(
                 raw_data,
+                "5-Bus",
                 "5bus_ts",
                 "7day",
-                "timeseries_pointers_rt_7day.json",
+                "timeseries_pointers_rt_7day_copy.json",
             )
+            @info "Adding economic dispatch timeseries data"
+            add_time_series!(sys,timeseries_metadata_file;resolution=nothing)
             PSY.transform_single_time_series!(sys, Hour(2), Hour(1))
         end
     end
