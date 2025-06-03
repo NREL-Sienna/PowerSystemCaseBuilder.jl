@@ -54,26 +54,20 @@ function build_5_bus_hydro_uc_sys(; add_forecasts, raw_data, sys_kwargs...)
     return c_sys5_hy_uc
 end
 
-function build_5_bus_hydro_ed_sys(; raw_data, kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
-    rawsys = PSY.PowerSystemTableData(
-        raw_data,
-        100.0,
-        joinpath(raw_data, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(raw_data, "generator_mapping.yaml"),
+function build_5_bus_hydro_ed_sys(; add_forecasts, raw_data, sys_kwargs...)
+
+    c_sys5_hy_ed = build_custom_csys5(;raw_data,add_forecasts, 
+    decision_model_type="ed",
+    withStandardLoad=true,
+    withThermalStandard=true,
+    withRenewableDispatch=true,
+    withRenewableNonDispatch=false,
+    withEnergyReservoirStorage=true,
+    withInterruptiblePowerLoad=false,
+    withHydroReservoir=true,
+    withHydroDispatch=true,
+    sys_kwargs...,
     )
-    c_sys5_hy_ed = PSY.System(
-        rawsys;
-        timeseries_metadata_file = joinpath(
-            raw_data,
-            "5bus_ts",
-            "7day",
-            "timeseries_pointers_rt_7day.json",
-        ),
-        time_series_in_memory = true,
-        sys_kwargs...,
-    )
-    PSY.transform_single_time_series!(c_sys5_hy_ed, Hour(2), Hour(1))
 
     return c_sys5_hy_ed
 end
