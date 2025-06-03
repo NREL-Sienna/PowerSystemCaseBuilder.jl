@@ -54,36 +54,6 @@ function build_5_bus_hydro_uc_sys(; add_forecasts, raw_data, sys_kwargs...)
     return c_sys5_hy_uc
 end
 
-function build_5_bus_hydro_uc_sys_targets(; add_forecasts, raw_data, sys_kwargs...)
-    rawsys = PSY.PowerSystemTableData(
-        raw_data,
-        100.0,
-        joinpath(raw_data, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(raw_data, "generator_mapping.yaml"),
-    )
-    if add_forecasts
-        c_sys5_hy_uc = PSY.System(
-            rawsys;
-            timeseries_metadata_file = joinpath(
-                raw_data,
-                "5bus_ts",
-                "7day",
-                "timeseries_pointers_da_7day.json",
-            ),
-            time_series_in_memory = true,
-            sys_kwargs...,
-        )
-        PSY.transform_single_time_series!(c_sys5_hy_uc, Hour(24), Hour(24))
-    else
-        c_sys5_hy_uc = PSY.System(rawsys; sys_kwargs...)
-    end
-    cost = HydroGenerationCost(CostCurve(LinearCurve(0.15)), 0.0)
-    for hy in get_components(HydroEnergyReservoir, c_sys5_hy_uc)
-        set_operation_cost!(hy, cost)
-    end
-    return c_sys5_hy_uc
-end
-
 function build_5_bus_hydro_ed_sys(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     rawsys = PSY.PowerSystemTableData(
