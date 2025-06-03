@@ -782,6 +782,13 @@ const SYSTEM_CATALOG = [
         category = PSISystems,
         raw_data = joinpath(DATA_DIR, "5-Bus"),
         build_function = build_5_bus_hydro_wk_sys,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "5_bus_hydro_wk_sys_with_targets",

@@ -110,7 +110,17 @@ function build_custom_csys5(;raw_data,add_forecasts=true,
     ## decision_model_type ##
 
     if add_forecasts
-        if decision_model_type == "uc"
+
+        if decision_model_type == "wk"
+            timeseries_metadata_file = joinpath(
+            raw_data,
+            "5bus_ts",
+            "7day",
+            "timeseries_pointers_wk_7day.json",
+            )
+            add_time_series!(sys,timeseries_metadata_file;resolution=nothing)
+            PSY.transform_single_time_series!(sys, Hour(48), Hour(48))
+        elseif decision_model_type == "uc"
             timeseries_metadata_file = joinpath(
                 raw_data,
                 "5-Bus",
