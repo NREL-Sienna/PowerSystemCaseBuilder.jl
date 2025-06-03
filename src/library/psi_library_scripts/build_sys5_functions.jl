@@ -35,6 +35,11 @@ function add_RenewableDispatch!(sys)
     add_components!(sys,renewable_dispatch5(buses))
 end
 
+function add_HydroDispatch!(sys)
+    buses = get_components(ACBus,sys) |> collect
+    add_components!(sys,hydro_dispatch5(buses))
+end
+
 function add_RenewableNonDispatch!(sys)
     buses = get_components(ACBus,sys) |> collect
     add_components!(sys,renewable_nondispatch5(buses))
@@ -72,6 +77,7 @@ function build_custom_csys5(;raw_data,add_forecasts=true,
     withEnergyReservoirStorage=false,
     withInterruptiblePowerLoad=false,
     withHydroReservoir=false,
+    withHydroDispatch=false,
     sys_kwargs...,
     )
     sys = build_sys5_nodes(; add_forecasts, raw_data, sys_kwargs...,)
@@ -96,6 +102,11 @@ function build_custom_csys5(;raw_data,add_forecasts=true,
     end
     if withHydroReservoir
         add_HydroReservoir!(sys)
+    end
+    print("\n",withHydroDispatch,"\n")
+    print("\n",withHydroReservoir,"\n")
+    if withHydroDispatch
+        add_HydroDispatch!(sys)
     end
 
     ## decision_model_type ##

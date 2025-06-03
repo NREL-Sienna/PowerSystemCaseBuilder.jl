@@ -53,6 +53,11 @@ const SYSTEM_CATALOG = [
                 default = true,
                 allowed_values = Set([true, false]),
             ),
+            SystemArgument(;
+                name = :withHydroDispatch,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
         ],
     ),
     ##
