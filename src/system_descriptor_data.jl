@@ -107,7 +107,7 @@ const SYSTEM_CATALOG = [
         name = "c_sys5_pjm",
         description = "5-Bus system",
         category = PSISystems,
-        raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
+        raw_data = joinpath(DATA_DIR),
         build_function = build_c_sys5_pjm,
         supported_arguments = [
             SystemArgument(;
@@ -135,7 +135,7 @@ const SYSTEM_CATALOG = [
         name = "c_sys5_pjm_rt",
         description = "5-Bus system",
         category = PSISystems,
-        raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
+        raw_data = joinpath(DATA_DIR),
         build_function = build_c_sys5_pjm_rt,
         supported_arguments = [
             SystemArgument(;
@@ -752,7 +752,7 @@ const SYSTEM_CATALOG = [
         name = "5_bus_hydro_uc_sys",
         description = "5-Bus hydro unit commitment data",
         category = PSISystems,
-        raw_data = joinpath(DATA_DIR, "5-Bus"),
+        raw_data = joinpath(DATA_DIR),
         build_function = build_5_bus_hydro_uc_sys,
         supported_arguments = [
             SystemArgument(;

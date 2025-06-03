@@ -103,8 +103,6 @@ function build_custom_csys5(;raw_data,add_forecasts=true,
     if withHydroReservoir
         add_HydroReservoir!(sys)
     end
-    print("\n",withHydroDispatch,"\n")
-    print("\n",withHydroReservoir,"\n")
     if withHydroDispatch
         add_HydroDispatch!(sys)
     end
