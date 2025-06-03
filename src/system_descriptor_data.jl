@@ -784,13 +784,6 @@ const SYSTEM_CATALOG = [
         build_function = build_5_bus_hydro_wk_sys,
     ),
     SystemDescriptor(;
-        name = "5_bus_hydro_ed_sys_with_targets",
-        description = "5-Bus hydro economic dispatch data with energy targets",
-        category = PSISystems,
-        raw_data = joinpath(DATA_DIR, "5-Bus"),
-        build_function = build_5_bus_hydro_ed_sys_targets,
-    ),
-    SystemDescriptor(;
         name = "5_bus_hydro_wk_sys_with_targets",
         description = "5-Bus hydro system for weekly dispatch with energy targets",
         category = PSISystems,
