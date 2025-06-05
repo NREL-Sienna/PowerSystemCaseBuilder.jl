@@ -10,7 +10,7 @@ function build_c_sys5_pjm(; add_forecasts, raw_data, sys_kwargs...)
     withRenewableNonDispatch=false,
     withEnergyReservoirStorage=true,
     withInterruptiblePowerLoad=false,
-    withHydroReservoir=false,
+    withHydroTurbine=false,
     withHydroDispatch=false,
     sys_kwargs...,
     )
@@ -46,7 +46,8 @@ function build_5_bus_hydro_uc_sys(; add_forecasts, raw_data, sys_kwargs...)
     withRenewableNonDispatch=false,
     withEnergyReservoirStorage=true,
     withInterruptiblePowerLoad=false,
-    withHydroReservoir=true,
+    withHydroTurbine=true,
+    withHydroPumpTurbine=true,
     withHydroDispatch=true,
     sys_kwargs...,
     )
@@ -64,7 +65,8 @@ function build_5_bus_hydro_ed_sys(; add_forecasts, raw_data, sys_kwargs...)
     withRenewableNonDispatch=false,
     withEnergyReservoirStorage=true,
     withInterruptiblePowerLoad=false,
-    withHydroReservoir=true,
+    withHydroTurbine=true,
+    withHydroPumpTurbine=true,
     withHydroDispatch=true,
     sys_kwargs...,
     )
@@ -82,7 +84,8 @@ function build_5_bus_hydro_wk_sys(; add_forecasts,raw_data, sys_kwargs...)
     withRenewableNonDispatch=false,
     withEnergyReservoirStorage=true,
     withInterruptiblePowerLoad=false,
-    withHydroReservoir=true,
+    withHydroTurbine=true,
+    withHydroPumpTurbine=true,
     withHydroDispatch=true,
     sys_kwargs...,
     )

@@ -55,9 +55,19 @@ function add_InterruptiblePowerLoad!(sys)
     add_components!(sys,interruptible(buses))
 end
 
-function add_HydroReservoir!(sys)
+function add_HydroReservoirs!(sys)
     buses = get_components(ACBus,sys) |> collect
-    add_components!(sys,phes5(buses))
+    add_components!(sys,cabincreekreservoirs(buses))
+end
+
+function add_HydroTurbine!(sys)
+    buses = get_components(ACBus,sys) |> collect
+    add_components!(sys,cabincreekpump(buses,sys))
+end
+
+function add_HydroPumpTurbine!(sys)
+    buses = get_components(ACBus,sys) |> collect
+    add_components!(sys,cabincreeknopump(buses,sys))
 end
 
 """build the pjm 5bus system and select the desired component types to be added in. \\
@@ -76,7 +86,8 @@ function build_custom_csys5(;raw_data,add_forecasts=true,
     withRenewableNonDispatch=false,
     withEnergyReservoirStorage=false,
     withInterruptiblePowerLoad=false,
-    withHydroReservoir=false,
+    withHydroTurbine=false,
+    withHydroPumpTurbine=false,
     withHydroDispatch=false,
     sys_kwargs...,
     )
@@ -100,8 +111,15 @@ function build_custom_csys5(;raw_data,add_forecasts=true,
     if withInterruptiblePowerLoad
         add_InterruptiblePowerLoad!(sys)
     end
-    if withHydroReservoir
-        add_HydroReservoir!(sys)
+    # make sure to add HydroReservoir first
+    if withHydroTurbine || withHydroPumpTurbine
+        add_HydroReservoirs!(sys)
+    end
+    if withHydroTurbine
+        add_HydroTurbine!(sys)
+    end
+    if withHydroPumpTurbine
+        add_HydroPumpTurbine!(sys)
     end
     if withHydroDispatch
         add_HydroDispatch!(sys)
@@ -116,7 +134,7 @@ function build_custom_csys5(;raw_data,add_forecasts=true,
             raw_data,
             "5bus_ts",
             "7day",
-            "timeseries_pointers_wk_7day.json",
+            "timeseries_pointers_wk_7day_copy.json",
             )
             add_time_series!(sys,timeseries_metadata_file;resolution=nothing)
             PSY.transform_single_time_series!(sys, Hour(48), Hour(48))
@@ -126,9 +144,9 @@ function build_custom_csys5(;raw_data,add_forecasts=true,
                 "5-Bus",
                 "5bus_ts",
                 "7day",
-                "timeseries_pointers_da_7day.json",
+                "timeseries_pointers_da_7day_copy.json",
             )
-            add_time_series!(sys,timeseries_metadata_file;resolution=3600)
+            add_time_series!(sys,timeseries_metadata_file;resolution=nothing)
             PSY.transform_single_time_series!(sys, Hour(24), Hour(24))
         elseif decision_model_type == "ed"
             timeseries_metadata_file = joinpath(
@@ -172,8 +190,7 @@ function build_csys5_all_components_uc(;raw_data,add_forecasts)
         withRenewableDispatch=true,
         withRenewableNonDispatch=true,
         withEnergyReservoirStorage=false,
-        withInterruptiblePowerLoad=false,
-        withHydroReservoir=false
+        withInterruptiblePowerLoad=false
         )
 
 end

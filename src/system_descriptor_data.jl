@@ -49,7 +49,12 @@ const SYSTEM_CATALOG = [
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
-                name = :withHydroReservoir,
+                name = :withHydroTurbine,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :withHydroPumpTurbine,
                 default = true,
                 allowed_values = Set([true, false]),
             ),
