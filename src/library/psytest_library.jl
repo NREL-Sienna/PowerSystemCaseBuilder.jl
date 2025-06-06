@@ -154,6 +154,7 @@ function build_dynamic_inverter_sys(; kwargs...)
         PSY.ACBus(
             1, #number
             "Bus 1", #Name
+            true, #available
             "REF", #BusType (REF, PV, PQ)
             0, #Angle in radians
             1.06, #Voltage in pu
@@ -165,6 +166,7 @@ function build_dynamic_inverter_sys(; kwargs...)
         PSY.ACBus(
             2,
             "Bus 2",
+            true, #available
             "PV",
             0,
             1.045,
