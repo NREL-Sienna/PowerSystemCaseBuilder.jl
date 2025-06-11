@@ -1139,6 +1139,13 @@ const SYSTEM_CATALOG = [
         raw_data = joinpath(DATA_DIR, "psse_raw", "parser_test_a.raw"),
         build_function = build_pti,
     ),
+    SystemDescriptor(;
+        name = "isolated_bus_test_system",
+        description = "PSSE isolated bus test system",
+        category = PSSEParsingTestSystems,
+        raw_data = joinpath(DATA_DIR, "psse_raw", "isolated_bus_test.raw"),
+        build_function = build_pti,
+    ),
     # SystemDescriptor(
     #     name =  "pti_parser_test_b_sys",
     #     description =  "PSSE Test system",
