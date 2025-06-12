@@ -129,15 +129,19 @@ function build_custom_csys5(;raw_data,add_forecasts=true,
 
     if add_forecasts
 
+        # one week model
         if decision_model_type == "wk"
             timeseries_metadata_file = joinpath(
             raw_data,
+            "5-bus",
             "5bus_ts",
             "7day",
             "timeseries_pointers_wk_7day_copy.json",
             )
             add_time_series!(sys,timeseries_metadata_file;resolution=nothing)
-            PSY.transform_single_time_series!(sys, Hour(48), Hour(48))
+            PSY.transform_single_time_series!(sys, Hour(24*7), Hour(24*7))
+
+        # unit commitment 24 hours model
         elseif decision_model_type == "uc"
             timeseries_metadata_file = joinpath(
                 raw_data,
@@ -148,6 +152,8 @@ function build_custom_csys5(;raw_data,add_forecasts=true,
             )
             add_time_series!(sys,timeseries_metadata_file;resolution=nothing)
             PSY.transform_single_time_series!(sys, Hour(24), Hour(24))
+
+        # economic dispatch 1 hour forecast with 15-minute execution steps
         elseif decision_model_type == "ed"
             timeseries_metadata_file = joinpath(
                 raw_data,
@@ -158,7 +164,7 @@ function build_custom_csys5(;raw_data,add_forecasts=true,
             )
             @info "Adding economic dispatch timeseries data"
             add_time_series!(sys,timeseries_metadata_file;resolution=nothing)
-            PSY.transform_single_time_series!(sys, Hour(2), Hour(1))
+            PSY.transform_single_time_series!(sys, Hour(1), Minute(15))
         end
     end
     return sys
