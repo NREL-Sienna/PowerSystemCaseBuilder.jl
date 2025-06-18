@@ -979,6 +979,13 @@ const SYSTEM_CATALOG = [
         build_function = build_matpower,
     ),
     SystemDescriptor(;
+        name = "matpower_case5_pjm_sys",
+        description = "Original Matpower Test system",
+        category = MatpowerTestSystems,
+        raw_data = joinpath(DATA_DIR, "matpower", "case5_pjm.m"),
+        build_function = build_matpower,
+    ),
+    SystemDescriptor(;
         name = "matpower_case5_sys",
         description = "Matpower Test system",
         category = MatpowerTestSystems,
