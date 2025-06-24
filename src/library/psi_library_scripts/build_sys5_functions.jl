@@ -15,7 +15,7 @@ function build_sys5_nodes(; add_forecasts, raw_data, sys_kwargs...) #might remov
         100.0,
         nodes,
         branches5(nodes); # this is in PowerSystemsTestData/psy_data
-        sys_kwargs..., # might remove...
+        sys_kwargs..., 
     )
     return c_sys5
 end
@@ -55,9 +55,9 @@ function add_InterruptiblePowerLoad!(sys)
     add_components!(sys,interruptible(buses))
 end
 
-function add_HydroReservoirs!(sys)
+function add_HydroReservoirs!(sys,hydroLevelDataType)
     buses = get_components(ACBus,sys) |> collect
-    add_components!(sys,cabincreekreservoirs(buses))
+    add_components!(sys,cabincreekreservoirs(buses,hydroLevelDataType))
 end
 
 function add_HydroTurbine!(sys)
@@ -89,6 +89,7 @@ function build_custom_csys5(;raw_data,add_forecasts=true,
     withHydroTurbine=false,
     withHydroPumpTurbine=false,
     withHydroDispatch=false,
+    hydroLevelDataType=PSY.ReservoirDataType.USABLE_VOLUME,
     sys_kwargs...,
     )
     sys = build_sys5_nodes(; add_forecasts, raw_data, sys_kwargs...,)
@@ -113,7 +114,7 @@ function build_custom_csys5(;raw_data,add_forecasts=true,
     end
     # make sure to add HydroReservoir first
     if withHydroTurbine || withHydroPumpTurbine
-        add_HydroReservoirs!(sys)
+        add_HydroReservoirs!(sys,hydroLevelDataType)
     end
     if withHydroTurbine
         add_HydroTurbine!(sys)
@@ -131,12 +132,13 @@ function build_custom_csys5(;raw_data,add_forecasts=true,
 
         # one week model
         if decision_model_type == "wk"
+
             timeseries_metadata_file = joinpath(
             raw_data,
             "5-bus",
             "5bus_ts",
             "7day",
-            "timeseries_pointers_wk_7day_copy.json",
+            "timeseries_pointers_wk_7day_"*string(hydroLevelDataType)*".json",
             )
             add_time_series!(sys,timeseries_metadata_file;resolution=nothing)
             PSY.transform_single_time_series!(sys, Hour(24*7), Hour(24*7))
@@ -148,7 +150,7 @@ function build_custom_csys5(;raw_data,add_forecasts=true,
                 "5-Bus",
                 "5bus_ts",
                 "7day",
-                "timeseries_pointers_da_7day_copy.json",
+                "timeseries_pointers_da_7day_"*string(hydroLevelDataType)*".json",
             )
             add_time_series!(sys,timeseries_metadata_file;resolution=nothing)
             PSY.transform_single_time_series!(sys, Hour(24), Hour(24))
@@ -160,7 +162,7 @@ function build_custom_csys5(;raw_data,add_forecasts=true,
                 "5-Bus",
                 "5bus_ts",
                 "7day",
-                "timeseries_pointers_rt_7day_copy.json",
+                "timeseries_pointers_rt_7day_"*string(hydroLevelDataType)*".json",
             )
             @info "Adding economic dispatch timeseries data"
             add_time_series!(sys,timeseries_metadata_file;resolution=nothing)
