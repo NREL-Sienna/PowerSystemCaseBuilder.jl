@@ -2669,7 +2669,8 @@ function build_test_RTS_GMLC_sys(; raw_data, add_forecasts, kwargs...)
         rawsys = PSY.PowerSystemTableData(
             raw_data,
             100.0,
-            joinpath(raw_data, "user_descriptors.yaml"),
+            joinpath(raw_data, "user_descriptors.yaml");
+            generator_mapping_file = joinpath(raw_data, "generator_mapping.yaml"),
         )
         sys = PSY.System(rawsys; time_series_resolution = Dates.Hour(1), sys_kwargs...)
         return sys
