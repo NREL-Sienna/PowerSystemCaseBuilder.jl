@@ -2599,7 +2599,7 @@ function build_5_bus_matpower_DA(; raw_data, kwargs...)
         joinpath(FORECASTS_DIR, "timeseries_pointers_da_7day.json"),
     )
 
-    sys = System(pm_data)
+    sys = System(pm_data; sys_kwargs...)
     reserves = [
         VariableReserve{ReserveUp}("REG1", true, 5.0, 0.1),
         VariableReserve{ReserveUp}("REG2", true, 5.0, 0.06),
@@ -2646,7 +2646,7 @@ function build_5_bus_matpower_AGC(; raw_data, kwargs...)
         joinpath(FORECASTS_DIR, "timeseries_pointers_agc_7day.json"),
     )
 
-    sys = System(pm_data)
+    sys = System(pm_data; sys_kwargs...)
 
     add_time_series!(sys, tsp)
     return sys
@@ -4607,7 +4607,7 @@ function _build_cost_base_test_sys(; kwargs...)
             )
     end
     load_forecast = PSY.Deterministic("max_active_power", DA_load_forecast)
-    cost_test_sys = PSY.System(100.0;)
+    cost_test_sys = PSY.System(100.0; sys_kwargs...)
     PSY.add_component!(cost_test_sys, node)
     PSY.add_component!(cost_test_sys, load)
     PSY.add_component!(cost_test_sys, gen)
