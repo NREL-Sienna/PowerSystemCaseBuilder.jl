@@ -1245,7 +1245,7 @@ const SYSTEM_CATALOG = [
     #     build_function  =  build_pti
     # ),
     SystemDescriptor(;
-        name = "pti_case14_with_pst3w",
+        name = "pti_case14_with_pst3w_sys",
         description = "PSSE Case 14 with PST3W",
         category = PSSEParsingTestSystems,
         raw_data = joinpath(DATA_DIR, "psse_raw", "case14_with_pst3w.raw"),
