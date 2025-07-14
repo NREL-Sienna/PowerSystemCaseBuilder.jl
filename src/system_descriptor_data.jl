@@ -1049,6 +1049,13 @@ const SYSTEM_CATALOG = [
         build_function = build_matpower,
     ),
     SystemDescriptor(;
+        name = "matpower_cats",
+        description = "Matpower California test system",
+        category = MatpowerTestSystems,
+        raw_data = joinpath(DATA_DIR, "matpower", "CaliforniaTestSystem.m"),
+        build_function = build_matpower,
+    ),
+    SystemDescriptor(;
         name = "pti_case3_sys",
         description = "PSSE 3-bus Test system",
         category = PSSEParsingTestSystems,
@@ -1172,6 +1179,13 @@ const SYSTEM_CATALOG = [
         description = "PSSE zero impedance branch test system",
         category = PSSEParsingTestSystems,
         raw_data = joinpath(DATA_DIR, "psse_raw", "case14_zero_impedance_branch.raw"),
+        build_function = build_pti,
+    ),
+    SystemDescriptor(;
+        name = "psse_14_network_reduction_test_system",
+        description = "PSSE network reduction test system",
+        category = PSSEParsingTestSystems,
+        raw_data = joinpath(DATA_DIR, "psse_raw", "case14_reductions.raw"),
         build_function = build_pti,
     ),
     SystemDescriptor(;
