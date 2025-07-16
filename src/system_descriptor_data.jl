@@ -1192,7 +1192,7 @@ const SYSTEM_CATALOG = [
         name = "Base_Eastern_Interconnect_515GW",
         description = "Synthetic Eastern Interconnection system with 515 GW of generation",
         category = PSSEParsingTestSystems,
-        raw_data = joinpath(DATA_DIR, "psse_raw", "Base_Eastern_Interconnect_515GW.raw"),
+        raw_data = joinpath(DATA_DIR, "psse_raw", "Base_Eastern_Interconnect_515GW.RAW"),
         build_function = build_pti,
     ),
     # SystemDescriptor(
