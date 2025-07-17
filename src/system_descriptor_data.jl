@@ -1182,6 +1182,13 @@ const SYSTEM_CATALOG = [
         build_function = build_pti,
     ),
     SystemDescriptor(;
+        name = "psse_4_zero_impedance_3wt_test_system",
+        description = "PSSE zero impedance 3-winding transformer test system",
+        category = PSSEParsingTestSystems,
+        raw_data = joinpath(DATA_DIR, "psse_raw", "case4_zero_impedance_3wt.raw"),
+        build_function = build_pti,
+    ),
+    SystemDescriptor(;
         name = "psse_14_network_reduction_test_system",
         description = "PSSE network reduction test system",
         category = PSSEParsingTestSystems,
