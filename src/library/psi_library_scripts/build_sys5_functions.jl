@@ -62,12 +62,12 @@ end
 
 function add_HydroTurbine!(sys)
     buses = get_components(ACBus,sys) |> collect
-    add_components!(sys,cabincreekpump(buses,sys))
+    add_components!(sys,cabincreeknopump(buses,sys))
 end
 
 function add_HydroPumpTurbine!(sys)
     buses = get_components(ACBus,sys) |> collect
-    add_components!(sys,cabincreeknopump(buses,sys))
+    add_components!(sys,cabincreekpump(buses,sys))
 end
 
 """build the pjm 5bus system and select the desired component types to be added in. \\
@@ -166,7 +166,7 @@ function build_custom_csys5(;raw_data,add_forecasts=true,
             )
             @info "Adding economic dispatch timeseries data"
             add_time_series!(sys,timeseries_metadata_file;resolution=nothing)
-            PSY.transform_single_time_series!(sys, Hour(1), Minute(15))
+            PSY.transform_single_time_series!(sys, Hour(1), Hour(1))
         end
     end
     return sys

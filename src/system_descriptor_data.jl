@@ -45,22 +45,22 @@ const SYSTEM_CATALOG = [
             ),
             SystemArgument(;
                 name = :withInterruptiblePowerLoad,
-                default = true,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
                 name = :withHydroTurbine,
-                default = true,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
                 name = :withHydroPumpTurbine,
-                default = true,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
                 name = :withHydroDispatch,
-                default = true,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
         ],
