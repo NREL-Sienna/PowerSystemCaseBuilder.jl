@@ -1154,6 +1154,13 @@ const SYSTEM_CATALOG = [
         build_function = build_pti,
     ),
     SystemDescriptor(;
+        name = "pti_case14_with_interruptible_loads_sys",
+        description = "PSSE with interruptible loads Test system",
+        category = PSSEParsingTestSystems,
+        raw_data = joinpath(DATA_DIR, "psse_raw", "case14_with_interruptible_loads.raw"),
+        build_function = build_pti,
+    ),
+    SystemDescriptor(;
         name = "isolated_bus_test_system",
         description = "PSSE isolated bus test system",
         category = PSSEParsingTestSystems,
