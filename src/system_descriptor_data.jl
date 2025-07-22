@@ -1161,7 +1161,7 @@ const SYSTEM_CATALOG = [
         build_function = build_pti,
     ),
     SystemDescriptor(;
-        name = "pti_case8_voltage_wind_correction_sys",
+        name = "pti_case8_voltage_winding_correction_sys",
         description = "PSSE winding voltage correction test system",
         category = PSSEParsingTestSystems,
         raw_data = joinpath(DATA_DIR, "psse_raw", "case8_voltage_wind_correction.raw"),
