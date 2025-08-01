@@ -1,396 +1,94 @@
+include(joinpath("psi_library_scripts","build_sys5_functions.jl"))
+
 function build_c_sys5_pjm(; add_forecasts, raw_data, sys_kwargs...)
-    nodes = nodes5()
-    c_sys5 = PSY.System(
-        100.0,
-        nodes,
-        thermal_generators5(nodes),
-        loads5(nodes),
-        branches5(nodes);
-        sys_kwargs...,
-    )
-    pv_device = PSY.RenewableDispatch(
-        "PVBus5",
-        true,
-        nodes[3],
-        0.0,
-        0.0,
-        3.84,
-        PrimeMovers.PVe,
-        (min = 0.0, max = 0.0),
-        1.0,
-        RenewableGenerationCost(nothing),
-        100.0,
-    )
-    wind_device = PSY.RenewableDispatch(
-        "WindBus1",
-        true,
-        nodes[1],
-        0.0,
-        0.0,
-        4.51,
-        PrimeMovers.WT,
-        (min = 0.0, max = 0.0),
-        1.0,
-        RenewableGenerationCost(nothing),
-        100.0,
-    )
-    PSY.add_component!(c_sys5, pv_device)
-    PSY.add_component!(c_sys5, wind_device)
-    timeseries_dataset =
-        HDF5.h5read(joinpath(DATA_DIR, "5-Bus", "PJM_5_BUS_7_DAYS.h5"), "Time Series Data")
-    refdate = first(DayAhead)
-    da_load_time_series = DateTime[]
-    da_load_time_series_val = Float64[]
 
-    for i in 1:7
-        for v in timeseries_dataset["DA Load Data"]["DA_LOAD_DAY_$(i)"]
-            h = refdate + Hour(v.HOUR + (i - 1) * 24)
-            push!(da_load_time_series, h)
-            push!(da_load_time_series_val, v.LOAD)
-        end
-    end
-
-    re_timeseries = Dict(
-        "PVBus5" => CSV.read(
-            joinpath(
-                DATA_DIR,
-                "5-Bus",
-                "5bus_ts",
-                "gen",
-                "Renewable",
-                "PV",
-                "da_solar.csv",
-            ),
-            DataFrame,
-        )[
-            :,
-            :SolarBusC,
-        ],
-        "WindBus1" => CSV.read(
-            joinpath(
-                DATA_DIR,
-                "5-Bus",
-                "5bus_ts",
-                "gen",
-                "Renewable",
-                "WIND",
-                "da_wind.csv",
-            ),
-            DataFrame,
-        )[
-            :,
-            :WindBusA,
-        ],
+    c_sys5 = build_custom_csys5(;raw_data,add_forecasts, 
+    decision_model_type="uc",
+    withStandardLoad=true,
+    withThermalStandard=true,
+    withRenewableDispatch=true,
+    withRenewableNonDispatch=false,
+    withEnergyReservoirStorage=true,
+    withInterruptiblePowerLoad=false,
+    withHydroTurbine=false,
+    withHydroDispatch=false,
+    sys_kwargs...,
     )
-    re_timeseries["WindBus1"] = re_timeseries["WindBus1"] ./ 451
-
-    bus_dist_fact = Dict("Bus2" => 0.33, "Bus3" => 0.33, "Bus4" => 0.34)
-    peak_load = maximum(da_load_time_series_val)
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5))
-            set_max_active_power!(l, bus_dist_fact[PSY.get_name(l)] * peak_load / 100)
-            add_time_series!(
-                c_sys5,
-                l,
-                PSY.SingleTimeSeries(
-                    "max_active_power",
-                    TimeArray(da_load_time_series, da_load_time_series_val ./ peak_load),
-                ),
-            )
-        end
-        for (ix, g) in enumerate(PSY.get_components(RenewableDispatch, c_sys5))
-            add_time_series!(
-                c_sys5,
-                g,
-                PSY.SingleTimeSeries(
-                    "max_active_power",
-                    TimeArray(da_load_time_series, re_timeseries[PSY.get_name(g)]),
-                ),
-            )
-        end
-    end
 
     return c_sys5
 end
 
 function build_c_sys5_pjm_rt(; add_forecasts, raw_data, sys_kwargs...)
-    nodes = nodes5()
-    c_sys5 = PSY.System(
-        100.0,
-        nodes,
-        thermal_generators5(nodes),
-        loads5(nodes),
-        branches5(nodes);
-        sys_kwargs...,
-    )
-    pv_device = PSY.RenewableDispatch(
-        "PVBus5",
-        true,
-        nodes[3],
-        0.0,
-        0.0,
-        3.84,
-        PrimeMovers.PVe,
-        (min = 0.0, max = 0.0),
-        1.0,
-        RenewableGenerationCost(nothing),
-        100.0,
-    )
-    wind_device = PSY.RenewableDispatch(
-        "WindBus1",
-        true,
-        nodes[1],
-        0.0,
-        0.0,
-        4.51,
-        PrimeMovers.WT,
-        (min = 0.0, max = 0.0),
-        1.0,
-        RenewableGenerationCost(nothing),
-        100.0,
-    )
-    PSY.add_component!(c_sys5, pv_device)
-    PSY.add_component!(c_sys5, wind_device)
-    timeseries_dataset =
-        HDF5.h5read(joinpath(DATA_DIR, "5-Bus", "PJM_5_BUS_7_DAYS.h5"), "Time Series Data")
-    refdate = first(DayAhead)
-    rt_load_time_series = DateTime[]
-    rt_load_time_series_val = Float64[]
-    for i in 1:7
-        for v in timeseries_dataset["Actual Load Data"]["ACTUAL_LOAD_DAY_$(i).xls"]
-            h = refdate + Second(round(v.Time * 86400)) + Day(i - 1)
-            push!(rt_load_time_series, h)
-            push!(rt_load_time_series_val, v.Load)
-        end
-    end
 
-    re_timeseries = Dict(
-        "PVBus5" => CSV.read(
-            joinpath(
-                DATA_DIR,
-                "5-Bus",
-                "5bus_ts",
-                "gen",
-                "Renewable",
-                "PV",
-                "rt_solar.csv",
-            ),
-            DataFrame,
-        )[
-            :,
-            :SolarBusC,
-        ],
-        "WindBus1" => CSV.read(
-            joinpath(
-                DATA_DIR,
-                "5-Bus",
-                "5bus_ts",
-                "gen",
-                "Renewable",
-                "WIND",
-                "rt_wind.csv",
-            ),
-            DataFrame,
-        )[
-            :,
-            :WindBusA,
-        ],
+    c_sys5 = build_custom_csys5(;raw_data,add_forecasts, 
+    decision_model_type="ed",
+    withStandardLoad=true,
+    withThermalStandard=true,
+    withRenewableDispatch=true,
+    withRenewableNonDispatch=false,
+    withEnergyReservoirStorage=true,
+    withInterruptiblePowerLoad=false,
+    withHydroReservoir=false,
+    withHydroDispatch=false,
+    sys_kwargs...,
     )
-
-    re_timeseries["WindBus1"] = re_timeseries["WindBus1"] ./ 451
-    re_timeseries["PVBus5"] = re_timeseries["PVBus5"] ./ maximum(re_timeseries["PVBus5"])
-
-    rt_re_time_stamps =
-        collect(DateTime("2024-01-01T00:00:00"):Minute(5):DateTime("2024-01-07T23:55:00"))
-
-    rt_timearray = TimeArray(rt_load_time_series, rt_load_time_series_val)
-    rt_timearray = collapse(rt_timearray, Minute(5), first, TimeSeries.mean)
-    bus_dist_fact = Dict("Bus2" => 0.33, "Bus3" => 0.33, "Bus4" => 0.34)
-    peak_load = maximum(rt_load_time_series_val)
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5))
-            set_max_active_power!(l, bus_dist_fact[PSY.get_name(l)] * peak_load / 100)
-            rt_timearray =
-                TimeArray(rt_load_time_series, rt_load_time_series_val ./ peak_load)
-            rt_timearray = collapse(rt_timearray, Minute(5), first, TimeSeries.mean)
-            add_time_series!(
-                c_sys5,
-                l,
-                PSY.SingleTimeSeries("max_active_power", rt_timearray),
-            )
-        end
-        for (ix, g) in enumerate(PSY.get_components(RenewableDispatch, c_sys5))
-            add_time_series!(
-                c_sys5,
-                g,
-                PSY.SingleTimeSeries(
-                    "max_active_power",
-                    TimeArray(rt_re_time_stamps, re_timeseries[PSY.get_name(g)]),
-                ),
-            )
-        end
-    end
 
     return c_sys5
 end
 
 function build_5_bus_hydro_uc_sys(; add_forecasts, raw_data, sys_kwargs...)
-    rawsys = PSY.PowerSystemTableData(
-        raw_data,
-        100.0,
-        joinpath(raw_data, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(raw_data, "generator_mapping.yaml"),
-    )
-    if add_forecasts
-        c_sys5_hy_uc = PSY.System(
-            rawsys;
-            timeseries_metadata_file = joinpath(
-                raw_data,
-                "5bus_ts",
-                "7day",
-                "timeseries_pointers_da_7day.json",
-            ),
-            time_series_in_memory = true,
-            sys_kwargs...,
-        )
-        PSY.transform_single_time_series!(c_sys5_hy_uc, Hour(24), Hour(24))
-    else
-        c_sys5_hy_uc = PSY.System(rawsys; sys_kwargs...)
-    end
 
+    c_sys5_hy_uc = build_custom_csys5(;raw_data,add_forecasts, 
+    decision_model_type="uc",
+    withStandardLoad=true,
+    withThermalStandard=true,
+    withRenewableDispatch=true,
+    withRenewableNonDispatch=false,
+    withEnergyReservoirStorage=true,
+    withInterruptiblePowerLoad=false,
+    withHydroTurbine=true,
+    withHydroPumpTurbine=true,
+    withHydroDispatch=true,
+    sys_kwargs...,
+    )
+    
     return c_sys5_hy_uc
 end
 
-function build_5_bus_hydro_uc_sys_targets(; add_forecasts, raw_data, sys_kwargs...)
-    rawsys = PSY.PowerSystemTableData(
-        raw_data,
-        100.0,
-        joinpath(raw_data, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(raw_data, "generator_mapping.yaml"),
-    )
-    if add_forecasts
-        c_sys5_hy_uc = PSY.System(
-            rawsys;
-            timeseries_metadata_file = joinpath(
-                raw_data,
-                "5bus_ts",
-                "7day",
-                "timeseries_pointers_da_7day.json",
-            ),
-            time_series_in_memory = true,
-            sys_kwargs...,
-        )
-        PSY.transform_single_time_series!(c_sys5_hy_uc, Hour(24), Hour(24))
-    else
-        c_sys5_hy_uc = PSY.System(rawsys; sys_kwargs...)
-    end
-    cost = HydroGenerationCost(CostCurve(LinearCurve(0.15)), 0.0)
-    for hy in get_components(HydroEnergyReservoir, c_sys5_hy_uc)
-        set_operation_cost!(hy, cost)
-    end
-    return c_sys5_hy_uc
-end
+function build_5_bus_hydro_ed_sys(; add_forecasts, raw_data, sys_kwargs...)
 
-function build_5_bus_hydro_ed_sys(; raw_data, kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
-    rawsys = PSY.PowerSystemTableData(
-        raw_data,
-        100.0,
-        joinpath(raw_data, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(raw_data, "generator_mapping.yaml"),
+    c_sys5_hy_ed = build_custom_csys5(;raw_data,add_forecasts, 
+    decision_model_type="ed",
+    withStandardLoad=true,
+    withThermalStandard=true,
+    withRenewableDispatch=true,
+    withRenewableNonDispatch=false,
+    withEnergyReservoirStorage=true,
+    withInterruptiblePowerLoad=false,
+    withHydroTurbine=true,
+    withHydroPumpTurbine=true,
+    withHydroDispatch=true,
+    sys_kwargs...,
     )
-    c_sys5_hy_ed = PSY.System(
-        rawsys;
-        timeseries_metadata_file = joinpath(
-            raw_data,
-            "5bus_ts",
-            "7day",
-            "timeseries_pointers_rt_7day.json",
-        ),
-        time_series_in_memory = true,
-        sys_kwargs...,
-    )
-    PSY.transform_single_time_series!(c_sys5_hy_ed, Hour(2), Hour(1))
 
     return c_sys5_hy_ed
 end
 
-function build_5_bus_hydro_ed_sys_targets(; raw_data, kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
-    rawsys = PSY.PowerSystemTableData(
-        raw_data,
-        100.0,
-        joinpath(raw_data, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(raw_data, "generator_mapping.yaml"),
-    )
-    c_sys5_hy_ed = PSY.System(
-        rawsys;
-        timeseries_metadata_file = joinpath(
-            raw_data,
-            "5bus_ts",
-            "7day",
-            "timeseries_pointers_rt_7day.json",
-        ),
-        time_series_in_memory = true,
-        sys_kwargs...,
-    )
-    cost = HydroGenerationCost(CostCurve(LinearCurve(0.15)), 0.0)
-    for hy in get_components(HydroEnergyReservoir, c_sys5_hy_ed)
-        set_operation_cost!(hy, cost)
-    end
-    PSY.transform_single_time_series!(c_sys5_hy_ed, Hour(2), Hour(1))
+function build_5_bus_hydro_wk_sys(; add_forecasts,raw_data, sys_kwargs...)
 
-    return c_sys5_hy_ed
-end
-
-function build_5_bus_hydro_wk_sys(; raw_data, kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
-    rawsys = PSY.PowerSystemTableData(
-        raw_data,
-        100.0,
-        joinpath(raw_data, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(raw_data, "generator_mapping.yaml"),
+    c_sys5_hy_wk = build_custom_csys5(;raw_data,add_forecasts, 
+    decision_model_type="wk",
+    withStandardLoad=true,
+    withThermalStandard=true,
+    withRenewableDispatch=true,
+    withRenewableNonDispatch=false,
+    withEnergyReservoirStorage=true,
+    withInterruptiblePowerLoad=false,
+    withHydroTurbine=true,
+    withHydroPumpTurbine=true,
+    withHydroDispatch=true,
+    sys_kwargs...,
     )
-    c_sys5_hy_wk = PSY.System(
-        rawsys;
-        timeseries_metadata_file = joinpath(
-            raw_data,
-            "5bus_ts",
-            "7day",
-            "timeseries_pointers_wk_7day.json",
-        ),
-        time_series_in_memory = true,
-        sys_kwargs...,
-    )
-    PSY.transform_single_time_series!(c_sys5_hy_wk, Hour(48), Hour(48))
-
-    return c_sys5_hy_wk
-end
-
-function build_5_bus_hydro_wk_sys_targets(; raw_data, kwargs...)
-    sys_kwargs = filter_kwargs(; kwargs...)
-    rawsys = PSY.PowerSystemTableData(
-        raw_data,
-        100.0,
-        joinpath(raw_data, "user_descriptors.yaml");
-        generator_mapping_file = joinpath(raw_data, "generator_mapping.yaml"),
-    )
-    c_sys5_hy_wk = PSY.System(
-        rawsys;
-        timeseries_metadata_file = joinpath(
-            raw_data,
-            "5bus_ts",
-            "7day",
-            "timeseries_pointers_wk_7day.json",
-        ),
-        time_series_in_memory = true,
-        sys_kwargs...,
-    )
-    cost = HydroGenerationCost(CostCurve(LinearCurve(0.15)), 0.0)
-    for hy in get_components(HydroEnergyReservoir, c_sys5_hy_wk)
-        set_operation_cost!(hy, cost)
-    end
-    PSY.transform_single_time_series!(c_sys5_hy_wk, Hour(48), Hour(48))
 
     return c_sys5_hy_wk
 end

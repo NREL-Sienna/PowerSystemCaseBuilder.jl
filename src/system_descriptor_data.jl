@@ -1,4 +1,71 @@
 const SYSTEM_CATALOG = [
+
+    ## mm/edit-PSILibrary
+    SystemDescriptor(;
+        name = "csys5_custom",
+        description = "5-Bus system with kwargs to build",
+        category = PSISystems,
+        raw_data = joinpath(DATA_DIR),
+        build_function = build_custom_csys5,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :decision_model_type,
+                default = "ed",
+                allowed_values = Set(["uc", "ed"]),
+            ),
+            SystemArgument(;
+                name = :withStandardLoad,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :withThermalStandard,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :withRenewableDispatch,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :withRenewableNonDispatch,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :withEnergyReservoirStorage,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :withInterruptiblePowerLoad,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :withHydroTurbine,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :withHydroPumpTurbine,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :withHydroDispatch,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+        ],
+    ),
+    ##
     SystemDescriptor(;
         name = "c_sys14",
         description = "14-bus system",
@@ -45,7 +112,7 @@ const SYSTEM_CATALOG = [
         name = "c_sys5_pjm",
         description = "5-Bus system",
         category = PSISystems,
-        raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
+        raw_data = joinpath(DATA_DIR),
         build_function = build_c_sys5_pjm,
         supported_arguments = [
             SystemArgument(;
@@ -73,7 +140,7 @@ const SYSTEM_CATALOG = [
         name = "c_sys5_pjm_rt",
         description = "5-Bus system",
         category = PSISystems,
-        raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
+        raw_data = joinpath(DATA_DIR),
         build_function = build_c_sys5_pjm_rt,
         supported_arguments = [
             SystemArgument(;
@@ -690,7 +757,7 @@ const SYSTEM_CATALOG = [
         name = "5_bus_hydro_uc_sys",
         description = "5-Bus hydro unit commitment data",
         category = PSISystems,
-        raw_data = joinpath(DATA_DIR, "5-Bus"),
+        raw_data = joinpath(DATA_DIR),
         build_function = build_5_bus_hydro_uc_sys,
         supported_arguments = [
             SystemArgument(;
@@ -704,22 +771,8 @@ const SYSTEM_CATALOG = [
         name = "5_bus_hydro_ed_sys",
         description = "5-Bus hydro economic dispatch data",
         category = PSISystems,
-        raw_data = joinpath(DATA_DIR, "5-Bus"),
+        raw_data = joinpath(DATA_DIR),
         build_function = build_5_bus_hydro_ed_sys,
-    ),
-    SystemDescriptor(;
-        name = "5_bus_hydro_wk_sys",
-        description = "5-Bus hydro system for weekly dispatch",
-        category = PSISystems,
-        raw_data = joinpath(DATA_DIR, "5-Bus"),
-        build_function = build_5_bus_hydro_wk_sys,
-    ),
-    SystemDescriptor(;
-        name = "5_bus_hydro_uc_sys_with_targets",
-        description = "5-Bus hydro unit commitment data with energy targets",
-        category = PSISystems,
-        raw_data = joinpath(DATA_DIR, "5-Bus"),
-        build_function = build_5_bus_hydro_uc_sys_targets,
         supported_arguments = [
             SystemArgument(;
                 name = :add_forecasts,
@@ -729,18 +782,18 @@ const SYSTEM_CATALOG = [
         ],
     ),
     SystemDescriptor(;
-        name = "5_bus_hydro_ed_sys_with_targets",
-        description = "5-Bus hydro economic dispatch data with energy targets",
+        name = "5_bus_hydro_wk_sys",
+        description = "5-Bus hydro system for weekly dispatch",
         category = PSISystems,
         raw_data = joinpath(DATA_DIR, "5-Bus"),
-        build_function = build_5_bus_hydro_ed_sys_targets,
-    ),
-    SystemDescriptor(;
-        name = "5_bus_hydro_wk_sys_with_targets",
-        description = "5-Bus hydro system for weekly dispatch with energy targets",
-        category = PSISystems,
-        raw_data = joinpath(DATA_DIR, "5-Bus"),
-        build_function = build_5_bus_hydro_wk_sys_targets,
+        build_function = build_5_bus_hydro_wk_sys,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
     ),
     SystemDescriptor(;
         name = "psse_RTS_GMLC_sys",
