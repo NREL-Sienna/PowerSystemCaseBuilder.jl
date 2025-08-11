@@ -416,7 +416,7 @@ function build_c_sys5_re_only(; add_forecasts, raw_data, kwargs...)
     return c_sys5_re_only
 end
 
-function build_c_sys5_hy(; add_forecasts, raw_data, kwargs...)
+function build_c_sys5_hy(; add_forecasts, add_reserves, raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_hy = PSY.System(
@@ -453,6 +453,32 @@ function build_c_sys5_hy(; add_forecasts, raw_data, kwargs...)
                 c_sys5_hy,
                 r,
                 PSY.Deterministic("max_active_power", forecast_data),
+            )
+        end
+    end
+    if add_reserves
+        reserve_hy = reserve5_hy(PSY.get_components(PSY.HydroDispatch, c_sys5_hy))
+        PSY.add_service!(
+            c_sys5_hy,
+            reserve_hy[1],
+            PSY.get_components(PSY.HydroDispatch, c_sys5_hy),
+        )
+        PSY.add_service!(
+            c_sys5_hy,
+            reserve_hy[2],
+            [collect(PSY.get_components(PSY.HydroDispatch, c_sys5_hy))[end]],
+        )
+
+        for (ix, serv) in enumerate(PSY.get_components(PSY.VariableReserve, c_sys5_hy))
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ini_time = TimeSeries.timestamp(Reserve_ts[t])[1]
+                forecast_data[ini_time] = Reserve_ts[t]
+            end
+            PSY.add_time_series!(
+                c_sys5_hy,
+                serv,
+                PSY.Deterministic("requirement", forecast_data),
             )
         end
     end
