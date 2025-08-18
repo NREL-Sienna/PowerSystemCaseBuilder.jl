@@ -4359,6 +4359,9 @@ function build_two_area_pjm_DA(; add_forecasts, raw_data, sys_kwargs...)
     for n in nodes_area2
         PSY.set_name!(n, "Bus_$(PSY.get_name(n))_2")
         PSY.set_number!(n, 20 + PSY.get_number(n))
+        if PSY.get_bustype(n) == PSY.ACBusTypes.REF
+            set_bustype!(n, PSY.ACBusTypes.PV)
+        end
     end
 
     thermals_1 = thermal_generators5(nodes_area1)
