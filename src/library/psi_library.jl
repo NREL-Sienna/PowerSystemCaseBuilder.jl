@@ -1726,3 +1726,47 @@ function build_MTHVDC_two_RTS_DA_sys_noForecast(; kwargs...)
 
     return sys
 end
+
+#######################################
+#### PJM-NYISO-ISONE Test Systems #####
+#######################################
+
+function build_PJM_NY_NE_Test_DA_sys_2T_HVDC(; kwargs...)
+    sys = make_modified_RTS_GMLC_sys(; kwargs...)
+    include(joinpath(
+        DATA_DIR,
+        "psy_data",
+        "data_pjm_ny_ne_test_sys.jl",
+    ))
+    _update_rts_names_into_ei_sys!(sys, "PJM-NY-NE DA-system")
+    rts_data, scale_factor_data = _summary_rts_and_ei_data(sys, iso_data)
+    _scale_load_per_area_proportion!(sys, scale_factor_data)
+    _scale_internal_branch_ratings!(sys, scale_factor_data)
+    _scale_intertie_ratings!(sys, scale_factor_data)
+    _add_offshore_area!(sys)
+    _add_interchanges_one_area!(sys, scale_factor_data)
+    _add_offshore_one_generator!(sys, scale_factor_data)
+    _add_new_intertie_hvdc_lines!(sys)
+
+    return sys
+end
+
+function build_PJM_NY_NE_Test_RT_sys_2T_HVDC(; kwargs...)
+    sys = build_modified_RTS_GMLC_realization_sys(; kwargs...)
+    include(joinpath(
+        DATA_DIR,
+        "psy_data",
+        "data_pjm_ny_ne_test_sys.jl",
+    ))
+    _update_rts_names_into_ei_sys!(sys, "PJM-NY-NE RT-system")
+    rts_data, scale_factor_data = _summary_rts_and_ei_data(sys, iso_data)
+    _scale_load_per_area_proportion!(sys, scale_factor_data)
+    _scale_internal_branch_ratings!(sys, scale_factor_data)
+    _scale_intertie_ratings!(sys, scale_factor_data)
+    _add_offshore_area!(sys)
+    _add_interchanges_one_area!(sys, scale_factor_data)
+    _add_offshore_one_generator!(sys, scale_factor_data)
+    _add_new_intertie_hvdc_lines!(sys)
+
+    return sys
+end

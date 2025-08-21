@@ -881,6 +881,27 @@ const SYSTEM_CATALOG = [
         build_function = build_MTHVDC_two_RTS_DA_sys_noForecast,
     ),
     SystemDescriptor(;
+        name = "PJM-NY-NE_Test_DA_sys_2T_HVDC",
+        description = "RTS DA system scaled to PJM-NYISO-ISONE proportions with offshore wind with 2T-HVDC",
+        category = PSISystems,
+        raw_data = RTS_DIR,
+        build_function = build_PJM_NY_NE_Test_DA_sys_2T_HVDC,
+    ),
+    SystemDescriptor(;
+        name = "PJM-NY-NE_Test_RT_sys_2T_HVDC",
+        description = "RTS RT system scaled to PJM-NYISO-ISONE proportions with offshore wind with 2T-HVDC",
+        category = PSISystems,
+        raw_data = RTS_DIR,
+        build_function = build_PJM_NY_NE_Test_RT_sys_2T_HVDC,
+    ),
+    #SystemDescriptor(;
+    #    name = "PJM-NY-NE_Test_DA_sys_MT_HVDC",
+    #    description = "RTS DA system scaled to PJM-NYISO-ISONE proportions with offshore wind with MT-HVDC",
+    #    category = PSISystems,
+    #    raw_data = RTS_DIR,
+    #    build_function = build_PJM_NY_NE_Test_DA_sys_MT_HVDC,
+    #),
+    SystemDescriptor(;
         name = "psse_ACTIVSg2000_sys",
         description = "PSSE ACTIVSg2000 Test system",
         category = PSSEParsingTestSystems,
