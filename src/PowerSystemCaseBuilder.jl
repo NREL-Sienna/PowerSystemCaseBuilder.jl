@@ -96,6 +96,7 @@ include("system_catalog.jl")
 include("utils/download.jl")
 include("utils/print.jl")
 include("utils/utils.jl")
+include("utils/psy_scaling.jl")
 
 include("build_system.jl")
 include("system_descriptor_data.jl")
