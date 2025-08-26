@@ -1580,7 +1580,7 @@ const SYSTEM_CATALOG = [
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_batt_test_case_f_sys,
     ),
-        SystemDescriptor(;
+    SystemDescriptor(;
         name = "case11_network_reductions",
         description = "Test system for building simulations with network reductions",
         category = PSITestSystems,
