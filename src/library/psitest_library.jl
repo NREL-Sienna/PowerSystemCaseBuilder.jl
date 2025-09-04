@@ -1117,7 +1117,6 @@ function build_c_sys5_bat(;
     return c_sys5_bat
 end
 
-
 function build_c_sys5_hydro_pump_energy(;
     add_forecasts,
     add_single_time_series,
@@ -1225,13 +1224,12 @@ function build_c_sys5_hydro_pump_energy(;
             )
         end
     end
-    bat = first( PSY.get_components(EnergyReservoirStorage, c_sys5_bat) )
+    bat = first(PSY.get_components(EnergyReservoirStorage, c_sys5_bat))
 
-    convert_to_hydropump!( bat, c_sys5_bat )
-    PSY.remove_component!( c_sys5_bat, bat )
+    convert_to_hydropump!(bat, c_sys5_bat)
+    PSY.remove_component!(c_sys5_bat, bat)
     return c_sys5_bat
 end
-
 
 function build_c_sys5_il(; add_forecasts, add_reserves, raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)

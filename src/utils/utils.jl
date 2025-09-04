@@ -101,7 +101,6 @@ end
 
 _is_system_hash_name(name::String) = isempty(filter(!isxdigit, name)) && length(name) == 64
 
-
 function convert_to_hydropump!(d::EnergyReservoirStorage, sys::System)
     storage_capacity_MWh = d.storage_capacity * d.base_power
     reservoir_cost = HydroReservoirCost(;

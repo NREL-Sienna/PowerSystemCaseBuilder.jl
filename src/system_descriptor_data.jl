@@ -107,7 +107,6 @@ const SYSTEM_CATALOG = [
             ),
         ],
     ),
-
     SystemDescriptor(;
         name = "c_sys5_hydro_pump_energy",
         description = "5-Bus system with hydro pump storage",
@@ -132,8 +131,6 @@ const SYSTEM_CATALOG = [
             ),
         ],
     ),
-
-
     SystemDescriptor(;
         name = "c_sys5_dc",
         description = "Systems with HVDC data in the branches",
