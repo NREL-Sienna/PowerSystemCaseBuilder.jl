@@ -11,7 +11,7 @@ function _get_generic_hydro_reservoir_pair(node)
         travel_time = 0.0,
         initial_level = 0.5,
         head_to_volume_factor = LinearCurve(0.0),
-        operation_cost = HydroReservoirCost()
+        operation_cost = HydroReservoirCost(),
     )
 
     hydro = HydroTurbine(;
