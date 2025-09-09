@@ -30,7 +30,7 @@ function _get_generic_hydro_reservoir_pair(node)
         base_power = 100.0,
         conversion_factor = 1.0,
         outflow_limits = nothing,
-        powerhouse_elevation = 0.0
+        powerhouse_elevation = 0.0,
     )
     return hydro, reservoir
 end
