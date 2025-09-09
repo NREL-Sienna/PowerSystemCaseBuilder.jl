@@ -731,7 +731,7 @@ function build_c_sys5_hyd(;
         time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
-    add_component!(c_sys5_hyd, reservoir)
+    add_component!(c_sys5_hyd, reservoir[1])
     set_reservoirs!(hydros[2], reservoir)
 
     if add_forecasts
@@ -2231,7 +2231,7 @@ function build_c_sys5_hy_ems_uc(; add_forecasts, raw_data, kwargs...)
         time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
-    add_component!(c_sys5_hy_uc, reservoir)
+    add_component!(c_sys5_hy_uc, reservoir[1])
     set_reservoirs!(hydros[2], reservoir)
 
     if add_forecasts
@@ -2505,7 +2505,7 @@ function build_c_sys5_hy_ems_ed(; add_forecasts, raw_data, kwargs...)
         time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
-    add_component!(c_sys5_hy_ed, reservoir)
+    add_component!(c_sys5_hy_ed, reservoir[1])
     set_reservoirs!(hydros[2], reservoir)
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy_ed))
