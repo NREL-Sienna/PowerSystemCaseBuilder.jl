@@ -11,7 +11,7 @@ function _get_generic_hydro_reservoir_pair(node)
         travel_time = 0.0,
         initial_level = 0.5,
         head_to_volume_factor = LinearCurve(0.0),
-        operation_cost = HydroReservoirCost()
+        operation_cost = HydroReservoirCost(),
     )
 
     hydro = HydroTurbine(;
@@ -30,7 +30,7 @@ function _get_generic_hydro_reservoir_pair(node)
         base_power = 100.0,
         conversion_factor = 1.0,
         outflow_limits = nothing,
-        powerhouse_elevation = 0.0
+        powerhouse_elevation = 0.0,
     )
     return hydro, reservoir
 end
@@ -3740,7 +3740,6 @@ function build_hydro_test_case_b_sys(; raw_data, kwargs...)
             "d/m/y  H:M:S",
         ),
     )
-
 
     duration_load = [0.3, 0.6, 0.5]
     load_data =
