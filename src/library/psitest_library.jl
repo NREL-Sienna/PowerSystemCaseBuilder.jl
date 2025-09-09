@@ -3741,7 +3741,6 @@ function build_hydro_test_case_b_sys(; raw_data, kwargs...)
         ),
     )
 
-
     duration_load = [0.3, 0.6, 0.5]
     load_data =
         SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, duration_load))
