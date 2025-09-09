@@ -732,7 +732,7 @@ function build_c_sys5_hyd(;
         sys_kwargs...,
     )
     add_component!(c_sys5_hyd, reservoir)
-    set_reservoirs!(hydros[2], [reservoir])
+    set_reservoirs!(hydros[2], reservoir)
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hyd))
@@ -902,8 +902,8 @@ function build_c_sys5_hyd_ems(;
         time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
-    PSY.add_component!(c_sys5_hyd, reservoir)
-    set_reservoirs!(hydro_turbine, [reservoir])
+    PSY.add_component!(c_sys5_hyd, reservoir[1])
+    set_reservoirs!(hydro_turbine, reservoir)
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hyd))
@@ -2232,7 +2232,7 @@ function build_c_sys5_hy_ems_uc(; add_forecasts, raw_data, kwargs...)
         sys_kwargs...,
     )
     add_component!(c_sys5_hy_uc, reservoir)
-    set_reservoirs!(hydros[2], [reservoir])
+    set_reservoirs!(hydros[2], reservoir)
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy_uc))
@@ -2506,7 +2506,7 @@ function build_c_sys5_hy_ems_ed(; add_forecasts, raw_data, kwargs...)
         sys_kwargs...,
     )
     add_component!(c_sys5_hy_ed, reservoir)
-    set_reservoirs!(hydros[2], [reservoir])
+    set_reservoirs!(hydros[2], reservoir)
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
@@ -3741,6 +3741,7 @@ function build_hydro_test_case_b_sys(; raw_data, kwargs...)
         ),
     )
 
+    hydro, reservoir =_get_generic_hydro_reservoir_pair(node)
     duration_load = [0.3, 0.6, 0.5]
     load_data =
         SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, duration_load))
@@ -3759,9 +3760,11 @@ function build_hydro_test_case_b_sys(; raw_data, kwargs...)
     PSY.add_component!(hydro_test_case_b_sys, node)
     PSY.add_component!(hydro_test_case_b_sys, load)
     PSY.add_component!(hydro_test_case_b_sys, hydro)
+    PSY.add_component!(hydro_test_case_b_sys, reservoir)
+    PSY.set_reservoirs!(hydro, [reservoir])
     PSY.add_time_series!(hydro_test_case_b_sys, load, load_forecast_dur)
-    PSY.add_time_series!(hydro_test_case_b_sys, hydro, inflow_forecast_dur)
-    PSY.add_time_series!(hydro_test_case_b_sys, hydro, energy_target_forecast_dur)
+    PSY.add_time_series!(hydro_test_case_b_sys, reservoir, inflow_forecast_dur)
+    PSY.add_time_series!(hydro_test_case_b_sys, reservoir, energy_target_forecast_dur)
 
     return hydro_test_case_b_sys
 end
@@ -3789,7 +3792,7 @@ function build_hydro_test_case_c_sys(; raw_data, kwargs...)
         ),
     )
     turbine, reservoir = _get_generic_hydro_reservoir_pair(node)
-    set_reservoirs!(turbine, [reservoir])
+    set_reservoirs!(turbine, reservoir)
 
     duration_load = [0.3, 0.6, 0.5]
     load_data =
@@ -3840,7 +3843,7 @@ function build_hydro_test_case_d_sys(; raw_data, kwargs...)
         ),
     )
     turbine, reservoir = _get_generic_hydro_reservoir_pair(node)
-    set_reservoirs!(turbine, [reservoir])
+    set_reservoirs!(turbine, reservoir)
     duration_load = [0.3, 0.6, 0.5]
     load_data =
         SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, duration_load))
@@ -3890,7 +3893,7 @@ function build_hydro_test_case_e_sys(; raw_data, kwargs...)
         ),
     )
     turbine, reservoir = _get_generic_hydro_reservoir_pair(node)
-    set_reservoirs!(turbine, [reservoir])
+    set_reservoirs!(turbine, reservoir)
     duration_load = [0.3, 0.6, 0.5]
     load_data =
         SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, duration_load))
@@ -3940,7 +3943,7 @@ function build_hydro_test_case_f_sys(; raw_data, kwargs...)
         ),
     )
     turbine, reservoir = _get_generic_hydro_reservoir_pair(node)
-    set_reservoirs!(turbine, [reservoir])
+    set_reservoirs!(turbine, reservoir)
     duration_load = [0.3, 0.6, 0.5]
     load_data =
         SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, duration_load))
@@ -4430,7 +4433,7 @@ function build_c_sys5_all_components(; add_forecasts, raw_data, kwargs...)
         sys_kwargs...,
     )
     add_component!(c_sys5_all_components, reservoir[1])
-    set_reservoirs!(hydros[2], [reservoir])
+    set_reservoirs!(hydros[2], reservoir)
 
     # Boilerplate to handle time series
     # TODO refactor as per https://github.com/NREL-Sienna/PowerSystemCaseBuilder.jl/issues/66
