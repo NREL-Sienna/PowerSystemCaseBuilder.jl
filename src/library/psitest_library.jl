@@ -2109,8 +2109,8 @@ function build_c_sys5_hy_uc(; add_forecasts, kwargs...)
         time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
-    add_component!(c_sys5_hy_uc, reservoir)
-    set_reservoirs!(hydros[2], [reservoir])
+    add_component!(c_sys5_hy_uc, reservoir[1])
+    set_reservoirs!(hydros[2], reservoir)
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy_uc))
@@ -4430,7 +4430,7 @@ function build_c_sys5_all_components(; add_forecasts, raw_data, kwargs...)
         time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
-    add_component!(c_sys5_all_components, reservoir)
+    add_component!(c_sys5_all_components, reservoir[1])
     set_reservoirs!(hydros[2], [reservoir])
 
     # Boilerplate to handle time series
