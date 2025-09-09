@@ -720,7 +720,7 @@ function build_c_sys5_hyd(;
 )
     nodes = nodes5()
     hydros = hydro_generators5(nodes)
-    reservoir = hydro_reservoir()
+    reservoir = hydro_reservoir5_energy()
     c_sys5_hyd = PSY.System(
         100.0,
         nodes,
@@ -890,7 +890,7 @@ function build_c_sys5_hyd_ems(;
 )
     nodes = nodes5()
     hydro_turbine = hydro_generators5(nodes)[2]
-    reservoir = hydro_reservoir()
+    reservoir = hydro_reservoir5_energy()
 
     c_sys5_hyd = PSY.System(
         100.0,
@@ -2097,7 +2097,7 @@ function build_c_sys5_hy_uc(; add_forecasts, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     hydros = hydro_generators5(nodes)
-    reservoir = hydro_reservoir()
+    reservoir = hydro_reservoir5_energy()
     c_sys5_hy_uc = PSY.System(
         100.0,
         nodes,
@@ -2219,7 +2219,7 @@ function build_c_sys5_hy_ems_uc(; add_forecasts, raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     hydros = hydro_generators5(nodes)
-    reservoir = hydro_reservoir()
+    reservoir = hydro_reservoir5_energy()
     c_sys5_hy_uc = PSY.System(
         100.0,
         nodes,
@@ -2492,7 +2492,7 @@ function build_c_sys5_hy_ems_ed(; add_forecasts, raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     hydros = hydro_generators5(nodes)
-    reservoir = hydro_reservoir()
+    reservoir = hydro_reservoir5_energy()
     c_sys5_hy_ed = PSY.System(
         100.0,
         nodes,
@@ -4418,7 +4418,7 @@ function build_c_sys5_all_components(; add_forecasts, raw_data, kwargs...)
 
     nodes = nodes5()
     hydros = hydro_generators5(nodes)
-    reservoir = hydro_reservoir()
+    reservoir = hydro_reservoir5_energy()
     c_sys5_all_components = PSY.System(
         100.0,
         nodes,
