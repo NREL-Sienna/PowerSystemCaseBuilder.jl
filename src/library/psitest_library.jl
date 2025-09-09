@@ -719,16 +719,20 @@ function build_c_sys5_hyd(;
     sys_kwargs...,
 )
     nodes = nodes5()
+    hydros = hydro_generators5(nodes)
+    reservoir = hydro_reservoir()
     c_sys5_hyd = PSY.System(
         100.0,
         nodes,
         thermal_generators5(nodes),
-        [hydro_generators5(nodes)[2]],
+        [hydros[2]],
         loads5(nodes),
         branches5(nodes);
         time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
+    add_component!(c_sys5_hyd, reservoir)
+    set_reservoirs!(hydros[2], [reservoir])
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hyd))
@@ -885,16 +889,21 @@ function build_c_sys5_hyd_ems(;
     sys_kwargs...,
 )
     nodes = nodes5()
+    hydro_turbine = hydro_generators5(nodes)[2]
+    reservoir = hydro_reservoir()
+
     c_sys5_hyd = PSY.System(
         100.0,
         nodes,
         thermal_generators5(nodes),
-        [hydro_generators5_ems(nodes)[2]],
+        [hydro_turbine],
         loads5(nodes),
         branches5(nodes);
         time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
+    PSY.add_component!(c_sys5_hyd, reservoir)
+    set_reservoirs!(hydro_turbine, [reservoir])
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hyd))
@@ -2087,17 +2096,21 @@ end
 function build_c_sys5_hy_uc(; add_forecasts, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
+    hydros = hydro_generators5(nodes)
+    reservoir = hydro_reservoir()
     c_sys5_hy_uc = PSY.System(
         100.0,
         nodes,
         thermal_generators5_uc_testing(nodes),
-        hydro_generators5(nodes),
+        hydros,
         renewable_generators5(nodes),
         loads5(nodes),
         branches5(nodes);
         time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
+    add_component!(c_sys5_hy_uc, reservoir)
+    set_reservoirs!(hydros[2], [reservoir])
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy_uc))
@@ -2205,17 +2218,21 @@ end
 function build_c_sys5_hy_ems_uc(; add_forecasts, raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
+    hydros = hydro_generators5(nodes)
+    reservoir = hydro_reservoir()
     c_sys5_hy_uc = PSY.System(
         100.0,
         nodes,
         thermal_generators5_uc_testing(nodes),
-        hydro_generators5_ems(nodes),
+        hydros,
         renewable_generators5(nodes),
         loads5(nodes),
         branches5(nodes);
         time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
+    add_component!(c_sys5_hy_uc, reservoir)
+    set_reservoirs!(hydros[2], [reservoir])
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy_uc))
@@ -2474,19 +2491,22 @@ end
 function build_c_sys5_hy_ems_ed(; add_forecasts, raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
+    hydros = hydro_generators5(nodes)
+    reservoir = hydro_reservoir()
     c_sys5_hy_ed = PSY.System(
         100.0,
         nodes,
         thermal_generators5_uc_testing(nodes),
-        hydro_generators5_ems(nodes),
         renewable_generators5(nodes),
         loads5(nodes),
+        hydros,
         interruptible(nodes),
         branches5(nodes);
         time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
-
+    add_component!(c_sys5_hy_ed, reservoir)
+    set_reservoirs!(hydros[2], [reservoir])
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
@@ -4397,17 +4417,21 @@ function build_c_sys5_all_components(; add_forecasts, raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
 
     nodes = nodes5()
+    hydros = hydro_generators5(nodes)
+    reservoir = hydro_reservoir()
     c_sys5_all_components = PSY.System(
         100.0,
         nodes,
         thermal_generators5(nodes),
         renewable_generators5(nodes),
         loads5(nodes),
-        hydro_generators5(nodes),
+        hydros,
         branches5(nodes);
         time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
+    add_component!(c_sys5_all_components, reservoir)
+    set_reservoirs!(hydros[2], [reservoir])
 
     # Boilerplate to handle time series
     # TODO refactor as per https://github.com/NREL-Sienna/PowerSystemCaseBuilder.jl/issues/66
