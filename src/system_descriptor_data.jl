@@ -108,6 +108,30 @@ const SYSTEM_CATALOG = [
         ],
     ),
     SystemDescriptor(;
+        name = "c_sys5_hydro_pump_energy",
+        description = "5-Bus system with hydro pump storage",
+        category = PSITestSystems,
+        raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
+        build_function = build_c_sys5_hydro_pump_energy,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+        ],
+    ),
+    SystemDescriptor(;
         name = "c_sys5_dc",
         description = "Systems with HVDC data in the branches",
         category = PSITestSystems,
@@ -150,6 +174,49 @@ const SYSTEM_CATALOG = [
             SystemArgument(;
                 name = :add_forecasts,
                 default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+        ],
+    ),
+    SystemDescriptor(;
+        name = "c_sys5_hy_turbine_energy",
+        description = "5-Bus system with HydroTurbine with Energy Reservoir",
+        category = PSITestSystems,
+        raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
+        build_function = build_c_sys5_hy_turbine_energy,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+        ],
+    ),
+    SystemDescriptor(;
+        name = "c_sys5_hy_turbine_head",
+        description = "5-Bus system with HydroTurbine with Reservoir using Head (in meters) data",
+        category = PSITestSystems,
+        raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
+        build_function = build_c_sys5_hy_turbine_head,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
         ],

@@ -1578,6 +1578,18 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         PSY.set_max_participation_factor!(srvc, PARTICIPATION)
         if PSY.get_name(srvc) in ["Flex_Up", "Flex_Down", "Flex_Up_twin", "Flex_Down_twin"]
             # remove Flex services from DA and RT model
+            PSY.remove_time_series!(
+                main_sys,
+                PSY.DeterministicSingleTimeSeries,
+                srvc,
+                "requirement",
+            )
+        end
+    end
+    for srvc in PSY.get_components(PSY.Service, main_sys)
+        PSY.set_max_participation_factor!(srvc, PARTICIPATION)
+        if PSY.get_name(srvc) in ["Flex_Up", "Flex_Down", "Flex_Up_twin", "Flex_Down_twin"]
+            # remove Flex services from DA and RT model
             PSY.remove_component!(main_sys, srvc)
         end
     end
