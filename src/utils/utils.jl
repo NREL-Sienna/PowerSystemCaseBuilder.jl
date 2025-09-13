@@ -151,7 +151,7 @@ function convert_to_hydropump!(d::EnergyReservoirStorage, sys::System)
         ),
         active_power_pump = 0.0,
         efficiency = (turbine = d.efficiency.out, pump = d.efficiency.in),
-        must_run = false
+        must_run = false,
     )
     add_component!(sys, hpump)
     add_component!(sys, head_reservoir)
