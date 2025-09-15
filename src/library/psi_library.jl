@@ -591,6 +591,9 @@ function make_modified_RTS_GMLC_sys(
         PSY.set_rating!(g, FIX_DECREASE * rat_)
     end
 
+    ### Update Buses to PQ that got devices removed ###
+    bell_bus = get_component(PSY.ACBus, sys, "Bell")
+    PSY.set_bustype!(bell_bus, PSY.ACBusTypes.PQ)
     return sys
 end
 
