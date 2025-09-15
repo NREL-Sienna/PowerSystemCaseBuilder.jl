@@ -2340,11 +2340,13 @@ end
 function build_c_sys5_hy_ed(; add_forecasts, raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
+    hydros = hydro_generators5(nodes)
+    reservoir = hydro_reservoir5_energy()
     c_sys5_hy_ed = PSY.System(
         100.0,
         nodes,
         thermal_generators5_uc_testing(nodes),
-        hydro_generators5(nodes),
+        hydros,
         renewable_generators5(nodes),
         loads5(nodes),
         interruptible(nodes),
@@ -2352,6 +2354,8 @@ function build_c_sys5_hy_ed(; add_forecasts, raw_data, kwargs...)
         time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
+    add_component!(c_sys5_hy_ed, reservoir[1])
+    set_reservoirs!(hydros[2], reservoir)
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy_ed))

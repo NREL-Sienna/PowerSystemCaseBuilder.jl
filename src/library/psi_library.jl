@@ -564,7 +564,10 @@ function make_modified_RTS_GMLC_sys(
         PSY.clear_services!(d)
     end
 
-    # Add Hydro to regulation reserves
+    # Remove Hydro Energy Reservoirs data
+    for d in PSY.get_components(PSY.HydroReservoir, sys)
+        PSY.remove_component!(sys, d)
+    end
     for d in PSY.get_components(PSY.HydroTurbine, sys)
         PSY.remove_component!(sys, d)
     end
@@ -591,6 +594,9 @@ function make_modified_RTS_GMLC_sys(
         PSY.set_rating!(g, FIX_DECREASE * rat_)
     end
 
+    ### Update Buses to PQ that got devices removed ###
+    bell_bus = get_component(PSY.ACBus, sys, "Bell")
+    PSY.set_bustype!(bell_bus, PSY.ACBusTypes.PQ)
     return sys
 end
 
