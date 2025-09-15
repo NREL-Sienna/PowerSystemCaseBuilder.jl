@@ -1426,7 +1426,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         !PSY.has_time_series(b) && PSY.copy_time_series!(b, main_comp)
 
         # add service to the device to be added to main_sys
-        if length(PSY.get_services(main_comp)) > 0
+        if length(PSY.get_services(main_comp)) > 0 && supports_services(b)
             PSY.get_name(b)
             srvc_ = PSY.get_services(main_comp)
             for ss in srvc_
