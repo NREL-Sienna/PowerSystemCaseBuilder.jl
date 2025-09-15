@@ -1,3 +1,40 @@
+function _get_generic_hydro_reservoir_pair(node)
+    reservoir = PSY.HydroReservoir(;
+        name = "HydroReservoir",
+        available = true,
+        storage_level_limits = (min = 0.0, max = 50.0),
+        spillage_limits = nothing,
+        inflow = 4.0,
+        outflow = 0.0,
+        level_targets = nothing,
+        intake_elevation = 0.0,
+        travel_time = 0.0,
+        initial_level = 0.5,
+        head_to_volume_factor = LinearCurve(0.0),
+        operation_cost = HydroReservoirCost(),
+    )
+
+    hydro = HydroTurbine(;
+        name = "HydroEnergyReservoirTurbine",
+        available = true,
+        bus = node,
+        active_power = 0.0,
+        reactive_power = 0.0,
+        rating = 7.0,
+        active_power_limits = (min = 0.0, max = 7.0),
+        reactive_power_limits = (min = 0.0, max = 7.0),
+        ramp_limits = (up = 7.0, down = 7.0),
+        time_limits = nothing,
+        operation_cost = HydroGenerationCost(
+            CostCurve(LinearCurve(0.15)), 0.0),
+        base_power = 100.0,
+        conversion_factor = 1.0,
+        outflow_limits = nothing,
+        powerhouse_elevation = 0.0,
+    )
+    return hydro, reservoir
+end
+
 function build_c_sys14(; add_forecasts, raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes14()
@@ -682,16 +719,20 @@ function build_c_sys5_hyd(;
     sys_kwargs...,
 )
     nodes = nodes5()
+    hydros = hydro_generators5(nodes)
+    reservoir = hydro_reservoir5_energy()
     c_sys5_hyd = PSY.System(
         100.0,
         nodes,
         thermal_generators5(nodes),
-        [hydro_generators5(nodes)[2]],
+        [hydros[2]],
         loads5(nodes),
         branches5(nodes);
         time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
+    add_component!(c_sys5_hyd, reservoir[1])
+    set_reservoirs!(hydros[2], reservoir)
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hyd))
@@ -718,7 +759,7 @@ function build_c_sys5_hyd(;
                 PSY.Deterministic("max_active_power", forecast_data),
             )
         end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd))
+        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(hydro_budget_DA[t][ix])[1]
@@ -730,7 +771,7 @@ function build_c_sys5_hyd(;
                 PSY.Deterministic("hydro_budget", forecast_data),
             )
         end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd))
+        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
             forecast_data_inflow = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             forecast_data_target = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
@@ -771,7 +812,7 @@ function build_c_sys5_hyd(;
                 ),
             )
         end
-        for (ix, r) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd))
+        for (ix, r) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
             PSY.add_time_series!(
                 c_sys5_hyd,
                 r,
@@ -799,22 +840,22 @@ function build_c_sys5_hyd(;
         end
     end
     if add_reserves
-        reserve_hy = reserve5_hy(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd))
+        reserve_hy = reserve5_hy(PSY.get_components(PSY.HydroTurbine, c_sys5_hyd))
         PSY.add_service!(
             c_sys5_hyd,
             reserve_hy[1],
-            PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd),
+            PSY.get_components(PSY.HydroTurbine, c_sys5_hyd),
         )
         PSY.add_service!(
             c_sys5_hyd,
             reserve_hy[2],
-            [collect(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd))[end]],
+            [collect(PSY.get_components(PSY.HydroTurbine, c_sys5_hyd))[end]],
         )
         # ORDC curve
         PSY.add_service!(
             c_sys5_hyd,
             reserve_hy[3],
-            PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd),
+            PSY.get_components(PSY.HydroTurbine, c_sys5_hyd),
         )
         for (ix, serv) in enumerate(PSY.get_components(PSY.VariableReserve, c_sys5_hyd))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
@@ -848,16 +889,21 @@ function build_c_sys5_hyd_ems(;
     sys_kwargs...,
 )
     nodes = nodes5()
+    hydro_turbine = hydro_generators5(nodes)[2]
+    reservoir = hydro_reservoir5_energy()
+
     c_sys5_hyd = PSY.System(
         100.0,
         nodes,
         thermal_generators5(nodes),
-        [hydro_generators5_ems(nodes)[2]],
+        [hydro_turbine],
         loads5(nodes),
         branches5(nodes);
         time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
+    PSY.add_component!(c_sys5_hyd, reservoir[1])
+    set_reservoirs!(hydro_turbine, reservoir)
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hyd))
@@ -884,7 +930,7 @@ function build_c_sys5_hyd_ems(;
                 PSY.Deterministic("max_active_power", forecast_data),
             )
         end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd))
+        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(hydro_budget_DA[t][ix])[1]
@@ -896,7 +942,7 @@ function build_c_sys5_hyd_ems(;
                 PSY.Deterministic("hydro_budget", forecast_data),
             )
         end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd))
+        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
             forecast_data_inflow = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             forecast_data_target = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
@@ -937,7 +983,7 @@ function build_c_sys5_hyd_ems(;
                 ),
             )
         end
-        for (ix, r) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd))
+        for (ix, r) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
             PSY.add_time_series!(
                 c_sys5_hyd,
                 r,
@@ -965,22 +1011,22 @@ function build_c_sys5_hyd_ems(;
         end
     end
     if add_reserves
-        reserve_hy = reserve5_hy(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd))
+        reserve_hy = reserve5_hy(PSY.get_components(PSY.HydroTurbine, c_sys5_hyd))
         PSY.add_service!(
             c_sys5_hyd,
             reserve_hy[1],
-            PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd),
+            PSY.get_components(PSY.HydroTurbine, c_sys5_hyd),
         )
         PSY.add_service!(
             c_sys5_hyd,
             reserve_hy[2],
-            [collect(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd))[end]],
+            [collect(PSY.get_components(PSY.HydroTurbine, c_sys5_hyd))[end]],
         )
         # ORDC curve
         PSY.add_service!(
             c_sys5_hyd,
             reserve_hy[3],
-            PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hyd),
+            PSY.get_components(PSY.HydroTurbine, c_sys5_hyd),
         )
         for (ix, serv) in enumerate(PSY.get_components(PSY.VariableReserve, c_sys5_hyd))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
@@ -2050,17 +2096,21 @@ end
 function build_c_sys5_hy_uc(; add_forecasts, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
+    hydros = hydro_generators5(nodes)
+    reservoir = hydro_reservoir5_energy()
     c_sys5_hy_uc = PSY.System(
         100.0,
         nodes,
         thermal_generators5_uc_testing(nodes),
-        hydro_generators5(nodes),
+        hydros,
         renewable_generators5(nodes),
         loads5(nodes),
         branches5(nodes);
         time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
+    add_component!(c_sys5_hy_uc, reservoir[1])
+    set_reservoirs!(hydros[2], reservoir)
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy_uc))
@@ -2075,7 +2125,7 @@ function build_c_sys5_hy_uc(; add_forecasts, kwargs...)
                 PSY.Deterministic("max_active_power", forecast_data),
             )
         end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_uc))
+        for (ix, h) in enumerate(PSY.get_components(PSY.HydroTurbine, c_sys5_hy_uc))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
@@ -2087,7 +2137,7 @@ function build_c_sys5_hy_uc(; add_forecasts, kwargs...)
                 PSY.Deterministic("max_active_power", forecast_data),
             )
         end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_uc))
+        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_uc))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(storage_target_DA[t][ix])[1]
@@ -2099,7 +2149,7 @@ function build_c_sys5_hy_uc(; add_forecasts, kwargs...)
                 PSY.Deterministic("storage_target", forecast_data),
             )
         end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_uc))
+        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_uc))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
@@ -2111,7 +2161,7 @@ function build_c_sys5_hy_uc(; add_forecasts, kwargs...)
                 PSY.Deterministic("inflow", forecast_data),
             )
         end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_uc))
+        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_uc))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(hydro_budget_DA[t][ix])[1]
@@ -2168,17 +2218,21 @@ end
 function build_c_sys5_hy_ems_uc(; add_forecasts, raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
+    hydros = hydro_generators5(nodes)
+    reservoir = hydro_reservoir5_energy()
     c_sys5_hy_uc = PSY.System(
         100.0,
         nodes,
         thermal_generators5_uc_testing(nodes),
-        hydro_generators5_ems(nodes),
+        hydros,
         renewable_generators5(nodes),
         loads5(nodes),
         branches5(nodes);
         time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
+    add_component!(c_sys5_hy_uc, reservoir[1])
+    set_reservoirs!(hydros[2], reservoir)
 
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy_uc))
@@ -2193,7 +2247,7 @@ function build_c_sys5_hy_ems_uc(; add_forecasts, raw_data, kwargs...)
                 PSY.Deterministic("max_active_power", forecast_data),
             )
         end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_uc))
+        for (ix, h) in enumerate(PSY.get_components(PSY.HydroTurbine, c_sys5_hy_uc))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
@@ -2205,7 +2259,7 @@ function build_c_sys5_hy_ems_uc(; add_forecasts, raw_data, kwargs...)
                 PSY.Deterministic("max_active_power", forecast_data),
             )
         end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_uc))
+        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_uc))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(storage_target_DA[t][ix])[1]
@@ -2217,7 +2271,7 @@ function build_c_sys5_hy_ems_uc(; add_forecasts, raw_data, kwargs...)
                 PSY.Deterministic("storage_target", forecast_data),
             )
         end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_uc))
+        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_uc))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
@@ -2229,7 +2283,7 @@ function build_c_sys5_hy_ems_uc(; add_forecasts, raw_data, kwargs...)
                 PSY.Deterministic("inflow", forecast_data),
             )
         end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_uc))
+        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_uc))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(hydro_budget_DA[t][ix])[1]
@@ -2316,7 +2370,7 @@ function build_c_sys5_hy_ed(; add_forecasts, raw_data, kwargs...)
                 PSY.Deterministic("max_active_power", forecast_data),
             )
         end
-        for (ix, l) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_ed))
+        for (ix, l) in enumerate(PSY.get_components(PSY.HydroTurbine, c_sys5_hy_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = hydro_timeseries_DA[t][ix]
@@ -2348,7 +2402,7 @@ function build_c_sys5_hy_ed(; add_forecasts, raw_data, kwargs...)
                 PSY.Deterministic("max_active_power", forecast_data),
             )
         end
-        for (ix, l) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_ed))
+        for (ix, l) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = storage_target_DA[t][ix]
@@ -2364,7 +2418,7 @@ function build_c_sys5_hy_ed(; add_forecasts, raw_data, kwargs...)
                 PSY.Deterministic("storage_target", forecast_data),
             )
         end
-        for (ix, l) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_ed))
+        for (ix, l) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = hydro_timeseries_DA[t][ix]
@@ -2380,7 +2434,7 @@ function build_c_sys5_hy_ed(; add_forecasts, raw_data, kwargs...)
                 PSY.Deterministic("inflow", forecast_data),
             )
         end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_ed))
+        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = hydro_budget_DA[t][ix]
@@ -2437,19 +2491,22 @@ end
 function build_c_sys5_hy_ems_ed(; add_forecasts, raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
+    hydros = hydro_generators5(nodes)
+    reservoir = hydro_reservoir5_energy()
     c_sys5_hy_ed = PSY.System(
         100.0,
         nodes,
         thermal_generators5_uc_testing(nodes),
-        hydro_generators5_ems(nodes),
         renewable_generators5(nodes),
         loads5(nodes),
+        hydros,
         interruptible(nodes),
         branches5(nodes);
         time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
-
+    add_component!(c_sys5_hy_ed, reservoir[1])
+    set_reservoirs!(hydros[2], reservoir)
     if add_forecasts
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
@@ -2467,7 +2524,7 @@ function build_c_sys5_hy_ems_ed(; add_forecasts, raw_data, kwargs...)
                 PSY.Deterministic("max_active_power", forecast_data),
             )
         end
-        for (ix, l) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_ed))
+        for (ix, l) in enumerate(PSY.get_components(PSY.HydroTurbine, c_sys5_hy_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = hydro_timeseries_DA[t][ix]
@@ -2499,7 +2556,7 @@ function build_c_sys5_hy_ems_ed(; add_forecasts, raw_data, kwargs...)
                 PSY.Deterministic("max_active_power", forecast_data),
             )
         end
-        for (ix, l) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_ed))
+        for (ix, l) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = storage_target_DA[t][ix]
@@ -2515,7 +2572,7 @@ function build_c_sys5_hy_ems_ed(; add_forecasts, raw_data, kwargs...)
                 PSY.Deterministic("storage_target", forecast_data),
             )
         end
-        for (ix, l) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_ed))
+        for (ix, l) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = hydro_timeseries_DA[t][ix]
@@ -2531,7 +2588,7 @@ function build_c_sys5_hy_ems_ed(; add_forecasts, raw_data, kwargs...)
                 PSY.Deterministic("inflow", forecast_data),
             )
         end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_hy_ed))
+        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_ed))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ta = hydro_budget_DA[t][ix]
@@ -3683,26 +3740,8 @@ function build_hydro_test_case_b_sys(; raw_data, kwargs...)
             "d/m/y  H:M:S",
         ),
     )
-    hydro = HydroEnergyReservoir(;
-        name = "HydroEnergyReservoir",
-        available = true,
-        bus = node,
-        active_power = 0.0,
-        reactive_power = 0.0,
-        rating = 7.0,
-        prime_mover_type = PrimeMovers.HY,
-        active_power_limits = (min = 0.0, max = 7.0),
-        reactive_power_limits = (min = 0.0, max = 7.0),
-        ramp_limits = (up = 7.0, down = 7.0),
-        time_limits = nothing,
-        operation_cost = HydroGenerationCost(
-            CostCurve(LinearCurve(0.15)), 0.0),
-        base_power = 100.0,
-        storage_capacity = 50.0,
-        inflow = 4.0,
-        conversion_factor = 1.0,
-        initial_storage = 0.5,
-    )
+
+    hydro, reservoir = _get_generic_hydro_reservoir_pair(node)
     duration_load = [0.3, 0.6, 0.5]
     load_data =
         SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, duration_load))
@@ -3721,9 +3760,11 @@ function build_hydro_test_case_b_sys(; raw_data, kwargs...)
     PSY.add_component!(hydro_test_case_b_sys, node)
     PSY.add_component!(hydro_test_case_b_sys, load)
     PSY.add_component!(hydro_test_case_b_sys, hydro)
+    PSY.add_component!(hydro_test_case_b_sys, reservoir)
+    PSY.set_reservoirs!(hydro, [reservoir])
     PSY.add_time_series!(hydro_test_case_b_sys, load, load_forecast_dur)
-    PSY.add_time_series!(hydro_test_case_b_sys, hydro, inflow_forecast_dur)
-    PSY.add_time_series!(hydro_test_case_b_sys, hydro, energy_target_forecast_dur)
+    PSY.add_time_series!(hydro_test_case_b_sys, reservoir, inflow_forecast_dur)
+    PSY.add_time_series!(hydro_test_case_b_sys, reservoir, energy_target_forecast_dur)
 
     return hydro_test_case_b_sys
 end
@@ -3750,26 +3791,9 @@ function build_hydro_test_case_c_sys(; raw_data, kwargs...)
             "d/m/y  H:M:S",
         ),
     )
-    hydro = HydroEnergyReservoir(;
-        name = "HydroEnergyReservoir",
-        available = true,
-        bus = node,
-        active_power = 0.0,
-        reactive_power = 0.0,
-        rating = 7.0,
-        prime_mover_type = PrimeMovers.HY,
-        active_power_limits = (min = 0.0, max = 7.0),
-        reactive_power_limits = (min = 0.0, max = 7.0),
-        ramp_limits = (up = 7.0, down = 7.0),
-        time_limits = nothing,
-        operation_cost = HydroGenerationCost(
-            CostCurve(LinearCurve(0.15)), 0.0),
-        base_power = 100.0,
-        storage_capacity = 50.0,
-        inflow = 4.0,
-        conversion_factor = 1.0,
-        initial_storage = 0.5,
-    )
+    turbine, reservoir = _get_generic_hydro_reservoir_pair(node)
+    set_reservoirs!(turbine, reservoir)
+
     duration_load = [0.3, 0.6, 0.5]
     load_data =
         SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, duration_load))
@@ -3787,10 +3811,11 @@ function build_hydro_test_case_c_sys(; raw_data, kwargs...)
     hydro_test_case_c_sys = PSY.System(100.0; sys_kwargs...)
     PSY.add_component!(hydro_test_case_c_sys, node)
     PSY.add_component!(hydro_test_case_c_sys, load)
-    PSY.add_component!(hydro_test_case_c_sys, hydro)
+    PSY.add_component!(hydro_test_case_c_sys, turbine)
+    PSY.add_component!(hydro_test_case_c_sys, reservoir)
     PSY.add_time_series!(hydro_test_case_c_sys, load, load_forecast_dur)
-    PSY.add_time_series!(hydro_test_case_c_sys, hydro, inflow_forecast_dur)
-    PSY.add_time_series!(hydro_test_case_c_sys, hydro, energy_target_forecast_dur)
+    PSY.add_time_series!(hydro_test_case_c_sys, reservoir, inflow_forecast_dur)
+    PSY.add_time_series!(hydro_test_case_c_sys, reservoir, energy_target_forecast_dur)
 
     return hydro_test_case_c_sys
 end
@@ -3817,26 +3842,8 @@ function build_hydro_test_case_d_sys(; raw_data, kwargs...)
             "d/m/y  H:M:S",
         ),
     )
-    hydro = HydroEnergyReservoir(;
-        name = "HydroEnergyReservoir",
-        available = true,
-        bus = node,
-        active_power = 0.0,
-        reactive_power = 0.0,
-        rating = 7.0,
-        prime_mover_type = PrimeMovers.HY,
-        active_power_limits = (min = 0.0, max = 7.0),
-        reactive_power_limits = (min = 0.0, max = 7.0),
-        ramp_limits = (up = 7.0, down = 7.0),
-        time_limits = nothing,
-        operation_cost = HydroGenerationCost(
-            CostCurve(LinearCurve(0.15)), 0.0),
-        base_power = 100.0,
-        storage_capacity = 50.0,
-        inflow = 4.0,
-        conversion_factor = 1.0,
-        initial_storage = 0.5,
-    )
+    turbine, reservoir = _get_generic_hydro_reservoir_pair(node)
+    set_reservoirs!(turbine, reservoir)
     duration_load = [0.3, 0.6, 0.5]
     load_data =
         SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, duration_load))
@@ -3854,10 +3861,11 @@ function build_hydro_test_case_d_sys(; raw_data, kwargs...)
     hydro_test_case_d_sys = PSY.System(100.0; sys_kwargs...)
     PSY.add_component!(hydro_test_case_d_sys, node)
     PSY.add_component!(hydro_test_case_d_sys, load)
-    PSY.add_component!(hydro_test_case_d_sys, hydro)
+    PSY.add_component!(hydro_test_case_d_sys, turbine)
+    PSY.add_component!(hydro_test_case_d_sys, reservoir)
     PSY.add_time_series!(hydro_test_case_d_sys, load, load_forecast_dur)
-    PSY.add_time_series!(hydro_test_case_d_sys, hydro, inflow_forecast_dur)
-    PSY.add_time_series!(hydro_test_case_d_sys, hydro, energy_target_forecast_dur)
+    PSY.add_time_series!(hydro_test_case_d_sys, reservoir, inflow_forecast_dur)
+    PSY.add_time_series!(hydro_test_case_d_sys, reservoir, energy_target_forecast_dur)
 
     return hydro_test_case_d_sys
 end
@@ -3884,28 +3892,8 @@ function build_hydro_test_case_e_sys(; raw_data, kwargs...)
             "d/m/y  H:M:S",
         ),
     )
-    hydro = HydroEnergyReservoir(;
-        name = "HydroEnergyReservoir",
-        available = true,
-        bus = node,
-        active_power = 0.0,
-        reactive_power = 0.0,
-        rating = 7.0,
-        prime_mover_type = PrimeMovers.HY,
-        active_power_limits = (min = 0.0, max = 7.0),
-        reactive_power_limits = (min = 0.0, max = 7.0),
-        ramp_limits = (up = 7.0, down = 7.0),
-        time_limits = nothing,
-        operation_cost = HydroGenerationCost(
-            CostCurve(LinearCurve(0.15)),
-            0.0,
-        ),
-        base_power = 100.0,
-        storage_capacity = 50.0,
-        inflow = 4.0,
-        conversion_factor = 1.0,
-        initial_storage = 20.0,
-    )
+    turbine, reservoir = _get_generic_hydro_reservoir_pair(node)
+    set_reservoirs!(turbine, reservoir)
     duration_load = [0.3, 0.6, 0.5]
     load_data =
         SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, duration_load))
@@ -3923,10 +3911,11 @@ function build_hydro_test_case_e_sys(; raw_data, kwargs...)
     hydro_test_case_e_sys = PSY.System(100.0; sys_kwargs...)
     PSY.add_component!(hydro_test_case_e_sys, node)
     PSY.add_component!(hydro_test_case_e_sys, load)
-    PSY.add_component!(hydro_test_case_e_sys, hydro)
+    PSY.add_component!(hydro_test_case_e_sys, turbine)
+    PSY.add_component!(hydro_test_case_e_sys, reservoir)
     PSY.add_time_series!(hydro_test_case_e_sys, load, load_forecast_dur)
-    PSY.add_time_series!(hydro_test_case_e_sys, hydro, inflow_forecast_dur)
-    PSY.add_time_series!(hydro_test_case_e_sys, hydro, energy_target_forecast_dur)
+    PSY.add_time_series!(hydro_test_case_e_sys, reservoir, inflow_forecast_dur)
+    PSY.add_time_series!(hydro_test_case_e_sys, reservoir, energy_target_forecast_dur)
 
     return hydro_test_case_e_sys
 end
@@ -3953,28 +3942,8 @@ function build_hydro_test_case_f_sys(; raw_data, kwargs...)
             "d/m/y  H:M:S",
         ),
     )
-    hydro = HydroEnergyReservoir(;
-        name = "HydroEnergyReservoir",
-        available = true,
-        bus = node,
-        active_power = 0.0,
-        reactive_power = 0.0,
-        rating = 7.0,
-        prime_mover_type = PrimeMovers.HY,
-        active_power_limits = (min = 0.0, max = 7.0),
-        reactive_power_limits = (min = 0.0, max = 7.0),
-        ramp_limits = (up = 7.0, down = 7.0),
-        time_limits = nothing,
-        operation_cost = HydroGenerationCost(
-            CostCurve(LinearCurve(0.15)),
-            0.0,
-        ),
-        base_power = 100.0,
-        storage_capacity = 50.0,
-        inflow = 4.0,
-        conversion_factor = 1.0,
-        initial_storage = 10.0,
-    )
+    turbine, reservoir = _get_generic_hydro_reservoir_pair(node)
+    set_reservoirs!(turbine, reservoir)
     duration_load = [0.3, 0.6, 0.5]
     load_data =
         SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, duration_load))
@@ -3992,10 +3961,11 @@ function build_hydro_test_case_f_sys(; raw_data, kwargs...)
     hydro_test_case_f_sys = PSY.System(100.0; sys_kwargs...)
     PSY.add_component!(hydro_test_case_f_sys, node)
     PSY.add_component!(hydro_test_case_f_sys, load)
-    PSY.add_component!(hydro_test_case_f_sys, hydro)
+    PSY.add_component!(hydro_test_case_f_sys, turbine)
+    PSY.add_component!(hydro_test_case_f_sys, reservoir)
     PSY.add_time_series!(hydro_test_case_f_sys, load, load_forecast_dur)
-    PSY.add_time_series!(hydro_test_case_f_sys, hydro, inflow_forecast_dur)
-    PSY.add_time_series!(hydro_test_case_f_sys, hydro, energy_target_forecast_dur)
+    PSY.add_time_series!(hydro_test_case_f_sys, reservoir, inflow_forecast_dur)
+    PSY.add_time_series!(hydro_test_case_f_sys, reservoir, energy_target_forecast_dur)
 
     return hydro_test_case_f_sys
 end
@@ -4449,17 +4419,21 @@ function build_c_sys5_all_components(; add_forecasts, raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
 
     nodes = nodes5()
+    hydros = hydro_generators5(nodes)
+    reservoir = hydro_reservoir5_energy()
     c_sys5_all_components = PSY.System(
         100.0,
         nodes,
         thermal_generators5(nodes),
         renewable_generators5(nodes),
         loads5(nodes),
-        hydro_generators5(nodes),
+        hydros,
         branches5(nodes);
         time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
+    add_component!(c_sys5_all_components, reservoir[1])
+    set_reservoirs!(hydros[2], reservoir)
 
     # Boilerplate to handle time series
     # TODO refactor as per https://github.com/NREL-Sienna/PowerSystemCaseBuilder.jl/issues/66
@@ -4478,7 +4452,7 @@ function build_c_sys5_all_components(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, h) in
-            enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_all_components))
+            enumerate(PSY.get_components(PSY.HydroTurbine, c_sys5_all_components))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
@@ -4491,7 +4465,7 @@ function build_c_sys5_all_components(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, h) in
-            enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_all_components))
+            enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_all_components))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(storage_target_DA[t][ix])[1]
@@ -4504,7 +4478,7 @@ function build_c_sys5_all_components(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, h) in
-            enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_all_components))
+            enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_all_components))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
@@ -4517,7 +4491,7 @@ function build_c_sys5_all_components(; add_forecasts, raw_data, kwargs...)
             )
         end
         for (ix, h) in
-            enumerate(PSY.get_components(PSY.HydroEnergyReservoir, c_sys5_all_components))
+            enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_all_components))
             forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
             for t in 1:2
                 ini_time = TimeSeries.timestamp(hydro_budget_DA[t][ix])[1]

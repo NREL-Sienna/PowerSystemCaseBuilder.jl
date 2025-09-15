@@ -285,7 +285,7 @@ function build_5_bus_hydro_uc_sys_targets(; add_forecasts, raw_data, sys_kwargs.
         c_sys5_hy_uc = PSY.System(rawsys; sys_kwargs...)
     end
     cost = HydroGenerationCost(CostCurve(LinearCurve(0.15)), 0.0)
-    for hy in get_components(HydroEnergyReservoir, c_sys5_hy_uc)
+    for hy in get_components(HydroTurbine, c_sys5_hy_uc)
         set_operation_cost!(hy, cost)
     end
     return c_sys5_hy_uc
@@ -335,7 +335,7 @@ function build_5_bus_hydro_ed_sys_targets(; raw_data, kwargs...)
         sys_kwargs...,
     )
     cost = HydroGenerationCost(CostCurve(LinearCurve(0.15)), 0.0)
-    for hy in get_components(HydroEnergyReservoir, c_sys5_hy_ed)
+    for hy in get_components(HydroTurbine, c_sys5_hy_ed)
         set_operation_cost!(hy, cost)
     end
     PSY.transform_single_time_series!(c_sys5_hy_ed, Hour(2), Hour(1))
@@ -387,7 +387,7 @@ function build_5_bus_hydro_wk_sys_targets(; raw_data, kwargs...)
         sys_kwargs...,
     )
     cost = HydroGenerationCost(CostCurve(LinearCurve(0.15)), 0.0)
-    for hy in get_components(HydroEnergyReservoir, c_sys5_hy_wk)
+    for hy in get_components(HydroTurbine, c_sys5_hy_wk)
         set_operation_cost!(hy, cost)
     end
     PSY.transform_single_time_series!(c_sys5_hy_wk, Hour(48), Hour(48))
@@ -565,7 +565,7 @@ function make_modified_RTS_GMLC_sys(
     end
 
     # Add Hydro to regulation reserves
-    for d in PSY.get_components(PSY.HydroEnergyReservoir, sys)
+    for d in PSY.get_components(PSY.HydroTurbine, sys)
         PSY.remove_component!(sys, d)
     end
 
@@ -1426,7 +1426,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         !PSY.has_time_series(b) && PSY.copy_time_series!(b, main_comp)
 
         # add service to the device to be added to main_sys
-        if length(PSY.get_services(main_comp)) > 0
+        if length(PSY.get_services(main_comp)) > 0 && supports_services(b)
             PSY.get_name(b)
             srvc_ = PSY.get_services(main_comp)
             for ss in srvc_
