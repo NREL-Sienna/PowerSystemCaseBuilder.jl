@@ -4713,10 +4713,8 @@ function build_two_area_pjm_DA(; add_forecasts, raw_data, sys_kwargs...)
         sys_kwargs...,
     )
 
-    area1 = Area(nothing)
-    area1.name = "Area1"
-    area2 = Area(nothing)
-    area1.name = "Area2"
+    area1 = Area(; name = "Area1")
+    area2 = Area(; name = "Area2")
 
     add_component!(sys, area1)
     add_component!(sys, area2)
@@ -4861,6 +4859,75 @@ function build_two_area_pjm_DA(; add_forecasts, raw_data, sys_kwargs...)
                     "max_active_power",
                     TimeArray(da_load_time_series, re_timeseries[PSY.get_name(g)]),
                 ),
+            )
+        end
+    end
+    if add_reserves
+        thermal_standard_area_1 = collect(
+            PSY.get_components(
+                x -> PSY.get_name(PSY.get_area(PSY.get_bus(x))) == "Area1",
+                PSY.ThermalStandard,
+                sys,
+            ),
+        )
+        thermal_standard_area_2 = collect(
+            PSY.get_components(
+                x -> PSY.get_name(PSY.get_area(PSY.get_bus(x))) == "Area2",
+                PSY.ThermalStandard,
+                sys,
+            ),
+        )
+        reserves_area_1 = reserve5(thermal_standard_area_1)
+        for reserve in reserves_area_1
+            PSY.set_name!(reserve, "$(PSY.get_name(reserve))_1")
+        end
+        reserves_area_2 = reserve5(thermal_standard_area_2)
+        for reserve in reserves_area_2
+            PSY.set_name!(reserve, "$(PSY.get_name(reserve))_2")
+        end
+        for (area_thermals, area_reserves) in zip(
+            [thermal_standard_area_1, thermal_standard_area_2],
+            [reserves_area_1, reserves_area_2],
+        )
+            PSY.add_service!(
+                sys,
+                area_reserves[1],
+                area_thermals,
+            )
+            PSY.add_service!(
+                sys,
+                area_reserves[2],
+                area_thermals[end],
+            )
+            PSY.add_service!(
+                sys,
+                area_reserves[3],
+                area_thermals,
+            )
+            # ORDC Curve
+            PSY.add_service!(
+                sys,
+                area_reserves[4],
+                area_thermals,
+            )
+        end
+        for serv in PSY.get_components(PSY.VariableReserve, sys)
+            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+            for t in 1:2
+                ini_time = timestamp(Reserve_ts[t])[1]
+                forecast_data[ini_time] = Reserve_ts[t]
+            end
+            PSY.add_time_series!(
+                sys,
+                serv,
+                PSY.Deterministic("requirement", forecast_data),
+            )
+        end
+        for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, sys))
+            PSY.set_variable_cost!(
+                sys,
+                serv,
+                ORDC_cost,
             )
         end
     end
