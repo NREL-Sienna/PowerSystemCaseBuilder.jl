@@ -1432,17 +1432,19 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         !PSY.has_time_series(b) && PSY.copy_time_series!(b, main_comp)
 
         # add service to the device to be added to main_sys
-        if length(PSY.get_services(main_comp)) > 0 && supports_services(b)
-            PSY.get_name(b)
-            srvc_ = PSY.get_services(main_comp)
-            for ss in srvc_
-                srvc_type = typeof(ss)
-                srvc_name = PSY.get_name(ss)
-                PSY.add_service!(
-                    b,
-                    PSY.get_component(srvc_type, main_sys, srvc_name * "_twin"),
-                    main_sys,
-                )
+        if PSY.supports_services(b)
+            if length(PSY.get_services(main_comp)) > 0
+                PSY.get_name(b)
+                srvc_ = PSY.get_services(main_comp)
+                for ss in srvc_
+                    srvc_type = typeof(ss)
+                    srvc_name = PSY.get_name(ss)
+                    PSY.add_service!(
+                        b,
+                        PSY.get_component(srvc_type, main_sys, srvc_name * "_twin"),
+                        main_sys,
+                    )
+                end
             end
         end
         # change scale

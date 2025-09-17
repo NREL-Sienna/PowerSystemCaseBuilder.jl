@@ -51,8 +51,10 @@ function build_c_sys14(; add_forecasts, raw_data, kwargs...)
     if add_forecasts
         forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
         for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys14))
-            ini_time = TimeSeries.timestamp(timeseries_DA14[ix])[1]
-            forecast_data[ini_time] = timeseries_DA14[ix]
+            for t in 1:2
+                ini_time = TimeSeries.timestamp(timeseries_DA14[t][ix])[1]
+                forecast_data[ini_time] = timeseries_DA14[t][ix]
+            end
             PSY.add_time_series!(
                 c_sys14,
                 l,
@@ -80,8 +82,10 @@ function build_c_sys14_dc(; add_forecasts, raw_data, kwargs...)
     if add_forecasts
         forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
         for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys14_dc))
-            ini_time = TimeSeries.timestamp(timeseries_DA14[ix])[1]
-            forecast_data[ini_time] = timeseries_DA14[ix]
+            for t in 1:2
+                ini_time = TimeSeries.timestamp(timeseries_DA14[t][ix])[1]
+                forecast_data[ini_time] = timeseries_DA14[t][ix]
+            end
             PSY.add_time_series!(
                 c_sys14_dc,
                 l,
