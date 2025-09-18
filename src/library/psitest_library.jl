@@ -4658,7 +4658,7 @@ function build_c_sys5_radial(; raw_data, kwargs...)
     return new_sys
 end
 
-function build_two_area_pjm_DA(; add_forecasts, raw_data, sys_kwargs...)
+function build_two_area_pjm_DA(; add_forecasts, add_reserves, raw_data, sys_kwargs...)
     nodes_area1 = nodes5()
     for n in nodes_area1
         PSY.set_name!(n, "Bus_$(PSY.get_name(n))_1")
@@ -4912,15 +4912,14 @@ function build_two_area_pjm_DA(; add_forecasts, raw_data, sys_kwargs...)
             )
         end
         for serv in PSY.get_components(PSY.VariableReserve, sys)
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = timestamp(Reserve_ts[t])[1]
-                forecast_data[ini_time] = Reserve_ts[t]
-            end
+            reserve_time_series = PSY.SingleTimeSeries(;
+                name = "requirement",
+                data = TimeSeries.TimeArray(da_load_time_series, rand(168)),
+            )
             PSY.add_time_series!(
                 sys,
                 serv,
-                PSY.Deterministic("requirement", forecast_data),
+                reserve_time_series,
             )
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, sys))
