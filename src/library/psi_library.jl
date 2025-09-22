@@ -254,6 +254,7 @@ function build_5_bus_hydro_uc_sys(; add_forecasts, raw_data, sys_kwargs...)
             sys_kwargs...,
         )
         PSY.transform_single_time_series!(c_sys5_hy_uc, Hour(24), Hour(24))
+        copy_inflow_time_series!(c_sys5_hy_uc)
     else
         c_sys5_hy_uc = PSY.System(rawsys; sys_kwargs...)
     end
@@ -281,6 +282,7 @@ function build_5_bus_hydro_uc_sys_targets(; add_forecasts, raw_data, sys_kwargs.
             sys_kwargs...,
         )
         PSY.transform_single_time_series!(c_sys5_hy_uc, Hour(24), Hour(24))
+        copy_inflow_time_series!(c_sys5_hy_uc)
     else
         c_sys5_hy_uc = PSY.System(rawsys; sys_kwargs...)
     end
@@ -311,6 +313,7 @@ function build_5_bus_hydro_ed_sys(; raw_data, kwargs...)
         sys_kwargs...,
     )
     PSY.transform_single_time_series!(c_sys5_hy_ed, Hour(2), Hour(1))
+    copy_inflow_time_series!(c_sys5_hy_ed)
 
     return c_sys5_hy_ed
 end
@@ -339,6 +342,7 @@ function build_5_bus_hydro_ed_sys_targets(; raw_data, kwargs...)
         set_operation_cost!(hy, cost)
     end
     PSY.transform_single_time_series!(c_sys5_hy_ed, Hour(2), Hour(1))
+    copy_inflow_time_series!(c_sys5_hy_ed)
 
     return c_sys5_hy_ed
 end
@@ -363,6 +367,7 @@ function build_5_bus_hydro_wk_sys(; raw_data, kwargs...)
         sys_kwargs...,
     )
     PSY.transform_single_time_series!(c_sys5_hy_wk, Hour(48), Hour(48))
+    copy_inflow_time_series!(c_sys5_hy_wk)
 
     return c_sys5_hy_wk
 end
@@ -391,6 +396,7 @@ function build_5_bus_hydro_wk_sys_targets(; raw_data, kwargs...)
         set_operation_cost!(hy, cost)
     end
     PSY.transform_single_time_series!(c_sys5_hy_wk, Hour(48), Hour(48))
+    copy_inflow_time_series!(c_sys5_hy_wk)
 
     return c_sys5_hy_wk
 end

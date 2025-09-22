@@ -161,3 +161,11 @@ function convert_to_hydropump!(d::EnergyReservoirStorage, sys::System)
     end
     copy_time_series!(hpump, d)
 end
+
+function copy_inflow_time_series!(sys)
+    for turb in get_components(HydroTurbine, sys)
+        res = only(turb.reservoirs)
+        name_map = Dict((PSY.get_name(turb), "inflow") => "inflow")
+        copy_time_series!(res, turb; name_mapping = name_map)
+    end
+end
