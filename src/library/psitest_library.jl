@@ -60,6 +60,15 @@ function build_c_sys14(; add_forecasts, raw_data, kwargs...)
                 l,
                 PSY.Deterministic("max_active_power", forecast_data),
             )
+            PSY.add_time_series!(
+                c_sys14,
+                l,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    single_timeseries_DA14[ix];
+                    scaling_factor_multiplier = PSY.get_max_active_power,
+                ),
+            )
         end
     end
 
@@ -90,6 +99,15 @@ function build_c_sys14_dc(; add_forecasts, raw_data, kwargs...)
                 c_sys14_dc,
                 l,
                 PSY.Deterministic("max_active_power", forecast_data),
+            )
+            PSY.add_time_series!(
+                c_sys14_dc,
+                l,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    single_timeseries_DA14[ix];
+                    scaling_factor_multiplier = PSY.get_max_active_power,
+                ),
             )
         end
     end
