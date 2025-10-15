@@ -197,7 +197,6 @@ end
 
 function build_c_sys5_re(;
     add_forecasts,
-    add_single_time_series,
     add_reserves,
     raw_data,
     sys_kwargs...,
@@ -307,7 +306,6 @@ end
 
 function build_c_sys5_re_fuel_cost(;
     add_forecasts,
-    add_single_time_series,
     add_reserves,
     raw_data,
     sys_kwargs...,
@@ -1120,7 +1118,6 @@ end
 
 function build_c_sys5_hyd(;
     add_forecasts,
-    add_single_time_series,
     add_reserves,
     raw_data,
     sys_kwargs...,
@@ -1237,7 +1234,7 @@ function build_c_sys5_hyd(;
         PSY.add_service!(
             c_sys5_hyd,
             reserve_hy[2],
-            [collect(PSY.get_components(PSY.HydroTurbine, c_sys5_hyd))[end]],
+            PSY.get_components(PSY.HydroTurbine, c_sys5_hyd),
         )
         # ORDC curve
         PSY.add_service!(
@@ -1276,7 +1273,6 @@ end
 
 function build_c_sys5_hyd_ems(;
     add_forecasts,
-    add_single_time_series,
     add_reserves,
     raw_data,
     sys_kwargs...,
@@ -1433,7 +1429,6 @@ end
 
 function build_c_sys5_bat(;
     add_forecasts,
-    add_single_time_series,
     add_reserves,
     raw_data,
     sys_kwargs...,
@@ -1541,7 +1536,6 @@ end
 
 function build_c_sys5_hydro_pump_energy(;
     add_forecasts,
-    add_single_time_series,
     add_reserves,
     raw_data,
     sys_kwargs...,
@@ -2028,7 +2022,6 @@ end
 
 function build_c_sys5_uc(;
     add_forecasts,
-    add_single_time_series,
     add_reserves,
     raw_data,
     sys_kwargs...,
@@ -2121,7 +2114,6 @@ end
 
 function build_c_sys5_uc_non_spin(;
     add_forecasts,
-    add_single_time_series,
     add_reserves,
     raw_data,
     sys_kwargs...,
@@ -2239,7 +2231,6 @@ end
 
 function build_c_sys5_uc_re(;
     add_forecasts,
-    add_single_time_series,
     add_reserves,
     raw_data,
     sys_kwargs...,
