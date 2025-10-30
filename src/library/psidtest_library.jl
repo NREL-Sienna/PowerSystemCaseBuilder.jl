@@ -53,8 +53,12 @@ function build_psid_psse_test_avr(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     avr_type = get(kwargs, :avr_type, "")
     if isempty(avr_type)
-        error("No AVR type provided. Provide avr_type as kwarg when using build_system")
-    elseif avr_type == "AC1A_SAT"
+        @warn(
+            "No AVR type provided. Provide avr_type as kwarg when using build_system. By default AC1A will be used."
+        )
+        avr_type = "AC1A"
+    end
+    if avr_type == "AC1A_SAT"
         raw_file = joinpath(raw_data, "AC1A/ThreeBusMulti.raw")
         dyr_file = joinpath(raw_data, "AC1A/ThreeBus_ESAC1A_SAT.dyr")
     elseif avr_type == "AC1A"
@@ -85,10 +89,12 @@ function build_psid_psse_test_tg(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     tg_type = get(kwargs, :tg_type, "")
     if isempty(tg_type)
-        error(
-            "No Turbine Governor type provided. Provide tg_type as kwarg when using build_system",
+        @warn(
+            "No Turbine Governor type provided. Provide tg_type as kwarg when using build_system. By default GAST will be used.",
         )
-    elseif tg_type == "GAST"
+        tg_type = "GAST"
+    end
+    if tg_type == "GAST"
         raw_file = joinpath(raw_data, "GAST/ThreeBusMulti.raw")
         dyr_file = joinpath(raw_data, "GAST/ThreeBus_GAST.dyr")
     elseif tg_type == "HYGOV"
@@ -115,10 +121,12 @@ function build_psid_psse_test_gen(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     gen_type = get(kwargs, :gen_type, "")
     if isempty(gen_type)
-        error(
-            "No Generator model type provided. Provide gen_type as kwarg when using build_system",
+        @warn(
+            "No Generator model type provided. Provide gen_type as kwarg when using build_system. By default GENCLS will be used.",
         )
-    elseif gen_type == "GENCLS"
+        gen_type = "GENCLS"
+    end
+    if gen_type == "GENCLS"
         raw_file = joinpath(raw_data, "GENCLS/ThreeBusMulti.raw")
         dyr_file = joinpath(raw_data, "GENCLS/ThreeBus_GENCLS.dyr")
     elseif gen_type == "GENROE"
@@ -160,8 +168,12 @@ function build_psid_psse_test_pss(; raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     pss_type = get(kwargs, :pss_type, "")
     if isempty(pss_type)
-        error("No PSS type provided. Provide pss_type as kwarg when using build_system")
-    elseif pss_type == "STAB1"
+        @warn(
+            "No PSS type provided. Provide pss_type as kwarg when using build_system. By default STAB1 will be used."
+        )
+        pss_type = "STAB1"
+    end
+    if pss_type == "STAB1"
         raw_file = joinpath(raw_data, "STAB1/OMIB_SSS.raw")
         dyr_file = joinpath(raw_data, "STAB1/OMIB_SSS.dyr")
     elseif pss_type == "IEEEST"
