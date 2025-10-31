@@ -11,6 +11,11 @@ const SYSTEM_CATALOG = [
                 default = true,
                 allowed_values = Set([true, false]),
             ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
         ],
     ),
     SystemDescriptor(;
@@ -25,6 +30,11 @@ const SYSTEM_CATALOG = [
                 default = true,
                 allowed_values = Set([true, false]),
             ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
         ],
     ),
     SystemDescriptor(;
@@ -37,6 +47,11 @@ const SYSTEM_CATALOG = [
             SystemArgument(;
                 name = :add_forecasts,
                 default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
         ],
@@ -101,6 +116,11 @@ const SYSTEM_CATALOG = [
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
                 name = :add_reserves,
                 default = false,
                 allowed_values = Set([true, false]),
@@ -117,6 +137,11 @@ const SYSTEM_CATALOG = [
             SystemArgument(;
                 name = :add_forecasts,
                 default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
@@ -138,6 +163,11 @@ const SYSTEM_CATALOG = [
                 default = true,
                 allowed_values = Set([true, false]),
             ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
         ],
     ),
     SystemDescriptor(;
@@ -150,6 +180,11 @@ const SYSTEM_CATALOG = [
             SystemArgument(;
                 name = :add_forecasts,
                 default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
@@ -172,6 +207,11 @@ const SYSTEM_CATALOG = [
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
                 name = :add_reserves,
                 default = false,
                 allowed_values = Set([true, false]),
@@ -188,6 +228,11 @@ const SYSTEM_CATALOG = [
             SystemArgument(;
                 name = :add_forecasts,
                 default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
@@ -210,6 +255,11 @@ const SYSTEM_CATALOG = [
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
                 name = :add_reserves,
                 default = false,
                 allowed_values = Set([true, false]),
@@ -226,6 +276,11 @@ const SYSTEM_CATALOG = [
             SystemArgument(;
                 name = :add_forecasts,
                 default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
@@ -248,6 +303,11 @@ const SYSTEM_CATALOG = [
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
                 name = :add_reserves,
                 default = false,
                 allowed_values = Set([true, false]),
@@ -266,6 +326,11 @@ const SYSTEM_CATALOG = [
                 default = true,
                 allowed_values = Set([true, false]),
             ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
         ],
     ),
     SystemDescriptor(;
@@ -280,6 +345,11 @@ const SYSTEM_CATALOG = [
                 default = true,
                 allowed_values = Set([true, false]),
             ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
         ],
     ),
     SystemDescriptor(;
@@ -292,6 +362,11 @@ const SYSTEM_CATALOG = [
             SystemArgument(;
                 name = :add_forecasts,
                 default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
@@ -313,6 +388,11 @@ const SYSTEM_CATALOG = [
                 default = true,
                 allowed_values = Set([true, false]),
             ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
         ],
     ),
     SystemDescriptor(;
@@ -327,6 +407,11 @@ const SYSTEM_CATALOG = [
                 default = true,
                 allowed_values = Set([true, false]),
             ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
         ],
     ),
     SystemDescriptor(;
@@ -339,6 +424,11 @@ const SYSTEM_CATALOG = [
             SystemArgument(;
                 name = :add_forecasts,
                 default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
@@ -361,6 +451,11 @@ const SYSTEM_CATALOG = [
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
                 name = :add_reserves,
                 default = false,
                 allowed_values = Set([true, false]),
@@ -377,6 +472,11 @@ const SYSTEM_CATALOG = [
             SystemArgument(;
                 name = :add_forecasts,
                 default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
@@ -398,6 +498,11 @@ const SYSTEM_CATALOG = [
                 default = true,
                 allowed_values = Set([true, false]),
             ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
         ],
     ),
     SystemDescriptor(;
@@ -410,6 +515,11 @@ const SYSTEM_CATALOG = [
             SystemArgument(;
                 name = :add_forecasts,
                 default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
@@ -432,6 +542,11 @@ const SYSTEM_CATALOG = [
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
                 name = :add_reserves,
                 default = false,
                 allowed_values = Set([true, false]),
@@ -450,6 +565,11 @@ const SYSTEM_CATALOG = [
                 default = true,
                 allowed_values = Set([true, false]),
             ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
         ],
     ),
     SystemDescriptor(;
@@ -462,6 +582,11 @@ const SYSTEM_CATALOG = [
             SystemArgument(;
                 name = :add_forecasts,
                 default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
@@ -484,6 +609,11 @@ const SYSTEM_CATALOG = [
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
                 name = :add_reserves,
                 default = false,
                 allowed_values = Set([true, false]),
@@ -500,6 +630,11 @@ const SYSTEM_CATALOG = [
             SystemArgument(;
                 name = :add_forecasts,
                 default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
@@ -522,6 +657,11 @@ const SYSTEM_CATALOG = [
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
                 name = :add_reserves,
                 default = false,
                 allowed_values = Set([true, false]),
@@ -538,6 +678,11 @@ const SYSTEM_CATALOG = [
             SystemArgument(;
                 name = :add_forecasts,
                 default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
@@ -560,6 +705,11 @@ const SYSTEM_CATALOG = [
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
                 name = :add_reserves,
                 default = false,
                 allowed_values = Set([true, false]),
@@ -576,6 +726,11 @@ const SYSTEM_CATALOG = [
             SystemArgument(;
                 name = :add_forecasts,
                 default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
@@ -611,6 +766,11 @@ const SYSTEM_CATALOG = [
             SystemArgument(;
                 name = :add_forecasts,
                 default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;

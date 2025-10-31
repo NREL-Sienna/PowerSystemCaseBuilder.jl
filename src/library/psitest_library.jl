@@ -35,7 +35,7 @@ function _get_generic_hydro_reservoir_pair(node)
     return hydro, reservoir
 end
 
-function build_c_sys14(; add_forecasts, raw_data, kwargs...)
+function build_c_sys14(; add_forecasts, add_single_time_series, raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes14()
     c_sys14 = PSY.System(
@@ -48,18 +48,13 @@ function build_c_sys14(; add_forecasts, raw_data, kwargs...)
         sys_kwargs...,
     )
 
-    if add_forecasts
-        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-        for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys14))
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(timeseries_DA14[t][ix])[1]
-                forecast_data[ini_time] = timeseries_DA14[t][ix]
-            end
-            PSY.add_time_series!(
-                c_sys14,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+    forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+    for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys14))
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(timeseries_DA14[t][ix])[1]
+            forecast_data[ini_time] = timeseries_DA14[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys14,
                 l,
@@ -69,13 +64,21 @@ function build_c_sys14(; add_forecasts, raw_data, kwargs...)
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys14,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
+            end
         end
     end
 
     return c_sys14
 end
 
-function build_c_sys14_dc(; add_forecasts, raw_data, kwargs...)
+function build_c_sys14_dc(; add_forecasts, add_single_time_series, raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes14()
     c_sys14_dc = PSY.System(
@@ -88,18 +91,13 @@ function build_c_sys14_dc(; add_forecasts, raw_data, kwargs...)
         sys_kwargs...,
     )
 
-    if add_forecasts
-        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys14_dc))
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(timeseries_DA14[t][ix])[1]
-                forecast_data[ini_time] = timeseries_DA14[t][ix]
-            end
-            PSY.add_time_series!(
-                c_sys14_dc,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+    forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys14_dc))
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(timeseries_DA14[t][ix])[1]
+            forecast_data[ini_time] = timeseries_DA14[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys14_dc,
                 l,
@@ -109,13 +107,21 @@ function build_c_sys14_dc(; add_forecasts, raw_data, kwargs...)
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys14_dc,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
+            end
         end
     end
 
     return c_sys14_dc
 end
 
-function build_c_sys5(; add_forecasts, raw_data, kwargs...)
+function build_c_sys5(; add_forecasts, add_single_time_series, raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5 = PSY.System(
@@ -127,18 +133,13 @@ function build_c_sys5(; add_forecasts, raw_data, kwargs...)
         sys_kwargs...,
     )
 
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = load_timeseries_DA[t][ix]
-            end
-            add_time_series!(
-                c_sys5,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+    for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = load_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             add_time_series!(
                 c_sys5,
                 l,
@@ -148,13 +149,21 @@ function build_c_sys5(; add_forecasts, raw_data, kwargs...)
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
+        else
+            if add_forecasts
+                add_time_series!(
+                    c_sys5,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
+            end
         end
     end
 
     return c_sys5
 end
 
-function build_c_sys5_ml(; add_forecasts, raw_data, kwargs...)
+function build_c_sys5_ml(; add_forecasts, add_single_time_series, raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_ml = PSY.System(
@@ -167,18 +176,13 @@ function build_c_sys5_ml(; add_forecasts, raw_data, kwargs...)
         sys_kwargs...,
     )
 
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5_ml))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = load_timeseries_DA[t][ix]
-            end
-            PSY.add_time_series!(
-                c_sys5_ml,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+    for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5_ml))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = load_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             add_time_series!(
                 c_sys5_ml,
                 l,
@@ -188,6 +192,14 @@ function build_c_sys5_ml(; add_forecasts, raw_data, kwargs...)
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
+        else
+            if add_forecasts
+                add_time_series!(
+                    c_sys5_ml,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
+            end
         end
     end
     line = PSY.get_component(Line, c_sys5_ml, "1")
@@ -197,6 +209,7 @@ end
 
 function build_c_sys5_re(;
     add_forecasts,
+    add_single_time_series,
     add_reserves,
     raw_data,
     sys_kwargs...,
@@ -213,18 +226,13 @@ function build_c_sys5_re(;
         sys_kwargs...,
     )
 
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_re))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = load_timeseries_DA[t][ix]
-            end
-            PSY.add_time_series!(
-                c_sys5_re,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_re))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = load_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_re,
                 l,
@@ -234,18 +242,23 @@ function build_c_sys5_re(;
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, r) in enumerate(PSY.get_components(RenewableGen, c_sys5_re))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(ren_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = ren_timeseries_DA[t][ix]
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_re,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_re,
-                r,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, r) in enumerate(PSY.get_components(RenewableGen, c_sys5_re))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(ren_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = ren_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_re,
                 r,
@@ -255,8 +268,17 @@ function build_c_sys5_re(;
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_re,
+                    r,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
+            end
         end
     end
+
     if add_reserves
         reserve_re = reserve5_re(PSY.get_components(PSY.RenewableDispatch, c_sys5_re))
         PSY.add_service!(
@@ -281,16 +303,21 @@ function build_c_sys5_re(;
                 ini_time = TimeSeries.timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
             end
-            PSY.add_time_series!(
-                c_sys5_re,
-                serv,
-                PSY.Deterministic("requirement", forecast_data),
-            )
-            PSY.add_time_series!(
-                c_sys5_re,
-                serv,
-                PSY.SingleTimeSeries("requirement", Reserve_single_ts),
-            )
+            if add_single_time_series
+                PSY.add_time_series!(
+                    c_sys5_re,
+                    serv,
+                    PSY.SingleTimeSeries("requirement", Reserve_single_ts),
+                )
+            else
+                if add_forecasts
+                    PSY.add_time_series!(
+                        c_sys5_re,
+                        serv,
+                        PSY.Deterministic("requirement", forecast_data),
+                    )
+                end
+            end
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_re))
             PSY.set_variable_cost!(
@@ -306,6 +333,7 @@ end
 
 function build_c_sys5_re_fuel_cost(;
     add_forecasts,
+    add_single_time_series,
     add_reserves,
     raw_data,
     sys_kwargs...,
@@ -322,18 +350,13 @@ function build_c_sys5_re_fuel_cost(;
         sys_kwargs...,
     )
 
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_re))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = load_timeseries_DA[t][ix]
-            end
-            PSY.add_time_series!(
-                c_sys5_re,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_re))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = load_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_re,
                 l,
@@ -343,18 +366,23 @@ function build_c_sys5_re_fuel_cost(;
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, r) in enumerate(PSY.get_components(RenewableGen, c_sys5_re))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(ren_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = ren_timeseries_DA[t][ix]
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_re,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_re,
-                r,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, r) in enumerate(PSY.get_components(RenewableGen, c_sys5_re))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(ren_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = ren_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_re,
                 r,
@@ -364,6 +392,14 @@ function build_c_sys5_re_fuel_cost(;
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_re,
+                    r,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
+            end
         end
     end
     if add_reserves
@@ -390,16 +426,21 @@ function build_c_sys5_re_fuel_cost(;
                 ini_time = TimeSeries.timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
             end
-            PSY.add_time_series!(
-                c_sys5_re,
-                serv,
-                PSY.Deterministic("requirement", forecast_data),
-            )
-            PSY.add_time_series!(
-                c_sys5_re,
-                serv,
-                PSY.SingleTimeSeries("requirement", Reserve_single_ts),
-            )
+            if add_single_time_series
+                PSY.add_time_series!(
+                    c_sys5_re,
+                    serv,
+                    PSY.SingleTimeSeries("requirement", Reserve_single_ts),
+                )
+            else
+                if add_forecasts
+                    PSY.add_time_series!(
+                        c_sys5_re,
+                        serv,
+                        PSY.Deterministic("requirement", forecast_data),
+                    )
+                end
+            end
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_re))
             PSY.set_variable_cost!(
@@ -450,7 +491,7 @@ function build_c_sys5_re_fuel_cost(;
     return c_sys5_re
 end
 
-function build_c_sys5_re_only(; add_forecasts, raw_data, kwargs...)
+function build_c_sys5_re_only(; add_forecasts, add_single_time_series, raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_re_only = PSY.System(
@@ -463,18 +504,13 @@ function build_c_sys5_re_only(; add_forecasts, raw_data, kwargs...)
         sys_kwargs...,
     )
 
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_re_only))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = load_timeseries_DA[t][ix]
-            end
-            PSY.add_time_series!(
-                c_sys5_re_only,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_re_only))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = load_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             add_time_series!(
                 c_sys5_re_only,
                 l,
@@ -484,18 +520,23 @@ function build_c_sys5_re_only(; add_forecasts, raw_data, kwargs...)
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, r) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_re_only))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(ren_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = ren_timeseries_DA[t][ix]
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_re_only,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_re_only,
-                r,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, r) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_re_only))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(ren_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = ren_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             add_time_series!(
                 c_sys5_re_only,
                 r,
@@ -505,13 +546,27 @@ function build_c_sys5_re_only(; add_forecasts, raw_data, kwargs...)
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_re_only,
+                    r,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
+            end
         end
     end
 
     return c_sys5_re_only
 end
 
-function build_c_sys5_hy(; add_forecasts, add_reserves, raw_data, kwargs...)
+function build_c_sys5_hy(;
+    add_forecasts,
+    add_single_time_series,
+    add_reserves,
+    raw_data,
+    kwargs...,
+)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_hy = PSY.System(
@@ -525,18 +580,13 @@ function build_c_sys5_hy(; add_forecasts, add_reserves, raw_data, kwargs...)
         sys_kwargs...,
     )
 
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = load_timeseries_DA[t][ix]
-            end
-            PSY.add_time_series!(
-                c_sys5_hy,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = load_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             add_time_series!(
                 c_sys5_hy,
                 l,
@@ -546,18 +596,23 @@ function build_c_sys5_hy(; add_forecasts, add_reserves, raw_data, kwargs...)
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, r) in enumerate(PSY.get_components(PSY.HydroGen, c_sys5_hy))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hy,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hy,
-                r,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, r) in enumerate(PSY.get_components(PSY.HydroGen, c_sys5_hy))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             add_time_series!(
                 c_sys5_hy,
                 r,
@@ -567,6 +622,14 @@ function build_c_sys5_hy(; add_forecasts, add_reserves, raw_data, kwargs...)
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hy,
+                    r,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
+            end
         end
     end
     if add_reserves
@@ -588,23 +651,34 @@ function build_c_sys5_hy(; add_forecasts, add_reserves, raw_data, kwargs...)
                 ini_time = TimeSeries.timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
             end
-            PSY.add_time_series!(
-                c_sys5_hy,
-                serv,
-                PSY.Deterministic("requirement", forecast_data),
-            )
-            PSY.add_time_series!(
-                c_sys5_hy,
-                serv,
-                PSY.SingleTimeSeries("requirement", Reserve_single_ts),
-            )
+            if add_single_time_series
+                PSY.add_time_series!(
+                    c_sys5_hy,
+                    serv,
+                    PSY.SingleTimeSeries("requirement", Reserve_single_ts),
+                )
+            else
+                if add_forecasts
+                    PSY.add_time_series!(
+                        c_sys5_hy,
+                        serv,
+                        PSY.Deterministic("requirement", forecast_data),
+                    )
+                end
+            end
         end
     end
 
     return c_sys5_hy
 end
 
-function build_c_sys5_hy_turbine_energy(; add_forecasts, add_reserves, raw_data, kwargs...)
+function build_c_sys5_hy_turbine_energy(;
+    add_forecasts,
+    add_single_time_series,
+    add_reserves,
+    raw_data,
+    kwargs...,
+)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_hyd = PSY.System(
@@ -623,18 +697,13 @@ function build_c_sys5_hy_turbine_energy(; add_forecasts, add_reserves, raw_data,
     PSY.add_component!(c_sys5_hyd, res)
     set_downstream_turbines!(res, [turb])
 
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = load_timeseries_DA[t][ix]
-            end
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hyd))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = load_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             add_time_series!(
                 c_sys5_hyd,
                 l,
@@ -644,54 +713,69 @@ function build_c_sys5_hy_turbine_energy(; add_forecasts, add_reserves, raw_data,
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroTurbine, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hyd,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                h,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(PSY.HydroTurbine, c_sys5_hyd))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
                 PSY.SingleTimeSeries("max_active_power", hydro_single_timeseries_DA),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(hydro_budget_DA[t][ix])[1]
-                forecast_data[ini_time] = hydro_budget_DA[t][ix]
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hyd,
+                    h,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                h,
-                PSY.Deterministic("hydro_budget", forecast_data),
-            )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(hydro_budget_DA[t][ix])[1]
+            forecast_data[ini_time] = hydro_budget_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
                 PSY.SingleTimeSeries("max_active_power", hydro_budget_single_ts_DA),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
-            forecast_data_inflow = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            forecast_data_target = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][ix])[1]
-                forecast_data_inflow[ini_time] = hydro_timeseries_DA[t][ix]
-                forecast_data_target[ini_time] = storage_target_DA[t][ix]
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hyd,
+                    h,
+                    PSY.Deterministic("hydro_budget", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                h,
-                PSY.Deterministic("inflow", forecast_data_inflow),
-            )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
+        forecast_data_inflow = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        forecast_data_target = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][ix])[1]
+            forecast_data_inflow[ini_time] = hydro_timeseries_DA[t][ix]
+            forecast_data_target[ini_time] = storage_target_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
@@ -700,13 +784,21 @@ function build_c_sys5_hy_turbine_energy(; add_forecasts, add_reserves, raw_data,
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
-                PSY.Deterministic("storage_target", forecast_data_target),
-            )
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                h,
                 PSY.SingleTimeSeries("storage_target", storage_target_single_ts_DA),
             )
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hyd,
+                    h,
+                    PSY.Deterministic("inflow", forecast_data_inflow),
+                )
+                PSY.add_time_series!(
+                    c_sys5_hyd,
+                    h,
+                    PSY.Deterministic("storage_target", forecast_data_target),
+                )
+            end
         end
     end
     if add_reserves
@@ -728,23 +820,34 @@ function build_c_sys5_hy_turbine_energy(; add_forecasts, add_reserves, raw_data,
                 ini_time = TimeSeries.timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
             end
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                serv,
-                PSY.Deterministic("requirement", forecast_data),
-            )
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                serv,
-                PSY.SingleTimeSeries("requirement", Reserve_single_ts),
-            )
+            if add_single_time_series
+                PSY.add_time_series!(
+                    c_sys5_hyd,
+                    serv,
+                    PSY.SingleTimeSeries("requirement", Reserve_single_ts),
+                )
+            else
+                if add_forecasts
+                    PSY.add_time_series!(
+                        c_sys5_hyd,
+                        serv,
+                        PSY.Deterministic("requirement", forecast_data),
+                    )
+                end
+            end
         end
     end
 
     return c_sys5_hyd
 end
 
-function build_c_sys5_hy_turbine_head(; add_forecasts, add_reserves, raw_data, kwargs...)
+function build_c_sys5_hy_turbine_head(;
+    add_forecasts,
+    add_single_time_series,
+    add_reserves,
+    raw_data,
+    kwargs...,
+)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_hyd = PSY.System(
@@ -763,18 +866,13 @@ function build_c_sys5_hy_turbine_head(; add_forecasts, add_reserves, raw_data, k
     PSY.add_component!(c_sys5_hyd, res)
     set_downstream_turbines!(res, [turb])
 
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = load_timeseries_DA[t][ix]
-            end
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hyd))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = load_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hyd,
                 l,
@@ -784,20 +882,25 @@ function build_c_sys5_hy_turbine_head(; add_forecasts, add_reserves, raw_data, k
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
-            forecast_data_inflow = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            forecast_data_outflow = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(inflow_ts_DA_water[t][ix])[1]
-                forecast_data_inflow[ini_time] = inflow_ts_DA_water[t][ix]
-                forecast_data_outflow[ini_time] = outflow_ts_DA_water[t][ix]
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hyd,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                h,
-                PSY.Deterministic("inflow", forecast_data_inflow),
-            )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
+        forecast_data_inflow = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        forecast_data_outflow = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(inflow_ts_DA_water[t][ix])[1]
+            forecast_data_inflow[ini_time] = inflow_ts_DA_water[t][ix]
+            forecast_data_outflow[ini_time] = outflow_ts_DA_water[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
@@ -806,15 +909,24 @@ function build_c_sys5_hy_turbine_head(; add_forecasts, add_reserves, raw_data, k
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
-                PSY.Deterministic("outflow", forecast_data_outflow),
-            )
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                h,
                 PSY.SingleTimeSeries("outflow", outflow_single_ts_DA_water),
             )
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hyd,
+                    h,
+                    PSY.Deterministic("inflow", forecast_data_inflow),
+                )
+                PSY.add_time_series!(
+                    c_sys5_hyd,
+                    h,
+                    PSY.Deterministic("outflow", forecast_data_outflow),
+                )
+            end
         end
     end
+
     if add_reserves
         reserve_hy = reserve5_hy(turb)
         PSY.add_service!(
@@ -834,16 +946,21 @@ function build_c_sys5_hy_turbine_head(; add_forecasts, add_reserves, raw_data, k
                 ini_time = TimeSeries.timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
             end
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                serv,
-                PSY.Deterministic("requirement", forecast_data),
-            )
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                serv,
-                PSY.SingleTimeSeries("requirement", Reserve_single_ts),
-            )
+            if add_single_time_series
+                PSY.add_time_series!(
+                    c_sys5_hyd,
+                    serv,
+                    PSY.SingleTimeSeries("requirement", Reserve_single_ts),
+                )
+            else
+                if add_forecasts
+                    PSY.add_time_series!(
+                        c_sys5_hyd,
+                        serv,
+                        PSY.Deterministic("requirement", forecast_data),
+                    )
+                end
+            end
         end
     end
 
@@ -852,6 +969,7 @@ end
 
 function build_c_sys5_hy_cascading_turbine_energy(;
     add_forecasts,
+    add_single_time_series,
     add_reserves,
     raw_data,
     kwargs...,
@@ -879,18 +997,13 @@ function build_c_sys5_hy_cascading_turbine_energy(;
     set_downstream_turbines!(res_tail, [turb_down])
     set_upstream_reservoirs!(res_tail, [res_head])
 
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = load_timeseries_DA[t][ix]
-            end
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hyd))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = load_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hyd,
                 l,
@@ -900,54 +1013,69 @@ function build_c_sys5_hy_cascading_turbine_energy(;
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroTurbine, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][1])[1]
-                forecast_data[ini_time] = hydro_timeseries_DA[t][1]
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hyd,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                h,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(PSY.HydroTurbine, c_sys5_hyd))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][1])[1]
+            forecast_data[ini_time] = hydro_timeseries_DA[t][1]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
                 PSY.SingleTimeSeries("max_active_power", hydro_single_timeseries_DA),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(hydro_budget_DA[t][1])[1]
-                forecast_data[ini_time] = hydro_budget_DA[t][1]
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hyd,
+                    h,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                h,
-                PSY.Deterministic("hydro_budget", forecast_data),
-            )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(hydro_budget_DA[t][1])[1]
+            forecast_data[ini_time] = hydro_budget_DA[t][1]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
                 PSY.SingleTimeSeries("hydro_budget", hydro_budget_single_ts_DA),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
-            forecast_data_inflow = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            forecast_data_target = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][1])[1]
-                forecast_data_inflow[ini_time] = hydro_timeseries_DA[t][1]
-                forecast_data_target[ini_time] = storage_target_DA[t][1]
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hyd,
+                    h,
+                    PSY.Deterministic("hydro_budget", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                h,
-                PSY.Deterministic("inflow", forecast_data_inflow),
-            )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
+        forecast_data_inflow = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        forecast_data_target = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][1])[1]
+            forecast_data_inflow[ini_time] = hydro_timeseries_DA[t][1]
+            forecast_data_target[ini_time] = storage_target_DA[t][1]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
@@ -956,13 +1084,21 @@ function build_c_sys5_hy_cascading_turbine_energy(;
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
-                PSY.Deterministic("storage_target", forecast_data_target),
-            )
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                h,
                 PSY.SingleTimeSeries("storage_target", storage_target_single_ts_DA),
             )
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hyd,
+                    h,
+                    PSY.Deterministic("inflow", forecast_data_inflow),
+                )
+                PSY.add_time_series!(
+                    c_sys5_hyd,
+                    h,
+                    PSY.Deterministic("storage_target", forecast_data_target),
+                )
+            end
         end
     end
     if add_reserves
@@ -984,16 +1120,21 @@ function build_c_sys5_hy_cascading_turbine_energy(;
                 ini_time = TimeSeries.timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
             end
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                serv,
-                PSY.Deterministic("requirement", forecast_data),
-            )
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                serv,
-                PSY.SingleTimeSeries("requirement", Reserve_single_ts),
-            )
+            if add_single_time_series
+                PSY.add_time_series!(
+                    c_sys5_hyd,
+                    serv,
+                    PSY.SingleTimeSeries("requirement", Reserve_single_ts),
+                )
+            else
+                if add_forecasts
+                    PSY.add_time_series!(
+                        c_sys5_hyd,
+                        serv,
+                        PSY.Deterministic("requirement", forecast_data),
+                    )
+                end
+            end
         end
     end
 
@@ -1002,6 +1143,7 @@ end
 
 function build_c_sys5_hy_cascading_turbine_head(;
     add_forecasts,
+    add_single_time_series,
     add_reserves,
     raw_data,
     kwargs...,
@@ -1029,18 +1171,13 @@ function build_c_sys5_hy_cascading_turbine_head(;
     set_downstream_turbines!(res_tail, [turb_down])
     set_upstream_reservoirs!(res_tail, [res_head])
 
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = load_timeseries_DA[t][ix]
-            end
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hyd))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = load_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hyd,
                 l,
@@ -1050,20 +1187,25 @@ function build_c_sys5_hy_cascading_turbine_head(;
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
-            forecast_data_inflow = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            forecast_data_outflow = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(inflow_ts_DA_water[t][1])[1]
-                forecast_data_inflow[ini_time] = inflow_ts_DA_water[t][1]
-                forecast_data_outflow[ini_time] = outflow_ts_DA_water[t][1]
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hyd,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                h,
-                PSY.Deterministic("inflow", forecast_data_inflow),
-            )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
+        forecast_data_inflow = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        forecast_data_outflow = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(inflow_ts_DA_water[t][1])[1]
+            forecast_data_inflow[ini_time] = inflow_ts_DA_water[t][1]
+            forecast_data_outflow[ini_time] = outflow_ts_DA_water[t][1]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
@@ -1072,13 +1214,21 @@ function build_c_sys5_hy_cascading_turbine_head(;
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
-                PSY.Deterministic("outflow", forecast_data_outflow),
-            )
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                h,
                 PSY.SingleTimeSeries("outflow", outflow_single_ts_DA_water),
             )
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hyd,
+                    h,
+                    PSY.Deterministic("inflow", forecast_data_inflow),
+                )
+                PSY.add_time_series!(
+                    c_sys5_hyd,
+                    h,
+                    PSY.Deterministic("outflow", forecast_data_outflow),
+                )
+            end
         end
     end
     if add_reserves
@@ -1100,16 +1250,21 @@ function build_c_sys5_hy_cascading_turbine_head(;
                 ini_time = TimeSeries.timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
             end
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                serv,
-                PSY.Deterministic("requirement", forecast_data),
-            )
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                serv,
-                PSY.SingleTimeSeries("requirement", Reserve_single_ts),
-            )
+            if add_single_time_series
+                PSY.add_time_series!(
+                    c_sys5_hyd,
+                    serv,
+                    PSY.SingleTimeSeries("requirement", Reserve_single_ts),
+                )
+            else
+                if add_forecasts
+                    PSY.add_time_series!(
+                        c_sys5_hyd,
+                        serv,
+                        PSY.Deterministic("requirement", forecast_data),
+                    )
+                end
+            end
         end
     end
 
@@ -1118,6 +1273,7 @@ end
 
 function build_c_sys5_hyd(;
     add_forecasts,
+    add_single_time_series,
     add_reserves,
     raw_data,
     sys_kwargs...,
@@ -1138,18 +1294,13 @@ function build_c_sys5_hyd(;
     add_component!(c_sys5_hyd, reservoir[1])
     set_downstream_turbines!(reservoir[1], [hydros[2]])
 
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = load_timeseries_DA[t][ix]
-            end
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hyd))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = load_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hyd,
                 l,
@@ -1159,54 +1310,63 @@ function build_c_sys5_hyd(;
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(HydroGen, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
-            end
+        elseif add_forecasts
             PSY.add_time_series!(
                 c_sys5_hyd,
-                h,
+                l,
                 PSY.Deterministic("max_active_power", forecast_data),
             )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(HydroGen, c_sys5_hyd))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
                 PSY.SingleTimeSeries("max_active_power", hydro_single_timeseries_DA),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(hydro_budget_DA[t][ix])[1]
-                forecast_data[ini_time] = hydro_budget_DA[t][ix]
-            end
+        elseif add_forecasts
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
-                PSY.Deterministic("hydro_budget", forecast_data),
+                PSY.Deterministic("max_active_power", forecast_data),
             )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(hydro_budget_DA[t][ix])[1]
+            forecast_data[ini_time] = hydro_budget_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
                 PSY.SingleTimeSeries("hydro_budget", hydro_budget_single_ts_DA),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
-            forecast_data_inflow = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            forecast_data_target = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][ix])[1]
-                forecast_data_inflow[ini_time] = hydro_timeseries_DA[t][ix]
-                forecast_data_target[ini_time] = storage_target_DA[t][ix]
-            end
+        elseif add_forecasts
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
-                PSY.Deterministic("inflow", forecast_data_inflow),
+                PSY.Deterministic("hydro_budget", forecast_data),
             )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
+        forecast_data_inflow = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        forecast_data_target = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][ix])[1]
+            forecast_data_inflow[ini_time] = hydro_timeseries_DA[t][ix]
+            forecast_data_target[ini_time] = storage_target_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
@@ -1215,12 +1375,18 @@ function build_c_sys5_hyd(;
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
-                PSY.Deterministic("storage_target", forecast_data_target),
+                PSY.SingleTimeSeries("storage_target", storage_target_single_ts_DA),
+            )
+        elseif add_forecasts
+            PSY.add_time_series!(
+                c_sys5_hyd,
+                h,
+                PSY.Deterministic("inflow", forecast_data_inflow),
             )
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
-                PSY.SingleTimeSeries("storage_target", storage_target_single_ts_DA),
+                PSY.Deterministic("storage_target", forecast_data_target),
             )
         end
     end
@@ -1248,16 +1414,19 @@ function build_c_sys5_hyd(;
                 ini_time = TimeSeries.timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
             end
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                serv,
-                PSY.Deterministic("requirement", forecast_data),
-            )
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                serv,
-                PSY.SingleTimeSeries("requirement", Reserve_single_ts),
-            )
+            if add_single_time_series
+                PSY.add_time_series!(
+                    c_sys5_hyd,
+                    serv,
+                    PSY.SingleTimeSeries("requirement", Reserve_single_ts),
+                )
+            elseif add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hyd,
+                    serv,
+                    PSY.Deterministic("requirement", forecast_data),
+                )
+            end
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_hyd))
             PSY.set_variable_cost!(
@@ -1273,39 +1442,34 @@ end
 
 function build_c_sys5_hyd_ems(;
     add_forecasts,
+    add_single_time_series,
     add_reserves,
     raw_data,
     sys_kwargs...,
 )
     nodes = nodes5()
-    hydro_turbine = hydro_generators5(nodes)[2]
+    hydros = hydro_generators5(nodes)
     reservoir = hydro_reservoir5_energy()
-
     c_sys5_hyd = PSY.System(
         100.0,
         nodes,
         thermal_generators5(nodes),
-        [hydro_turbine],
+        [hydros[2]],
         loads5(nodes),
         branches5(nodes);
         time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
         sys_kwargs...,
     )
-    PSY.add_component!(c_sys5_hyd, reservoir[1])
-    set_downstream_turbines!(reservoir[1], [hydro_turbine])
+    add_component!(c_sys5_hyd, reservoir[1])
+    set_downstream_turbines!(reservoir[1], [hydros[2]])
 
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = load_timeseries_DA[t][ix]
-            end
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hyd))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = load_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hyd,
                 l,
@@ -1315,54 +1479,63 @@ function build_c_sys5_hyd_ems(;
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(HydroGen, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
-            end
+        elseif add_forecasts
             PSY.add_time_series!(
                 c_sys5_hyd,
-                h,
+                l,
                 PSY.Deterministic("max_active_power", forecast_data),
             )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(HydroGen, c_sys5_hyd))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
                 PSY.SingleTimeSeries("max_active_power", hydro_single_timeseries_DA),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(hydro_budget_DA[t][ix])[1]
-                forecast_data[ini_time] = hydro_budget_DA[t][ix]
-            end
+        elseif add_forecasts
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
-                PSY.Deterministic("hydro_budget", forecast_data),
+                PSY.Deterministic("max_active_power", forecast_data),
             )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(hydro_budget_DA[t][ix])[1]
+            forecast_data[ini_time] = hydro_budget_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
                 PSY.SingleTimeSeries("hydro_budget", hydro_budget_single_ts_DA),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
-            forecast_data_inflow = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            forecast_data_target = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][ix])[1]
-                forecast_data_inflow[ini_time] = hydro_timeseries_DA[t][ix]
-                forecast_data_target[ini_time] = storage_target_DA[t][ix]
-            end
+        elseif add_forecasts
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
-                PSY.Deterministic("inflow", forecast_data_inflow),
+                PSY.Deterministic("hydro_budget", forecast_data),
             )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hyd))
+        forecast_data_inflow = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        forecast_data_target = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(hydro_timeseries_DA[t][ix])[1]
+            forecast_data_inflow[ini_time] = hydro_timeseries_DA[t][ix]
+            forecast_data_target[ini_time] = storage_target_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
@@ -1371,12 +1544,18 @@ function build_c_sys5_hyd_ems(;
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
-                PSY.Deterministic("storage_target", forecast_data_target),
+                PSY.SingleTimeSeries("storage_target", storage_target_single_ts_DA),
+            )
+        elseif add_forecasts
+            PSY.add_time_series!(
+                c_sys5_hyd,
+                h,
+                PSY.Deterministic("inflow", forecast_data_inflow),
             )
             PSY.add_time_series!(
                 c_sys5_hyd,
                 h,
-                PSY.SingleTimeSeries("storage_target", storage_target_single_ts_DA),
+                PSY.Deterministic("storage_target", forecast_data_target),
             )
         end
     end
@@ -1390,7 +1569,7 @@ function build_c_sys5_hyd_ems(;
         PSY.add_service!(
             c_sys5_hyd,
             reserve_hy[2],
-            [collect(PSY.get_components(PSY.HydroTurbine, c_sys5_hyd))[end]],
+            PSY.get_components(PSY.HydroTurbine, c_sys5_hyd),
         )
         # ORDC curve
         PSY.add_service!(
@@ -1404,16 +1583,19 @@ function build_c_sys5_hyd_ems(;
                 ini_time = TimeSeries.timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
             end
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                serv,
-                PSY.Deterministic("requirement", forecast_data),
-            )
-            PSY.add_time_series!(
-                c_sys5_hyd,
-                serv,
-                PSY.SingleTimeSeries("requirement", Reserve_single_ts),
-            )
+            if add_single_time_series
+                PSY.add_time_series!(
+                    c_sys5_hyd,
+                    serv,
+                    PSY.SingleTimeSeries("requirement", Reserve_single_ts),
+                )
+            elseif add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hyd,
+                    serv,
+                    PSY.Deterministic("requirement", forecast_data),
+                )
+            end
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_hyd))
             PSY.set_variable_cost!(
@@ -1429,6 +1611,7 @@ end
 
 function build_c_sys5_bat(;
     add_forecasts,
+    add_single_time_series,
     add_reserves,
     raw_data,
     sys_kwargs...,
@@ -1447,18 +1630,13 @@ function build_c_sys5_bat(;
         sys_kwargs...,
     )
 
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_bat))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = load_timeseries_DA[t][ix]
-            end
-            PSY.add_time_series!(
-                c_sys5_bat,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_bat))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = load_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_bat,
                 l,
@@ -1468,25 +1646,39 @@ function build_c_sys5_bat(;
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, r) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_bat))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(ren_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = ren_timeseries_DA[t][ix]
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_bat,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_bat,
-                r,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, r) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_bat))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(ren_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = ren_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_bat,
                 r,
                 PSY.SingleTimeSeries("max_active_power", ren_single_timeseries_DA[ix]),
             )
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_bat,
+                    r,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
+            end
         end
     end
+
     if add_reserves
         reserve_bat = reserve5_re(PSY.get_components(PSY.RenewableDispatch, c_sys5_bat))
         PSY.add_service!(
@@ -1511,16 +1703,21 @@ function build_c_sys5_bat(;
                 ini_time = TimeSeries.timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
             end
-            PSY.add_time_series!(
-                c_sys5_bat,
-                serv,
-                PSY.Deterministic("requirement", forecast_data),
-            )
-            PSY.add_time_series!(
-                c_sys5_bat,
-                serv,
-                PSY.SingleTimeSeries("requirement", Reserve_single_ts),
-            )
+            if add_single_time_series
+                PSY.add_time_series!(
+                    c_sys5_bat,
+                    serv,
+                    PSY.SingleTimeSeries("requirement", Reserve_single_ts),
+                )
+            else
+                if add_forecasts
+                    PSY.add_time_series!(
+                        c_sys5_bat,
+                        serv,
+                        PSY.Deterministic("requirement", forecast_data),
+                    )
+                end
+            end
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_bat))
             PSY.set_variable_cost!(
@@ -1536,6 +1733,7 @@ end
 
 function build_c_sys5_hydro_pump_energy(;
     add_forecasts,
+    add_single_time_series,
     add_reserves,
     raw_data,
     sys_kwargs...,
@@ -1554,18 +1752,13 @@ function build_c_sys5_hydro_pump_energy(;
         sys_kwargs...,
     )
 
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_bat))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = load_timeseries_DA[t][ix]
-            end
-            PSY.add_time_series!(
-                c_sys5_bat,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_bat))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = load_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_bat,
                 l,
@@ -1575,25 +1768,39 @@ function build_c_sys5_hydro_pump_energy(;
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, r) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_bat))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(ren_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = ren_timeseries_DA[t][ix]
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_bat,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_bat,
-                r,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, r) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_bat))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(ren_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = ren_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_bat,
                 r,
                 PSY.SingleTimeSeries("max_active_power", ren_single_timeseries_DA[ix]),
             )
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_bat,
+                    r,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
+            end
         end
     end
+
     if add_reserves
         reserve_bat = reserve5_re(PSY.get_components(PSY.RenewableDispatch, c_sys5_bat))
         PSY.add_service!(
@@ -1618,16 +1825,21 @@ function build_c_sys5_hydro_pump_energy(;
                 ini_time = TimeSeries.timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
             end
-            PSY.add_time_series!(
-                c_sys5_bat,
-                serv,
-                PSY.Deterministic("requirement", forecast_data),
-            )
-            PSY.add_time_series!(
-                c_sys5_bat,
-                serv,
-                PSY.SingleTimeSeries("requirement", Reserve_single_ts),
-            )
+            if add_single_time_series
+                PSY.add_time_series!(
+                    c_sys5_bat,
+                    serv,
+                    PSY.SingleTimeSeries("requirement", Reserve_single_ts),
+                )
+            else
+                if add_forecasts
+                    PSY.add_time_series!(
+                        c_sys5_bat,
+                        serv,
+                        PSY.Deterministic("requirement", forecast_data),
+                    )
+                end
+            end
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_bat))
             PSY.set_variable_cost!(
@@ -1644,7 +1856,13 @@ function build_c_sys5_hydro_pump_energy(;
     return c_sys5_bat
 end
 
-function build_c_sys5_il(; add_forecasts, add_reserves, raw_data, kwargs...)
+function build_c_sys5_il(;
+    add_forecasts,
+    add_single_time_series,
+    add_reserves,
+    raw_data,
+    kwargs...,
+)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_il = PSY.System(
@@ -1658,18 +1876,13 @@ function build_c_sys5_il(; add_forecasts, add_reserves, raw_data, kwargs...)
         sys_kwargs...,
     )
 
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_il))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = load_timeseries_DA[t][ix]
-            end
-            PSY.add_time_series!(
-                c_sys5_il,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_il))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = load_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_il,
                 l,
@@ -1679,18 +1892,21 @@ function build_c_sys5_il(; add_forecasts, add_reserves, raw_data, kwargs...)
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, i) in enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_il))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(Iload_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = Iload_timeseries_DA[t][ix]
-            end
+        elseif add_forecasts
             PSY.add_time_series!(
                 c_sys5_il,
-                i,
+                l,
                 PSY.Deterministic("max_active_power", forecast_data),
             )
+        end
+    end
+    for (ix, i) in enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_il))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(Iload_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = Iload_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_il,
                 i,
@@ -1699,6 +1915,12 @@ function build_c_sys5_il(; add_forecasts, add_reserves, raw_data, kwargs...)
                     Iload_single_timeseries_DA;
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
+            )
+        elseif add_forecasts
+            PSY.add_time_series!(
+                c_sys5_il,
+                i,
+                PSY.Deterministic("max_active_power", forecast_data),
             )
         end
     end
@@ -1727,16 +1949,19 @@ function build_c_sys5_il(; add_forecasts, add_reserves, raw_data, kwargs...)
                 ini_time = TimeSeries.timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
             end
-            PSY.add_time_series!(
-                c_sys5_il,
-                serv,
-                PSY.Deterministic("requirement", forecast_data),
-            )
-            PSY.add_time_series!(
-                c_sys5_il,
-                serv,
-                PSY.SingleTimeSeries("requirement", Reserve_single_ts),
-            )
+            if add_single_time_series
+                PSY.add_time_series!(
+                    c_sys5_il,
+                    serv,
+                    PSY.SingleTimeSeries("requirement", Reserve_single_ts),
+                )
+            elseif add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_il,
+                    serv,
+                    PSY.Deterministic("requirement", forecast_data),
+                )
+            end
         end
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_il))
             PSY.set_variable_cost!(
@@ -1750,7 +1975,7 @@ function build_c_sys5_il(; add_forecasts, add_reserves, raw_data, kwargs...)
     return c_sys5_il
 end
 
-function build_c_sys5_dc(; add_forecasts, raw_data, kwargs...)
+function build_c_sys5_dc(; add_forecasts, add_single_time_series, raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_dc = PSY.System(
@@ -1764,18 +1989,13 @@ function build_c_sys5_dc(; add_forecasts, raw_data, kwargs...)
         sys_kwargs...,
     )
 
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_dc))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = load_timeseries_DA[t][ix]
-            end
-            PSY.add_time_series!(
-                c_sys5_dc,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_dc))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(load_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = load_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_dc,
                 l,
@@ -1785,23 +2005,36 @@ function build_c_sys5_dc(; add_forecasts, raw_data, kwargs...)
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, r) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_dc))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(ren_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = ren_timeseries_DA[t][ix]
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_dc,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_dc,
-                r,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, r) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_dc))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(ren_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = ren_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_dc,
                 r,
                 PSY.SingleTimeSeries("max_active_power", ren_single_timeseries_DA[ix]),
             )
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_dc,
+                    r,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
+            end
         end
     end
 
@@ -2022,6 +2255,7 @@ end
 
 function build_c_sys5_uc(;
     add_forecasts,
+    add_single_time_series,
     add_reserves,
     raw_data,
     sys_kwargs...,
@@ -2037,18 +2271,13 @@ function build_c_sys5_uc(;
         sys_kwargs...,
     )
 
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_uc))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = timestamp(load_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = load_timeseries_DA[t][ix]
-            end
-            PSY.add_time_series!(
-                c_sys5_uc,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_uc))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = timestamp(load_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = load_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_uc,
                 l,
@@ -2058,6 +2287,14 @@ function build_c_sys5_uc(;
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_uc,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
+            end
         end
     end
     if add_reserves
@@ -2089,16 +2326,21 @@ function build_c_sys5_uc(;
                 ini_time = timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
             end
-            PSY.add_time_series!(
-                c_sys5_uc,
-                serv,
-                PSY.Deterministic("requirement", forecast_data),
-            )
-            PSY.add_time_series!(
-                c_sys5_uc,
-                serv,
-                PSY.SingleTimeSeries("requirement", Reserve_single_ts),
-            )
+            if add_single_time_series
+                PSY.add_time_series!(
+                    c_sys5_uc,
+                    serv,
+                    PSY.SingleTimeSeries("requirement", Reserve_single_ts),
+                )
+            else
+                if add_forecasts
+                    PSY.add_time_series!(
+                        c_sys5_uc,
+                        serv,
+                        PSY.Deterministic("requirement", forecast_data),
+                    )
+                end
+            end
         end
 
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_uc))
@@ -2114,6 +2356,7 @@ end
 
 function build_c_sys5_uc_non_spin(;
     add_forecasts,
+    add_single_time_series,
     add_reserves,
     raw_data,
     sys_kwargs...,
@@ -2129,18 +2372,13 @@ function build_c_sys5_uc_non_spin(;
         sys_kwargs...,
     )
 
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_uc))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = timestamp(load_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = load_timeseries_DA[t][ix]
-            end
-            PSY.add_time_series!(
-                c_sys5_uc,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_uc))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = timestamp(load_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = load_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_uc,
                 l,
@@ -2150,6 +2388,14 @@ function build_c_sys5_uc_non_spin(;
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_uc,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
+            end
         end
     end
     if add_reserves
@@ -2188,16 +2434,21 @@ function build_c_sys5_uc_non_spin(;
                 ini_time = timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
             end
-            PSY.add_time_series!(
-                c_sys5_uc,
-                serv,
-                PSY.Deterministic("requirement", forecast_data),
-            )
-            PSY.add_time_series!(
-                c_sys5_uc,
-                serv,
-                PSY.SingleTimeSeries("requirement", Reserve_single_ts),
-            )
+            if add_single_time_series
+                PSY.add_time_series!(
+                    c_sys5_uc,
+                    serv,
+                    PSY.SingleTimeSeries("requirement", Reserve_single_ts),
+                )
+            else
+                if add_forecasts
+                    PSY.add_time_series!(
+                        c_sys5_uc,
+                        serv,
+                        PSY.Deterministic("requirement", forecast_data),
+                    )
+                end
+            end
         end
 
         for serv in PSY.get_components(PSY.VariableReserveNonSpinning, c_sys5_uc)
@@ -2206,16 +2457,21 @@ function build_c_sys5_uc_non_spin(;
                 ini_time = timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
             end
-            PSY.add_time_series!(
-                c_sys5_uc,
-                serv,
-                PSY.Deterministic("requirement", forecast_data),
-            )
-            PSY.add_time_series!(
-                c_sys5_uc,
-                serv,
-                PSY.SingleTimeSeries("requirement", Reserve_single_ts),
-            )
+            if add_single_time_series
+                PSY.add_time_series!(
+                    c_sys5_uc,
+                    serv,
+                    PSY.SingleTimeSeries("requirement", Reserve_single_ts),
+                )
+            else
+                if add_forecasts
+                    PSY.add_time_series!(
+                        c_sys5_uc,
+                        serv,
+                        PSY.Deterministic("requirement", forecast_data),
+                    )
+                end
+            end
         end
 
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_uc))
@@ -2231,6 +2487,7 @@ end
 
 function build_c_sys5_uc_re(;
     add_forecasts,
+    add_single_time_series,
     add_reserves,
     raw_data,
     sys_kwargs...,
@@ -2248,18 +2505,13 @@ function build_c_sys5_uc_re(;
         sys_kwargs...,
     )
 
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_uc))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = timestamp(load_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = load_timeseries_DA[t][ix]
-            end
-            PSY.add_time_series!(
-                c_sys5_uc,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_uc))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = timestamp(load_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = load_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_uc,
                 l,
@@ -2269,35 +2521,45 @@ function build_c_sys5_uc_re(;
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, r) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_uc))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = timestamp(ren_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = ren_timeseries_DA[t][ix]
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_uc,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_uc,
-                r,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, r) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_uc))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = timestamp(ren_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = ren_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_uc,
                 r,
                 PSY.SingleTimeSeries("max_active_power", ren_single_timeseries_DA[ix]),
             )
-        end
-        for (ix, i) in enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_uc))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = timestamp(Iload_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = Iload_timeseries_DA[t][ix]
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_uc,
+                    r,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_uc,
-                i,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, i) in enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_uc))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = timestamp(Iload_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = Iload_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_uc,
                 i,
@@ -2307,6 +2569,14 @@ function build_c_sys5_uc_re(;
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_uc,
+                    i,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
+            end
         end
     end
     if add_reserves
@@ -2338,16 +2608,21 @@ function build_c_sys5_uc_re(;
                 ini_time = timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
             end
-            PSY.add_time_series!(
-                c_sys5_uc,
-                serv,
-                PSY.Deterministic("requirement", forecast_data),
-            )
-            PSY.add_time_series!(
-                c_sys5_uc,
-                serv,
-                PSY.SingleTimeSeries("requirement", Reserve_single_ts),
-            )
+            if add_single_time_series
+                PSY.add_time_series!(
+                    c_sys5_uc,
+                    serv,
+                    PSY.SingleTimeSeries("requirement", Reserve_single_ts),
+                )
+            else
+                if add_forecasts
+                    PSY.add_time_series!(
+                        c_sys5_uc,
+                        serv,
+                        PSY.Deterministic("requirement", forecast_data),
+                    )
+                end
+            end
         end
 
         for (ix, serv) in enumerate(PSY.get_components(PSY.ReserveDemandCurve, c_sys5_uc))
@@ -2371,7 +2646,7 @@ function build_c_sys5_pwl_uc(; raw_data, kwargs...)
     return c_sys5_uc
 end
 
-function build_c_sys5_ed(; add_forecasts, add_reserves, kwargs...)
+function build_c_sys5_ed(; add_forecasts, add_single_time_series, add_reserves, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_ed = PSY.System(
@@ -2386,22 +2661,17 @@ function build_c_sys5_ed(; add_forecasts, add_reserves, kwargs...)
         sys_kwargs...,
     )
 
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2 # loop over days
-                ta = load_timeseries_DA[t][ix]
-                for i in 1:length(ta) # loop over hours
-                    ini_time = timestamp(ta[i]) #get the hour
-                    data = when(load_timeseries_RT[t][ix], hour, hour(ini_time[1])) # get the subset ts for that hour
-                    forecast_data[ini_time[1]] = data
-                end
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2 # loop over days
+            ta = load_timeseries_DA[t][ix]
+            for i in 1:length(ta) # loop over hours
+                ini_time = timestamp(ta[i]) #get the hour
+                data = when(load_timeseries_RT[t][ix], hour, hour(ini_time[1])) # get the subset ts for that hour
+                forecast_data[ini_time[1]] = data
             end
-            PSY.add_time_series!(
-                c_sys5_ed,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_ed,
                 l,
@@ -2411,43 +2681,53 @@ function build_c_sys5_ed(; add_forecasts, add_reserves, kwargs...)
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, l) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2 # loop over days
-                ta = ren_timeseries_DA[t][ix]
-                for i in 1:length(ta) # loop over hours
-                    ini_time = timestamp(ta[i]) #get the hour
-                    data = when(ren_timeseries_RT[t][ix], hour, hour(ini_time[1])) # get the subset ts for that hour
-                    forecast_data[ini_time[1]] = data
-                end
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_ed,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_ed,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, l) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2 # loop over days
+            ta = ren_timeseries_DA[t][ix]
+            for i in 1:length(ta) # loop over hours
+                ini_time = timestamp(ta[i]) #get the hour
+                data = when(ren_timeseries_RT[t][ix], hour, hour(ini_time[1])) # get the subset ts for that hour
+                forecast_data[ini_time[1]] = data
+            end
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_ed,
                 l,
                 PSY.SingleTimeSeries("max_active_power", ren_single_timeseries_RT[ix]),
             )
-        end
-        for (ix, l) in enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2 # loop over days
-                ta = Iload_timeseries_DA[t][ix]
-                for i in 1:length(ta) # loop over hours
-                    ini_time = timestamp(ta[i]) #get the hour
-                    data = when(Iload_timeseries_RT[t][ix], hour, hour(ini_time[1])) # get the subset ts for that hour
-                    forecast_data[ini_time[1]] = data
-                end
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_ed,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_ed,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, l) in enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2 # loop over days
+            ta = Iload_timeseries_DA[t][ix]
+            for i in 1:length(ta) # loop over hours
+                ini_time = timestamp(ta[i]) #get the hour
+                data = when(Iload_timeseries_RT[t][ix], hour, hour(ini_time[1])) # get the subset ts for that hour
+                forecast_data[ini_time[1]] = data
+            end
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_ed,
                 l,
@@ -2457,6 +2737,14 @@ function build_c_sys5_ed(; add_forecasts, add_reserves, kwargs...)
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_ed,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
+            end
         end
     end
     if add_reserves
@@ -2490,23 +2778,40 @@ function build_c_sys5_ed(; add_forecasts, add_reserves, kwargs...)
                     forecast_data[ini_time] = data
                 end
             end
-            PSY.add_time_series!(
-                c_sys5_ed,
-                serv,
-                PSY.Deterministic("requirement", forecast_data),
-            )
-            PSY.add_time_series!(
-                c_sys5_ed,
-                serv,
-                PSY.SingleTimeSeries("requirement", Reserve_single_ts_RT),
-            )
+            if add_single_time_series
+                PSY.add_time_series!(
+                    c_sys5_ed,
+                    serv,
+                    PSY.SingleTimeSeries("requirement", Reserve_single_ts_RT),
+                )
+            else
+                if add_forecasts
+                    PSY.add_time_series!(
+                        c_sys5_ed,
+                        serv,
+                        PSY.Deterministic("requirement", forecast_data),
+                    )
+                end
+            end
         end
     end
     return c_sys5_ed
 end
 
-function build_c_sys5_pwl_ed(; add_forecasts, add_reserves, raw_data, kwargs...)
-    c_sys5_ed = build_c_sys5_ed(; add_forecasts, add_reserves, raw_data, kwargs...)
+function build_c_sys5_pwl_ed(;
+    add_forecasts,
+    add_single_time_series,
+    add_reserves,
+    raw_data,
+    kwargs...,
+)
+    c_sys5_ed = build_c_sys5_ed(;
+        add_forecasts,
+        add_single_time_series,
+        add_reserves,
+        raw_data,
+        kwargs...,
+    )
     thermal = thermal_generators5_pwl(collect(PSY.get_components(PSY.ACBus, c_sys5_ed)))
     for d in thermal
         PSY.add_component!(c_sys5_ed, d)
@@ -2515,8 +2820,8 @@ function build_c_sys5_pwl_ed(; add_forecasts, add_reserves, raw_data, kwargs...)
 end
 
 #raw_data not assigned
-function build_c_sys5_pwl_ed_nonconvex(; add_forecasts, kwargs...)
-    c_sys5_ed = build_c_sys5_ed(; add_forecasts, kwargs...)
+function build_c_sys5_pwl_ed_nonconvex(; add_forecasts, add_single_time_series, kwargs...)
+    c_sys5_ed = build_c_sys5_ed(; add_forecasts, add_single_time_series, kwargs...)
     thermal =
         thermal_generators5_pwl_nonconvex(collect(PSY.get_components(PSY.ACBus, c_sys5_ed)))
     for d in thermal
@@ -2525,7 +2830,7 @@ function build_c_sys5_pwl_ed_nonconvex(; add_forecasts, kwargs...)
     return c_sys5_ed
 end
 
-function build_c_sys5_hy_uc(; add_forecasts, kwargs...)
+function build_c_sys5_hy_uc(; add_forecasts, add_single_time_series, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     hydros = hydro_generators5(nodes)
@@ -2544,18 +2849,13 @@ function build_c_sys5_hy_uc(; add_forecasts, kwargs...)
     add_component!(c_sys5_hy_uc, reservoir[1])
     set_downstream_turbines!(reservoir[1], [hydros[2]])
 
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = timestamp(load_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = load_timeseries_DA[t][ix]
-            end
-            PSY.add_time_series!(
-                c_sys5_hy_uc,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy_uc))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = timestamp(load_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = load_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 l,
@@ -2565,103 +2865,123 @@ function build_c_sys5_hy_uc(; add_forecasts, kwargs...)
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroTurbine, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hy_uc,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hy_uc,
-                h,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(PSY.HydroTurbine, c_sys5_hy_uc))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 h,
                 PSY.SingleTimeSeries("max_active_power", hydro_single_timeseries_DA),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = timestamp(storage_target_DA[t][ix])[1]
-                forecast_data[ini_time] = storage_target_DA[t][ix]
-            end
+        elseif add_forecasts
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 h,
-                PSY.Deterministic("storage_target", forecast_data),
+                PSY.Deterministic("max_active_power", forecast_data),
             )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_uc))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = timestamp(storage_target_DA[t][ix])[1]
+            forecast_data[ini_time] = storage_target_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 h,
                 PSY.SingleTimeSeries("storage_target", storage_target_single_ts_DA),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = hydro_timeseries_DA[t][ix] .* 0.8
-            end
+        elseif add_forecasts
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 h,
-                PSY.Deterministic("inflow", forecast_data),
+                PSY.Deterministic("storage_target", forecast_data),
             )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_uc))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = hydro_timeseries_DA[t][ix] .* 0.8
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 h,
                 PSY.SingleTimeSeries("inflow", hydro_single_timeseries_DA),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(hydro_budget_DA[t][ix])[1]
-                forecast_data[ini_time] = hydro_budget_DA[t][ix]
-            end
+        elseif add_forecasts
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 h,
-                PSY.Deterministic("hydro_budget", forecast_data),
+                PSY.Deterministic("inflow", forecast_data),
             )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_uc))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(hydro_budget_DA[t][ix])[1]
+            forecast_data[ini_time] = hydro_budget_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 h,
                 PSY.SingleTimeSeries("hydro_budget", hydro_budget_single_ts_DA),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroDispatch, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
-            end
+        elseif add_forecasts
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 h,
-                PSY.Deterministic("max_active_power", forecast_data),
+                PSY.Deterministic("hydro_budget", forecast_data),
             )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(PSY.HydroDispatch, c_sys5_hy_uc))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 h,
                 PSY.SingleTimeSeries("max_active_power", hydro_single_timeseries_DA),
             )
-        end
-        for (ix, r) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = timestamp(ren_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = ren_timeseries_DA[t][ix]
-            end
+        elseif add_forecasts
             PSY.add_time_series!(
                 c_sys5_hy_uc,
-                r,
+                h,
                 PSY.Deterministic("max_active_power", forecast_data),
             )
+        end
+    end
+    for (ix, r) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_hy_uc))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = timestamp(ren_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = ren_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 r,
@@ -2671,19 +2991,22 @@ function build_c_sys5_hy_uc(; add_forecasts, kwargs...)
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, i) in
-            enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = timestamp(Iload_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = Iload_timeseries_DA[t][ix]
-            end
+        elseif add_forecasts
             PSY.add_time_series!(
                 c_sys5_hy_uc,
-                i,
+                r,
                 PSY.Deterministic("max_active_power", forecast_data),
             )
+        end
+    end
+    for (ix, i) in
+        enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_hy_uc))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = timestamp(Iload_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = Iload_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 i,
@@ -2693,13 +3016,24 @@ function build_c_sys5_hy_uc(; add_forecasts, kwargs...)
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
+        elseif add_forecasts
+            PSY.add_time_series!(
+                c_sys5_hy_uc,
+                i,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
         end
     end
 
     return c_sys5_hy_uc
 end
 
-function build_c_sys5_hy_ems_uc(; add_forecasts, raw_data, kwargs...)
+function build_c_sys5_hy_ems_uc(;
+    add_forecasts,
+    add_single_time_series,
+    raw_data,
+    kwargs...,
+)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     hydros = hydro_generators5(nodes)
@@ -2718,18 +3052,13 @@ function build_c_sys5_hy_ems_uc(; add_forecasts, raw_data, kwargs...)
     add_component!(c_sys5_hy_uc, reservoir[1])
     set_downstream_turbines!(reservoir[1], [hydros[2]])
 
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = timestamp(load_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = load_timeseries_DA[t][ix]
-            end
-            PSY.add_time_series!(
-                c_sys5_hy_uc,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy_uc))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = timestamp(load_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = load_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 l,
@@ -2739,103 +3068,123 @@ function build_c_sys5_hy_ems_uc(; add_forecasts, raw_data, kwargs...)
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroTurbine, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hy_uc,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hy_uc,
-                h,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(PSY.HydroTurbine, c_sys5_hy_uc))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 h,
                 PSY.SingleTimeSeries("max_active_power", hydro_single_timeseries_DA),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = timestamp(storage_target_DA[t][ix])[1]
-                forecast_data[ini_time] = storage_target_DA[t][ix]
-            end
+        elseif add_forecasts
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 h,
-                PSY.Deterministic("storage_target", forecast_data),
+                PSY.Deterministic("max_active_power", forecast_data),
             )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_uc))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = timestamp(storage_target_DA[t][ix])[1]
+            forecast_data[ini_time] = storage_target_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 h,
                 PSY.SingleTimeSeries("storage_target", storage_target_single_ts_DA),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = hydro_timeseries_DA[t][ix] .* 0.8
-            end
+        elseif add_forecasts
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 h,
-                PSY.Deterministic("inflow", forecast_data),
+                PSY.Deterministic("storage_target", forecast_data),
             )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_uc))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = hydro_timeseries_DA[t][ix] .* 0.8
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 h,
                 PSY.SingleTimeSeries("inflow", hydro_single_timeseries_DA),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = TimeSeries.timestamp(hydro_budget_DA[t][ix])[1]
-                forecast_data[ini_time] = hydro_budget_DA[t][ix]
-            end
+        elseif add_forecasts
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 h,
-                PSY.Deterministic("hydro_budget", forecast_data),
+                PSY.Deterministic("inflow", forecast_data),
             )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_uc))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = TimeSeries.timestamp(hydro_budget_DA[t][ix])[1]
+            forecast_data[ini_time] = hydro_budget_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 h,
                 PSY.SingleTimeSeries("hydro_budget", hydro_budget_single_ts_DA),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroDispatch, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
-            end
+        elseif add_forecasts
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 h,
-                PSY.Deterministic("max_active_power", forecast_data),
+                PSY.Deterministic("hydro_budget", forecast_data),
             )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(PSY.HydroDispatch, c_sys5_hy_uc))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = timestamp(hydro_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = hydro_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 h,
                 PSY.SingleTimeSeries("max_active_power", hydro_single_timeseries_DA),
             )
-        end
-        for (ix, r) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = timestamp(ren_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = ren_timeseries_DA[t][ix]
-            end
+        elseif add_forecasts
             PSY.add_time_series!(
                 c_sys5_hy_uc,
-                r,
+                h,
                 PSY.Deterministic("max_active_power", forecast_data),
             )
+        end
+    end
+    for (ix, r) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_hy_uc))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = timestamp(ren_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = ren_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 r,
@@ -2845,19 +3194,22 @@ function build_c_sys5_hy_ems_uc(; add_forecasts, raw_data, kwargs...)
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, i) in
-            enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_hy_uc))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ini_time = timestamp(Iload_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = Iload_timeseries_DA[t][ix]
-            end
+        elseif add_forecasts
             PSY.add_time_series!(
                 c_sys5_hy_uc,
-                i,
+                r,
                 PSY.Deterministic("max_active_power", forecast_data),
             )
+        end
+    end
+    for (ix, i) in
+        enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_hy_uc))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time = timestamp(Iload_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = Iload_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_uc,
                 i,
@@ -2867,13 +3219,19 @@ function build_c_sys5_hy_ems_uc(; add_forecasts, raw_data, kwargs...)
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
+        elseif add_forecasts
+            PSY.add_time_series!(
+                c_sys5_hy_uc,
+                i,
+                PSY.Deterministic("max_active_power", forecast_data),
+            )
         end
     end
 
     return c_sys5_hy_uc
 end
 
-function build_c_sys5_hy_ed(; add_forecasts, raw_data, kwargs...)
+function build_c_sys5_hy_ed(; add_forecasts, add_single_time_series, raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     hydros = hydro_generators5(nodes)
@@ -2893,22 +3251,17 @@ function build_c_sys5_hy_ed(; add_forecasts, raw_data, kwargs...)
     add_component!(c_sys5_hy_ed, reservoir[1])
     set_downstream_turbines!(reservoir[1], [hydros[2]])
 
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2 # loop over days
-                ta = load_timeseries_DA[t][ix]
-                for i in 1:length(ta) # loop over hours
-                    ini_time = timestamp(ta[i]) #get the hour
-                    data = when(load_timeseries_RT[t][ix], hour, hour(ini_time[1])) # get the subset ts for that hour
-                    forecast_data[ini_time[1]] = data
-                end
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2 # loop over days
+            ta = load_timeseries_DA[t][ix]
+            for i in 1:length(ta) # loop over hours
+                ini_time = timestamp(ta[i]) #get the hour
+                data = when(load_timeseries_RT[t][ix], hour, hour(ini_time[1])) # get the subset ts for that hour
+                forecast_data[ini_time[1]] = data
             end
-            PSY.add_time_series!(
-                c_sys5_hy_ed,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_ed,
                 l,
@@ -2918,43 +3271,53 @@ function build_c_sys5_hy_ed(; add_forecasts, raw_data, kwargs...)
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, l) in enumerate(PSY.get_components(PSY.HydroTurbine, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ta = hydro_timeseries_DA[t][ix]
-                for i in 1:length(ta)
-                    ini_time = timestamp(ta[i])
-                    data = when(hydro_timeseries_RT[t][ix], hour, hour(ini_time[1]))
-                    forecast_data[ini_time[1]] = data
-                end
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hy_ed,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hy_ed,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, l) in enumerate(PSY.get_components(PSY.HydroTurbine, c_sys5_hy_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ta = hydro_timeseries_DA[t][ix]
+            for i in 1:length(ta)
+                ini_time = timestamp(ta[i])
+                data = when(hydro_timeseries_RT[t][ix], hour, hour(ini_time[1]))
+                forecast_data[ini_time[1]] = data
+            end
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_ed,
                 l,
                 PSY.SingleTimeSeries("max_active_power", hydro_single_timeseries_RT),
             )
-        end
-        for (ix, l) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ta = ren_timeseries_DA[t][ix]
-                for i in 1:length(ta)
-                    ini_time = timestamp(ta[i])
-                    data = when(ren_timeseries_RT[t][ix], hour, hour(ini_time[1]))
-                    forecast_data[ini_time[1]] = data
-                end
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hy_ed,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hy_ed,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, l) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_hy_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ta = ren_timeseries_DA[t][ix]
+            for i in 1:length(ta)
+                ini_time = timestamp(ta[i])
+                data = when(ren_timeseries_RT[t][ix], hour, hour(ini_time[1]))
+                forecast_data[ini_time[1]] = data
+            end
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_ed,
                 l,
@@ -2964,86 +3327,106 @@ function build_c_sys5_hy_ed(; add_forecasts, raw_data, kwargs...)
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, l) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ta = storage_target_DA[t][ix]
-                for i in 1:length(ta)
-                    ini_time = timestamp(ta[i])
-                    data = when(storage_target_RT[t][ix], hour, hour(ini_time[1]))
-                    forecast_data[ini_time[1]] = data
-                end
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hy_ed,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hy_ed,
-                l,
-                PSY.Deterministic("storage_target", forecast_data),
-            )
+        end
+    end
+    for (ix, l) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ta = storage_target_DA[t][ix]
+            for i in 1:length(ta)
+                ini_time = timestamp(ta[i])
+                data = when(storage_target_RT[t][ix], hour, hour(ini_time[1]))
+                forecast_data[ini_time[1]] = data
+            end
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_ed,
                 l,
                 PSY.SingleTimeSeries("storage_target", storage_target_single_ts_RT),
             )
-        end
-        for (ix, l) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ta = hydro_timeseries_DA[t][ix]
-                for i in 1:length(ta)
-                    ini_time = timestamp(ta[i])
-                    data = when(hydro_timeseries_RT[t][ix], hour, hour(ini_time[1]))
-                    forecast_data[ini_time[1]] = data
-                end
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hy_ed,
+                    l,
+                    PSY.Deterministic("storage_target", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hy_ed,
-                l,
-                PSY.Deterministic("inflow", forecast_data),
-            )
+        end
+    end
+    for (ix, l) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ta = hydro_timeseries_DA[t][ix]
+            for i in 1:length(ta)
+                ini_time = timestamp(ta[i])
+                data = when(hydro_timeseries_RT[t][ix], hour, hour(ini_time[1]))
+                forecast_data[ini_time[1]] = data
+            end
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_ed,
                 l,
                 PSY.SingleTimeSeries("inflow", hydro_single_timeseries_RT),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ta = hydro_budget_DA[t][ix]
-                for i in 1:length(ta)
-                    ini_time = timestamp(ta[i])
-                    data = when(hydro_budget_RT[t][ix] .* 0.8, hour, hour(ini_time[1]))
-                    forecast_data[ini_time[1]] = data
-                end
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hy_ed,
+                    l,
+                    PSY.Deterministic("inflow", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hy_ed,
-                h,
-                PSY.Deterministic("hydro_budget", forecast_data),
-            )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ta = hydro_budget_DA[t][ix]
+            for i in 1:length(ta)
+                ini_time = timestamp(ta[i])
+                data = when(hydro_budget_RT[t][ix] .* 0.8, hour, hour(ini_time[1]))
+                forecast_data[ini_time[1]] = data
+            end
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_ed,
                 h,
                 PSY.SingleTimeSeries("hydro_budget", hydro_budget_single_ts_RT),
             )
-        end
-        for (ix, l) in
-            enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ta = Iload_timeseries_DA[t][ix]
-                for i in 1:length(ta)
-                    ini_time = timestamp(ta[i])
-                    data = when(Iload_timeseries_RT[t][ix], hour, hour(ini_time[1]))
-                    forecast_data[ini_time[1]] = data
-                end
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hy_ed,
+                    h,
+                    PSY.Deterministic("hydro_budget", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hy_ed,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, l) in
+        enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_hy_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ta = Iload_timeseries_DA[t][ix]
+            for i in 1:length(ta)
+                ini_time = timestamp(ta[i])
+                data = when(Iload_timeseries_RT[t][ix], hour, hour(ini_time[1]))
+                forecast_data[ini_time[1]] = data
+            end
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_ed,
                 l,
@@ -3053,34 +3436,52 @@ function build_c_sys5_hy_ed(; add_forecasts, raw_data, kwargs...)
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, l) in enumerate(PSY.get_components(PSY.HydroDispatch, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ta = hydro_timeseries_DA[t][ix]
-                for i in 1:length(ta)
-                    ini_time = timestamp(ta[i])
-                    data = when(hydro_timeseries_RT[t][ix], hour, hour(ini_time[1]))
-                    forecast_data[ini_time[1]] = data
-                end
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hy_ed,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hy_ed,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, l) in enumerate(PSY.get_components(PSY.HydroDispatch, c_sys5_hy_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ta = hydro_timeseries_DA[t][ix]
+            for i in 1:length(ta)
+                ini_time = timestamp(ta[i])
+                data = when(hydro_timeseries_RT[t][ix], hour, hour(ini_time[1]))
+                forecast_data[ini_time[1]] = data
+            end
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_ed,
                 l,
                 PSY.SingleTimeSeries("max_active_power", hydro_single_timeseries_RT),
             )
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hy_ed,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
+            end
         end
     end
 
     return c_sys5_hy_ed
 end
 
-function build_c_sys5_hy_ems_ed(; add_forecasts, raw_data, kwargs...)
+function build_c_sys5_hy_ems_ed(;
+    add_forecasts,
+    add_single_time_series,
+    raw_data,
+    kwargs...,
+)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     hydros = hydro_generators5(nodes)
@@ -3089,9 +3490,9 @@ function build_c_sys5_hy_ems_ed(; add_forecasts, raw_data, kwargs...)
         100.0,
         nodes,
         thermal_generators5_uc_testing(nodes),
+        hydros,
         renewable_generators5(nodes),
         loads5(nodes),
-        hydros,
         interruptible(nodes),
         branches5(nodes);
         time_series_in_memory = get(sys_kwargs, :time_series_in_memory, true),
@@ -3099,22 +3500,18 @@ function build_c_sys5_hy_ems_ed(; add_forecasts, raw_data, kwargs...)
     )
     add_component!(c_sys5_hy_ed, reservoir[1])
     set_downstream_turbines!(reservoir[1], [hydros[2]])
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2 # loop over days
-                ta = load_timeseries_DA[t][ix]
-                for i in 1:length(ta) # loop over hours
-                    ini_time = timestamp(ta[i]) #get the hour
-                    data = when(load_timeseries_RT[t][ix], hour, hour(ini_time[1])) # get the subset ts for that hour
-                    forecast_data[ini_time[1]] = data
-                end
+
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_hy_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2 # loop over days
+            ta = load_timeseries_DA[t][ix]
+            for i in 1:length(ta) # loop over hours
+                ini_time = timestamp(ta[i]) #get the hour
+                data = when(load_timeseries_RT[t][ix], hour, hour(ini_time[1])) # get the subset ts for that hour
+                forecast_data[ini_time[1]] = data
             end
-            PSY.add_time_series!(
-                c_sys5_hy_ed,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_ed,
                 l,
@@ -3124,43 +3521,53 @@ function build_c_sys5_hy_ems_ed(; add_forecasts, raw_data, kwargs...)
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, l) in enumerate(PSY.get_components(PSY.HydroTurbine, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ta = hydro_timeseries_DA[t][ix]
-                for i in 1:length(ta)
-                    ini_time = timestamp(ta[i])
-                    data = when(hydro_timeseries_RT[t][ix], hour, hour(ini_time[1]))
-                    forecast_data[ini_time[1]] = data
-                end
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hy_ed,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hy_ed,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, l) in enumerate(PSY.get_components(PSY.HydroTurbine, c_sys5_hy_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ta = hydro_timeseries_DA[t][ix]
+            for i in 1:length(ta)
+                ini_time = timestamp(ta[i])
+                data = when(hydro_timeseries_RT[t][ix], hour, hour(ini_time[1]))
+                forecast_data[ini_time[1]] = data
+            end
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_ed,
                 l,
                 PSY.SingleTimeSeries("max_active_power", hydro_single_timeseries_RT),
             )
-        end
-        for (ix, l) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ta = ren_timeseries_DA[t][ix]
-                for i in 1:length(ta)
-                    ini_time = timestamp(ta[i])
-                    data = when(ren_timeseries_RT[t][ix], hour, hour(ini_time[1]))
-                    forecast_data[ini_time[1]] = data
-                end
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hy_ed,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hy_ed,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, l) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_hy_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ta = ren_timeseries_DA[t][ix]
+            for i in 1:length(ta)
+                ini_time = timestamp(ta[i])
+                data = when(ren_timeseries_RT[t][ix], hour, hour(ini_time[1]))
+                forecast_data[ini_time[1]] = data
+            end
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_ed,
                 l,
@@ -3170,86 +3577,106 @@ function build_c_sys5_hy_ems_ed(; add_forecasts, raw_data, kwargs...)
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, l) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ta = storage_target_DA[t][ix]
-                for i in 1:length(ta)
-                    ini_time = timestamp(ta[i])
-                    data = when(storage_target_RT[t][ix], hour, hour(ini_time[1]))
-                    forecast_data[ini_time[1]] = data
-                end
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hy_ed,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hy_ed,
-                l,
-                PSY.Deterministic("storage_target", forecast_data),
-            )
+        end
+    end
+    for (ix, l) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ta = storage_target_DA[t][ix]
+            for i in 1:length(ta)
+                ini_time = timestamp(ta[i])
+                data = when(storage_target_RT[t][ix], hour, hour(ini_time[1]))
+                forecast_data[ini_time[1]] = data
+            end
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_ed,
                 l,
                 PSY.SingleTimeSeries("storage_target", storage_target_single_ts_RT),
             )
-        end
-        for (ix, l) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ta = hydro_timeseries_DA[t][ix]
-                for i in 1:length(ta)
-                    ini_time = timestamp(ta[i])
-                    data = when(hydro_timeseries_RT[t][ix], hour, hour(ini_time[1]))
-                    forecast_data[ini_time[1]] = data
-                end
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hy_ed,
+                    l,
+                    PSY.Deterministic("storage_target", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hy_ed,
-                l,
-                PSY.Deterministic("inflow", forecast_data),
-            )
+        end
+    end
+    for (ix, l) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ta = hydro_timeseries_DA[t][ix]
+            for i in 1:length(ta)
+                ini_time = timestamp(ta[i])
+                data = when(hydro_timeseries_RT[t][ix], hour, hour(ini_time[1]))
+                forecast_data[ini_time[1]] = data
+            end
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_ed,
                 l,
                 PSY.SingleTimeSeries("inflow", hydro_single_timeseries_RT),
             )
-        end
-        for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ta = hydro_budget_DA[t][ix]
-                for i in 1:length(ta)
-                    ini_time = timestamp(ta[i])
-                    data = when(hydro_budget_RT[t][ix] .* 0.8, hour, hour(ini_time[1]))
-                    forecast_data[ini_time[1]] = data
-                end
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hy_ed,
+                    l,
+                    PSY.Deterministic("inflow", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hy_ed,
-                h,
-                PSY.Deterministic("hydro_budget", forecast_data),
-            )
+        end
+    end
+    for (ix, h) in enumerate(PSY.get_components(PSY.HydroReservoir, c_sys5_hy_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ta = hydro_budget_DA[t][ix]
+            for i in 1:length(ta)
+                ini_time = timestamp(ta[i])
+                data = when(hydro_budget_RT[t][ix] .* 0.8, hour, hour(ini_time[1]))
+                forecast_data[ini_time[1]] = data
+            end
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_ed,
                 h,
                 PSY.SingleTimeSeries("hydro_budget", hydro_budget_single_ts_RT),
             )
-        end
-        for (ix, l) in
-            enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ta = Iload_timeseries_DA[t][ix]
-                for i in 1:length(ta)
-                    ini_time = timestamp(ta[i])
-                    data = when(Iload_timeseries_RT[t][ix], hour, hour(ini_time[1]))
-                    forecast_data[ini_time[1]] = data
-                end
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hy_ed,
+                    h,
+                    PSY.Deterministic("hydro_budget", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hy_ed,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, l) in
+        enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_hy_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ta = Iload_timeseries_DA[t][ix]
+            for i in 1:length(ta)
+                ini_time = timestamp(ta[i])
+                data = when(Iload_timeseries_RT[t][ix], hour, hour(ini_time[1]))
+                forecast_data[ini_time[1]] = data
+            end
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_ed,
                 l,
@@ -3259,34 +3686,53 @@ function build_c_sys5_hy_ems_ed(; add_forecasts, raw_data, kwargs...)
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, l) in enumerate(PSY.get_components(PSY.HydroDispatch, c_sys5_hy_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ta = hydro_timeseries_DA[t][ix]
-                for i in 1:length(ta)
-                    ini_time = timestamp(ta[i])
-                    data = when(hydro_timeseries_RT[t][ix], hour, hour(ini_time[1]))
-                    forecast_data[ini_time[1]] = data
-                end
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hy_ed,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_hy_ed,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, l) in enumerate(PSY.get_components(PSY.HydroDispatch, c_sys5_hy_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ta = hydro_timeseries_DA[t][ix]
+            for i in 1:length(ta)
+                ini_time = timestamp(ta[i])
+                data = when(hydro_timeseries_RT[t][ix], hour, hour(ini_time[1]))
+                forecast_data[ini_time[1]] = data
+            end
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_hy_ed,
                 l,
                 PSY.SingleTimeSeries("max_active_power", hydro_single_timeseries_RT),
             )
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_hy_ed,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
+            end
         end
     end
 
     return c_sys5_hy_ed
 end
 
-function build_c_sys5_phes_ed(; add_forecasts, add_reserves, raw_data, kwargs...)
+function build_c_sys5_phes_ed(;
+    add_forecasts,
+    add_single_time_series,
+    add_reserves,
+    raw_data,
+    kwargs...,
+)
     sys_kwargs = filter_kwargs(; kwargs...)
     nodes = nodes5()
     c_sys5_phes_ed = PSY.System(
@@ -3307,22 +3753,17 @@ function build_c_sys5_phes_ed(; add_forecasts, add_reserves, raw_data, kwargs...
     set_downstream_turbines!(head_reservoir, [hydro_pump])
     set_upstream_turbines!(tail_reservoir, [hydro_pump])
 
-    if add_forecasts
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_phes_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2 # loop over days
-                ta = load_timeseries_DA[t][ix]
-                for i in 1:length(ta) # loop over hours
-                    ini_time = timestamp(ta[i]) #get the hour
-                    data = when(load_timeseries_RT[t][ix], hour, hour(ini_time[1])) # get the subset ts for that hour
-                    forecast_data[ini_time[1]] = data
-                end
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_phes_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2 # loop over days
+            ta = load_timeseries_DA[t][ix]
+            for i in 1:length(ta) # loop over hours
+                ini_time = timestamp(ta[i]) #get the hour
+                data = when(load_timeseries_RT[t][ix], hour, hour(ini_time[1])) # get the subset ts for that hour
+                forecast_data[ini_time[1]] = data
             end
-            PSY.add_time_series!(
-                c_sys5_phes_ed,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_phes_ed,
                 l,
@@ -3332,43 +3773,53 @@ function build_c_sys5_phes_ed(; add_forecasts, add_reserves, raw_data, kwargs...
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, l) in enumerate(PSY.get_components(PSY.HydroGen, c_sys5_phes_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ta = hydro_timeseries_DA[t][ix]
-                for i in 1:length(ta)
-                    ini_time = timestamp(ta[i])
-                    data = when(hydro_timeseries_RT[t][ix], hour, hour(ini_time[1]))
-                    forecast_data[ini_time[1]] = data
-                end
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_phes_ed,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_phes_ed,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, l) in enumerate(PSY.get_components(PSY.HydroGen, c_sys5_phes_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ta = hydro_timeseries_DA[t][ix]
+            for i in 1:length(ta)
+                ini_time = timestamp(ta[i])
+                data = when(hydro_timeseries_RT[t][ix], hour, hour(ini_time[1]))
+                forecast_data[ini_time[1]] = data
+            end
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_phes_ed,
                 l,
                 PSY.SingleTimeSeries("max_active_power", hydro_single_timeseries_RT),
             )
-        end
-        for (ix, l) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_phes_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ta = ren_timeseries_DA[t][ix]
-                for i in 1:length(ta)
-                    ini_time = timestamp(ta[i])
-                    data = when(ren_timeseries_RT[t][ix], hour, hour(ini_time[1]))
-                    forecast_data[ini_time[1]] = data
-                end
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_phes_ed,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_phes_ed,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, l) in enumerate(PSY.get_components(PSY.RenewableGen, c_sys5_phes_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ta = ren_timeseries_DA[t][ix]
+            for i in 1:length(ta)
+                ini_time = timestamp(ta[i])
+                data = when(ren_timeseries_RT[t][ix], hour, hour(ini_time[1]))
+                forecast_data[ini_time[1]] = data
+            end
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_phes_ed,
                 l,
@@ -3378,22 +3829,27 @@ function build_c_sys5_phes_ed(; add_forecasts, add_reserves, raw_data, kwargs...
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
-        end
-        for (ix, l) in enumerate(PSY.get_components(PSY.HydroPumpTurbine, c_sys5_phes_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ta = hydro_timeseries_DA[t][ix]
-                for i in 1:length(ta)
-                    ini_time = timestamp(ta[i])
-                    data = when(hydro_timeseries_RT[t][ix], hour, hour(ini_time[1]))
-                    forecast_data[ini_time[1]] = data
-                end
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_phes_ed,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_phes_ed,
-                head_reservoir,
-                PSY.Deterministic("initial_level", forecast_data),
-            )
+        end
+    end
+    for (ix, l) in enumerate(PSY.get_components(PSY.HydroPumpTurbine, c_sys5_phes_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ta = hydro_timeseries_DA[t][ix]
+            for i in 1:length(ta)
+                ini_time = timestamp(ta[i])
+                data = when(hydro_timeseries_RT[t][ix], hour, hour(ini_time[1]))
+                forecast_data[ini_time[1]] = data
+            end
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_phes_ed,
                 head_reservoir,
@@ -3402,29 +3858,34 @@ function build_c_sys5_phes_ed(; add_forecasts, add_reserves, raw_data, kwargs...
             PSY.add_time_series!(
                 c_sys5_phes_ed,
                 tail_reservoir,
-                PSY.Deterministic("initial_level", forecast_data),
-            )
-            PSY.add_time_series!(
-                c_sys5_phes_ed,
-                tail_reservoir,
                 PSY.SingleTimeSeries("initial_level", hydro_single_timeseries_RT),
             )
-        end
-        for (ix, l) in enumerate(PSY.get_components(PSY.HydroPumpTurbine, c_sys5_phes_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ta = hydro_timeseries_DA[t][ix]
-                for i in 1:length(ta)
-                    ini_time = timestamp(ta[i])
-                    data = when(hydro_timeseries_RT[t][ix] .* 0.8, hour, hour(ini_time[1]))
-                    forecast_data[ini_time[1]] = data
-                end
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_phes_ed,
+                    head_reservoir,
+                    PSY.Deterministic("initial_level", forecast_data),
+                )
+                PSY.add_time_series!(
+                    c_sys5_phes_ed,
+                    tail_reservoir,
+                    PSY.Deterministic("initial_level", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_phes_ed,
-                head_reservoir,
-                PSY.Deterministic("inflow", forecast_data),
-            )
+        end
+    end
+    for (ix, l) in enumerate(PSY.get_components(PSY.HydroPumpTurbine, c_sys5_phes_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ta = hydro_timeseries_DA[t][ix]
+            for i in 1:length(ta)
+                ini_time = timestamp(ta[i])
+                data = when(hydro_timeseries_RT[t][ix] .* 0.8, hour, hour(ini_time[1]))
+                forecast_data[ini_time[1]] = data
+            end
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_phes_ed,
                 head_reservoir,
@@ -3439,11 +3900,6 @@ function build_c_sys5_phes_ed(; add_forecasts, add_reserves, raw_data, kwargs...
             PSY.add_time_series!(
                 c_sys5_phes_ed,
                 tail_reservoir,
-                PSY.Deterministic("outflow", forecast_data),
-            )
-            PSY.add_time_series!(
-                c_sys5_phes_ed,
-                tail_reservoir,
                 PSY.SingleTimeSeries(
                     "inflow",
                     TimeSeries.TimeArray(
@@ -3452,23 +3908,33 @@ function build_c_sys5_phes_ed(; add_forecasts, add_reserves, raw_data, kwargs...
                     ),
                 ),
             )
-        end
-        for (ix, l) in
-            enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_phes_ed))
-            forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-            for t in 1:2
-                ta = Iload_timeseries_DA[t][ix]
-                for i in 1:length(ta)
-                    ini_time = timestamp(ta[i])
-                    data = when(Iload_timeseries_RT[t][ix], hour, hour(ini_time[1]))
-                    forecast_data[ini_time[1]] = data
-                end
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_phes_ed,
+                    head_reservoir,
+                    PSY.Deterministic("inflow", forecast_data),
+                )
+                PSY.add_time_series!(
+                    c_sys5_phes_ed,
+                    tail_reservoir,
+                    PSY.Deterministic("outflow", forecast_data),
+                )
             end
-            PSY.add_time_series!(
-                c_sys5_phes_ed,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+        end
+    end
+    for (ix, l) in
+        enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5_phes_ed))
+        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ta = Iload_timeseries_DA[t][ix]
+            for i in 1:length(ta)
+                ini_time = timestamp(ta[i])
+                data = when(Iload_timeseries_RT[t][ix], hour, hour(ini_time[1]))
+                forecast_data[ini_time[1]] = data
+            end
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_phes_ed,
                 l,
@@ -3478,8 +3944,17 @@ function build_c_sys5_phes_ed(; add_forecasts, add_reserves, raw_data, kwargs...
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_phes_ed,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
+            end
         end
     end
+
     if add_reserves
         reserve_uc =
             reserve5_phes(PSY.get_components(PSY.HydroPumpTurbine, c_sys5_phes_ed))
@@ -3508,16 +3983,21 @@ function build_c_sys5_phes_ed(; add_forecasts, add_reserves, raw_data, kwargs...
                     forecast_data[ini_time] = data
                 end
             end
-            PSY.add_time_series!(
-                c_sys5_phes_ed,
-                serv,
-                PSY.Deterministic("requirement", forecast_data),
-            )
-            PSY.add_time_series!(
-                c_sys5_phes_ed,
-                serv,
-                PSY.SingleTimeSeries("requirement", Reserve_single_ts_RT),
-            )
+            if add_single_time_series
+                PSY.add_time_series!(
+                    c_sys5_phes_ed,
+                    serv,
+                    PSY.SingleTimeSeries("requirement", Reserve_single_ts_RT),
+                )
+            else
+                if add_forecasts
+                    PSY.add_time_series!(
+                        c_sys5_phes_ed,
+                        serv,
+                        PSY.Deterministic("requirement", forecast_data),
+                    )
+                end
+            end
         end
     end
 
@@ -3526,6 +4006,7 @@ end
 
 function build_c_sys5_pglib(;
     add_forecasts,
+    add_single_time_series,
     add_reserves,
     raw_data,
     sys_kwargs...,
@@ -3542,18 +4023,13 @@ function build_c_sys5_pglib(;
         sys_kwargs...,
     )
 
-    if add_forecasts
-        forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
-        for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_uc))
-            for t in 1:2
-                ini_time = timestamp(load_timeseries_DA[t][ix])[1]
-                forecast_data[ini_time] = load_timeseries_DA[t][ix]
-            end
-            PSY.add_time_series!(
-                c_sys5_uc,
-                l,
-                PSY.Deterministic("max_active_power", forecast_data),
-            )
+    forecast_data = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+    for (ix, l) in enumerate(PSY.get_components(PSY.PowerLoad, c_sys5_uc))
+        for t in 1:2
+            ini_time = timestamp(load_timeseries_DA[t][ix])[1]
+            forecast_data[ini_time] = load_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
             PSY.add_time_series!(
                 c_sys5_uc,
                 l,
@@ -3563,6 +4039,14 @@ function build_c_sys5_pglib(;
                     scaling_factor_multiplier = PSY.get_max_active_power,
                 ),
             )
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_uc,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data),
+                )
+            end
         end
     end
     if add_reserves
@@ -3588,16 +4072,21 @@ function build_c_sys5_pglib(;
                 ini_time = timestamp(Reserve_ts[t])[1]
                 forecast_data[ini_time] = Reserve_ts[t]
             end
-            PSY.add_time_series!(
-                c_sys5_uc,
-                serv,
-                PSY.Deterministic("requirement", forecast_data),
-            )
-            PSY.add_time_series!(
-                c_sys5_uc,
-                serv,
-                PSY.SingleTimeSeries("requirement", Reserve_single_ts),
-            )
+            if add_single_time_series
+                PSY.add_time_series!(
+                    c_sys5_uc,
+                    serv,
+                    PSY.SingleTimeSeries("requirement", Reserve_single_ts),
+                )
+            else
+                if add_forecasts
+                    PSY.add_time_series!(
+                        c_sys5_uc,
+                        serv,
+                        PSY.Deterministic("requirement", forecast_data),
+                    )
+                end
+            end
         end
     end
 
