@@ -1,6 +1,7 @@
 @testset "Test Serialization/De-Serialization PSI Cases" begin
     system_catalog = SystemCatalog(SYSTEM_CATALOG)
     for (name, descriptor) in system_catalog.data[PSITestSystems]
+        @testset "Test Serialization/De-Serialization for $name" begin
         # build a new system from scratch
         supported_args_permutations = PSB.get_supported_args_permutations(descriptor)
         if isempty(supported_args_permutations)
@@ -44,6 +45,7 @@
             @test !PSB.is_serialized(name, supported_args)
         end
     end
+end
 end
 
 @testset "Test PSI Cases' Specific Behaviors" begin
