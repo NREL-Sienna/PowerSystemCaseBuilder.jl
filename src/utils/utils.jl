@@ -88,7 +88,7 @@ end
 
 """
 Creates a JSON file informing the user about the meaning of the hash value in the file path
-if it doesn't exist already 
+if it doesn't exist already
 """
 function serialize_case_parameters(case_args::Dict{Symbol, <:Any})
     dir_path = get_serialization_dir(case_args)
@@ -109,3 +109,65 @@ function _get_system_directories(path::String)
 end
 
 _is_system_hash_name(name::String) = isempty(filter(!isxdigit, name)) && length(name) == 64
+
+function convert_to_hydropump!(d::EnergyReservoirStorage, sys::System)
+    storage_capacity_MWh = d.storage_capacity * d.base_power
+    reservoir_cost = HydroReservoirCost(;
+        level_shortage_cost = d.operation_cost.energy_shortage_cost,
+        level_surplus_cost = d.operation_cost.energy_surplus_cost,
+        spillage_cost = 0.0,
+    )
+    hpump = HydroPumpTurbine(;
+        name = "$(d.name)_pump",
+        available = d.available,
+        bus = d.bus,
+        active_power = d.active_power,
+        reactive_power = d.reactive_power,
+        rating = d.rating,
+        active_power_limits = d.output_active_power_limits,
+        reactive_power_limits = d.reactive_power_limits,
+        active_power_limits_pump = d.input_active_power_limits,
+        outflow_limits = nothing,
+        powerhouse_elevation = 0.0,
+        ramp_limits = nothing,
+        time_limits = nothing,
+        base_power = d.base_power,
+        operation_cost = HydroGenerationCost(;
+            variable = d.operation_cost.discharge_variable_cost,
+            fixed = d.operation_cost.fixed,
+        ),
+        active_power_pump = 0.0,
+        efficiency = (turbine = d.efficiency.out, pump = d.efficiency.in),
+        must_run = false,
+    )
+    head_reservoir = HydroReservoir(;
+        name = "$(d.name)_head_reservoir",
+        available = d.available,
+        storage_level_limits = (
+            min = storage_capacity_MWh * d.storage_level_limits.min,
+            max = storage_capacity_MWh * d.storage_level_limits.max,
+        ),
+        initial_level = d.initial_storage_capacity_level,
+        spillage_limits = nothing,
+        inflow = 1.0,
+        outflow = 0.0,
+        level_targets = d.storage_target,
+        intake_elevation = 0.0,
+        head_to_volume_factor = LinearCurve(0.0),
+        operation_cost = reservoir_cost,
+        level_data_type = ReservoirDataType.ENERGY,
+    )
+    tail_reservoir = HydroReservoir(nothing)
+    PSY.set_name!(tail_reservoir, "$(d.name)_tail_reservoir")
+    PSY.set_available!(tail_reservoir, d.available)
+    add_component!(sys, hpump)
+    add_component!(sys, head_reservoir)
+    add_component!(sys, tail_reservoir)
+    set_downstream_turbines!(head_reservoir, [hpump])
+    set_upstream_turbines!(tail_reservoir, [hpump])
+    set_upstream_reservoirs!(tail_reservoir, [head_reservoir])
+    for service in PSY.get_services(d)
+        PSY.add_service!(hpump, service, sys)
+    end
+    copy_time_series!(hpump, d)
+end

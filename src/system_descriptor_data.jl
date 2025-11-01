@@ -11,6 +11,11 @@ const SYSTEM_CATALOG = [
                 default = true,
                 allowed_values = Set([true, false]),
             ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
         ],
     ),
     SystemDescriptor(;
@@ -25,6 +30,11 @@ const SYSTEM_CATALOG = [
                 default = true,
                 allowed_values = Set([true, false]),
             ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
         ],
     ),
     SystemDescriptor(;
@@ -37,6 +47,11 @@ const SYSTEM_CATALOG = [
             SystemArgument(;
                 name = :add_forecasts,
                 default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
         ],
@@ -65,6 +80,11 @@ const SYSTEM_CATALOG = [
             SystemArgument(;
                 name = :add_forecasts,
                 default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
         ],
@@ -108,6 +128,30 @@ const SYSTEM_CATALOG = [
         ],
     ),
     SystemDescriptor(;
+        name = "c_sys5_hydro_pump_energy",
+        description = "5-Bus system with hydro pump storage",
+        category = PSITestSystems,
+        raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
+        build_function = build_c_sys5_hydro_pump_energy,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+        ],
+    ),
+    SystemDescriptor(;
         name = "c_sys5_dc",
         description = "Systems with HVDC data in the branches",
         category = PSITestSystems,
@@ -117,6 +161,11 @@ const SYSTEM_CATALOG = [
             SystemArgument(;
                 name = :add_forecasts,
                 default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
         ],
@@ -131,6 +180,11 @@ const SYSTEM_CATALOG = [
             SystemArgument(;
                 name = :add_forecasts,
                 default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
@@ -152,6 +206,112 @@ const SYSTEM_CATALOG = [
                 default = true,
                 allowed_values = Set([true, false]),
             ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+        ],
+    ),
+    SystemDescriptor(;
+        name = "c_sys5_hy_turbine_energy",
+        description = "5-Bus system with HydroTurbine with Energy Reservoir",
+        category = PSITestSystems,
+        raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
+        build_function = build_c_sys5_hy_turbine_energy,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+        ],
+    ),
+    SystemDescriptor(;
+        name = "c_sys5_hy_turbine_head",
+        description = "5-Bus system with HydroTurbine with Reservoir using Head (in meters) data",
+        category = PSITestSystems,
+        raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
+        build_function = build_c_sys5_hy_turbine_head,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+        ],
+    ),
+    SystemDescriptor(;
+        name = "c_sys5_hy_cascading_turbine_energy",
+        description = "5-Bus system with Cascading HydroTurbines with Energy Reservoirs",
+        category = PSITestSystems,
+        raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
+        build_function = build_c_sys5_hy_cascading_turbine_energy,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+        ],
+    ),
+    SystemDescriptor(;
+        name = "c_sys5_hy_cascading_turbine_head",
+        description = "5-Bus system with HydroTurbine with Reservoir using Head (in meters) data",
+        category = PSITestSystems,
+        raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
+        build_function = build_c_sys5_hy_cascading_turbine_head,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_reserves,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
         ],
     ),
     SystemDescriptor(;
@@ -164,6 +324,11 @@ const SYSTEM_CATALOG = [
             SystemArgument(;
                 name = :add_forecasts,
                 default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
         ],
@@ -180,6 +345,11 @@ const SYSTEM_CATALOG = [
                 default = true,
                 allowed_values = Set([true, false]),
             ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
         ],
     ),
     SystemDescriptor(;
@@ -192,6 +362,11 @@ const SYSTEM_CATALOG = [
             SystemArgument(;
                 name = :add_forecasts,
                 default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
@@ -213,6 +388,11 @@ const SYSTEM_CATALOG = [
                 default = true,
                 allowed_values = Set([true, false]),
             ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
         ],
     ),
     SystemDescriptor(;
@@ -225,6 +405,11 @@ const SYSTEM_CATALOG = [
             SystemArgument(;
                 name = :add_forecasts,
                 default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
         ],
@@ -290,6 +475,11 @@ const SYSTEM_CATALOG = [
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
                 name = :add_reserves,
                 default = false,
                 allowed_values = Set([true, false]),
@@ -308,6 +498,11 @@ const SYSTEM_CATALOG = [
                 default = true,
                 allowed_values = Set([true, false]),
             ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
         ],
     ),
     SystemDescriptor(;
@@ -323,12 +518,12 @@ const SYSTEM_CATALOG = [
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
-                name = :add_reserves,
+                name = :add_single_time_series,
                 default = false,
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
-                name = :add_single_time_series,
+                name = :add_reserves,
                 default = false,
                 allowed_values = Set([true, false]),
             ),
@@ -347,12 +542,12 @@ const SYSTEM_CATALOG = [
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
-                name = :add_reserves,
+                name = :add_single_time_series,
                 default = false,
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
-                name = :add_single_time_series,
+                name = :add_reserves,
                 default = false,
                 allowed_values = Set([true, false]),
             ),
@@ -370,6 +565,11 @@ const SYSTEM_CATALOG = [
                 default = true,
                 allowed_values = Set([true, false]),
             ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
         ],
     ),
     SystemDescriptor(;
@@ -385,12 +585,12 @@ const SYSTEM_CATALOG = [
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
-                name = :add_reserves,
+                name = :add_single_time_series,
                 default = false,
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
-                name = :add_single_time_series,
+                name = :add_reserves,
                 default = false,
                 allowed_values = Set([true, false]),
             ),
@@ -505,6 +705,11 @@ const SYSTEM_CATALOG = [
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
                 name = :add_reserves,
                 default = false,
                 allowed_values = Set([true, false]),
@@ -521,6 +726,11 @@ const SYSTEM_CATALOG = [
             SystemArgument(;
                 name = :add_forecasts,
                 default = true,
+                allowed_values = Set([true, false]),
+            ),
+            SystemArgument(;
+                name = :add_single_time_series,
+                default = false,
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
@@ -1042,6 +1252,20 @@ const SYSTEM_CATALOG = [
         build_function = build_matpower,
     ),
     SystemDescriptor(;
+        name = "matpower_case5_transformer",
+        description = "Matpower Test system",
+        category = MatpowerTestSystems,
+        raw_data = joinpath(DATA_DIR, "matpower", "case5_transformers.m"),
+        build_function = build_matpower,
+    ),
+    SystemDescriptor(;
+        name = "matpower_cats",
+        description = "Matpower California test system",
+        category = MatpowerTestSystems,
+        raw_data = joinpath(DATA_DIR, "matpower", "CaliforniaTestSystem.m"),
+        build_function = build_matpower,
+    ),
+    SystemDescriptor(;
         name = "pti_case3_sys",
         description = "PSSE 3-bus Test system",
         category = PSSEParsingTestSystems,
@@ -1074,6 +1298,20 @@ const SYSTEM_CATALOG = [
         description = "PSSE 14-bus Test system",
         category = PSSEParsingTestSystems,
         raw_data = joinpath(DATA_DIR, "psse_raw", "case14.raw"),
+        build_function = build_pti,
+    ),
+    SystemDescriptor(;
+        name = "pti_modified_case14_sys",
+        description = "PSSE Modified 14-bus Test system",
+        category = PSSEParsingTestSystems,
+        raw_data = joinpath(DATA_DIR, "psse_raw", "modified_case14.raw"),
+        build_function = build_pti,
+    ),
+    SystemDescriptor(;
+        name = "pti_modified_case25_v35_sys",
+        description = "PSSE Modified 25-bus V35 Test system",
+        category = PSSEParsingTestSystems,
+        raw_data = joinpath(DATA_DIR, "psse_raw", "case25_v35_savnwb.raw"),
         build_function = build_pti,
     ),
     SystemDescriptor(;
@@ -1130,6 +1368,76 @@ const SYSTEM_CATALOG = [
         description = "PSSE Test system",
         category = PSSEParsingTestSystems,
         raw_data = joinpath(DATA_DIR, "psse_raw", "parser_test_a.raw"),
+        build_function = build_pti,
+    ),
+    SystemDescriptor(;
+        name = "pti_case14_with_interruptible_loads_sys",
+        description = "PSSE with interruptible loads Test system",
+        category = PSSEParsingTestSystems,
+        raw_data = joinpath(DATA_DIR, "psse_raw", "case14_with_interruptible_loads.raw"),
+        build_function = build_pti,
+    ),
+    SystemDescriptor(;
+        name = "pti_case8_voltage_winding_correction_sys",
+        description = "PSSE case8 winding voltage correction test system",
+        category = PSSEParsingTestSystems,
+        raw_data = joinpath(DATA_DIR, "psse_raw", "case8_voltage_wind_correction.raw"),
+        build_function = build_pti,
+    ),
+    SystemDescriptor(;
+        name = "pti_case10_voltage_winding_correction_sys",
+        description = "PSSE case10 winding voltage correction test system",
+        category = PSSEParsingTestSystems,
+        raw_data = joinpath(DATA_DIR, "psse_raw", "case10_voltage_winding_correction.raw"),
+        build_function = build_pti,
+    ),
+    SystemDescriptor(;
+        name = "isolated_bus_test_system",
+        description = "PSSE isolated bus test system",
+        category = PSSEParsingTestSystems,
+        raw_data = joinpath(DATA_DIR, "psse_raw", "isolated_bus_test.raw"),
+        build_function = build_pti,
+    ),
+    SystemDescriptor(;
+        name = "psse_ybus_14_test_system",
+        description = "PSSE ybus test system",
+        category = PSSEParsingTestSystems,
+        raw_data = joinpath(DATA_DIR, "psse_raw", "case14_ybus.raw"),
+        build_function = build_pti,
+    ),
+    SystemDescriptor(;
+        name = "psse_14_tap_correction_test_system",
+        description = "PSSE tap correction test system",
+        category = PSSEParsingTestSystems,
+        raw_data = joinpath(DATA_DIR, "psse_raw", "case14_tap_correction.raw"),
+        build_function = build_pti,
+    ),
+    SystemDescriptor(;
+        name = "psse_14_zero_impedance_branch_test_system",
+        description = "PSSE zero impedance branch test system",
+        category = PSSEParsingTestSystems,
+        raw_data = joinpath(DATA_DIR, "psse_raw", "case14_zero_impedance_branch.raw"),
+        build_function = build_pti,
+    ),
+    SystemDescriptor(;
+        name = "psse_4_zero_impedance_3wt_test_system",
+        description = "PSSE zero impedance 3-winding transformer test system",
+        category = PSSEParsingTestSystems,
+        raw_data = joinpath(DATA_DIR, "psse_raw", "case4_zero_impedance_3wt.raw"),
+        build_function = build_pti,
+    ),
+    SystemDescriptor(;
+        name = "psse_14_network_reduction_test_system",
+        description = "PSSE network reduction test system",
+        category = PSSEParsingTestSystems,
+        raw_data = joinpath(DATA_DIR, "psse_raw", "case14_reductions.raw"),
+        build_function = build_pti,
+    ),
+    SystemDescriptor(;
+        name = "Base_Eastern_Interconnect_515GW",
+        description = "Synthetic Eastern Interconnection system with 515 GW of generation",
+        category = PSSEParsingTestSystems,
+        raw_data = joinpath(DATA_DIR, "psse_raw", "Base_Eastern_Interconnect_515GW.RAW"),
         build_function = build_pti,
     ),
     # SystemDescriptor(
@@ -1195,6 +1503,27 @@ const SYSTEM_CATALOG = [
     #     raw_data =  joinpath(DATA_DIR, "psse_raw", "parser_test_j.raw"),
     #     build_function  =  build_pti
     # ),
+    SystemDescriptor(;
+        name = "pti_case14_with_pst3w_sys",
+        description = "PSSE Case 14 with PST3W",
+        category = PSSEParsingTestSystems,
+        raw_data = joinpath(DATA_DIR, "psse_raw", "case14_with_pst3w.raw"),
+        build_function = build_pti,
+    ),
+    SystemDescriptor(;
+        name = "pti_case16_complete_sys",
+        description = "PSSE Case 16 with All Network Components",
+        category = PSSEParsingTestSystems,
+        raw_data = joinpath(DATA_DIR, "psse_raw", "case16_all_components.raw"),
+        build_function = build_pti,
+    ),
+    SystemDescriptor(;
+        name = "pti_case11_with_synchronous_condensers_sys",
+        description = "PSSE Case 11 with Synch. Condensers",
+        category = PSSEParsingTestSystems,
+        raw_data = joinpath(DATA_DIR, "psse_raw", "case11_with_synchronous_condensers.raw"),
+        build_function = build_pti,
+    ),
     SystemDescriptor(;
         name = "pti_three_winding_mag_test_sys",
         description = "PSSE Test system",
@@ -1309,11 +1638,6 @@ const SYSTEM_CATALOG = [
             SystemArgument(;
                 name = :add_forecasts,
                 default = true,
-                allowed_values = Set([true, false]),
-            ),
-            SystemArgument(;
-                name = :add_single_time_series,
-                default = false,
                 allowed_values = Set([true, false]),
             ),
             SystemArgument(;
@@ -1474,6 +1798,20 @@ const SYSTEM_CATALOG = [
         category = PSITestSystems,
         raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
         build_function = build_batt_test_case_f_sys,
+    ),
+    SystemDescriptor(;
+        name = "case10_radial_series_reductions",
+        description = "Test system for radial and series reductions",
+        category = PSITestSystems,
+        raw_data = joinpath(DATA_DIR, "psse_raw", "case10_radial_series_reductions.raw"),
+        build_function = build_pti,
+    ),
+    SystemDescriptor(;
+        name = "case11_network_reductions",
+        description = "Test system for building simulations with network reductions",
+        category = PSITestSystems,
+        raw_data = joinpath(DATA_DIR, "psse_raw", "case11_network_reductions.raw"),
+        build_function = build_pti,
     ),
     SystemDescriptor(;
         name = "psid_psse_test_avr",

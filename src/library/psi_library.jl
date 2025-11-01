@@ -285,7 +285,7 @@ function build_5_bus_hydro_uc_sys_targets(; add_forecasts, raw_data, sys_kwargs.
         c_sys5_hy_uc = PSY.System(rawsys; sys_kwargs...)
     end
     cost = HydroGenerationCost(CostCurve(LinearCurve(0.15)), 0.0)
-    for hy in get_components(HydroEnergyReservoir, c_sys5_hy_uc)
+    for hy in get_components(HydroTurbine, c_sys5_hy_uc)
         set_operation_cost!(hy, cost)
     end
     return c_sys5_hy_uc
@@ -335,7 +335,7 @@ function build_5_bus_hydro_ed_sys_targets(; raw_data, kwargs...)
         sys_kwargs...,
     )
     cost = HydroGenerationCost(CostCurve(LinearCurve(0.15)), 0.0)
-    for hy in get_components(HydroEnergyReservoir, c_sys5_hy_ed)
+    for hy in get_components(HydroTurbine, c_sys5_hy_ed)
         set_operation_cost!(hy, cost)
     end
     PSY.transform_single_time_series!(c_sys5_hy_ed, Hour(2), Hour(1))
@@ -387,7 +387,7 @@ function build_5_bus_hydro_wk_sys_targets(; raw_data, kwargs...)
         sys_kwargs...,
     )
     cost = HydroGenerationCost(CostCurve(LinearCurve(0.15)), 0.0)
-    for hy in get_components(HydroEnergyReservoir, c_sys5_hy_wk)
+    for hy in get_components(HydroTurbine, c_sys5_hy_wk)
         set_operation_cost!(hy, cost)
     end
     PSY.transform_single_time_series!(c_sys5_hy_wk, Hour(48), Hour(48))
@@ -564,8 +564,11 @@ function make_modified_RTS_GMLC_sys(
         PSY.clear_services!(d)
     end
 
-    # Add Hydro to regulation reserves
-    for d in PSY.get_components(PSY.HydroEnergyReservoir, sys)
+    # Remove Hydro Energy Reservoirs data
+    for d in PSY.get_components(PSY.HydroReservoir, sys)
+        PSY.remove_component!(sys, d)
+    end
+    for d in PSY.get_components(PSY.HydroTurbine, sys)
         PSY.remove_component!(sys, d)
     end
 
@@ -591,6 +594,9 @@ function make_modified_RTS_GMLC_sys(
         PSY.set_rating!(g, FIX_DECREASE * rat_)
     end
 
+    ### Update Buses to PQ that got devices removed ###
+    bell_bus = get_component(PSY.ACBus, sys, "Bell")
+    PSY.set_bustype!(bell_bus, PSY.ACBusTypes.PQ)
     return sys
 end
 
@@ -638,16 +644,126 @@ function build_two_zone_5_bus(; kwargs...)
 
     # Buses
     nodes10() = [
-        ACBus(1, "nodeA", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
-        ACBus(2, "nodeB", "PQ", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
-        ACBus(3, "nodeC", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
-        ACBus(4, "nodeD", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
-        ACBus(5, "nodeE", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
-        ACBus(6, "nodeA2", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
-        ACBus(7, "nodeB2", "PQ", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
-        ACBus(8, "nodeC2", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
-        ACBus(9, "nodeD2", "REF", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
-        ACBus(10, "nodeE2", "PV", 0, 1.0, (min = 0.9, max = 1.05), 230, nothing, nothing),
+        ACBus(
+            1,
+            "nodeA",
+            true,
+            "PV",
+            0,
+            1.0,
+            (min = 0.9, max = 1.05),
+            230,
+            nothing,
+            nothing,
+        ),
+        ACBus(
+            2,
+            "nodeB",
+            true,
+            "PQ",
+            0,
+            1.0,
+            (min = 0.9, max = 1.05),
+            230,
+            nothing,
+            nothing,
+        ),
+        ACBus(
+            3,
+            "nodeC",
+            true,
+            "PV",
+            0,
+            1.0,
+            (min = 0.9, max = 1.05),
+            230,
+            nothing,
+            nothing,
+        ),
+        ACBus(
+            4,
+            "nodeD",
+            true,
+            "REF",
+            0,
+            1.0,
+            (min = 0.9, max = 1.05),
+            230,
+            nothing,
+            nothing,
+        ),
+        ACBus(
+            5,
+            "nodeE",
+            true,
+            "PV",
+            0,
+            1.0,
+            (min = 0.9, max = 1.05),
+            230,
+            nothing,
+            nothing,
+        ),
+        ACBus(
+            6,
+            "nodeA2",
+            true,
+            "PV",
+            0,
+            1.0,
+            (min = 0.9, max = 1.05),
+            230,
+            nothing,
+            nothing,
+        ),
+        ACBus(
+            7,
+            "nodeB2",
+            true,
+            "PQ",
+            0,
+            1.0,
+            (min = 0.9, max = 1.05),
+            230,
+            nothing,
+            nothing,
+        ),
+        ACBus(
+            8,
+            "nodeC2",
+            true,
+            "PV",
+            0,
+            1.0,
+            (min = 0.9, max = 1.05),
+            230,
+            nothing,
+            nothing,
+        ),
+        ACBus(
+            9,
+            "nodeD2",
+            true,
+            "REF",
+            0,
+            1.0,
+            (min = 0.9, max = 1.05),
+            230,
+            nothing,
+            nothing,
+        ),
+        ACBus(
+            10,
+            "nodeE2",
+            true,
+            "PV",
+            0,
+            1.0,
+            (min = 0.9, max = 1.05),
+            230,
+            nothing,
+            nothing,
+        ),
     ]
 
     # Lines
@@ -661,7 +777,7 @@ function build_two_zone_5_bus(; kwargs...)
             0.00281,
             0.0281,
             (from = 0.00356, to = 0.00356),
-            2.0,
+            3.29, # min for 230kV
             (min = -0.7, max = 0.7),
         ),
         Line(
@@ -673,7 +789,7 @@ function build_two_zone_5_bus(; kwargs...)
             0.00304,
             0.0304,
             (from = 0.00329, to = 0.00329),
-            2.0,
+            3.29, # min for 230kV
             (min = -0.7, max = 0.7),
         ),
         Line(
@@ -685,7 +801,7 @@ function build_two_zone_5_bus(; kwargs...)
             0.00064,
             0.0064,
             (from = 0.01563, to = 0.01563),
-            18.8120,
+            7.96, # max for 230kV
             (min = -0.7, max = 0.7),
         ),
         Line(
@@ -697,7 +813,7 @@ function build_two_zone_5_bus(; kwargs...)
             0.00108,
             0.0108,
             (from = 0.00926, to = 0.00926),
-            11.1480,
+            7.96, # max for 230kV
             (min = -0.7, max = 0.7),
         ),
         Line(
@@ -709,7 +825,7 @@ function build_two_zone_5_bus(; kwargs...)
             0.00297,
             0.0297,
             (from = 0.00337, to = 0.00337),
-            40.530,
+            7.96, # max for 230kV
             (min = -0.7, max = 0.7),
         ),
         Line(
@@ -721,7 +837,7 @@ function build_two_zone_5_bus(; kwargs...)
             0.00297,
             0.0297,
             (from = 0.00337, to = 0.00337),
-            2.00,
+            3.29, # min for 230kV
             (min = -0.7, max = 0.7),
         ),
         Line(
@@ -733,7 +849,7 @@ function build_two_zone_5_bus(; kwargs...)
             0.00281,
             0.0281,
             (from = 0.00356, to = 0.00356),
-            2.0,
+            3.29, # min for 230kV
             (min = -0.7, max = 0.7),
         ),
         Line(
@@ -745,7 +861,7 @@ function build_two_zone_5_bus(; kwargs...)
             0.00304,
             0.0304,
             (from = 0.00329, to = 0.00329),
-            2.0,
+            3.29, # min for 230kV
             (min = -0.7, max = 0.7),
         ),
         Line(
@@ -757,7 +873,7 @@ function build_two_zone_5_bus(; kwargs...)
             0.00064,
             0.0064,
             (from = 0.01563, to = 0.01563),
-            18.8120,
+            7.96, # max for 230kV
             (min = -0.7, max = 0.7),
         ),
         Line(
@@ -769,7 +885,7 @@ function build_two_zone_5_bus(; kwargs...)
             0.00108,
             0.0108,
             (from = 0.00926, to = 0.00926),
-            11.1480,
+            7.96, # max for 230kV
             (min = -0.7, max = 0.7),
         ),
         Line(
@@ -781,7 +897,7 @@ function build_two_zone_5_bus(; kwargs...)
             0.00297,
             0.0297,
             (from = 0.00337, to = 0.00337),
-            40.530,
+            7.96, # max for 230kV
             (min = -0.7, max = 0.7),
         ),
         Line(
@@ -793,7 +909,7 @@ function build_two_zone_5_bus(; kwargs...)
             0.00297,
             0.0297,
             (from = 0.00337, to = 0.00337),
-            2.00,
+            3.29, # min for 230kV
             (min = -0.7, max = 0.7),
         ),
         TwoTerminalHVDCLine(
@@ -805,7 +921,7 @@ function build_two_zone_5_bus(; kwargs...)
             (min = -2.0, max = 2.0),
             (min = -2.0, max = 2.0),
             (min = -2.0, max = 2.0),
-            (l0 = 0.0, l1 = 0.0),
+            LinearCurve(0.0),
         ),
     ]
 
@@ -1316,17 +1432,19 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         !PSY.has_time_series(b) && PSY.copy_time_series!(b, main_comp)
 
         # add service to the device to be added to main_sys
-        if length(PSY.get_services(main_comp)) > 0
-            PSY.get_name(b)
-            srvc_ = PSY.get_services(main_comp)
-            for ss in srvc_
-                srvc_type = typeof(ss)
-                srvc_name = PSY.get_name(ss)
-                PSY.add_service!(
-                    b,
-                    PSY.get_component(srvc_type, main_sys, srvc_name * "_twin"),
-                    main_sys,
-                )
+        if PSY.supports_services(b)
+            if length(PSY.get_services(main_comp)) > 0
+                PSY.get_name(b)
+                srvc_ = PSY.get_services(main_comp)
+                for ss in srvc_
+                    srvc_type = typeof(ss)
+                    srvc_name = PSY.get_name(ss)
+                    PSY.add_service!(
+                        b,
+                        PSY.get_component(srvc_type, main_sys, srvc_name * "_twin"),
+                        main_sys,
+                    )
+                end
             end
         end
         # change scale
@@ -1361,7 +1479,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
             active_power_limits_to = (min = -1000.0, max = 1000.0),
             reactive_power_limits_from = (min = -1000.0, max = 1000.0),
             reactive_power_limits_to = (min = -1000.0, max = 1000.0),
-            loss = (l0 = 0.0, l1 = 0.1),
+            loss = PSY.LinearCurve(0.1),
             services = Vector{Service}[],
             ext = Dict{String, Any}(),
         )
@@ -1464,6 +1582,18 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
     PARTICIPATION = 0.2
 
     # remove Flex services and fix max participation
+    for srvc in PSY.get_components(PSY.Service, main_sys)
+        PSY.set_max_participation_factor!(srvc, PARTICIPATION)
+        if PSY.get_name(srvc) in ["Flex_Up", "Flex_Down", "Flex_Up_twin", "Flex_Down_twin"]
+            # remove Flex services from DA and RT model
+            PSY.remove_time_series!(
+                main_sys,
+                PSY.DeterministicSingleTimeSeries,
+                srvc,
+                "requirement",
+            )
+        end
+    end
     for srvc in PSY.get_components(PSY.Service, main_sys)
         PSY.set_max_participation_factor!(srvc, PARTICIPATION)
         if PSY.get_name(srvc) in ["Flex_Up", "Flex_Down", "Flex_Up_twin", "Flex_Down_twin"]
