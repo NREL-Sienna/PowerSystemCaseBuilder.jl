@@ -8,4 +8,4 @@ PowerSystems = "bcd98974-b02a-5e2f-9ee0-a103f5c450dd"
 [compat]
 Documenter = "^1.8"
 julia = "^1.10"
-PowerSystems = "^5.0"
+PowerSystems = "5"
