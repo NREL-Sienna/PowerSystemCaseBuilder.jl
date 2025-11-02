@@ -46,7 +46,6 @@
         end
     end
 end
-end
 
 @testset "Test PSI Cases' Specific Behaviors" begin
     """
