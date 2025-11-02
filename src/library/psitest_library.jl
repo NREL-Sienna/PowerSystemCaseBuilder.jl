@@ -5035,7 +5035,7 @@ function build_hydro_test_case_b_sys(; raw_data, kwargs...)
     PSY.add_component!(hydro_test_case_b_sys, load)
     PSY.add_component!(hydro_test_case_b_sys, hydro)
     PSY.add_component!(hydro_test_case_b_sys, reservoir)
-    PSY.set_upstream_turbine!(reservoir, hydro)
+    PSY.set_downstream_turbines!(reservoir, [hydro])
     PSY.add_time_series!(hydro_test_case_b_sys, load, load_forecast_dur)
     PSY.add_time_series!(hydro_test_case_b_sys, reservoir, inflow_forecast_dur)
     PSY.add_time_series!(hydro_test_case_b_sys, reservoir, energy_target_forecast_dur)
@@ -5066,7 +5066,7 @@ function build_hydro_test_case_c_sys(; raw_data, kwargs...)
         ),
     )
     turbine, reservoir = _get_generic_hydro_reservoir_pair(node)
-    set_upstream_turbine!(reservoir, turbine)
+    set_downstream_turbines!(reservoir, [turbine])
 
     duration_load = [0.3, 0.6, 0.5]
     load_data =
@@ -5117,7 +5117,7 @@ function build_hydro_test_case_d_sys(; raw_data, kwargs...)
         ),
     )
     turbine, reservoir = _get_generic_hydro_reservoir_pair(node)
-    set_upstream_turbine!(reservoir, turbine)
+    set_downstream_turbines!(reservoir, [turbine])
     duration_load = [0.3, 0.6, 0.5]
     load_data =
         SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, duration_load))
@@ -5167,7 +5167,7 @@ function build_hydro_test_case_e_sys(; raw_data, kwargs...)
         ),
     )
     turbine, reservoir = _get_generic_hydro_reservoir_pair(node)
-    set_upstream_turbine!(reservoir, turbine)
+    set_downstream_turbines!(reservoir, [turbine])
     duration_load = [0.3, 0.6, 0.5]
     load_data =
         SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, duration_load))
@@ -5217,7 +5217,7 @@ function build_hydro_test_case_f_sys(; raw_data, kwargs...)
         ),
     )
     turbine, reservoir = _get_generic_hydro_reservoir_pair(node)
-    set_upstream_turbine!(reservoir, turbine)
+    set_downstream_turbines!(reservoir, [turbine])
     duration_load = [0.3, 0.6, 0.5]
     load_data =
         SortedDict(time_periods[1] => TimeSeries.TimeArray(time_periods, duration_load))
