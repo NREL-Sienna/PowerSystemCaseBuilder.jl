@@ -1853,6 +1853,49 @@ function build_c_sys5_hydro_pump_energy(;
 
     convert_to_hydropump!(bat, c_sys5_bat)
     PSY.remove_component!(c_sys5_bat, bat)
+
+    for (ix, l) in enumerate(PSY.get_components(PSY.HydroPumpTurbine, c_sys5_bat))
+        forecast_data_power = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        forecast_data_cap = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time_power = TimeSeries.timestamp(hydro_pump_power_timeseries_DA[t][ix])[1]
+            forecast_data_power[ini_time_power] = hydro_pump_power_timeseries_DA[t][ix]
+            ini_time_cap = TimeSeries.timestamp(hydro_pump_cap_timeseries_DA[t][ix])[1]
+            forecast_data_cap[ini_time_cap] = hydro_pump_cap_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
+            PSY.add_time_series!(
+                c_sys5_bat,
+                l,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    hydro_pump_power_single_timeseries_DA;
+                ),
+            )
+            PSY.add_time_series!(
+                c_sys5_bat,
+                l,
+                PSY.SingleTimeSeries(
+                    "capacity",
+                    hydro_pump_cap_single_timeseries_DA;
+                ),
+            )
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_bat,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data_power),
+                )
+                PSY.add_time_series!(
+                    c_sys5_bat,
+                    l,
+                    PSY.Deterministic("capacity", forecast_data_cap),
+                )
+            end
+        end
+    end
+
     return c_sys5_bat
 end
 
