@@ -1853,6 +1853,49 @@ function build_c_sys5_hydro_pump_energy(;
 
     convert_to_hydropump!(bat, c_sys5_bat)
     PSY.remove_component!(c_sys5_bat, bat)
+
+    for (ix, l) in enumerate(PSY.get_components(PSY.HydroPumpTurbine, c_sys5_bat))
+        forecast_data_power = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        forecast_data_cap = SortedDict{Dates.DateTime, TimeSeries.TimeArray}()
+        for t in 1:2
+            ini_time_power = TimeSeries.timestamp(hydro_pump_power_timeseries_DA[t][ix])[1]
+            forecast_data_power[ini_time_power] = hydro_pump_power_timeseries_DA[t][ix]
+            ini_time_cap = TimeSeries.timestamp(hydro_pump_cap_timeseries_DA[t][ix])[1]
+            forecast_data_cap[ini_time_cap] = hydro_pump_cap_timeseries_DA[t][ix]
+        end
+        if add_single_time_series
+            PSY.add_time_series!(
+                c_sys5_bat,
+                l,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    hydro_pump_power_single_timeseries_DA;
+                ),
+            )
+            PSY.add_time_series!(
+                c_sys5_bat,
+                l,
+                PSY.SingleTimeSeries(
+                    "capacity",
+                    hydro_pump_cap_single_timeseries_DA;
+                ),
+            )
+        else
+            if add_forecasts
+                PSY.add_time_series!(
+                    c_sys5_bat,
+                    l,
+                    PSY.Deterministic("max_active_power", forecast_data_power),
+                )
+                PSY.add_time_series!(
+                    c_sys5_bat,
+                    l,
+                    PSY.Deterministic("capacity", forecast_data_cap),
+                )
+            end
+        end
+    end
+
     return c_sys5_bat
 end
 
@@ -2040,6 +2083,279 @@ function build_c_sys5_dc(; add_forecasts, add_single_time_series, raw_data, kwar
 
     return c_sys5_dc
 end
+
+function build_c_sys5_events(; add_forecasts, raw_data, sys_kwargs...)
+    nodes = nodes5()
+    c_sys5 = PSY.System(
+        100.0,
+        nodes,
+        thermal_generators5_events(nodes),
+        loads5(nodes),
+        interruptible(nodes),
+        branches5(nodes);
+        sys_kwargs...,
+    )
+    pv_device = PSY.RenewableDispatch(
+        "PVBus5",
+        true,
+        nodes[3],
+        0.0,
+        0.0,
+        3.84,
+        PrimeMovers.PVe,
+        (min = 0.0, max = 0.0),
+        1.0,
+        RenewableGenerationCost(nothing),
+        100.0,
+    )
+    wind_device = PSY.RenewableDispatch(
+        "WindBus1",
+        true,
+        nodes[1],
+        0.0,
+        0.0,
+        4.51,
+        PrimeMovers.WT,
+        (min = 0.0, max = 0.0),
+        1.0,
+        RenewableGenerationCost(nothing),
+        100.0,
+    )
+    PSY.add_component!(c_sys5, pv_device)
+    PSY.add_component!(c_sys5, wind_device)
+    constant_reserve = constant_reserve5()
+    PSY.add_component!(c_sys5, constant_reserve)
+    for g in PSY.get_components(ThermalStandard, c_sys5)
+        add_service!(g, constant_reserve, c_sys5)
+    end
+    timeseries_dataset =
+        HDF5.h5read(joinpath(DATA_DIR, "5-Bus", "PJM_5_BUS_7_DAYS.h5"), "Time Series Data")
+    refdate = first(DayAhead)
+    da_load_time_series = DateTime[]
+    da_load_time_series_val = Float64[]
+
+    for i in 1:2
+        for v in timeseries_dataset["DA Load Data"]["DA_LOAD_DAY_$(i)"]
+            h = refdate + Hour(v.HOUR + (i - 1) * 24)
+            push!(da_load_time_series, h)
+            push!(da_load_time_series_val, v.LOAD)
+        end
+    end
+    re_timeseries = Dict(
+        "PVBus5" => CSV.read(
+            joinpath(
+                DATA_DIR,
+                "5-Bus",
+                "5bus_ts",
+                "gen",
+                "Renewable",
+                "PV",
+                "da_solar.csv",
+            ),
+            DataFrame,
+        )[
+            1:48,
+            :SolarBusC,
+        ],
+        "WindBus1" => CSV.read(
+            joinpath(
+                DATA_DIR,
+                "5-Bus",
+                "5bus_ts",
+                "gen",
+                "Renewable",
+                "WIND",
+                "da_wind.csv",
+            ),
+            DataFrame,
+        )[
+            1:48,
+            :WindBusA,
+        ],
+    )
+    re_timeseries["WindBus1"] = re_timeseries["WindBus1"] ./ 451
+
+    bus_dist_fact = Dict("Bus2" => 0.33, "Bus3" => 0.33, "Bus4" => 0.34)
+    peak_load = maximum(da_load_time_series_val)
+    if add_forecasts
+        for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5))
+            set_max_active_power!(l, bus_dist_fact[PSY.get_name(l)] * peak_load / 100)
+            add_time_series!(
+                c_sys5,
+                l,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    TimeArray(da_load_time_series, da_load_time_series_val ./ peak_load),
+                ),
+            )
+        end
+        for (ix, i) in enumerate(PSY.get_components(PSY.InterruptiblePowerLoad, c_sys5))
+            PSY.add_time_series!(
+                c_sys5,
+                i,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    Iload_single_timeseries_DA;
+                    scaling_factor_multiplier = PSY.get_max_active_power,
+                ),
+            )
+        end
+        for (ix, g) in enumerate(PSY.get_components(RenewableDispatch, c_sys5))
+            add_time_series!(
+                c_sys5,
+                g,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    TimeArray(da_load_time_series, re_timeseries[PSY.get_name(g)]),
+                ),
+            )
+        end
+    end
+    return c_sys5
+end
+
+function build_c_sys5_events_rt(; add_forecasts, raw_data, sys_kwargs...)
+    nodes = nodes5()
+    c_sys5 = PSY.System(
+        100.0,
+        nodes,
+        thermal_generators5_events(nodes),
+        loads5(nodes),
+        interruptible(nodes),
+        branches5(nodes);
+        sys_kwargs...,
+    )
+    pv_device = PSY.RenewableDispatch(
+        "PVBus5",
+        true,
+        nodes[3],
+        0.0,
+        0.0,
+        3.84,
+        PrimeMovers.PVe,
+        (min = 0.0, max = 0.0),
+        1.0,
+        RenewableGenerationCost(nothing),
+        100.0,
+    )
+    wind_device = PSY.RenewableDispatch(
+        "WindBus1",
+        true,
+        nodes[1],
+        0.0,
+        0.0,
+        4.51,
+        PrimeMovers.WT,
+        (min = 0.0, max = 0.0),
+        1.0,
+        RenewableGenerationCost(nothing),
+        100.0,
+    )
+    PSY.add_component!(c_sys5, pv_device)
+    PSY.add_component!(c_sys5, wind_device)
+    constant_reserve = constant_reserve5()
+    PSY.add_component!(c_sys5, constant_reserve)
+    for g in PSY.get_components(ThermalStandard, c_sys5)
+        add_service!(g, constant_reserve, c_sys5)
+    end
+    timeseries_dataset =
+        HDF5.h5read(joinpath(DATA_DIR, "5-Bus", "PJM_5_BUS_7_DAYS.h5"), "Time Series Data")
+    refdate = first(DayAhead)
+    rt_load_time_series = DateTime[]
+    rt_load_time_series_val = Float64[]
+    # This scale factor is empirically determined to ensure test cases for events are feasible in PSI:
+    rt_load_scale_factor = 0.9
+    for i in 1:2
+        for v in timeseries_dataset["Actual Load Data"]["ACTUAL_LOAD_DAY_$(i).xls"]
+            h = refdate + Second(round(v.Time * 86400)) + Day(i - 1)
+            push!(rt_load_time_series, h)
+            push!(rt_load_time_series_val, v.Load * rt_load_scale_factor)
+        end
+    end
+
+    re_timeseries = Dict(
+        "PVBus5" => CSV.read(
+            joinpath(
+                DATA_DIR,
+                "5-Bus",
+                "5bus_ts",
+                "gen",
+                "Renewable",
+                "PV",
+                "rt_solar.csv",
+            ),
+            DataFrame,
+        )[
+            1:576,
+            :SolarBusC,
+        ],
+        "WindBus1" => CSV.read(
+            joinpath(
+                DATA_DIR,
+                "5-Bus",
+                "5bus_ts",
+                "gen",
+                "Renewable",
+                "WIND",
+                "rt_wind.csv",
+            ),
+            DataFrame,
+        )[
+            1:576,
+            :WindBusA,
+        ],
+    )
+
+    re_timeseries["WindBus1"] = re_timeseries["WindBus1"] ./ 451
+    re_timeseries["PVBus5"] = re_timeseries["PVBus5"] ./ maximum(re_timeseries["PVBus5"])
+
+    rt_re_time_stamps =
+        collect(DateTime("2024-01-01T00:00:00"):Minute(5):DateTime("2024-01-02T23:55:00"))
+
+    rt_timearray = TimeArray(rt_load_time_series, rt_load_time_series_val)
+    rt_timearray = collapse(rt_timearray, Minute(5), first, TimeSeries.mean)
+    bus_dist_fact = Dict("Bus2" => 0.33, "Bus3" => 0.33, "Bus4" => 0.34)
+    peak_load = maximum(rt_load_time_series_val)
+    if add_forecasts
+        for (ix, l) in enumerate(PSY.get_components(PowerLoad, c_sys5))
+            set_max_active_power!(l, bus_dist_fact[PSY.get_name(l)] * peak_load / 100)
+            rt_timearray =
+                TimeArray(rt_load_time_series, rt_load_time_series_val ./ peak_load)
+            rt_timearray = collapse(rt_timearray, Minute(5), first, TimeSeries.mean)
+            add_time_series!(
+                c_sys5,
+                l,
+                PSY.SingleTimeSeries("max_active_power", rt_timearray),
+            )
+        end
+        for (ix, l) in enumerate(PSY.get_components(InterruptiblePowerLoad, c_sys5))
+            rt_timearray =
+                TimeArray(rt_load_time_series, rt_load_time_series_val ./ peak_load)
+            rt_timearray = collapse(rt_timearray, Minute(5), first, TimeSeries.mean)
+            add_time_series!(
+                c_sys5,
+                l,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    Iload_single_timeseries_RT;
+                    scaling_factor_multiplier = PSY.get_max_active_power,
+                ),
+            )
+        end
+        for (ix, g) in enumerate(PSY.get_components(RenewableDispatch, c_sys5))
+            add_time_series!(
+                c_sys5,
+                g,
+                PSY.SingleTimeSeries(
+                    "max_active_power",
+                    TimeArray(rt_re_time_stamps, re_timeseries[PSY.get_name(g)]),
+                ),
+            )
+        end
+    end
+    return c_sys5
+end
+
 #=
 function build_c_sys5_reg(; add_forecasts, raw_data, kwargs...)
     sys_kwargs = filter_kwargs(; kwargs...)

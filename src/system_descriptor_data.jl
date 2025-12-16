@@ -573,6 +573,34 @@ const SYSTEM_CATALOG = [
         ],
     ),
     SystemDescriptor(;
+        name = "c_sys5_events",
+        description = "5-Bus system for testing events",
+        category = PSITestSystems,
+        raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
+        build_function = build_c_sys5_events,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
+    ),
+    SystemDescriptor(;
+        name = "c_sys5_events_rt",
+        description = "5-Bus system for testing events with real time data",
+        category = PSITestSystems,
+        raw_data = joinpath(DATA_DIR, "psy_data", "data_5bus_pu.jl"),
+        build_function = build_c_sys5_events_rt,
+        supported_arguments = [
+            SystemArgument(;
+                name = :add_forecasts,
+                default = true,
+                allowed_values = Set([true, false]),
+            ),
+        ],
+    ),
+    SystemDescriptor(;
         name = "c_sys5_uc",
         description = "5-Bus system for Unit Commitment Simulations",
         category = PSITestSystems,
