@@ -6690,6 +6690,29 @@ function build_pwl_incremental_fuel_test_sys(; kwargs...)
     return base_sys
 end
 
+"Same as build_pwl_incremental_cost_test_sys but converts on the fly to PiecewiseAverageCurve"
+function build_pwl_average_cost_test_sys(; kwargs...)
+    base_sys = _build_cost_base_test_sys(; kwargs...)
+    node = PSY.get_component(ACBus, base_sys, "nodeA")
+    test_gen = thermal_generator_pwl_incremental_cost(node)
+    oc = get_operation_cost(test_gen)
+    set_variable!(oc, CostCurve(AverageRateCurve(get_value_curve(get_variable(oc)))))
+    PSY.add_component!(base_sys, test_gen)
+    return base_sys
+end
+
+"Same as build_pwl_incremental_fuel_test_sys but converts on the fly to PiecewiseAverageCurve"
+function build_pwl_average_fuel_test_sys(; kwargs...)
+    base_sys = _build_cost_base_test_sys(; kwargs...)
+    node = PSY.get_component(ACBus, base_sys, "nodeA")
+    test_gen = thermal_generator_pwl_incremental_fuel(node)
+    oc = get_operation_cost(test_gen)
+    vc = get_variable(oc)
+    set_variable!(oc, FuelCurve(AverageRateCurve(get_value_curve(vc)), get_fuel_cost(vc)))
+    PSY.add_component!(base_sys, test_gen)
+    return base_sys
+end
+
 function build_non_convex_io_pwl_cost_test(; kwargs...)
     base_sys = _build_cost_base_test_sys(; kwargs...)
     node = PSY.get_component(ACBus, base_sys, "nodeA")
