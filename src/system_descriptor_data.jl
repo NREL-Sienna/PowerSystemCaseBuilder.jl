@@ -880,6 +880,20 @@ const SYSTEM_CATALOG = [
         build_function = build_pwl_incremental_fuel_test_sys,
     ),
     SystemDescriptor(;
+        name = "c_pwl_average_cost_test",
+        description = "1 bus CostCurve{PiecewiseAverageCurve} testing",
+        raw_data = joinpath(DATA_DIR, "psy_data", "generation_cost_function_data.jl"),
+        category = PSITestSystems,
+        build_function = build_pwl_average_cost_test_sys,
+    ),
+    SystemDescriptor(;
+        name = "c_pwl_average_fuel_test",
+        description = "1 bus FuelCurve{PiecewiseAverageCurve} testing",
+        raw_data = joinpath(DATA_DIR, "psy_data", "generation_cost_function_data.jl"),
+        category = PSITestSystems,
+        build_function = build_pwl_average_fuel_test_sys,
+    ),
+    SystemDescriptor(;
         name = "c_non_convex_io_pwl_cost_test",
         description = "1 Bus PWL sos testing",
         raw_data = joinpath(DATA_DIR, "psy_data", "generation_cost_function_data.jl"),
