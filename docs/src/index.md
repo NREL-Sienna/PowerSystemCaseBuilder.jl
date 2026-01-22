@@ -26,7 +26,7 @@ suggestions, and bug reports.
 
 ## About Sienna
 
-`PowerSystemCaseBuilder.jl` is part of the National Renewable Energy Laboratory's
+`PowerSystemCaseBuilder.jl` is part of the National Laboratory of the Rockies (formerly known as NREL)'s
 [Sienna ecosystem](https://nrel-sienna.github.io/Sienna/), an open source framework for
 power system modeling, simulation, and optimization. The Sienna ecosystem can be
 [found on Github](https://github.com/NREL-Sienna/Sienna). It contains three applications:
