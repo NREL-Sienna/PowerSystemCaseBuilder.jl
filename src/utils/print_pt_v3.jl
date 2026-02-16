@@ -13,6 +13,8 @@ function show_systems(sys::SystemCatalog, category::Type{<:SystemCategory}; kwar
         data;
         column_labels = column_labels,
         alignment = :l,
+        fit_table_in_display_horizontally = false,  # show full column content (no horizontal truncation)
+        fit_table_in_display_vertically = false,   # show all rows (no vertical truncation)
         kwargs...,
     )
 end

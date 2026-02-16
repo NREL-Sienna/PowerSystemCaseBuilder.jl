@@ -8,5 +8,12 @@ function show_systems(sys::SystemCatalog, category::Type{<:SystemCategory}; kwar
         data[i, 2] = get_description(d)
     end
 
-    PrettyTables.pretty_table(stdout, data; header = header, alignment = :l, kwargs...)
+    PrettyTables.pretty_table(
+        stdout,
+        data;
+        header = header,
+        alignment = :l,
+        crop = :none,
+        kwargs...,
+    )
 end
