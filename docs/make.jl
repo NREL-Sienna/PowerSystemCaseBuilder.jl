@@ -12,6 +12,10 @@ if isfile("docs/src/howto/.DS_Store.md")
     rm("docs/src/howto/.DS_Store.md")
 end
 
+include(joinpath(@__DIR__, "src", "reference", "make_catalog_reference.jl"))
+catalog_md_path = joinpath(@__DIR__, "src", "reference", "generated_catalog.md")
+write(catalog_md_path, generate_catalog_md())
+
 pages = OrderedDict(
     "Welcome" => "index.md",
     ## TODO follow this diataxis structure as new material is added
@@ -21,7 +25,7 @@ pages = OrderedDict(
     # "Explanation" => Any["stub" => "explanation/stub.md"],
     "Reference" => Any[
         "Public API" => "reference/public.md",
-        "Full Catalog of `System`s" => "reference/catalog.md",
+        "Full Catalog of `System`s" => "reference/generated_catalog.md",
         "Developers" => ["Developer Guidelines" => "reference/developer_guidelines.md",
         "Internals" => "reference/internal.md"],
     ],
