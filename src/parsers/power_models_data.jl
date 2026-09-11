@@ -979,6 +979,14 @@ function _is_likely_motor_load(d::Dict, gen_name::Union{SubString{String}, Strin
     return
 end
 
+function _thermal_status(gen_status)
+    if !iszero(gen_status)
+        return OperationalStates.ONLINE
+    else
+        return OperationalStates.OFFLINE
+    end
+end
+
 # TODO test this more directly?
 """
 The polynomial term follows the convention that for an n-degree polynomial, at least n + 1 components are needed.
@@ -1025,7 +1033,7 @@ function make_thermal_gen(
             cost = QuadraticFunctionData(get.(Ref(coeffs), quadratic_degrees, 0)...)
             fixed = (d["ncost"] >= 1) ? last(d["cost"]) : 0.0
         end
-        cost = CostCurve(InputOutputCurve((cost)), IS.DU)
+        cost = CostCurve(InputOutputCurve((cost)), IS.CU)
         startup = d["startup"]
         shutdn = d["shutdown"]
     else
@@ -1070,7 +1078,7 @@ function make_thermal_gen(
     _is_likely_motor_load(d, gen_name)
     thermal_gen = ThermalStandard(;
         name = gen_name,
-        status = Bool(d["gen_status"]),
+        status = _thermal_status(d["gen_status"]),
         available = Bool(d["gen_status"]),
         bus = bus,
         active_power = d["pg"] * base_conversion,
@@ -1765,7 +1773,7 @@ function make_dcline(name::String, d::Dict, bus_f::ACBus, bus_t::ACBus, source_t
             active_power_limits_to = d["active_power_limits_to"],
             reactive_power_limits_from = d["reactive_power_limits_from"],
             reactive_power_limits_to = d["reactive_power_limits_to"],
-            loss = LinearCurve(d["loss1"], d["loss0"]),
+            loss = LossCurve(LinearCurve(d["loss1"], d["loss0"]), NaturalUnit()),
             ext = get(d, "ext", Dict{String, Any}()),
         )
     elseif source_type == "matpower"
@@ -1778,7 +1786,7 @@ function make_dcline(name::String, d::Dict, bus_f::ACBus, bus_t::ACBus, source_t
             active_power_limits_to = (min = d["pmint"], max = d["pmaxt"]),
             reactive_power_limits_from = (min = d["qminf"], max = d["qmaxf"]),
             reactive_power_limits_to = (min = d["qmint"], max = d["qmaxt"]),
-            loss = LinearCurve(d["loss1"], d["loss0"]),
+            loss = LossCurve(LinearCurve(d["loss1"], d["loss0"]), NaturalUnit()),
         )
     else
         error("Not supported source type for DC lines: $source_type")
@@ -1921,7 +1929,7 @@ function make_switched_shunt(name::String, d::Dict, bus::ACBus)
         :name => name,
         :available => Bool(d["status"]),
         :bus => bus,
-        :Y => (d["gs"] + d["bs"]im),
+        :solved_admittance => d["bs"],
         :number_of_steps => d["step_number"],
         :Y_increase => d["y_increment"],
         :admittance_limits => d["admittance_limits"],
@@ -1931,7 +1939,7 @@ function make_switched_shunt(name::String, d::Dict, bus::ACBus)
     )
 
     if haskey(d, "initial_status")
-        params[:initial_status] = d["initial_status"]
+        params[:number_engaged] = d["initial_status"]
     end
 
     return SwitchedAdmittance(; params...)

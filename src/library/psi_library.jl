@@ -561,7 +561,7 @@ function make_modified_RTS_GMLC_sys(
         sys,
     )
         PSY.get_fuel(d) == PSY.ThermalFuels.COAL &&
-            (PSY.set_ramp_limits!(d, (up = 0.001 * IS.DU, down = 0.001 * IS.DU)))
+            (PSY.set_ramp_limits!(d, (up = 0.001 * IS.CU, down = 0.001 * IS.CU)))
         if PSY.get_fuel(d) == PSY.ThermalFuels.DISTILLATE_FUEL_OIL
             PSY.remove_component!(sys, d)
             continue
@@ -570,10 +570,10 @@ function make_modified_RTS_GMLC_sys(
             PSY.get_operation_cost(d),
             PSY.get_start_up(PSY.get_operation_cost(d)) / 2.0,
         )
-        if PSY.get_rating(d, IS.DU) < 3
-            PSY.set_status!(d, false)
-            PSY.set_status!(d, false)
-            PSY.set_active_power!(d, 0.0 * IS.DU)
+        if PSY.get_rating(d, IS.CU) < 3
+            PSY.set_status!(d, PSY.OperationalStates.OFFLINE)
+            PSY.set_status!(d, PSY.OperationalStates.OFFLINE)
+            PSY.set_active_power!(d, 0.0 * IS.CU)
             continue
         end
         PSY.clear_services!(d)
@@ -603,8 +603,8 @@ function make_modified_RTS_GMLC_sys(
         PSY.RenewableDispatch,
         sys,
     )
-        rat_ = PSY.get_rating(g, IS.DU)
-        PSY.set_rating!(g, DISPATCH_INCREASE * rat_ * IS.DU)
+        rat_ = PSY.get_rating(g, IS.CU)
+        PSY.set_rating!(g, DISPATCH_INCREASE * rat_ * IS.CU)
     end
 
     for g in PSY.get_components(
@@ -612,8 +612,8 @@ function make_modified_RTS_GMLC_sys(
         PSY.RenewableNonDispatch,
         sys,
     )
-        rat_ = PSY.get_rating(g, IS.DU)
-        PSY.set_rating!(g, FIX_DECREASE * rat_ * IS.DU)
+        rat_ = PSY.get_rating(g, IS.CU)
+        PSY.set_rating!(g, FIX_DECREASE * rat_ * IS.CU)
     end
 
     ### Update Buses to PQ that got devices removed ###
@@ -952,7 +952,7 @@ function build_two_zone_5_bus(; kwargs...)
         ThermalStandard(;
             name = "Alta",
             available = true,
-            status = true,
+            status = OperationalStates.ONLINE,
             bus = nodes10[1],
             active_power = 0.40,
             reactive_power = 0.010,
@@ -975,7 +975,7 @@ function build_two_zone_5_bus(; kwargs...)
         ThermalStandard(;
             name = "Park City",
             available = true,
-            status = true,
+            status = OperationalStates.ONLINE,
             bus = nodes10[1],
             active_power = 1.70,
             reactive_power = 0.20,
@@ -997,7 +997,7 @@ function build_two_zone_5_bus(; kwargs...)
         ThermalStandard(;
             name = "Solitude",
             available = true,
-            status = true,
+            status = OperationalStates.ONLINE,
             bus = nodes10[3],
             active_power = 5.2,
             reactive_power = 1.00,
@@ -1019,7 +1019,7 @@ function build_two_zone_5_bus(; kwargs...)
         ThermalStandard(;
             name = "Sundance",
             available = true,
-            status = true,
+            status = OperationalStates.ONLINE,
             bus = nodes10[4],
             active_power = 2.0,
             reactive_power = 0.40,
@@ -1041,7 +1041,7 @@ function build_two_zone_5_bus(; kwargs...)
         ThermalStandard(;
             name = "Brighton",
             available = true,
-            status = true,
+            status = OperationalStates.ONLINE,
             bus = nodes10[5],
             active_power = 6.0,
             reactive_power = 1.50,
@@ -1063,7 +1063,7 @@ function build_two_zone_5_bus(; kwargs...)
         ThermalStandard(;
             name = "Alta-2",
             available = true,
-            status = true,
+            status = OperationalStates.ONLINE,
             bus = nodes10[6],
             active_power = 0.40,
             reactive_power = 0.010,
@@ -1085,7 +1085,7 @@ function build_two_zone_5_bus(; kwargs...)
         ThermalStandard(;
             name = "Park City-2",
             available = true,
-            status = true,
+            status = OperationalStates.ONLINE,
             bus = nodes10[6],
             active_power = 1.70,
             reactive_power = 0.20,
@@ -1107,7 +1107,7 @@ function build_two_zone_5_bus(; kwargs...)
         ThermalStandard(;
             name = "Solitude-2",
             available = true,
-            status = true,
+            status = OperationalStates.ONLINE,
             bus = nodes10[8],
             active_power = 5.2,
             reactive_power = 1.00,
@@ -1129,7 +1129,7 @@ function build_two_zone_5_bus(; kwargs...)
         ThermalStandard(;
             name = "Sundance-2",
             available = true,
-            status = true,
+            status = OperationalStates.ONLINE,
             bus = nodes10[9],
             active_power = 2.0,
             reactive_power = 0.40,
@@ -1151,7 +1151,7 @@ function build_two_zone_5_bus(; kwargs...)
         ThermalStandard(;
             name = "Brighton-2",
             available = true,
-            status = true,
+            status = OperationalStates.ONLINE,
             bus = nodes10[10],
             active_power = 6.0,
             reactive_power = 1.50,
@@ -1363,7 +1363,7 @@ function _duplicate_system(main_sys::PSY.System, twin_sys::PSY.System, HVDC_line
         end
         for d in
             get_components(x -> get_fuel(x) == ThermalFuels.NUCLEAR, ThermalStandard, sys)
-            set_must_run!(d, true)
+            set_commitment_mode!(d, PSY.CommitmentModes.MUST_RUN)
         end
     end
 
@@ -1972,10 +1972,13 @@ function build_MTHVDC_two_RTS_DA_sys_noForecast(; kwargs...)
             rating = 1.0,
             active_power_limits = (min = 0.0, max = 1.0),
             base_power = P_limit_7T[ix],
-            loss_function = PSY.QuadraticCurve(
-                c_pu[ix],
-                b_pu[ix],
-                a_pu[ix],
+            loss_function = PSY.LossCurve(
+                PSY.QuadraticCurve(
+                    c_pu[ix],
+                    b_pu[ix],
+                    a_pu[ix],
+                ),
+                PSY.NaturalUnit(),
             ),
         )
         PSY.add_component!(sys, ipc)
@@ -1993,10 +1996,13 @@ function build_MTHVDC_two_RTS_DA_sys_noForecast(; kwargs...)
             rating = 1.0,
             active_power_limits = (min = 0.0, max = 1.0),
             base_power = P_limit_9T,
-            loss_function = PSY.QuadraticCurve(
-                c_pu_9T,
-                b_pu_9T,
-                a_pu_9T,
+            loss_function = PSY.LossCurve(
+                PSY.QuadraticCurve(
+                    c_pu_9T,
+                    b_pu_9T,
+                    a_pu_9T,
+                ),
+                PSY.NaturalUnit(),
             ),
         )
         PSY.add_component!(sys, ipc)
