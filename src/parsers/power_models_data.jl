@@ -1773,7 +1773,7 @@ function make_dcline(name::String, d::Dict, bus_f::ACBus, bus_t::ACBus, source_t
             active_power_limits_to = d["active_power_limits_to"],
             reactive_power_limits_from = d["reactive_power_limits_from"],
             reactive_power_limits_to = d["reactive_power_limits_to"],
-            loss = LinearCurve(d["loss1"], d["loss0"]),
+            loss = LossCurve(LinearCurve(d["loss1"], d["loss0"]), NaturalUnit()),
             ext = get(d, "ext", Dict{String, Any}()),
         )
     elseif source_type == "matpower"
@@ -1786,7 +1786,7 @@ function make_dcline(name::String, d::Dict, bus_f::ACBus, bus_t::ACBus, source_t
             active_power_limits_to = (min = d["pmint"], max = d["pmaxt"]),
             reactive_power_limits_from = (min = d["qminf"], max = d["qmaxf"]),
             reactive_power_limits_to = (min = d["qmint"], max = d["qmaxt"]),
-            loss = LinearCurve(d["loss1"], d["loss0"]),
+            loss = LossCurve(LinearCurve(d["loss1"], d["loss0"]), NaturalUnit()),
         )
     else
         error("Not supported source type for DC lines: $source_type")

@@ -1972,10 +1972,13 @@ function build_MTHVDC_two_RTS_DA_sys_noForecast(; kwargs...)
             rating = 1.0,
             active_power_limits = (min = 0.0, max = 1.0),
             base_power = P_limit_7T[ix],
-            loss_function = PSY.QuadraticCurve(
-                c_pu[ix],
-                b_pu[ix],
-                a_pu[ix],
+            loss_function = PSY.LossCurve(
+                PSY.QuadraticCurve(
+                    c_pu[ix],
+                    b_pu[ix],
+                    a_pu[ix],
+                ),
+                PSY.NaturalUnit(),
             ),
         )
         PSY.add_component!(sys, ipc)
@@ -1993,10 +1996,13 @@ function build_MTHVDC_two_RTS_DA_sys_noForecast(; kwargs...)
             rating = 1.0,
             active_power_limits = (min = 0.0, max = 1.0),
             base_power = P_limit_9T,
-            loss_function = PSY.QuadraticCurve(
-                c_pu_9T,
-                b_pu_9T,
-                a_pu_9T,
+            loss_function = PSY.LossCurve(
+                PSY.QuadraticCurve(
+                    c_pu_9T,
+                    b_pu_9T,
+                    a_pu_9T,
+                ),
+                PSY.NaturalUnit(),
             ),
         )
         PSY.add_component!(sys, ipc)
